@@ -41,11 +41,14 @@ router.post("/google-login", async (req, res) => {
         name,
         email,
         googleId,
-        // Optional profile picture logic can be added here if you want to store it
+        profilePicture: picture,
       });
-    } else if (!user.googleId) {
-      // Link googleId to existing email user
-      user.googleId = googleId;
+    } else {
+      // Link googleId to existing email user and update profile picture only if not already set
+      user.googleId = user.googleId || googleId;
+      if (!user.profilePicture) {
+        user.profilePicture = picture;
+      }
       await user.save();
     }
 
