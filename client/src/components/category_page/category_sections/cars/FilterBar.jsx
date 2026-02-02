@@ -89,13 +89,12 @@ const FilterBar = ({
   categories = ['Supercars', 'Luxury Sedans', 'Ultra-Luxury'],
   brands = ['Ferrari', 'Lamborghini', 'Porsche', 'McLaren', 'Bugatti', 'Rolls-Royce', 'Aston Martin'],
   models = ['Aventador', 'Huracan', '911 GT3', 'Chiron', 'Phantom', 'DB5'],
-  countries = ['Italy', 'Germany', 'UK', 'USA', 'France']
+  priceRanges = null
 }) => {
   const [filters, setFilters] = useState({
     category: '',
     brand: '',
     model: '',
-    country: '',
     price: ''
   });
 
@@ -159,22 +158,15 @@ const FilterBar = ({
 
           <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
-          <AutoWidthDropdown
-            label="Country"
-            value={filters.country}
-            options={countries}
-            onChange={(val) => handleFilterChange('country', val)}
-          />
 
-          <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
           {/* Price - Spans 2 cols on mobile */}
           <div className="col-span-2 md:col-span-1 xl:col-span-auto w-full xl:w-auto">
             <AutoWidthDropdown
               label="Price"
               value={filters.price}
-              options={['Low to High', 'High to Low']}
-              onChange={(val) => handleFilterChange('price', val)}
+              options={priceRanges ? priceRanges : ['Low to High', 'High to Low']}
+              onChange={(val) => handleFilterChange(priceRanges ? 'priceRange' : 'price', val)}
             />
           </div>
 

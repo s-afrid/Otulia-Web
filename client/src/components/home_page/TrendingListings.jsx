@@ -45,14 +45,6 @@ const TrendingListings = () => {
         <h2 className="text-3xl md:text-4xl playfair-display text-black">
           Trending Listings
         </h2>
-        <button
-          onClick={() => {
-            navigate("/trending");
-          }}
-          className="px-3 md:px-10 py-3 bg-black text-white rounded-full text-sm font-semibold hover:bg-gray-800 transition-colors"
-        >
-          See More
-        </button>
       </div>
 
       {/* Slider Container */}

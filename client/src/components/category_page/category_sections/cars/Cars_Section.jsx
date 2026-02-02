@@ -27,6 +27,23 @@ const Cars_Section = () => {
         searchParams.delete('price');
     }
 
+    if (searchParams.has('priceRange')) {
+      const priceRange = searchParams.get('priceRange');
+      if (priceRange) {
+        if (priceRange.includes('+')) {
+          const min = parseInt(priceRange.replace(/\$|M|\+/g, '')) * 1000000;
+          searchParams.set('minPrice', min);
+        } else {
+          const [minStr, maxStr] = priceRange.split(' – ');
+          const min = parseInt(minStr.replace(/\$|K|M/g, '')) * (minStr.includes('M') ? 1000000 : 1000);
+          const max = parseInt(maxStr.replace(/\$|K|M/g, '')) * (maxStr.includes('M') ? 1000000 : 1000);
+          searchParams.set('minPrice', min);
+          searchParams.set('maxPrice', max);
+        }
+      }
+      searchParams.delete('priceRange');
+    }
+
     if (searchParams.has('country')) {
         const country = searchParams.get('country');
         const existingLocation = searchParams.get('location') || '';
@@ -98,6 +115,16 @@ const Cars_Section = () => {
     },
   ];
 
+  const priceRanges = [
+    '$50K – $100K',
+    '$100K – $200K',
+    '$200K – $400K',
+    '$400K – $750K',
+    '$750K – $1.5M',
+    '$1.5M – $3M',
+    '$3M+'
+  ];
+
   return (
     <div className="">
       <Cars_Hero />
@@ -126,7 +153,7 @@ const Cars_Section = () => {
         <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
         <section className="w-full px-3 md:px-16 py-12 bg-white">
-          <FilterBar onFilter={handleFilter} key={filterBarKey} />
+          <FilterBar onFilter={handleFilter} key={filterBarKey} priceRanges={priceRanges} />
         </section>
 
         <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white">
