@@ -101,6 +101,10 @@ const Estate_Section = () => {
     navigate(`?${searchParams.toString()}`, { replace: true });
   };
 
+  const handleLocationClick = (location) => {
+    navigate(`?location=${location}`);
+  };
+
   const locations = [
     {
       id: 1,
@@ -162,6 +166,7 @@ const Estate_Section = () => {
               {locations.map((item) => (
                 <div
                   key={item.id}
+                  onClick={() => handleLocationClick(item.location)}
                   className="
               group flex items-center 
               bg-white 
