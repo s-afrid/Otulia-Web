@@ -1,0 +1,28 @@
+{
+  "Superbike": {
+    "Ducati": ["Panigale V4", "Panigale V2"],
+    "BMW": ["S 1000 RR", "M 1000 RR"],
+    "Yamaha": ["R1", "R6"],
+    "Kawasaki": ["Ninja ZX-10R", "Ninja H2"],
+    "Honda": ["CBR1000RR-R Fireblade"]
+  },
+  "Cruiser": {
+    "Harley-Davidson": ["Fat Boy", "Street Glide", "Sportster S"],
+    "Indian": ["Chief", "FTR 1200", "Scout"],
+    "Ducati": ["Diavel", "XDiavel"]
+  },
+  "Sport": {
+    "Ducati": ["Streetfighter V4", "Monster"],
+    "KTM": ["1290 Super Duke R", "890 Duke R"],
+    "Triumph": ["Speed Triple", "Street Triple"]
+  },
+  "Touring": {
+    "BMW": ["R 1250 GS", "K 1600 GTL"],
+    "Honda": ["Gold Wing"],
+    "Harley-Davidson": ["Road Glide", "Ultra Limited"]
+  },
+  "Electric": {
+    "LiveWire": ["One"],
+    "Zero": ["SR/S", "SR/F"]
+  }
+}

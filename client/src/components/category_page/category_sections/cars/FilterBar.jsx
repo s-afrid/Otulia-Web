@@ -86,9 +86,7 @@ const AutoWidthDropdown = ({ label, value, options, onChange }) => {
 
 const FilterBar = ({
   onFilter,
-  categories = ['Supercars', 'Luxury Sedans', 'Ultra-Luxury'],
-  brands = ['Ferrari', 'Lamborghini', 'Porsche', 'McLaren', 'Bugatti', 'Rolls-Royce', 'Aston Martin'],
-  models = ['Aventador', 'Huracan', '911 GT3', 'Chiron', 'Phantom', 'DB5'],
+  filterOptions,
   priceRanges = null
 }) => {
   const [filters, setFilters] = useState({
@@ -99,8 +97,21 @@ const FilterBar = ({
     priceRange: ''
   });
 
+  const categories = filterOptions ? Object.keys(filterOptions) : [];
+  const brands = filters.category && filterOptions[filters.category] ? Object.keys(filterOptions[filters.category]) : [];
+  const models = filters.brand && filterOptions[filters.category] && filterOptions[filters.category][filters.brand] ? filterOptions[filters.category][filters.brand] : [];
+
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    const newFilters = { ...filters, [key]: value };
+
+    if (key === 'category') {
+      newFilters.brand = '';
+      newFilters.model = '';
+    } else if (key === 'brand') {
+      newFilters.model = '';
+    }
+    
+    setFilters(newFilters);
   };
 
   const handleSearch = () => {

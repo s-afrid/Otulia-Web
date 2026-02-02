@@ -1,0 +1,23 @@
+{
+  "Motor Yacht": {
+    "Sunseeker": ["Predator", "Manhattan", "131 Yacht"],
+    "Princess": ["X95", "Y72", "F55"],
+    "Ferretti": ["Ferretti Yachts 920", "Ferretti Yachts 780"],
+    "Azimut": ["Grande 27 Metri", "S6"],
+    "Riva": ["50METRI", "110' DOLCEVITA"]
+  },
+  "Sailing Yacht": {
+    "Beneteau": ["Oceanis 51.1", "First Yacht 53"],
+    "Jeanneau": ["Jeanneau Yachts 60", "Sun Odyssey 490"],
+    "Nautor's Swan": ["Swan 58", "Swan 98"]
+  },
+  "Superyacht": {
+    "Lurssen": ["Azzam", "Dilbar"],
+    "Feadship": ["Symphony", "Faith"],
+    "Oceanco": ["Black Pearl", "Jubilee"]
+  },
+  "Catamaran": {
+    "Lagoon": ["Seventy 7", "52"],
+    "Fountaine Pajot": ["Alegria 67", "Saba 50"]
+  }
+}

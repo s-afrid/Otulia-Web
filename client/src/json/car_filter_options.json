@@ -1,0 +1,49 @@
+{
+  "Supercars": {
+    "Ferrari": ["488 GTB", "F8 Tributo", "SF90 Stradale", "296 GTB", "Roma"],
+    "Lamborghini": ["Aventador", "Huracan", "Revuelto", "Urus"],
+    "McLaren": ["720S", "Artura", "GT", "Speedtail", "Senna"],
+    "Porsche": ["911 GT3", "911 Turbo S", "GT2 RS"],
+    "Aston Martin": ["Valkyrie", "Valhalla", "DB11", "DBS Superleggera"],
+    "Bugatti": ["Chiron", "Veyron", "Divo"]
+  },
+  "Luxury Sedans": {
+    "Rolls-Royce": ["Phantom", "Ghost", "Wraith", "Dawn"],
+    "Bentley": ["Flying Spur", "Continental GT", "Mulsanne"],
+    "Mercedes-Benz": ["S-Class", "E-Class", "C-Class", "EQS"],
+    "BMW": ["7 Series", "5 Series", "3 Series", "i7"],
+    "Audi": ["A8", "A6", "A4", "e-tron GT"]
+  },
+  "Sports Cars": {
+    "Porsche": ["911 Carrera", "718 Cayman", "718 Boxster"],
+    "Chevrolet": ["Corvette", "Camaro"],
+    "Ford": ["Mustang", "GT"],
+    "Nissan": ["GT-R", "Z"],
+    "Toyota": ["Supra", "GR86"]
+  },
+  "SUVs": {
+    "Lamborghini": ["Urus"],
+    "Bentley": ["Bentayga"],
+    "Rolls-Royce": ["Cullinan"],
+    "Mercedes-Benz": ["G-Class", "GLS", "GLE"],
+    "BMW": ["X7", "X5", "X3"],
+    "Audi": ["Q8", "Q7", "Q5"],
+    "Land Rover": ["Range Rover", "Defender", "Discovery"]
+  },
+  "Electric Cars": {
+    "Tesla": ["Model S", "Model 3", "Model X", "Model Y"],
+    "Porsche": ["Taycan"],
+    "Audi": ["e-tron", "Q4 e-tron"],
+    "Mercedes-Benz": ["EQE", "EQS"],
+    "BMW": ["i4", "iX", "i7"],
+    "Lucid": ["Air"],
+    "Rivian": ["R1T", "R1S"]
+  },
+  "Classic Cars": {
+    "Ferrari": ["250 GTO", "F40", "Dino 246 GT"],
+    "Mercedes-Benz": ["300 SL Gullwing", "280 SL Pagoda"],
+    "Porsche": ["356", "911 (classic)"],
+    "Jaguar": ["E-Type"],
+    "Aston Martin": ["DB5"]
+  }
+}

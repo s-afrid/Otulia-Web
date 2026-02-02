@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Yacht_Hero from './Yacht_Hero';
 import FilterBar from '../cars/FilterBar';
 import AssetCard from '../../../AssetCard';
+import yachtFilterOptions from '../../../../json/yacht_filter_options.json';
 import SortDropdown from '../SortDropdown';
 
 const Yacht_Section = () => {
@@ -17,14 +18,12 @@ const Yacht_Section = () => {
     const featuredListRef = useRef(null);
 
     const brands = [
-        { id: 1, name: 'Azimut', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Azimut_Yachts_logo.png/1200px-Azimut_Yachts_logo.png' },
-        { id: 2, name: 'Sunseeker', logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/3/36/Sunseeker_Logo.svg/1200px-Sunseeker_Logo.svg.png' },
-        { id: 3, name: 'Princess', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Princess_Yachts_logo.svg/1200px-Princess_Yachts_logo.svg.png' },
-        { id: 4, name: 'Ferretti', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Ferretti_Group_logo.svg/1200px-Ferretti_Group_logo.svg.png' },
-        { id: 5, name: 'Benetti', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Azimut_Benetti_Group_logo.svg/1200px-Azimut_Benetti_Group_logo.svg.png' },
-    ];
-
-    const datafetch = async (reset = false) => {
+        { id: 1, name: 'Azimut', logo: 'https://brandlogos.net/wp-content/uploads/2025/06/azimut_yachts-logo_brandlogos.net_svens-512x118.png' },
+        { id: 2, name: 'Sunseeker', logo: 'https://cdn.worldvectorlogo.com/logos/sunseeker.svg' },
+        { id: 3, name: 'Princess', logo: 'https://www.kpsfund.com/images/default-source/default-album/princess-yachts-logo.jpg?sfvrsn=ea309b5a_0' },
+        { id: 4, name: 'Ferretti', logo: 'https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/122011/ferretti_yachts_0.png?itok=dOa4Se4L' },
+        { id: 5, name: 'Benetti', logo: 'https://waterrevolutionfoundation.org/wp-content/uploads/2020/12/Benetti-logo.png' },
+    ];    const datafetch = async (reset = false) => {
         const searchParams = new URLSearchParams(location.search);
         searchParams.set('limit', limit);
         searchParams.set('page', reset ? 1 : page);
@@ -110,10 +109,6 @@ const Yacht_Section = () => {
         navigate(`?${searchParams.toString()}`, { replace: true });
     }
 
-    // Yacht Specific Options
-    const yachtCategories = ['Motor Yacht', 'Sailing Yacht', 'Superyacht', 'Catamaran'];
-    const yachtBrandsList = [...brands.map(b => b.name), 'Riva', 'Heesen', 'Wally'];
-    const yachtModels = ['Grande 27 Metri', 'Predator 74', 'Oasis 40M', 'Flybridge'];
     const priceRanges = [
         '£1M – £3M',
         '£3M – £8M',
@@ -152,9 +147,7 @@ const Yacht_Section = () => {
                 <section className="w-full px-3 md:px-16 py-12 bg-white">
                     <FilterBar
                         onFilter={handleFilter}
-                        categories={yachtCategories}
-                        brands={yachtBrandsList}
-                        models={yachtModels}
+                        filterOptions={yachtFilterOptions}
                         priceRanges={priceRanges}
                         key={filterBarKey}
                     />

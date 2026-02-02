@@ -4,7 +4,7 @@ import Cars_Hero from './Cars_Hero';
 import FilterBar from './FilterBar';
 import AssetCard from '../../../AssetCard';
 import SortDropdown from '../SortDropdown';
-import randomShuffle from '../../../../modules/randomShuffle';
+import carFilterOptions from '../../../../json/car_filter_options.json';
 import Cars_Search from './Cars_Search';
 
 const Cars_Section = () => {
@@ -130,6 +130,7 @@ const Cars_Section = () => {
       <Cars_Hero />
     
       <div className="bg-white">
+
         <section className="w-full px-3 md:px-16 py-12 bg-white">
           <div className="flex flex-col items-center justify-center mb-10">
             <h2 className="text-3xl md:text-4xl playfair-display text-black mb-12 text-center">
@@ -153,7 +154,7 @@ const Cars_Section = () => {
         <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
         <section className="w-full px-3 md:px-16 py-12 bg-white">
-          <FilterBar onFilter={handleFilter} key={filterBarKey} priceRanges={priceRanges} />
+          <FilterBar onFilter={handleFilter} key={filterBarKey} priceRanges={priceRanges} filterOptions={carFilterOptions} />
         </section>
 
         <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white">
