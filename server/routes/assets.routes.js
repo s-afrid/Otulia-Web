@@ -688,8 +688,31 @@ router.get("/location-suggestions", async (req, res) => {
       return res.json([]);
     }
 
-    const searchRegex = { $regex: q, $options: "i" };
+    const photonApiUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5&lang=en`;
 
+    try {
+      const response = await axios.get(photonApiUrl);
+      if (response.data && response.data.features) {
+        const suggestions = response.data.features.map(feature => {
+          const { name, city, country } = feature.properties;
+          let suggestion = name;
+          if (city && name !== city) {
+            suggestion += `, ${city}`;
+          }
+          if (country && name !== country && city !== country) {
+            suggestion += `, ${country}`;
+          }
+          return suggestion;
+        });
+        return res.json(suggestions);
+      }
+    } catch (apiErr) {
+      console.error("Photon API Error:", apiErr.message);
+      // Fallback to local search if Photon API fails
+    }
+
+    // Fallback to local database search
+    const searchRegex = { $regex: q, $options: "i" };
     const [carLocations, estateLocations, bikeLocations, yachtLocations] = await Promise.all([
       CarAsset.distinct("location", { location: searchRegex }),
       EstateAsset.distinct("location", { location: searchRegex }),
@@ -706,8 +729,10 @@ router.get("/location-suggestions", async (req, res) => {
 
     const uniqueLocations = [...new Set(combinedLocations)];
 
-    res.json(uniqueLocations.slice(0, 10)); // Limit to 10 suggestions
+    res.json(uniqueLocations.slice(0, 10));
+
   } catch (err) {
+    console.error("Location Suggestions Error:", err);
     res.status(500).json({ message: "Failed to fetch location suggestions" });
   }
 });
