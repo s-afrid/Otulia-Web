@@ -6,6 +6,7 @@ const EstateAsset = require("../models/EstateAsset.model");
 const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
 
+const axios = require("axios");
 const router = express.Router();
 
 /**
@@ -613,36 +614,64 @@ router.get("/suggestions", async (req, res) => {
       return res.json([]);
     }
 
-    const searchRegex = { $regex: q, $options: "i" };
+    // 1. Fetch suggestions from Google's unofficial API
+    const googleApiUrl = `https://suggestqueries.google.com/complete/search?client=firefox&ds=&q=${encodeURIComponent(q)}`;
+    let googleSuggestions = [];
+    try {
+      const response = await axios.get(googleApiUrl);
+      if (response.data && Array.isArray(response.data) && response.data.length > 1) {
+        googleSuggestions = response.data[1];
+      }
+    } catch (apiErr) {
+      console.error("Google Suggestion API Error:", apiErr.message);
+      // Don't fail the request, just proceed with local suggestions
+    }
 
-    const [carTitles, estateTitles, bikeTitles, yachtTitles, carBrands, bikeBrands, yachtBrands, categories, locations] = await Promise.all([
-      CarAsset.distinct("title", { title: searchRegex }),
-      EstateAsset.distinct("title", { title: searchRegex }),
-      BikeAsset.distinct("title", { title: searchRegex }),
-      YachtAsset.distinct("title", { title: searchRegex }),
-      CarAsset.distinct("brand", { brand: searchRegex }),
-      BikeAsset.distinct("brand", { brand: searchRegex }),
-      YachtAsset.distinct("brand", { brand: searchRegex }),
-      CarAsset.distinct("category", { category: searchRegex }),
-      EstateAsset.distinct("location", { location: searchRegex }),
+    // 2. Fetch suggestions from the local database (as a supplement)
+    const searchRegex = { $regex: `^${q}`, $options: "i" };
+    const [brands, titles, models] = await Promise.all([
+      CarAsset.find({ brand: searchRegex }).limit(5),
+      CarAsset.find({ title: searchRegex }).limit(5),
+      CarAsset.find({ 'specification.model': searchRegex }).limit(5),
+      BikeAsset.find({ brand: searchRegex }).limit(5),
+      BikeAsset.find({ title: searchRegex }).limit(5),
+      BikeAsset.find({ 'specification.model': searchRegex }).limit(5),
+      YachtAsset.find({ brand: searchRegex }).limit(5),
+      YachtAsset.find({ title: searchRegex }).limit(5),
+      YachtAsset.find({ 'specification.model': searchRegex }).limit(5),
+      EstateAsset.find({ title: searchRegex }).limit(5)
     ]);
+    
+    const localSuggestions = {};
+    const processAssets = (assets, field, type) => {
+      assets.forEach(asset => {
+        const value = asset[field] || (asset.specification && asset.specification.model);
+        if (value && !localSuggestions[value]) {
+          localSuggestions[value] = { value, type };
+        }
+      });
+    };
 
-    const suggestions = [
-      ...carTitles,
-      ...estateTitles,
-      ...bikeTitles,
-      ...yachtTitles,
-      ...carBrands,
-      ...bikeBrands,
-      ...yachtBrands,
-      ...categories,
-      ...locations,
-    ];
+    processAssets(brands, 'brand', 'Brand');
+    processAssets(titles, 'title', 'Asset');
+    processAssets(models, 'model', 'Model');
 
-    const uniqueSuggestions = [...new Set(suggestions)];
+    // 3. Combine, deduplicate, and send
+    const combined = [...googleSuggestions.map(s => ({ value: s, type: 'Global' })), ...Object.values(localSuggestions)];
+    const uniqueValues = {};
+    const uniqueSuggestions = [];
+    
+    for (const suggestion of combined) {
+      if (!uniqueValues[suggestion.value]) {
+        uniqueValues[suggestion.value] = true;
+        uniqueSuggestions.push(suggestion);
+      }
+    }
 
     res.json(uniqueSuggestions.slice(0, 10));
+
   } catch (err) {
+    console.error("Suggestions Error:", err);
     res.status(500).json({ message: "Failed to fetch suggestions" });
   }
 });

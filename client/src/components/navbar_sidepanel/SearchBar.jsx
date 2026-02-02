@@ -57,7 +57,7 @@ const SearchBar = () => {
       setActiveSuggestion(prev => (prev > 0 ? prev - 1 : 0));
     } else if (e.key === 'Enter') {
       if (activeSuggestion > -1 && suggestions[activeSuggestion]) {
-        setQuery(suggestions[activeSuggestion]);
+        setQuery(suggestions[activeSuggestion].value);
         handleSearch(e);
       }
     }
@@ -101,12 +101,12 @@ const SearchBar = () => {
               key={index}
               className={`p-2 cursor-pointer hover:bg-gray-200 ${index === activeSuggestion ? 'bg-gray-200' : ''}`}
               onClick={() => {
-                setQuery(suggestion);
+                setQuery(suggestion.value);
                 setSuggestions([]);
-                navigate(`/shop?q=${suggestion}`);
+                navigate(`/shop?q=${suggestion.value}`);
               }}
             >
-              {suggestion}
+              {suggestion.value}
             </li>
           ))}
         </ul>
