@@ -33,6 +33,24 @@ const Yacht_Section = () => {
             searchParams.set('sort', searchParams.get('price'));
             searchParams.delete('price');
         }
+
+        if (searchParams.has('priceRange')) {
+            const priceRange = searchParams.get('priceRange');
+            if (priceRange) {
+                if (priceRange.includes('+')) {
+                    const min = parseInt(priceRange.replace(/£|M|\+/g, '')) * 1000000;
+                    searchParams.set('minPrice', min);
+                } else {
+                    const [minStr, maxStr] = priceRange.split(' – ');
+                    const min = parseInt(minStr.replace(/£|K|M/g, '')) * (minStr.includes('M') ? 1000000 : 1000);
+                    const max = parseInt(maxStr.replace(/£|K|M/g, '')) * (maxStr.includes('M') ? 1000000 : 1000);
+                    searchParams.set('minPrice', min);
+                    searchParams.set('maxPrice', max);
+                }
+            }
+            searchParams.delete('priceRange');
+        }
+
         if (searchParams.has('country')) {
             searchParams.set('location', searchParams.get('country'));
             searchParams.delete('country');
@@ -96,7 +114,13 @@ const Yacht_Section = () => {
     const yachtCategories = ['Motor Yacht', 'Sailing Yacht', 'Superyacht', 'Catamaran'];
     const yachtBrandsList = [...brands.map(b => b.name), 'Riva', 'Heesen', 'Wally'];
     const yachtModels = ['Grande 27 Metri', 'Predator 74', 'Oasis 40M', 'Flybridge'];
-    const yachtCountries = ['Italy', 'UK', 'Netherlands', 'USA', 'France'];
+    const priceRanges = [
+        '£1M – £3M',
+        '£3M – £8M',
+        '£8M – £20M',
+        '£20M – £50M',
+        '£50M+'
+    ];
 
     return (
         <div className=''>
@@ -131,7 +155,7 @@ const Yacht_Section = () => {
                         categories={yachtCategories}
                         brands={yachtBrandsList}
                         models={yachtModels}
-                        countries={yachtCountries}
+                        priceRanges={priceRanges}
                         key={filterBarKey}
                     />
                 </section>

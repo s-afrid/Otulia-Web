@@ -33,6 +33,24 @@ const Bike_Section = () => {
             searchParams.set('sort', searchParams.get('price'));
             searchParams.delete('price');
         }
+
+        if (searchParams.has('priceRange')) {
+            const priceRange = searchParams.get('priceRange');
+            if (priceRange) {
+                if (priceRange.includes('+')) {
+                    const min = parseInt(priceRange.replace(/£|K|\+/g, '')) * 1000;
+                    searchParams.set('minPrice', min);
+                } else {
+                    const [minStr, maxStr] = priceRange.split(' – ');
+                    const min = parseInt(minStr.replace(/£|K/g, '')) * 1000;
+                    const max = parseInt(maxStr.replace(/£|K/g, '')) * 1000;
+                    searchParams.set('minPrice', min);
+                    searchParams.set('maxPrice', max);
+                }
+            }
+            searchParams.delete('priceRange');
+        }
+
         if (searchParams.has('country')) {
             searchParams.set('location', searchParams.get('country'));
             searchParams.delete('country');
@@ -96,7 +114,13 @@ const Bike_Section = () => {
     const bikeCategories = ['Sport', 'Cruiser', 'Touring', 'Standard', 'Off-Road'];
     const bikeBrandsList = brands.map(b => b.name);
     const bikeModels = ['Panigale', 'Ninja', 'S 1000 RR', 'R1', 'Fat Boy']; // Examples
-    const bikeCountries = ['Italy', 'Japan', 'Germany', 'USA'];
+    const priceRanges = [
+        '£15K – £30K',
+        '£30K – £60K',
+        '£60K – £120K',
+        '£120K – £250K',
+        '£250K+'
+    ];
 
     return (
         <div className=''>
@@ -131,7 +155,7 @@ const Bike_Section = () => {
                         categories={bikeCategories}
                         brands={bikeBrandsList}
                         models={bikeModels}
-                        countries={bikeCountries}
+                        priceRanges={priceRanges}
                         key={filterBarKey}
                     />
                 </section>

@@ -21,14 +21,16 @@ const Estate_Section = () => {
     searchParams.set('limit', limit);
 
     const priceRange = searchParams.get('priceRange');
-    if (priceRange && !priceRange.startsWith('Any')) {
-      if (priceRange === '£10M+') {
-        searchParams.set('minPrice', '10000000');
-      } else if (priceRange.includes('-')) {
-        const [minStr, maxStr] = priceRange.split(' - ');
-        const parseVal = (str) => str.replace(/£/g, '').replace(/M/g, '000000').trim();
-        searchParams.set('minPrice', parseVal(minStr));
-        searchParams.set('maxPrice', parseVal(maxStr));
+    if (priceRange && priceRange !== 'Any Price') {
+      if (priceRange.includes('+')) {
+        const min = parseInt(priceRange.replace(/£|M|\+/g, '')) * 1000000;
+        searchParams.set('minPrice', min);
+      } else {
+        const [minStr, maxStr] = priceRange.split(' – ');
+        const min = parseInt(minStr.replace(/£|K|M/g, '')) * (minStr.includes('M') ? 1000000 : 1000);
+        const max = parseInt(maxStr.replace(/£|K|M/g, '')) * (maxStr.includes('M') ? 1000000 : 1000);
+        searchParams.set('minPrice', min);
+        searchParams.set('maxPrice', max);
       }
     }
     searchParams.delete('priceRange');

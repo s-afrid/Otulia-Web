@@ -95,7 +95,8 @@ const FilterBar = ({
     category: '',
     brand: '',
     model: '',
-    price: ''
+    price: '',
+    priceRange: ''
   });
 
   const handleFilterChange = (key, value) => {
@@ -164,7 +165,7 @@ const FilterBar = ({
           <div className="col-span-2 md:col-span-1 xl:col-span-auto w-full xl:w-auto">
             <AutoWidthDropdown
               label="Price"
-              value={filters.price}
+              value={priceRanges ? filters.priceRange : filters.price}
               options={priceRanges ? priceRanges : ['Low to High', 'High to Low']}
               onChange={(val) => handleFilterChange(priceRanges ? 'priceRange' : 'price', val)}
             />
