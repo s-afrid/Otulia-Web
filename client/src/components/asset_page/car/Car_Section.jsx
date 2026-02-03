@@ -124,8 +124,7 @@ const Car_Section = () => {
         </div>
       </div>
 
-      <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
-
+  
       
     </div>
   );

@@ -45,7 +45,6 @@ const YachtFeatures = ({ item }) => {
           <SpecRow label="Builder:" value={item?.builder || specs.brandBuilder} isLink />
           <SpecRow label="Model:" value={specs.model} isLink />
           <SpecRow label="Year:" value={specs.yearOfConstruction} />
-          <SpecRow label="Price:" value={formatPrice(item?.price)} />
           <SpecRow label="Listing Type:" value={item?.type} />
           
           {/* Location with Icon */}

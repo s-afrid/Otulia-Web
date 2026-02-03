@@ -66,19 +66,23 @@ const Bike_Section = () => {
 
             <BikeGallery images={info.images} />
 
-            <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
+            <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
             <BikeDetails item={info} modelName="BikeAsset" />
 
-            <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
+            <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
             <BikeKeyFeatures item={info} />
 
             <BikeFeatures item={info} />
 
-            <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
+            <div className="flex items-center justify-center mb-4">
+            <LocationMap locationName={info.location} />
+            </div>
 
-            <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white">
+            <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
+
+            <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white">
                 <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
                     More Bikes
                 </h1>
@@ -91,11 +95,6 @@ const Bike_Section = () => {
                 </div>
             </div>
 
-             <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
-
-             <div className="flex items-center justify-center mb-4">
-            <LocationMap locationName={info.location} />
-            </div>
         </div>
     );
 };

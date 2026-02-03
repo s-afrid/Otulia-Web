@@ -1,105 +1,75 @@
 import React from 'react';
 
 const BikeFeatures = ({ item }) => {
-  // DEBUG: Check your browser console to see what 'item' actually contains
-  console.log("BikeFeatures received item:", item);
+  // 1. Safe access to nested objects
+  const specs = item?.specification || {};
+  const keySpecs = item?.keySpecifications || {};
 
-  // Safety check 1: Is item undefined?
-  if (!item) {
-    return <div className="p-4 text-red-500">Error: No data passed to component</div>;
-  }
-
-  // Safety check 2: Handle if 'item' IS the specification itself, or if it HAS a specification field
-  // This makes the component work even if you pass <BikeFeatures item={info.specification} />
-  const specs = item.specification || item || {};
-  
-  // Helper to safely render values (handles 0, null, and undefined)
-  const formatValue = (val, unit = "") => {
-    if (val === undefined || val === null || val === "") return "-";
-    return `${val}${unit}`;
+  // 2. Helper to format price
+  const formatPrice = (price) => {
+    if (!price) return "-";
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
   };
 
-  const SpecRow = ({ label, value }) => (
-    <div className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0 montserrat">
-      <span className="text-gray-500 text-sm md:text-base">{label}</span>
-      <span className="text-gray-900 font-medium text-sm md:text-base text-right">
-        {value}
+  // 3. Helper function to render a single row
+  const SpecRow = ({ label, value, isLink = false, icon = null }) => (
+    <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
+      <span className="text-gray-500 font-normal text-sm md:text-base">
+        {label}
       </span>
-    </div>
-  );
-
-  const SpecSection = ({ title, children }) => (
-    <div className="mb-8 break-inside-avoid">
-      <h3 className="text-lg font-bold text-black mb-4 border-l-4 border-gray-800 pl-3 montserrat">
-        {title}
-      </h3>
-      <div className="bg-white rounded-lg p-0">
-        {children}
+      <div className="flex items-center gap-2 text-right">
+        {icon && <span>{icon}</span>}
+        <span 
+          className={`text-sm md:text-base font-medium text-black ${
+            isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
+          }`}
+        >
+          {value || "-"}
+        </span>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-0 items-start">
+    <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white montserrat">
+      
+      {/* Title */}
+      <h3 className="text-2xl font-bold mb-6">Bike Specifications</h3>
+
+      {/* Container - Stacks on mobile, 2 columns on Desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-0">
         
-        {/* LEFT COLUMN */}
+        {/* LEFT COLUMN - Identity & General */}
         <div className="flex flex-col">
-          <SpecSection title="General Information">
-            <SpecRow label="Brand:" value={formatValue(specs.brand)} />
-            <SpecRow label="Model:" value={formatValue(specs.model)} />
-            <SpecRow label="Variant:" value={formatValue(specs.variant)} />
-            <SpecRow label="Year:" value={formatValue(specs.yearOfConstruction || specs.year)} />
-            <SpecRow label="Color:" value={formatValue(specs.color)} />
-          </SpecSection>
-
-          <SpecSection title="History & Condition">
-            <SpecRow label="Condition:" value={formatValue(specs.condition)} />
-            <SpecRow label="Owners:" value={formatValue(specs.ownershipCount)} />
-            <SpecRow label="Accident History:" value={formatValue(specs.accidentHistory)} />
-          </SpecSection>
-
-          <SpecSection title="Engine & Performance">
-            <SpecRow label="Engine Type:" value={formatValue(specs.engineType)} />
-            {/* Try multiple key names for Capacity */}
-            <SpecRow 
-              label="Engine Capacity:" 
-              value={formatValue(specs.engineCapacityCC || specs.engineCapacity, " cc")} 
-            />
-            <SpecRow label="Max Power:" value={formatValue(specs.maxPower)} />
-            <SpecRow label="Max Torque:" value={formatValue(specs.maxTorque)} />
-            <SpecRow label="Transmission:" value={formatValue(specs.transmission)} />
-            <SpecRow label="Fuel System:" value={formatValue(specs.fuelSystem)} />
-            {/* Try multiple key names for Mileage */}
-            <SpecRow 
-              label="Mileage:" 
-              value={formatValue(specs.mileageKM || specs.mileage, " km/l")} 
-            />
-            <SpecRow label="Fuel Type:" value={formatValue(specs.fuelType)} />
-          </SpecSection>
+          <SpecRow label="Brand:" value={item?.brand || specs.brand} isLink />
+          <SpecRow label="Model:" value={specs.model} isLink />
+          <SpecRow label="Variant:" value={item?.variant || specs.variant} />
+          <SpecRow label="Year:" value={specs.yearOfConstruction || specs.year} />
+          
+          <SpecRow label="Listing Type:" value={item?.type} />
+          
+          {/* Location with Icon */}
+          <SpecRow 
+            label="Location:" 
+            value={item?.location} 
+            isLink 
+            icon={<span className="text-lg">📍</span>}
+          />
         </div>
 
-        {/* RIGHT COLUMN */}
+        {/* RIGHT COLUMN - Specs & Condition */}
         <div className="flex flex-col">
-          <SpecSection title="Chassis & Suspension">
-            <SpecRow label="Frame:" value={formatValue(specs.frame)} />
-            <SpecRow label="Front Suspension:" value={formatValue(specs.frontSuspension)} />
-            <SpecRow label="Front Brake:" value={formatValue(specs.frontBrake)} />
-            <SpecRow label="Rear Brake:" value={formatValue(specs.rearBrake)} />
-          </SpecSection>
+          {/* Specifications Section */}
+          <SpecRow label="Engine Capacity:" value={keySpecs.engineCapacity || specs.engineCapacityCC} />
+          <SpecRow label="Mileage:" value={keySpecs.mileage || specs.mileageKM} />
+          <SpecRow label="Fuel Type:" value={keySpecs.fuelType || specs.fuelType} />
+          <SpecRow label="Transmission:" value={keySpecs.transmission || specs.transmission} />
+          <SpecRow label="Color:" value={keySpecs.color || specs.color} />
 
-          <SpecSection title="Safety & Electronics">
-            <SpecRow label="ABS:" value={formatValue(specs.abs)} />
-            <SpecRow label="Traction Control:" value={formatValue(specs.tractionControl)} />
-            <SpecRow label="Ride Modes:" value={formatValue(specs.rideModes)} />
-            <SpecRow label="Immobilizer:" value={formatValue(specs.immobilizer)} />
-          </SpecSection>
-
-          <SpecSection title="Wheels & Tyres">
-            <SpecRow label="Front Wheel:" value={formatValue(specs.frontWheel)} />
-            <SpecRow label="Rear Wheel:" value={formatValue(specs.rearWheel)} />
-            <SpecRow label="Tyre Type:" value={formatValue(specs.tyreType)} />
-          </SpecSection>
+          {/* Condition Section */}
+          <SpecRow label="Condition / Status:" value={specs.condition || specs.usageStatus} />
+          <SpecRow label="Ownership Count:" value={specs.ownershipCount} />
+          <SpecRow label="Accident History:" value={specs.accidentHistory} />
         </div>
 
       </div>

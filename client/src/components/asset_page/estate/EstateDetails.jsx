@@ -113,13 +113,17 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
   }
 
   return (
-    <div className="w-full max-w-[1700px] mx-auto p-4 md:p-8 bg-white font-sans">
+    <div className="w-full max-w-[90%] mx-auto p-4 md:p-8 bg-white font-sans">
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
 
         {/* LEFT COLUMN: Details */}
         <div className="w-full lg:w-2/3">
           <div className="flex items-center gap-4 mb-4">
-            <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
+            {/* TITLE: Times New Roman + Smaller Size (text-4xl) */}
+            <h1 
+              className="text-3xl md:text-4xl font-bold text-black"
+              style={{ fontFamily: '"Times New Roman", Times, serif' }}
+            >
               {title}
             </h1>
             {brand_logo && (
@@ -146,13 +150,36 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
               {description}
             </p>
           </div>
+
+          {/* MOVED: SALE BUY BOX (Interested Block) */}
+          {/* Placed here in the Left Column, below Description */}
+          {type !== 'Rent' && (
+            <div className="border border-gray-200 rounded-sm shadow-sm p-6 bg-gray-50 mt-8">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold playfair-display mb-2">Interested?</h3>
+                  <p className="text-gray-500 text-sm">Invest in this premium property today.</p>
+                </div>
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full md:w-auto px-8 bg-black text-white py-4 rounded-sm font-medium hover:bg-gray-800 transition-all montserrat"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* RIGHT COLUMN: Price & Card */}
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
           <div className="w-full text-left lg:text-right">
-            <h2 className="text-3xl md:text-4xl font-bold playfair-display text-black">
-              $ {numberWithCommas(price)} {type === 'Rent' && <span className="text-lg font-normal text-gray-500">/ day</span>}
+            {/* PRICE: Times New Roman + Larger Size (text-5xl) */}
+            <h2 
+              className="text-3xl md:text-5xl font-bold text-black"
+              style={{ fontFamily: '"Times New Roman", Times, serif' }}
+            >
+              $ {numberWithCommas(price)} {type === 'Rent' && <span className="text-lg font-normal text-gray-500 font-sans">/ day</span>}
             </h2>
           </div>
 
@@ -191,7 +218,7 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
                   </div>
                   <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
                     <span>Total Rent</span>
-                    <span>
+                    <span style={{ fontFamily: '"Times New Roman", Times, serif' }}>
                       $ {numberWithCommas(Math.ceil(Math.abs(new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * price)}
                     </span>
                   </div>
@@ -207,19 +234,7 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
             </div>
           )}
 
-          {/* SALE BUY BOX */}
-          {type !== 'Rent' && (
-            <div className="border border-gray-200 rounded-sm shadow-sm p-6 bg-white">
-              <h3 className="text-xl font-bold playfair-display mb-2">Interested?</h3>
-              <p className="text-gray-500 text-sm mb-6">Invest in this premium property today.</p>
-              <button
-                onClick={handleAddToCart}
-                className="w-full bg-black text-white py-4 rounded-sm font-medium hover:bg-gray-800 transition-all montserrat"
-              >
-                Add to Cart
-              </button>
-            </div>
-          )}
+          {/* Note: The Sale "Interested" box was moved from here to the left column */}
 
           {/* Agent Card Box */}
           <div className="border border-gray-200 rounded-sm shadow-sm p-6 bg-white">

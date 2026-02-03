@@ -46,7 +46,6 @@ const CarFeatures = ({ item }) => {
           <SpecRow label="Model:" value={specs.model} isLink />
           <SpecRow label="Variant:" value={item?.variant} />
           <SpecRow label="Year:" value={specs.yearOfConstruction} />
-          <SpecRow label="Price:" value={formatPrice(item?.price)} />
           <SpecRow label="Listing Type:" value={item?.type} />
           
           {/* Location with Icon */}

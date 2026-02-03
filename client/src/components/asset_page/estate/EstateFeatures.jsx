@@ -1,20 +1,27 @@
 import React from 'react';
 
 const EstateFeatures = ({ item }) => {
-  // Safe access to specifications to prevent crashes
+  // 1. Safe access to nested objects
   const specs = item?.specification || {};
+  const keySpecs = item?.keySpecifications || {};
 
-  // Helper function to render a single row
+  // 2. Helper to format price
+  const formatPrice = (price) => {
+    if (!price) return "-";
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+  };
+
+  // 3. Helper function to render a single row
   const SpecRow = ({ label, value, isLink = false, icon = null }) => (
     <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
-      <span className="text-gray-900 font-normal text-sm md:text-base">
+      <span className="text-gray-500 font-normal text-sm md:text-base">
         {label}
       </span>
       <div className="flex items-center gap-2 text-right">
         {icon && <span>{icon}</span>}
         <span 
-          className={`text-sm md:text-base font-normal text-gray-500 ${
-            isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-700' : ''
+          className={`text-sm md:text-base font-medium text-black ${
+            isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
           }`}
         >
           {value || "-"}
@@ -24,48 +31,53 @@ const EstateFeatures = ({ item }) => {
   );
 
   return (
-    <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white montserrat">
+    <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white montserrat">
       
+      {/* Title */}
+      <h3 className="text-2xl font-bold mb-6">Property Specifications</h3>
+
       {/* Container - Stacks on mobile, 2 columns on Desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-0">
         
-        {/* LEFT COLUMN */}
+        {/* LEFT COLUMN - General Info & Location */}
         <div className="flex flex-col">
-          <SpecRow label="Year of construction:" value={specs.yearOfConstruction} />
-          <SpecRow label="Property type:" value={specs.propertyType} />
-          <SpecRow label="Architecture style:" value={specs.architectureStyle} />
-          <SpecRow label="Built-up area:" value={specs.builtUpArea} />
-          <SpecRow label="Land area:" value={specs.landArea} />
-          <SpecRow label="Floors:" value={specs.floors} />
-          <SpecRow label="Bedrooms:" value={specs.bedrooms} />
-          <SpecRow label="Bathrooms:" value={specs.bathrooms} />
-          <SpecRow label="Ceiling height:" value={specs.ceilingHeight} />
-          <SpecRow label="Parking capacity:" value={specs.parkingCapacity} />
-          <SpecRow label="Furnishing status:" value={specs.furnitureStatus} />
-          <SpecRow label="Ownership type:" value={specs.ownershipType} />
+          {/* General Fields from "Estate Details" */}
+          <SpecRow label="Property Name:" value={item?.propertyName || item?.title} />
+          <SpecRow label="Property Type:" value={specs.propertyType || keySpecs.propertyType} />
+          <SpecRow label="Listing Type:" value={item?.type} />
+          <SpecRow label="Year Built:" value={specs.yearOfConstruction} />
+          
+          {/* Location Details */}
+          <SpecRow 
+            label="Location:" 
+            value={item?.location || `${specs.city}, ${specs.country}`} 
+            isLink 
+            icon={<span className="text-lg">📍</span>}
+          />
+          <SpecRow label="Address:" value={specs.address} />
+          <SpecRow label="Neighborhood:" value={specs.areaNeighborhood} />
+          
+          <SpecRow label="Condition:" value={specs.condition} />
+          <SpecRow label="Usage Status:" value={specs.usageStatus} />
         </div>
 
-        {/* RIGHT COLUMN */}
+        {/* RIGHT COLUMN - Dimensions, Specs & Materials */}
         <div className="flex flex-col">
-          <SpecRow label="View:" value={specs.view} />
-          <SpecRow label="Configuration:" value={specs.configuration} />
-          <SpecRow label="Interior material:" value={specs.interiorMaterial} />
-          <SpecRow label="Interior color theme:" value={specs.interiorColorTheme} />
-          <SpecRow label="Exterior finish:" value={specs.exteriorFinish} />
-          <SpecRow label="Outdoor spaces:" value={specs.outdoorSpaces} />
-          <SpecRow label="Climate control:" value={specs.climateControl} />
-          <SpecRow label="Smart home system:" value={specs.smartHomeSystem} />
-          <SpecRow label="Security:" value={specs.security} />
-          <SpecRow label="Condition:" value={specs.condition} />
-          <SpecRow label="Usage status:" value={specs.usageStatus} />
-          <SpecRow 
-            label="Country:" 
-            value={specs.country} 
-            icon={
-              // Assuming Italy based on image, but dynamic if needed
-              <span className="text-lg">🇮🇹</span> 
-            }
-          />
+          {/* Dimensions */}
+          <SpecRow label="Built-up Area:" value={specs.builtUpArea || keySpecs.builtUpArea} />
+          <SpecRow label="Land Area:" value={specs.landArea || keySpecs.landArea} />
+          
+          {/* Room Counts */}
+          <SpecRow label="Bedrooms:" value={specs.bedrooms || keySpecs.bedrooms} />
+          <SpecRow label="Bathrooms:" value={specs.bathrooms || keySpecs.bathrooms} />
+          <SpecRow label="Floors:" value={specs.floors || keySpecs.floors} />
+          
+          {/* Features & Finish */}
+          <SpecRow label="Furnishing:" value={specs.furnishingStatus} />
+          <SpecRow label="Architecture Style:" value={specs.architectureStyle} />
+          <SpecRow label="Interior Material:" value={specs.interiorMaterial} />
+          <SpecRow label="Exterior Finish:" value={specs.exteriorFinish} />
+          <SpecRow label="Climate Control:" value={specs.climateControl} />
         </div>
 
       </div>
