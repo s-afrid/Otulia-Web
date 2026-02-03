@@ -15,7 +15,7 @@ const CartPage = () => {
 
     const paypalOptions = {
         "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
-        currency: "GBP",
+        currency: "USD",
         intent: "capture",
     };
 
@@ -136,12 +136,12 @@ const CartPage = () => {
                                                     Duration: {item.duration} days
                                                 </div>
                                                 <div className="font-medium">
-                                                    £ {numberWithCommas(item.pricePerDay)} x {item.duration} = £ {numberWithCommas(item.totalPrice)}
+                                                    $ {numberWithCommas(item.pricePerDay)} x {item.duration} = $ {numberWithCommas(item.totalPrice)}
                                                 </div>
                                             </>
                                         ) : (
                                             <div className="font-medium">
-                                                Price: £ {numberWithCommas(item.totalPrice)}
+                                                Price: $ {numberWithCommas(item.totalPrice)}
                                             </div>
                                         )}
                                     </div>
@@ -155,15 +155,15 @@ const CartPage = () => {
                                 <h2 className="text-xl font-bold mb-6 font-playfair">Order Summary</h2>
                                 <div className="flex justify-between mb-4">
                                     <span className="text-gray-600">Subtotal</span>
-                                    <span className="font-medium">£ {numberWithCommas(cartTotal)}</span>
+                                    <span className="font-medium">$ {numberWithCommas(cartTotal)}</span>
                                 </div>
                                 <div className="flex justify-between mb-6">
                                     <span className="text-gray-600">Service Fee</span>
-                                    <span className="font-medium">£ 0</span>
+                                    <span className="font-medium">$ 0</span>
                                 </div>
                                 <div className="border-t pt-4 flex justify-between mb-8">
                                     <span className="font-bold text-lg">Total</span>
-                                    <span className="font-bold text-lg">£ {numberWithCommas(cartTotal)}</span>
+                                    <span className="font-bold text-lg">$ {numberWithCommas(cartTotal)}</span>
                                 </div>
 
                                 <button
@@ -203,7 +203,7 @@ const CartPage = () => {
                         <div className="p-6">
                             <div className="mb-6 flex justify-between items-center">
                                 <span className="text-gray-600 font-medium">Total Payable</span>
-                                <span className="text-2xl font-bold text-black">£{numberWithCommas(cartTotal)}</span>
+                                <span className="text-2xl font-bold text-black">${numberWithCommas(cartTotal)}</span>
                             </div>
 
                             <div className="min-h-[150px] flex flex-col justify-center">

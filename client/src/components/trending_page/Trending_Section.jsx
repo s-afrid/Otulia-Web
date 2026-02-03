@@ -35,7 +35,7 @@ const Trending_Section = ({ type }) => {
     {
       id: 1,
       title: "Palm Crest Villa",
-      price: "£ 18,750,000",
+      price: "$ 18,750,000",
       location: "Beverly Hills, Los Angeles, USA",
       details: "6 Beds | 8 Baths | 12,400 sqft",
       image:
@@ -44,7 +44,7 @@ const Trending_Section = ({ type }) => {
     {
       id: 2,
       title: "Azure Ridge Estate",
-      price: "£ 14,980,000",
+      price: "$ 14,980,000",
       location: "Bel Air, Los Angeles, USA",
       details: "10 Beds | 8 Baths | 10,100 sqft",
       image:
@@ -53,7 +53,7 @@ const Trending_Section = ({ type }) => {
     {
       id: 3,
       title: "Monte Verde Retreat",
-      price: "£ 9,450,000",
+      price: "$ 9,450,000",
       location: "Lake Como, Lombardy, Italy",
       details: "5 Beds | 8 Baths | 7,400 sqft",
       image:
@@ -62,7 +62,7 @@ const Trending_Section = ({ type }) => {
     {
       id: 4,
       title: "Timberlake Grand",
-      price: "£ 11,200,000",
+      price: "$ 11,200,000",
       location: "Aspen, Colorado, USA",
       details: "15 Beds | 8 Baths | 13,400 sqft",
       image:

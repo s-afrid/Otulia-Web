@@ -48,7 +48,7 @@ const SharedFilterBar = ({ onSearch }) => {
                     <div className="relative w-full">
                         <input
                             type="number"
-                            placeholder="Min Price"
+                            placeholder="Min Price ($)"
                             value={minPrice}
                             onChange={(e) => setMinPrice(e.target.value)}
                             className="w-full p-2.5 outline-none text-sm font-sans placeholder:text-gray-400"
@@ -61,7 +61,7 @@ const SharedFilterBar = ({ onSearch }) => {
                     <div className="relative w-full">
                         <input
                             type="number"
-                            placeholder="Max Price"
+                            placeholder="Max Price ($)"
                             value={maxPrice}
                             onChange={(e) => setMaxPrice(e.target.value)}
                             className="w-full p-2.5 outline-none text-sm font-sans placeholder:text-gray-400"

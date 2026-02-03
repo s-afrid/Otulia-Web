@@ -22,11 +22,11 @@ const Estate_Section = () => {
 
     const priceRange = searchParams.get('priceRange');
     if (priceRange && !priceRange.startsWith('Any')) {
-      if (priceRange === '£10M+') {
+      if (priceRange === '$10M+') {
         searchParams.set('minPrice', '10000000');
       } else if (priceRange.includes('-')) {
         const [minStr, maxStr] = priceRange.split(' - ');
-        const parseVal = (str) => str.replace(/£/g, '').replace(/M/g, '000000').trim();
+        const parseVal = (str) => str.replace(/\$/g, '').replace(/M/g, '000000').trim();
         searchParams.set('minPrice', parseVal(minStr));
         searchParams.set('maxPrice', parseVal(maxStr));
       }
@@ -41,12 +41,12 @@ const Estate_Section = () => {
 
     const bedrooms = searchParams.get('bedrooms');
     if (bedrooms && bedrooms.startsWith('Any')) {
-        searchParams.delete('bedrooms');
+      searchParams.delete('bedrooms');
     }
 
     const bathrooms = searchParams.get('bathrooms');
     if (bathrooms && bathrooms.startsWith('Any')) {
-        searchParams.delete('bathrooms');
+      searchParams.delete('bathrooms');
     }
 
     const architecture = searchParams.get('architecture');
@@ -61,7 +61,7 @@ const Estate_Section = () => {
       searchParams.set('search', (existingSearch + ' ' + amenities).trim());
     }
     searchParams.delete('amenities');
-    
+
     searchParams.delete('sizeLand'); // a filter that is not supported by backend
 
     const url = `/api/assets/estates?${searchParams.toString()}`;

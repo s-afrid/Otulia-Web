@@ -12,7 +12,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
     const plans = [
         {
             name: "Premium Basic",
-            price: "£ 5,000",
+            price: "$ 5,000",
             period: "per month",
             features: [
                 "List up to 25 luxury assets",
@@ -27,7 +27,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
         },
         {
             name: "Business VIP",
-            price: "£ 15,000",
+            price: "$ 15,000",
             period: "per month",
             features: [
                 "Listing capacity: 50 assets",
