@@ -11,30 +11,182 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         category: editData?.category || (editData?.itemModel === 'CarAsset' ? 'Car' : editData?.itemModel === 'EstateAsset' ? 'Estate' : editData?.itemModel === 'BikeAsset' ? 'Bike' : editData?.itemModel === 'YachtAsset' ? 'Yacht' : 'Car'),
         type: editData?.type || 'Sale',
         location: editData?.location || '',
-        description: editData?.description || ''
+        description: editData?.description || '',
+        isPublic: editData?.status === 'Active' ? true : true, // Default to true
+
+        // Car/Bike Common
+        make: editData?.brand || (editData?.specification?.brand) || '',
+        model: editData?.specification?.model || '',
+        variant: editData?.specification?.variant || '',
+        year: editData?.specification?.yearOfConstruction || editData?.specification?.year || new Date().getFullYear(),
+        mileage: editData?.specification?.mileage || editData?.specification?.mileageKM || '',
+        fuelType: editData?.specification?.fuel || editData?.specification?.fuelType || '',
+        transmission: editData?.specification?.transmission || '',
+        exteriorColor: editData?.specification?.exteriorColor || '',
+        interiorColor: editData?.specification?.interiorColor || '',
+        condition: editData?.specification?.condition || '',
+        accidentHistory: editData?.specification?.accidentHistory || '',
+
+        // Car Specific
+        horsepower: editData?.specification?.power || '',
+        cylinderCapacity: editData?.specification?.cylinderCapacity || '',
+        topSpeed: editData?.specification?.topSpeed || '',
+        steering: editData?.specification?.steering || '',
+        driveType: editData?.specification?.drive || '',
+        interiorMaterial: editData?.specification?.interiorMaterial || '',
+        manufacturerColorCode: editData?.specification?.manufacturerColorCode || '',
+        matchingNumbers: editData?.specification?.matchingNumbers || '',
+        accidentFree: editData?.specification?.accidentFree || '',
+        countryOfFirstDelivery: editData?.specification?.countryOfFirstDelivery || '',
+        numberOfOwners: editData?.specification?.numberOfOwners || '1',
+        currentCarLocation: editData?.specification?.carLocation || '',
+
+        // Bike Specific
+        brand: editData?.brand || editData?.specification?.brand || '',
+        engineCapacity: editData?.specification?.engineCapacityCC || editData?.specification?.engineCapacity || '',
+        color: editData?.specification?.color || '',
+        ownershipCount: editData?.specification?.ownershipCount || '1',
+
+        // Yacht Specific
+        yachtName: editData?.title || '',
+        builder: editData?.builder || editData?.specification?.builder || '',
+        length: editData?.specification?.length || '',
+        beam: editData?.specification?.beam || '',
+        draft: editData?.specification?.draft || '',
+        cruisingSpeed: editData?.specification?.cruisingSpeed || '',
+        guestCapacity: editData?.specification?.guestCapacity || '',
+        crewCapacity: editData?.specification?.crewCapacity || '',
+        engineType: editData?.specification?.engineType || '',
+        hullMaterial: editData?.specification?.hullMaterial || '',
+
+        // Estate Specific
+        propertyName: editData?.title || editData?.propertyName || '',
+        propertyType: editData?.keySpecifications?.propertyType || editData?.specification?.propertyType || '',
+        architectureStyle: editData?.specification?.architectureStyle || '',
+        builtUpArea: editData?.specification?.builtUpArea || '',
+        landArea: editData?.specification?.landArea || '',
+        bedrooms: editData?.specification?.bedrooms || '',
+        bathrooms: editData?.specification?.bathrooms || '',
+        floors: editData?.specification?.floors || '',
+        furnishingStatus: editData?.specification?.furnishingStatus || '',
+        configuration: editData?.specification?.configuration || '',
+        interiorColorTheme: editData?.specification?.interiorColorTheme || '',
+        exteriorFinish: editData?.specification?.exteriorFinish || '',
+        climateControl: editData?.specification?.climateControl || '',
+        usageStatus: editData?.specification?.usageStatus || '',
+        country: editData?.specification?.country || '',
+        city: editData?.specification?.city || '',
+        address: editData?.specification?.address || '',
+        areaNeighborhood: editData?.specification?.areaNeighborhood || '',
+        latitude: editData?.specification?.latitude || '',
+        longitude: editData?.specification?.longitude || '',
+
+        amenities: editData?.amenities || [],
+        smartHomeSystems: editData?.smartHomeSystems || [],
+        viewTypes: editData?.viewTypes || [],
     });
+
     const [images, setImages] = useState([]);
     const [documents, setDocuments] = useState([]);
 
     // Reset form when editData changes or modal closes/opens
     React.useEffect(() => {
         if (editData) {
+            const spec = editData.specification || {};
+            const keySpec = editData.keySpecifications || {};
             setFormData({
                 title: editData.title || '',
                 price: editData.price || '',
                 category: editData.itemModel === 'CarAsset' ? 'Car' : editData.itemModel === 'EstateAsset' ? 'Estate' : editData.itemModel === 'BikeAsset' ? 'Bike' : editData.itemModel === 'YachtAsset' ? 'Yacht' : 'Car',
                 type: editData.type || 'Sale',
                 location: editData.location || '',
-                description: editData.description || ''
+                description: editData.description || '',
+                isPublic: editData.status === 'Active',
+
+                make: editData.brand || spec.brand || '',
+                model: spec.model || '',
+                variant: spec.variant || '',
+                year: spec.yearOfConstruction || spec.year || new Date().getFullYear(),
+                mileage: spec.mileage || spec.mileageKM || '',
+                fuelType: spec.fuel || spec.fuelType || '',
+                transmission: spec.transmission || '',
+                exteriorColor: spec.exteriorColor || '',
+                interiorColor: spec.interiorColor || '',
+                condition: spec.condition || '',
+                accidentHistory: spec.accidentHistory || '',
+
+                horsepower: spec.power || '',
+                cylinderCapacity: spec.cylinderCapacity || '',
+                topSpeed: spec.topSpeed || '',
+                steering: spec.steering || '',
+                driveType: spec.drive || '',
+                interiorMaterial: spec.interiorMaterial || '',
+                manufacturerColorCode: spec.manufacturerColorCode || '',
+                matchingNumbers: spec.matchingNumbers || '',
+                accidentFree: spec.accidentFree || '',
+                countryOfFirstDelivery: spec.countryOfFirstDelivery || '',
+                numberOfOwners: spec.numberOfOwners || '1',
+                currentCarLocation: spec.carLocation || '',
+
+                brand: editData.brand || spec.brand || '',
+                engineCapacity: spec.engineCapacityCC || spec.engineCapacity || '',
+                color: spec.color || '',
+                ownershipCount: spec.ownershipCount || '1',
+
+                yachtName: editData.title || '',
+                builder: editData.builder || spec.builder || '',
+                length: spec.length || '',
+                beam: spec.beam || '',
+                draft: spec.draft || '',
+                cruisingSpeed: spec.cruisingSpeed || '',
+                guestCapacity: spec.guestCapacity || '',
+                crewCapacity: spec.crewCapacity || '',
+                engineType: spec.engineType || '',
+                hullMaterial: spec.hullMaterial || '',
+
+                propertyName: editData.title || editData.propertyName || '',
+                propertyType: keySpec.propertyType || spec.propertyType || '',
+                architectureStyle: spec.architectureStyle || '',
+                builtUpArea: spec.builtUpArea || '',
+                landArea: spec.landArea || '',
+                bedrooms: spec.bedrooms || '',
+                bathrooms: spec.bathrooms || '',
+                floors: spec.floors || '',
+                furnishingStatus: spec.furnishingStatus || '',
+                configuration: spec.configuration || '',
+                interiorColorTheme: spec.interiorColorTheme || '',
+                exteriorFinish: spec.exteriorFinish || '',
+                climateControl: spec.climateControl || '',
+                usageStatus: spec.usageStatus || '',
+                country: spec.country || '',
+                city: spec.city || '',
+                address: spec.address || '',
+                areaNeighborhood: spec.areaNeighborhood || '',
+                latitude: spec.latitude || '',
+                longitude: spec.longitude || '',
+
+                amenities: editData.amenities || [],
+                smartHomeSystems: editData.smartHomeSystems || [],
+                viewTypes: editData.viewTypes || [],
             });
         } else {
             setFormData({
-                title: '',
-                price: '',
-                category: 'Car',
-                type: 'Sale',
-                location: '',
-                description: ''
+                title: '', price: '', category: 'Car', type: 'Sale', location: '', description: '', isPublic: true,
+                make: '', model: '', variant: '', year: new Date().getFullYear(),
+                mileage: '', fuelType: '', transmission: '', exteriorColor: '', interiorColor: '',
+                condition: '', accidentHistory: '', horsepower: '', cylinderCapacity: '', topSpeed: '',
+                steering: '', driveType: '', interiorMaterial: '', manufacturerColorCode: '',
+                matchingNumbers: '', accidentFree: '', countryOfFirstDelivery: '',
+                numberOfOwners: '1', currentCarLocation: '',
+                brand: '', engineCapacity: '', color: '', ownershipCount: '1',
+                yachtName: '', builder: '', length: '', beam: '', draft: '', cruisingSpeed: '',
+                guestCapacity: '', crewCapacity: '', engineType: '', hullMaterial: '',
+                propertyName: '', propertyType: '', architectureStyle: '', builtUpArea: '',
+                landArea: '', bedrooms: '', bathrooms: '', floors: '', furnishingStatus: '',
+                configuration: '', interiorColorTheme: '', exteriorFinish: '',
+                climateControl: '', usageStatus: '', country: '', city: '', address: '',
+                areaNeighborhood: '', latitude: '', longitude: '',
+                amenities: [], smartHomeSystems: [], viewTypes: []
             });
         }
     }, [editData, isOpen]);
@@ -57,8 +209,45 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         e.preventDefault();
         setLoading(true);
 
+        // Construct Highlights
+        let constructedHighlights = [];
+        if (formData.category === 'Car') {
+            constructedHighlights = [
+                formData.horsepower ? `${formData.horsepower} hp` : '',
+                formData.mileage ? `${formData.mileage} mi` : '',
+                formData.cylinderCapacity ? `${formData.cylinderCapacity} L` : ''
+            ].filter(Boolean);
+        } else if (formData.category === 'Yacht') {
+            constructedHighlights = [
+                formData.length ? `${formData.length} M length` : '',
+                formData.bathrooms ? `Bathrooms: ${formData.bathrooms}` : '',
+                formData.engineType ? `Engine: ${formData.engineType}` : '',
+                formData.cruisingSpeed ? `Cruising Speed: ${formData.cruisingSpeed} knots` : ''
+            ].filter(Boolean);
+        } else if (formData.category === 'Estate') {
+            constructedHighlights = [
+                formData.landArea ? `Land Area: ${formData.landArea} Sq Ft` : '',
+                formData.bathrooms ? `Bathrooms: ${formData.bathrooms}` : '',
+                formData.bedrooms ? `Bedrooms: ${formData.bedrooms}` : '',
+                formData.builtUpArea ? `Built Area: ${formData.builtUpArea} Sq Ft` : ''
+            ].filter(Boolean);
+        } else if (formData.category === 'Bike') {
+            constructedHighlights = [
+                formData.engineCapacity ? `${formData.engineCapacity} cc` : '',
+                formData.mileage ? `${formData.mileage} km` : ''
+            ].filter(Boolean);
+        }
+
         const data = new FormData();
-        Object.keys(formData).forEach(key => data.append(key, formData[key]));
+        Object.keys(formData).forEach(key => {
+            if (['amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
+                data.append(key, JSON.stringify(formData[key]));
+            } else {
+                data.append(key, formData[key]);
+            }
+        });
+
+        data.append('highlights', JSON.stringify(constructedHighlights));
 
         images.forEach(file => data.append('images', file));
         documents.forEach(file => data.append('documents', file));
@@ -92,6 +281,17 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleCheckboxToggle = (listName, value) => {
+        setFormData(prev => {
+            const currentList = prev[listName] || [];
+            if (currentList.includes(value)) {
+                return { ...prev, [listName]: currentList.filter(item => item !== value) };
+            } else {
+                return { ...prev, [listName]: [...currentList, value] };
+            }
+        });
     };
 
     return (
@@ -145,6 +345,146 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         <textarea name="description" value={formData.description} rows="3" className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange}></textarea>
                     </div>
 
+                    {/* Category Specific Fields */}
+                    <div className="pt-4 border-t border-gray-100">
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4">{formData.category} Specifications</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {formData.category === 'Car' && (
+                                <>
+                                    <InputField label="Make" name="make" value={formData.make} onChange={handleInputChange} />
+                                    <InputField label="Model" name="model" value={formData.model} onChange={handleInputChange} />
+                                    <InputField label="Variant" name="variant" value={formData.variant} onChange={handleInputChange} />
+                                    <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
+                                    <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} onChange={handleInputChange} />
+                                    <InputField label="Horsepower" name="horsepower" value={formData.horsepower} onChange={handleInputChange} />
+                                    <InputField label="Engine Capacity (L)" name="cylinderCapacity" value={formData.cylinderCapacity} onChange={handleInputChange} />
+                                    <InputField label="Top Speed" name="topSpeed" value={formData.topSpeed} onChange={handleInputChange} />
+                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} />
+                                    <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} />
+                                    <SelectField label="Drive Type" name="driveType" value={formData.driveType} options={['AWD', 'RWD', 'FWD', '4WD']} onChange={handleInputChange} />
+                                    <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} />
+                                    <InputField label="Interior Color" name="interiorColor" value={formData.interiorColor} onChange={handleInputChange} />
+                                    <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} />
+                                    <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic', 'Restored']} onChange={handleInputChange} />
+                                    <InputField label="Ownership Count" name="numberOfOwners" type="number" value={formData.numberOfOwners} onChange={handleInputChange} />
+                                    <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
+                                </>
+                            )}
+
+                            {formData.category === 'Bike' && (
+                                <>
+                                    <InputField label="Brand" name="brand" value={formData.brand} onChange={handleInputChange} />
+                                    <InputField label="Model" name="model" value={formData.model} onChange={handleInputChange} />
+                                    <InputField label="Variant" name="variant" value={formData.variant} onChange={handleInputChange} />
+                                    <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
+                                    <InputField label="Engine Capacity (cc)" name="engineCapacity" type="number" value={formData.engineCapacity} onChange={handleInputChange} />
+                                    <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} onChange={handleInputChange} />
+                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Petrol', 'Electric', 'Hybrid']} onChange={handleInputChange} />
+                                    <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Manual', 'Automatic', 'Semi-Automatic']} onChange={handleInputChange} />
+                                    <InputField label="Color" name="color" value={formData.color} onChange={handleInputChange} />
+                                    <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic']} onChange={handleInputChange} />
+                                    <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} />
+                                    <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
+                                </>
+                            )}
+
+                            {formData.category === 'Yacht' && (
+                                <>
+                                    <InputField label="Yacht Name" name="yachtName" value={formData.yachtName} onChange={handleInputChange} />
+                                    <InputField label="Builder" name="builder" value={formData.builder} onChange={handleInputChange} />
+                                    <InputField label="Model" name="model" value={formData.model} onChange={handleInputChange} />
+                                    <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
+                                    <InputField label="Length (m)" name="length" type="number" value={formData.length} onChange={handleInputChange} />
+                                    <InputField label="Beam (m)" name="beam" type="number" value={formData.beam} onChange={handleInputChange} />
+                                    <InputField label="Draft (m)" name="draft" type="number" value={formData.draft} onChange={handleInputChange} />
+                                    <InputField label="Engine Type" name="engineType" value={formData.engineType} onChange={handleInputChange} />
+                                    <InputField label="Cruising Speed (knots)" name="cruisingSpeed" type="number" value={formData.cruisingSpeed} onChange={handleInputChange} />
+                                    <InputField label="Guest Capacity" name="guestCapacity" type="number" value={formData.guestCapacity} onChange={handleInputChange} />
+                                    <InputField label="Crew Capacity" name="crewCapacity" type="number" value={formData.crewCapacity} onChange={handleInputChange} />
+                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Diesel', 'Gasoline', 'Hybrid', 'Electric']} onChange={handleInputChange} />
+                                    <SelectField label="Hull Material" name="hullMaterial" value={formData.hullMaterial} options={['Fiberglass', 'Steel', 'Aluminum', 'Carbon Fiber', 'Wood']} onChange={handleInputChange} />
+                                </>
+                            )}
+
+                            {formData.category === 'Estate' && (
+                                <>
+                                    <InputField label="Property Name" name="propertyName" value={formData.propertyName} onChange={handleInputChange} />
+                                    <SelectField label="Property Type" name="propertyType" value={formData.propertyType} options={['Villa', 'Penthouse', 'Apartment', 'Mansion', 'Estate']} onChange={handleInputChange} />
+                                    <InputField label="Built-up Area (sq ft)" name="builtUpArea" type="number" value={formData.builtUpArea} onChange={handleInputChange} />
+                                    <InputField label="Land Area (sq ft)" name="landArea" type="number" value={formData.landArea} onChange={handleInputChange} />
+                                    <InputField label="Bedrooms" name="bedrooms" type="number" value={formData.bedrooms} onChange={handleInputChange} />
+                                    <InputField label="Bathrooms" name="bathrooms" type="number" value={formData.bathrooms} onChange={handleInputChange} />
+                                    <InputField label="Floors" name="floors" type="number" value={formData.floors} onChange={handleInputChange} />
+                                    <SelectField label="Furnishing Status" name="furnishingStatus" value={formData.furnishingStatus} options={['Unfurnished', 'Partially Furnished', 'Fully Furnished', 'Designer Furnished']} onChange={handleInputChange} />
+                                    <InputField label="Configuration" name="configuration" value={formData.configuration} placeholder="e.g. 5BR + Study" onChange={handleInputChange} />
+                                    <InputField label="Architecture Style" name="architectureStyle" value={formData.architectureStyle} onChange={handleInputChange} />
+                                    <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} />
+                                    <InputField label="Interior Color Theme" name="interiorColorTheme" value={formData.interiorColorTheme} onChange={handleInputChange} />
+                                    <InputField label="Exterior Finish" name="exteriorFinish" value={formData.exteriorFinish} onChange={handleInputChange} />
+                                    <InputField label="Climate Control" name="climateControl" value={formData.climateControl} onChange={handleInputChange} />
+                                    <SelectField label="Usage Status" name="usageStatus" value={formData.usageStatus} options={['Vacant', 'Owner Occupied', 'Tenanted']} onChange={handleInputChange} />
+                                    <InputField label="Construction Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
+                                    <InputField label="Country" name="country" value={formData.country} onChange={handleInputChange} />
+                                    <InputField label="City" name="city" value={formData.city} onChange={handleInputChange} />
+                                    <InputField label="Address" name="address" value={formData.address} onChange={handleInputChange} />
+                                    <InputField label="Neighborhood" name="areaNeighborhood" value={formData.areaNeighborhood} onChange={handleInputChange} />
+                                    <InputField label="Latitude" name="latitude" value={formData.latitude} onChange={handleInputChange} />
+                                    <InputField label="Longitude" name="longitude" value={formData.longitude} onChange={handleInputChange} />
+                                </>
+                            )}
+                        </div>
+
+                        {formData.category === 'Estate' && (
+                            <div className="mt-8 space-y-6">
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Amenities</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {['Pool', 'Garden', 'Parking', 'Security', 'Smart Home', 'Gym', 'Wine Cellar', 'Home Theater', 'Elevator', 'Sea View'].map(item => (
+                                            <button
+                                                key={item}
+                                                type="button"
+                                                onClick={() => handleCheckboxToggle('amenities', item)}
+                                                className={`px-3 py-2 rounded-lg text-xs font-medium border transition-all ${formData.amenities.includes(item) ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-black'}`}
+                                            >
+                                                {item}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Smart Home Systems</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {['Lighting', 'Climate', 'Security', 'Entertainment', 'Voice Assistant', 'Blinds'].map(item => (
+                                            <button
+                                                key={item}
+                                                type="button"
+                                                onClick={() => handleCheckboxToggle('smartHomeSystems', item)}
+                                                className={`px-3 py-2 rounded-lg text-xs font-medium border transition-all ${formData.smartHomeSystems.includes(item) ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-black'}`}
+                                            >
+                                                {item}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">View Types</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {['Sea', 'City', 'Marina', 'Mountain', 'Golf', 'Park', 'River'].map(item => (
+                                            <button
+                                                key={item}
+                                                type="button"
+                                                onClick={() => handleCheckboxToggle('viewTypes', item)}
+                                                className={`px-3 py-2 rounded-lg text-xs font-medium border transition-all ${formData.viewTypes.includes(item) ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-black'}`}
+                                            >
+                                                {item}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     <div className="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-black/20 transition-colors">
                         <label className="cursor-pointer flex flex-col items-center gap-2">
                             <FiUploadCloud className="text-3xl text-gray-400" />
@@ -173,5 +513,34 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         </div>
     );
 };
+
+const InputField = ({ label, name, value, type = "text", placeholder, onChange }) => (
+    <div>
+        <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{label}</label>
+        <input
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors"
+        />
+    </div>
+);
+
+const SelectField = ({ label, name, value, options, onChange }) => (
+    <div>
+        <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{label}</label>
+        <select
+            name={name}
+            value={value}
+            onChange={onChange}
+            className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black cursor-pointer"
+        >
+            <option value="">Select {label}</option>
+            {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+        </select>
+    </div>
+);
 
 export default CreateListingModal;
