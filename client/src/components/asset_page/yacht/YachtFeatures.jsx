@@ -1,71 +1,79 @@
 import React from 'react';
 
 const YachtFeatures = ({ item }) => {
-  // Safe access to specification object
+  // 1. Safe access to nested objects based on your Schema
   const specs = item?.specification || {};
+  const keySpecs = item?.keySpecifications || {};
 
-  // Helper component for a single specification row
-  const SpecRow = ({ label, value }) => (
-    <div className="flex justify-between items-start py-3 border-b border-gray-100 last:border-0">
-      <span className="text-gray-500 text-sm md:text-base w-1/3">{label}</span>
-      <span className="text-gray-900 font-medium text-sm md:text-base text-right w-2/3 break-words">
-        {value || "-"}
+  // 2. Helper to format price
+  const formatPrice = (price) => {
+    if (!price) return "-";
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+  };
+
+  // 3. Helper function to render a single row
+  const SpecRow = ({ label, value, isLink = false, icon = null }) => (
+    <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
+      <span className="text-gray-500 font-normal text-sm md:text-base">
+        {label}
       </span>
-    </div>
-  );
-
-  // Helper component for a Section Group
-  const SpecSection = ({ title, children }) => (
-    <div className="mb-8 h-full montserrat">
-      {/* Visual Header matching the screenshot style (grey background header not strictly necessary but nice, 
-          using the bold side-border style to match previous components for consistency) */}
-      <h3 className="text-lg font-bold text-black mb-4 border-l-4 border-gray-800 pl-3">
-        {title}
-      </h3>
-      <div className="bg-white rounded-lg p-0">
-        {children}
+      <div className="flex items-center gap-2 text-right">
+        {icon && <span>{icon}</span>}
+        <span 
+          className={`text-sm md:text-base font-medium text-black ${
+            isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
+          }`}
+        >
+          {value || "-"}
+        </span>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white montserrat">
+    <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white montserrat">
       
-      {/* Grid Layout: Stacks on mobile, 2 columns on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-0 items-start">
+      {/* Title */}
+      <h3 className="text-2xl font-bold mb-6">Yacht Details</h3>
+
+      {/* Container - Stacks on mobile, 2 columns on Desktop */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-0">
         
-        {/* LEFT COLUMN: General */}
+        {/* LEFT COLUMN - General Info & Identity */}
         <div className="flex flex-col">
-          <SpecSection title="General">
-            <SpecRow label="Year of construction:" value={specs.yearOfConstruction} />
-            <SpecRow label="Brand / Builder:" value={specs.brandBuilder} />
-            <SpecRow label="Model:" value={specs.model} />
-            <SpecRow label="Yacht type:" value={specs.yachtType} />
-            <SpecRow label="Usage hours:" value={specs.usageHours} />
-            <SpecRow label="Top speed:" value={specs.topSpeed} />
-            <SpecRow label="Engine power:" value={specs.enginePower} />
-            <SpecRow label="Cruising speed:" value={specs.cruisingSpeed} />
-            <SpecRow label="Fuel consumption:" value={specs.fuelConsumption} />
-            <SpecRow label="Transmission:" value={specs.transmission} />
-            <SpecRow label="Hull material:" value={specs.hullMaterial} />
-          </SpecSection>
+          {/* Mapping fields from Image Header & General Column */}
+          <SpecRow label="Builder:" value={item?.builder || specs.brandBuilder} isLink />
+          <SpecRow label="Model:" value={specs.model} isLink />
+          <SpecRow label="Year:" value={specs.yearOfConstruction} />
+          <SpecRow label="Price:" value={formatPrice(item?.price)} />
+          <SpecRow label="Listing Type:" value={item?.type} />
+          
+          {/* Location with Icon */}
+          <SpecRow 
+            label="Location:" 
+            value={item?.location} 
+            isLink 
+            icon={<span className="text-lg">📍</span>}
+          />
+
+          <SpecRow label="Condition:" value={specs.condition} />
+          <SpecRow label="Usage Status:" value={specs.usageStatus} />
         </div>
 
-        {/* RIGHT COLUMN: Fuel & Configuration (Matches the "Fuel:" column in image) */}
+        {/* RIGHT COLUMN - Technical Specs & Dimensions */}
         <div className="flex flex-col">
-          <SpecSection title="Fuel & Configuration">
-            <SpecRow label="Fuel:" value={specs.fuelType} />
-            <SpecRow label="Configuration:" value={specs.configuration} />
-            <SpecRow label="Interior material:" value={specs.interiorMaterial} />
-            <SpecRow label="Interior color:" value={specs.interiorColor} />
-            <SpecRow label="Exterior color:" value={specs.exteriorColor} />
-            <SpecRow label="Manufacturer color code:" value={specs.manufacturerColorCode} />
-            <SpecRow label="Matching numbers:" value={specs.matchingNumbers} />
-            <SpecRow label="Condition:" value={specs.condition} />
-            <SpecRow label="New / used:" value={specs.usageStatus} />
-            <SpecRow label="Country of first delivery:" value={specs.countryOfFirstDelivery} />
-            <SpecRow label="Number of owners:" value={specs.numberOfOwners} />
-          </SpecSection>
+          {/* Mapping fields from Image Body & Key Specs */}
+          <SpecRow label="Length:" value={keySpecs.length || specs.length} />
+          <SpecRow label="Engine / Power:" value={specs.enginePower || keySpecs.totalPower} />
+          <SpecRow label="Cruising Speed:" value={specs.cruisingSpeed} />
+          <SpecRow label="Top Speed:" value={keySpecs.topSpeed || specs.topSpeed} />
+          
+          <SpecRow label="Fuel Capacity:" value={keySpecs.fuelCapacity} />
+          <SpecRow label="Hull Material:" value={specs.hullMaterial} />
+          
+          {/* Accommodation (Mapping Bedrooms to Guest Capacity context) */}
+          <SpecRow label="Bedrooms / Cabins:" value={keySpecs.bedrooms} />
+          <SpecRow label="Bathrooms:" value={keySpecs.bathrooms} />
         </div>
 
       </div>

@@ -33,7 +33,7 @@ const YachtKeyFeatures = ({ item }) => {
   );
 
   return (
-    <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white">
+    <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white">
       
       {/* Header Section */}
       <div className="flex justify-center mb-10">
