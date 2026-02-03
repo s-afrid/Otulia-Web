@@ -96,7 +96,7 @@ const PricingSection = () => {
       // Assuming "Cancel Subscription" handles return to Freemium.
       // Or if they want to switch to free, we call cancel-subscription
       if (window.confirm("Switching to Freemium will cancel your current subscription immediately. Continue?")) {
-        fetch('http://127.0.0.1:8000/api/payment/cancel-subscription', {
+        fetch('/api/payment/cancel-subscription', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -157,15 +157,7 @@ const PricingSection = () => {
               </div>
             )}
 
-            {/* CARD IMAGE HEADER */}
-            <div className="h-44 w-full overflow-hidden">
-              <img
-                src={plan.image}
-                alt={plan.name}
-                className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-
+            
             {/* CARD CONTENT */}
             <div className="flex flex-col items-center p-8 flex-1">
               <h3 className="text-xl font-bold text-black mb-8 uppercase tracking-widest">

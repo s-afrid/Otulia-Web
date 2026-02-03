@@ -6,30 +6,34 @@ const BlogSection = () => {
         const navigate = useNavigate()
 
         const mainPost = {
-        title: 'European Pied-à-Terres: How Streamlined Co-Ownership Is Reshaping Luxury Urban Living Abroad',
-        date: '14 Jan 2026',
-        snippet: 'The appeal of a European pied-à-terre has long captivated high-net-worth individuals seeking a home away from home...',
-        image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200'
+        title: 'Luxury Real Estate 2026: An Outlook By Sotheby’s International Realty',
+        date: '22 Jan 2026',
+        snippet: 'The 2026 Luxury Outlook by Sotheby’s International Realty confirms a clear structural shift in the global property landscape.',
+        image: 'https://luxurylifestyleawards.com/wp-content/uploads/2026/01/4-24-1536x1024.png',
+        navigate: 'https://luxurylifestyleawards.com/experience/luxury-real-estate-2026-an-outlook-by-sothebys-international-realty'
     }
 
     const sidePosts = [
         {
-            title: "Vorarlberg's Alpine Retreat: Exclusive Property Opportunities in Austria's Premier Ski Region",
-            date: '14 Jan 2026',
-            snippet: 'In the heart of the Arlberg ski region and the tranquil valleys of Brandnertal and Wald am Arlberg...',
-            image: 'https://images.unsplash.com/photo-1575143031874-6621ee230c10?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGZyZWUlMjBpbWFnZXMlMjBvZiUyMGhvdXNlJTIwaW4lMjBncmVlbmxhbmR8ZW58MHx8MHx8fDA%3D'
+            title: "Top 7 Most Expensive Cars in the World (2026 Edition)",
+            date: '21 Jan 2026',
+            snippet: 'Ultra expensive cars exist far beyond the realm of simple transportation. ',
+            image: 'https://www.motozite.com/blog/wp-content/uploads/2026/01/Top-7-Most-Expensive-Cars-in-the-World-2026-Edition-1024x683.jpg',
+            navigate: 'https://www.motozite.com/blog/most-expensive-cars-in-the-world/'
         },
         {
-            title: "The Prestige Effect: 7 Most-Viewed Celebrity Estates on JamesEdition in 2025",
+            title: "7 Incredibly Chic Trends That Will Define Luxury in 2026",
             date: '08 Jan 2026',
-            snippet: 'Celebrity-owned consistently leads readership and drives listing engagement. At the intersection...',
-            image: 'https://images.unsplash.com/photo-1623194419771-c6cbe2e869a4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZyZWUlMjBpbWFnZXMlMjBvZiUyMHZpbGFzfGVufDB8fDB8fHww'
+            snippet: "There's a feeling of renewal in the air now that 2026 has arrived. The new year is a blank slate ready to be filled with a fresh ...",
+            image: 'https://cdn.mos.cms.futurecdn.net/MV33hJCzxobZGH2N5gmeUi-1024-80.jpg.webp',
+            navigate: 'https://www.whowhatwear.com/fashion/shopping/luxury-fashion-trends-2026'
         },
         {
-            title: "From Hidden Gem to Global Hotspot: Inside Bermuda's Luxury Real Estate Renaissance",
+            title: "The 10 Best Compact Luxury SUVs to Buy Right Now",
             date: '06 Jan 2026',
-            snippet: 'In this episode, Eric Finnas Dahlstrom, CEO of JamesEdition, sits down with Jonathan Halata, Head...',
-            image: 'https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?auto=format&fit=crop&w=400'
+            snippet: 'German Hypercar Maker Capricorn Just Unveiled New Prototypes of Its $3.5 Million Beast ...',
+            image: 'https://robbreport.com/wp-content/uploads/2026/02/RR_20260202_Best_Compact_SUVs_Lead.jpg?w=1000',
+            navigate: 'https://robbreport.com/motors/cars/'
         }
     ]
 
@@ -37,14 +41,11 @@ const BlogSection = () => {
         <section className="w-full px-3 md:px-16 py-6 bg-white">
             <div className="flex items-center justify-between mb-12">
                 <h2 className="text-4xl playfair-display text-black">Our Blog</h2>
-                <button onClick={()=>{navigate('/blogs')}} className="px-10 py-3 cursor-pointer bg-black text-white rounded-full text-sm font-semibold hover:bg-gray-800 transition-colors">
-                    Read More...
-                </button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Left: Main Post */}
-                <div className="relative group cursor-pointer overflow-hidden aspect-[16/10]">
+                <a href={mainPost.navigate} target='_blank' className="relative group cursor-pointer overflow-hidden aspect-[16/10]">
                     <img src={mainPost.image} alt={mainPost.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     <div className="absolute bottom-10 left-10 right-10">
@@ -56,12 +57,12 @@ const BlogSection = () => {
                             {mainPost.snippet}
                         </p>
                     </div>
-                </div>
+                </a>
 
                 {/* Right: Side Posts */}
                 <div className="flex flex-col gap-10">
                     {sidePosts.map((post, idx) => (
-                        <div key={idx} className="flex gap-6 group cursor-pointer">
+                        <a key={idx} href={post.navigate} target='_blank' className="flex gap-6 group cursor-pointer">
                             <div className="w-48 h-32 flex-shrink-0 overflow-hidden">
                                 <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                             </div>
@@ -74,7 +75,7 @@ const BlogSection = () => {
                                     {post.snippet}
                                 </p>
                             </div>
-                        </div>
+                        </a>
                     ))}
                 </div>
             </div>
