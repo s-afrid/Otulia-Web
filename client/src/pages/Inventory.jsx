@@ -18,7 +18,7 @@ import numberWithCommas from '../modules/numberwithcomma';
 
 const paypalOptions = {
     "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
-    currency: "GBP",
+    currency: "USD",
     intent: "capture"
 };
 
@@ -340,7 +340,7 @@ const Inventory = () => {
                                 <AnalyticsCard title="Total Views" value={data.stats.totalViews} growth="+12.5%" icon={<FiEye />} />
                                 <AnalyticsCard title="Total Leads" value={data.stats.totalLeads} growth="+8.2%" icon={<FiUsers />} />
                                 <AnalyticsCard title="Saved / Shortlisted" value="89" growth="+5.1%" icon={<FiHeart />} />
-                                <AnalyticsCard title="Est. Lead Value" value={`£${numberWithCommas(4250000)}`} growth="+15.3%" icon={<FiTrendingUp />} />
+                                <AnalyticsCard title="Est. Lead Value" value={`$${numberWithCommas(4250000)}`} growth="+15.3%" icon={<FiTrendingUp />} />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -606,7 +606,7 @@ const Inventory = () => {
                                                         </span>
                                                     </td>
                                                     <td className="px-4 py-4">
-                                                        <span className="text-sm font-semibold text-gray-900">£{numberWithCommas(item.price)}</span>
+                                                        <span className="text-sm font-semibold text-gray-900">${numberWithCommas(item.price)}</span>
                                                     </td>
                                                     <td className="px-4 py-4">
                                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === 'Active' ? 'bg-emerald-50 text-emerald-600' :
@@ -776,7 +776,7 @@ const Inventory = () => {
                                 <AnalyticsCard title="Total Views" value={numberWithCommas(data.stats.totalViews)} growth="+18.2%" icon={<FiEye />} />
                                 <AnalyticsCard title="Total Leads" value={data.stats.totalLeads} growth="+12.5%" icon={<FiUsers />} />
                                 <AnalyticsCard title="Conversion Rate" value={`${data.stats.avgConversion}%`} growth="+0.3%" icon={<FiTrendingUp />} />
-                                <AnalyticsCard title="Avg Lead Value" value="£12,426" growth="+5.8%" icon={<FiCreditCard />} />
+                                <AnalyticsCard title="Avg Lead Value" value="$12,426" growth="+5.8%" icon={<FiCreditCard />} />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -1270,7 +1270,7 @@ const Inventory = () => {
                                                 </div>
                                                 <h4 className="text-2xl font-bold text-gray-900 font-playfair mb-2">Premium Basic</h4>
                                                 <div className="flex items-baseline justify-center gap-1">
-                                                    <span className="text-5xl font-black text-gray-900">£99</span>
+                                                    <span className="text-5xl font-black text-gray-900">$99</span>
                                                     <span className="text-gray-400 font-medium">/month</span>
                                                 </div>
 
@@ -1328,7 +1328,7 @@ const Inventory = () => {
                                                 </div>
                                                 <h4 className="text-2xl font-bold text-gray-900 font-playfair mb-2">Business VIP</h4>
                                                 <div className="flex items-baseline justify-center gap-1">
-                                                    <span className="text-5xl font-black text-gray-900">£299</span>
+                                                    <span className="text-5xl font-black text-gray-900">$299</span>
                                                     <span className="text-gray-400 font-medium">/month</span>
                                                 </div>
                                             </div>
@@ -1424,7 +1424,7 @@ const Inventory = () => {
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 font-playfair mb-1">Upgrade to {upgradePlan}</h3>
                             <p className="text-gray-400 text-sm">
-                                {upgradePlan === 'Business VIP' ? '£299.00 / month' : '£99.00 / month'}
+                                {upgradePlan === 'Business VIP' ? '$299.00 / month' : '$99.00 / month'}
                             </p>
                         </div>
 

@@ -16,7 +16,7 @@ const PricingSection = () => {
 
   const paypalOptions = {
     "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
-    currency: "GBP",
+    currency: "USD",
     intent: "capture",
   };
 
@@ -46,7 +46,7 @@ const PricingSection = () => {
       buttonColor: 'bg-[#D90416]',
       features: [
         'Upto 25 listings',
-        '£25 extra per listing',
+        '$25 extra per listing',
         '5 Days of Featured Placement',
         'Full Inventory Management System',
         'Priority Placement Across Categories',
@@ -62,7 +62,7 @@ const PricingSection = () => {
       buttonColor: 'bg-[#D90416]',
       features: [
         'Upto 50 listings',
-        '£20 per extra listing',
+        '$20 per extra listing',
         '13 Days Of Featured Listing',
         'Advanced Inventory Management System',
         'Priority Placement Across Categories',
@@ -173,7 +173,7 @@ const PricingSection = () => {
               </h3>
 
               <div className="flex items-start mb-2">
-                <span className="text-2xl font-bold text-black mt-2">£</span>
+                <span className="text-2xl font-bold text-black mt-2">$</span>
                 <span className="text-7xl font-bold text-black tracking-tighter">
                   {plan.price}
                 </span>
@@ -261,7 +261,7 @@ const PricingSection = () => {
             <div className="p-6">
               <div className="mb-6 flex justify-between items-center">
                 <span className="text-gray-600 font-medium">Total Amount</span>
-                <span className="text-2xl font-bold text-black">£{selectedPlan.price}</span>
+                <span className="text-2xl font-bold text-black">${selectedPlan.price}</span>
               </div>
 
               <div className="min-h-[150px] flex flex-col justify-center">

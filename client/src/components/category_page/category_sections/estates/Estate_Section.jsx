@@ -21,16 +21,14 @@ const Estate_Section = () => {
     searchParams.set('limit', limit);
 
     const priceRange = searchParams.get('priceRange');
-    if (priceRange && priceRange !== 'Any Price') {
-      if (priceRange.includes('+')) {
-        const min = parseInt(priceRange.replace(/£|M|\+/g, '')) * 1000000;
-        searchParams.set('minPrice', min);
-      } else {
-        const [minStr, maxStr] = priceRange.split(' – ');
-        const min = parseInt(minStr.replace(/£|K|M/g, '')) * (minStr.includes('M') ? 1000000 : 1000);
-        const max = parseInt(maxStr.replace(/£|K|M/g, '')) * (maxStr.includes('M') ? 1000000 : 1000);
-        searchParams.set('minPrice', min);
-        searchParams.set('maxPrice', max);
+    if (priceRange && !priceRange.startsWith('Any')) {
+      if (priceRange === '£10M+') {
+        searchParams.set('minPrice', '10000000');
+      } else if (priceRange.includes('-')) {
+        const [minStr, maxStr] = priceRange.split(' - ');
+        const parseVal = (str) => str.replace(/£/g, '').replace(/M/g, '000000').trim();
+        searchParams.set('minPrice', parseVal(minStr));
+        searchParams.set('maxPrice', parseVal(maxStr));
       }
     }
     searchParams.delete('priceRange');
@@ -43,12 +41,12 @@ const Estate_Section = () => {
 
     const bedrooms = searchParams.get('bedrooms');
     if (bedrooms && bedrooms.startsWith('Any')) {
-        searchParams.delete('bedrooms');
+      searchParams.delete('bedrooms');
     }
 
     const bathrooms = searchParams.get('bathrooms');
     if (bathrooms && bathrooms.startsWith('Any')) {
-        searchParams.delete('bathrooms');
+      searchParams.delete('bathrooms');
     }
 
     const architecture = searchParams.get('architecture');
@@ -63,7 +61,7 @@ const Estate_Section = () => {
       searchParams.set('search', (existingSearch + ' ' + amenities).trim());
     }
     searchParams.delete('amenities');
-    
+
     searchParams.delete('sizeLand'); // a filter that is not supported by backend
 
     const url = `/api/assets/estates?${searchParams.toString()}`;

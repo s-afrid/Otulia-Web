@@ -16,7 +16,7 @@ const PropertyFilterBar = ({ onFilter }) => {
   });
 
   const filters = [
-    { label: 'Price Range', key: 'priceRange', options: ['Any Price', '£150K – £300K', '£300K – £700K', '£700K – £1.5M', '£1.5M – £3M', '£3M – £7M', '£7M – £15M', '£15M – £30M', '£30M+'] },
+    { label: 'Price Range', key: 'priceRange', options: ['Any Price', '$1M - $5M', '$5M - $10M', '$10M+'] },
     { label: 'Type', key: 'type', options: ['Any', 'Villa', 'Penthouse', 'Mansion', 'Estate'] },
     { label: 'Bedrooms', key: 'bedrooms', options: ['Any', '3+', '4+', '5+'] },
     { label: 'Size & Land', key: 'sizeLand', options: ['Any SqFt', '5000+ sqft', '10,000+ sqft'] },

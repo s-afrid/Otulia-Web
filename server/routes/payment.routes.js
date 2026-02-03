@@ -60,7 +60,7 @@ router.post('/create-order', authMiddleware, async (req, res) => {
             intent: "CAPTURE",
             purchase_units: [{
                 amount: {
-                    currency_code: "GBP",
+                    currency_code: "USD",
                     value: totalAmount.toFixed(2) // Ensure 2 decimal places
                 },
                 description: description
