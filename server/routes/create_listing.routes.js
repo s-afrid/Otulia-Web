@@ -112,7 +112,8 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
                         power: req.body.horsepower,
                         mileage: req.body.mileage,
                         cylinderCapacity: req.body.cylinderCapacity,
-                        topSpeed: req.body.topSpeed
+                        topSpeed: req.body.topSpeed,
+                        engineType: req.body.engineType
                     },
                     specification: {
                         yearOfConstruction: req.body.year,
@@ -124,6 +125,7 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
                         power: req.body.horsepower,
                         cylinderCapacity: req.body.cylinderCapacity,
                         topSpeed: req.body.topSpeed,
+                        engineType: req.body.engineType,
                         steering: req.body.steering,
                         transmission: req.body.transmission,
                         drive: req.body.driveType,
@@ -375,6 +377,10 @@ router.put('/:id', authMiddleware, upload.fields([{ name: 'images', maxCount: 5 
             if (req.body.topSpeed) {
                 spec.topSpeed = req.body.topSpeed;
                 keySpec.topSpeed = req.body.topSpeed;
+            }
+            if (req.body.engineType) {
+                spec.engineType = req.body.engineType;
+                keySpec.engineType = req.body.engineType;
             }
             if (req.body.steering) spec.steering = req.body.steering;
             if (req.body.transmission) spec.transmission = req.body.transmission;

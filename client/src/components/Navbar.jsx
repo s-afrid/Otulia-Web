@@ -7,7 +7,7 @@ import ProfileDropdown from "./navbar/Profile_dropdown";
 import NavbarMobile from "./Navbar_mobile";
 import { useAuth } from "../contexts/AuthContext";
 
-const Navbar = () => {
+const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = false, customLogo = null }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [panelFlag, setpanelFlag] = useState(false);
 
@@ -28,14 +28,21 @@ const Navbar = () => {
 
   // 2. Determine Text/Icon Color
   // If we are NOT on Hero, OR if we have Scrolled -> Dark Text
-  const isDarkText = !isHeroPage || isScrolled;
+  // Override if forceTransparent is on
+  const isDarkText = (!isHeroPage || isScrolled) && !forceTransparent;
 
-  const navClasses = `fixed top-0 left-0 w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${!isHeroPage
-    ? "bg-white text-black" // FIXED: Changed text-white to text-black
-    : isScrolled
-      ? "bg-white text-black"
-      : "bg-transparent text-white"
+  const navClasses = `fixed top-0 left-0 w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${forceTransparent
+      ? "bg-transparent text-white"
+      : !isHeroPage
+        ? "bg-white text-black"
+        : isScrolled
+          ? "bg-white text-black"
+          : "bg-transparent text-white"
     }`;
+
+  // Default logo logic (can be refined based on 'isDarkText' if you have a black logo asset)
+  // For now, adhere to existing unless custom provided
+  const logoSrc = customLogo || "/logos/logo_inverted.png";
 
   return (
     <nav className={navClasses}>
@@ -44,7 +51,7 @@ const Navbar = () => {
         <img
           className="w-[140px] md:w-[200px] h-[40px] md:h-[60px] object-contain"
           alt="logo"
-          src="/logos/logo_inverted.png"
+          src={logoSrc}
           title="Otulia"
         />
       </NavLink>
@@ -89,9 +96,11 @@ const Navbar = () => {
 
       {/* 4. DESKTOP MENU */}
       <ul className="hidden md:flex items-center justify-center gap-8">
-        <li>
-          <Search />
-        </li>
+        {!hideSearch && (
+          <li>
+            <Search />
+          </li>
+        )}
 
         {/* 5. AUTH STATE HANDLING */}
         {loading ? (
@@ -100,7 +109,7 @@ const Navbar = () => {
           <li className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></li>
         ) : (
           <>
-            {!isAuthenticated && (
+            {!isAuthenticated && !hideLogin && (
               <li>
                 <LoginButton />
               </li>
@@ -108,8 +117,8 @@ const Navbar = () => {
             {isAuthenticated && (
               // Added text-inherit to ensure it follows the navbar color logic
               <li className="flex gap-3 items-center justify-center text-inherit">
-                <ProfileDropdown text={'text-black'} />
-                <Cart text={'text-black'}/>
+                <ProfileDropdown text={isDarkText ? 'text-black' : 'text-white'} />
+                <Cart text={isDarkText ? 'text-black' : 'text-white'} />
               </li>
             )}
           </>

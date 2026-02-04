@@ -12,10 +12,9 @@ const CarFeatures = ({ item }) => {
       </span>
       <div className="flex items-center gap-2 text-right">
         {icon && <span>{icon}</span>}
-        <span 
-          className={`text-sm md:text-base font-medium text-black ${
-            isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
-          }`}
+        <span
+          className={`text-sm md:text-base font-medium text-black ${isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
+            }`}
         >
           {value || "-"}
         </span>
@@ -25,10 +24,10 @@ const CarFeatures = ({ item }) => {
 
   return (
     <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white montserrat">
-      
+
       {/* Container - Stacks on mobile, 2 columns on Desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-0">
-        
+
         {/* LEFT COLUMN */}
         <div className="flex flex-col">
           <SpecRow label="Year of construction:" value={specs.yearOfConstruction} isLink />
@@ -36,7 +35,9 @@ const CarFeatures = ({ item }) => {
           <SpecRow label="Body:" value={specs.body} isLink />
           <SpecRow label="Series:" value={specs.series} isLink />
           <SpecRow label="Mileage:" value={specs.mileage} />
+          <SpecRow label="Top Speed:" value={specs.topSpeed} />
           <SpecRow label="Power:" value={specs.power} />
+          <SpecRow label="Engine Type:" value={specs.engineType} />
           <SpecRow label="Cylinder capacity:" value={specs.cylinderCapacity} />
           <SpecRow label="CO2 emissions:" value={specs.co2Emission} />
           <SpecRow label="Consumption:" value={specs.consumption} />
@@ -58,16 +59,16 @@ const CarFeatures = ({ item }) => {
           <SpecRow label="New / used:" value={specs.usageStatus} />
           <SpecRow label="Country of first delivery:" value={specs.countryOfFirstDelivery} />
           <SpecRow label="Number of vehicle owners:" value={specs.numberOfOwners} />
-          
+
           {/* Location Row with Flag */}
-          <SpecRow 
-            label="Car location:" 
-            value={specs.carLocation} 
-            isLink 
+          <SpecRow
+            label="Car location:"
+            value={specs.carLocation}
+            isLink
             icon={
               // Simple German Flag placeholder using standard emoji or div
               // Adjust based on country data if dynamic
-              <span className="text-xl">🇩🇪</span> 
+              <span className="text-xl">🇩🇪</span>
             }
           />
         </div>

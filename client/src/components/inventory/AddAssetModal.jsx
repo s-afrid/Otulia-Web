@@ -26,7 +26,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         highlight_length: '', highlight_baths: '', highlight_beds: '',
         highlight_area: '', highlight_kml: '', highlight_fuel: '',
         highlight_garage: '', highlight_built_area: '', highlight_floors: '',
-        highlight_engine_hp: '', highlight_speed: '',
+        highlight_engine_hp: '', highlight_speed: '', highlight_engine_type: '',
 
         // Car Specific
         mileage: '', fuelType: '', transmission: '',
@@ -150,17 +150,17 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         // Sync highlights to main fields to ensure backend keySpecs are populated
         if (assetType === 'Car') {
             if (!formData.horsepower) formData.horsepower = formData.highlight_hp;
-            if (!formData.mileage) formData.mileage = formData.highlight_km;
-            if (!formData.cylinderCapacity) formData.cylinderCapacity = formData.highlight_cc;
+            if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
+            if (!formData.engineType) formData.engineType = formData.highlight_engine_type;
         }
 
         // Construct Fixed Highlights based on Asset Type (Validation Removed)
         let constructedHighlights = [];
         if (assetType === 'Car') {
             constructedHighlights = [
-                formData.highlight_hp ? `${formData.highlight_hp} hp` : '',
-                formData.highlight_km ? `${formData.highlight_km} mi` : '',
-                formData.highlight_cc ? `${formData.highlight_cc} L` : ''
+                formData.highlight_speed ? `${formData.highlight_speed} mph` : '',
+                formData.highlight_engine_type ? `${formData.highlight_engine_type}` : '',
+                formData.highlight_hp ? `${formData.highlight_hp} hp` : ''
             ].filter(Boolean);
         } else if (assetType === 'Yacht') {
             constructedHighlights = [
@@ -430,9 +430,9 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             {/* Render Fixed Highlights based on Asset Type */}
                                             {assetType === 'Car' && (
                                                 <>
-                                                    <InputField label="Horsepower (hp) *" name="highlight_hp" value={formData.highlight_hp || ''} placeholder="e.g. 986" onChange={handleInputChange} />
-                                                    <InputField label="Mileage (mi) *" name="highlight_km" value={formData.highlight_km || ''} placeholder="e.g. 1,200" onChange={handleInputChange} />
-                                                    <InputField label="Engine Capacity (L) *" name="highlight_cc" value={formData.highlight_cc || ''} placeholder="e.g. 3.8" onChange={handleInputChange} />
+                                                    <InputField label="Top Speed (mph) *" name="highlight_speed" value={formData.highlight_speed || ''} placeholder="e.g. 211" onChange={handleInputChange} />
+                                                    <InputField label="Engine Type *" name="highlight_engine_type" value={formData.highlight_engine_type || ''} placeholder="e.g. V12" onChange={handleInputChange} />
+                                                    <InputField label="Horsepower (hp) *" name="highlight_hp" value={formData.highlight_hp || ''} placeholder="e.g. 789" onChange={handleInputChange} />
                                                 </>
                                             )}
                                             {assetType === 'Yacht' && (

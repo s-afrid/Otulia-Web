@@ -76,8 +76,12 @@ const AssetCard = ({ item }) => {
   if (category === '.' && item.keySpecifications) {
     const specs = item.keySpecifications;
 
-    if (specs.power || specs.mileage) {
-      displayDetails = [specs.power, specs.mileage, specs.cylinderCapacity].filter(Boolean).join(' | ');
+    if (specs.power || specs.mileage || specs.topSpeed) {
+      const p1 = specs.topSpeed ? (specs.topSpeed.toLowerCase().includes('mph') || specs.topSpeed.toLowerCase().includes('km') ? specs.topSpeed : `${specs.topSpeed} mph`) : specs.mileage; // Top Speed > Mileage
+      const p2 = specs.engineType || specs.cylinderCapacity; // Engine Type > CC
+      const p3 = specs.power ? (specs.power.toLowerCase().includes('hp') ? specs.power : `${specs.power} hp`) : null;
+
+      displayDetails = [p1, p2, p3].filter(Boolean).join(' | ');
       category = 'car';
     } else {
       const beds = specs.bedrooms ? `${specs.bedrooms} Beds` : null;
