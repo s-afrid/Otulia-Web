@@ -53,7 +53,7 @@ const Shop = () => {
 
   return (
     <div className='relative w-full overflow-x-hidden pt-24 min-h-screen bg-white'>
-      <Navbar />
+      <Navbar hideSearch={true} />
       {/* Simple Hero */}
       <div className="bg-white text-black py-16 px-4 text-center border-b border-gray-100">
         <h1 className="text-4xl md:text-5xl font-playfair mb-4 font-serif">
@@ -76,8 +76,8 @@ const Shop = () => {
             key={cat.name}
             onClick={() => setActiveCategory(cat.name)}
             className={`px-6 py-2 rounded-full border transition-all whitespace-nowrap font-medium ${activeCategory === cat.name
-                ? 'bg-black text-white border-black shadow-lg'
-                : 'bg-white text-black border-gray-200 hover:border-black'
+              ? 'bg-black text-white border-black shadow-lg'
+              : 'bg-white text-black border-gray-200 hover:border-black'
               }`}
           >
             {cat.name}

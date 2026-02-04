@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
-import { FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, FiClock, FiActivity, FiXCircle, FiSettings } from 'react-icons/fi';
+import { FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, FiClock, FiActivity, FiXCircle, FiSettings, FiCheckCircle } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import UserPlaceholder from '../assets/user.png';
+import VerificationModal from '../components/VerificationModal';
 
 const Profile = () => {
   const { user, logout, refreshUser, token } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [cancelMessage, setCancelMessage] = useState('');
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   // Edit state
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
+
+  const handleUploadSuccess = async () => {
+    setShowVerificationModal(false);
+    await refreshUser();
+    alert("Documents submitted successfully! Your account is now Pending Verification.");
+  };
 
   if (!user) {
     navigate('/login');
@@ -181,6 +189,51 @@ const Profile = () => {
                   </div>
                 </div>
 
+                {/* Partner Verification Status */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                  <div className="flex justify-between items-start mb-6">
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Partner Status</h3>
+
+                    {user.verificationStatus === 'Verified' ? (
+                      <span className="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-lg text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                        <FiCheckCircle /> Verified Partner
+                      </span>
+                    ) : user.verificationStatus === 'Pending' ? (
+                      <span className="px-3 py-1 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                        <FiClock /> Verification Pending
+                      </span>
+                    ) : (
+                      <span className="px-3 py-1 bg-gray-50 text-gray-500 border border-gray-100 rounded-lg text-[10px] font-bold uppercase tracking-widest">
+                        Unverified
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col md:flex-row gap-6 items-center">
+                    <div className="flex-1">
+                      <h4 className="text-xl font-bold text-gray-900 mb-2 font-playfair">
+                        {user.verificationStatus === 'Verified' ? 'You are a Certified Partner' : 'Become a Certified Partner'}
+                      </h4>
+                      <p className="text-gray-500 text-sm leading-relaxed">
+                        {user.verificationStatus === 'Verified'
+                          ? 'Your account is fully verified. You have access to detailed seller analytics, priority support, and the "Verified" badge on all your listings.'
+                          : user.verificationStatus === 'Pending'
+                            ? 'We have received your documents and are currently reviewing your application. This process usually takes 24-48 hours.'
+                            : 'Upload your business documents to unlock selling privileges, gain the "Verified" badge, and access premium seller tools.'}
+                      </p>
+                    </div>
+
+                    {user.verificationStatus !== 'Verified' && user.verificationStatus !== 'Pending' && (
+                      <button
+                        onClick={() => setShowVerificationModal(true)}
+                        className="px-6 py-3 bg-[#D48D2A] text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-[#B5751C] shadow-lg shadow-[#D48D2A]/20 transition-all whitespace-nowrap"
+                      >
+                        Verify Now
+                      </button>
+                    )}
+                  </div>
+                </div>
+
                 {/* Subscription Plan */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
                   <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Subscription Plan</h3>
@@ -316,6 +369,12 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      {showVerificationModal && (
+        <VerificationModal
+          onClose={() => setShowVerificationModal(false)}
+          onUploadSuccess={handleUploadSuccess}
+        />
+      )}
     </div>
   );
 };

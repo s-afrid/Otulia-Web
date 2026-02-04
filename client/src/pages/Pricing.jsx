@@ -5,7 +5,7 @@ import PricingSection from '../components/pricing_page/Pricing_Section'
 const Pricing = () => {
   return (
     <div className='pt-24'>
-      <Navbar />
+      <Navbar hideSearch={true} />
       <PricingSection />
     </div>
   )

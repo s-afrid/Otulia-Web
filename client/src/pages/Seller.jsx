@@ -54,7 +54,7 @@ const Seller = () => {
 
   return (
     <div className="relative w-full overflow-x-hidden bg-white montserrat pb-20">
-      <Navbar />
+      <Navbar hideSearch={true} />
 
       {/* HERO SECTION */}
       <section className="relative h-[300px] md:h-[450px] w-full flex items-center px-6 md:px-24 overflow-hidden">

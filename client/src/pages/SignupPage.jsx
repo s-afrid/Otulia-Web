@@ -37,7 +37,7 @@ const SignupPage = () => {
     };
 
     return (
-        <div className="relative min-h-screen flex items-center justify-center bg-black font-sans overflow-hidden pt-24 space-y-10">
+        <div className="relative min-h-screen flex items-center justify-center bg-black font-sans overflow-hidden space-y-10">
 
             {/* Full Screen Background */}
             <div className="absolute inset-0 z-0">
@@ -55,7 +55,7 @@ const SignupPage = () => {
             </div>
 
             {/* Centered Glass Card */}
-            <div className="relative z-10 w-full max-w-md p-1 px-4 animate-in zoom-in-95 duration-700">
+            <div className="relative z-10 w-full max-w-xl p-1 px-4 animate-in zoom-in-95 duration-700">
                 <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-[2rem] shadow-2xl p-8 md:p-12 overflow-hidden">
 
                     {/* Decorative Top Line */}

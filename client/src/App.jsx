@@ -46,7 +46,7 @@ import { CartProvider } from "./contexts/CartContext";
 
 function App() {
   const location = useLocation();
-  const hideFooterRoutes = ['/admin'];
+  const hideFooterRoutes = ['/admin', '/login', '/signup', '/inventory'];
   const shouldShowFooter = !hideFooterRoutes.some(path => location.pathname.startsWith(path));
 
   const [showSplash, setShowSplash] = React.useState(true);
