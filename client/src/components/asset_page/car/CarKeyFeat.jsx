@@ -8,7 +8,7 @@ const CarKeyFeatures = ({ item }) => {
   const specs = {
     power: item?.keySpecifications?.power || "518 HP",
     speed: item?.keySpecifications?.mileage || "300 km/h",
-    engine: item?.keySpecifications?.cylinderCapacity || "Inline V6"
+    engine: item?.keySpecifications?.engineType || "Inline V6"
   };
 
   return (
@@ -28,22 +28,29 @@ const CarKeyFeatures = ({ item }) => {
           {/* 1. POWER CARD */}
           <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-4 bg-white shadow-sm min-w-[200px] hover:border-teal-600 transition-colors cursor-default">
              <img className='w-12 h-auto object-contain' src={power} alt='Power' />
+
             <span className="text-lg md:text-xl font-bold text-black">
               {specs.power}
             </span>
           </div>
 
           {/* 2. SPEED CARD */}
-          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-4 bg-white shadow-sm min-w-[200px] hover:border-teal-600 transition-colors cursor-default">
-             <img className='w-12 h-auto object-contain' src={speed} alt='Speed' />
+
+          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-3 bg-white shadow-sm min-w-[180px] hover:border-teal-600 transition-colors cursor-default">
+            {/* Speedometer Icon */}
+            <img className='w-17 h-15' src={speed} alt='' />
+
             <span className="text-lg md:text-xl font-bold text-black">
               {specs.speed}
             </span>
           </div>
 
           {/* 3. ENGINE TYPE CARD */}
-          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-4 bg-white shadow-sm min-w-[200px] hover:border-teal-600 transition-colors cursor-default">
-             <img className='w-12 h-auto object-contain' src={engine} alt='Engine' />
+
+          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-3 bg-white shadow-sm min-w-[180px] hover:border-teal-600 transition-colors cursor-default">
+            {/* Piston/Engine Block Icon */}
+            <img className='w-17 h-15' src={engine} alt='' />
+
             <span className="text-lg md:text-xl font-bold text-black">
               {specs.engine}
             </span>

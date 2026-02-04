@@ -67,7 +67,7 @@ const Community = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
+      <Navbar hideSearch={true} />
 
       {/* HERO SECTION */}
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">

@@ -28,7 +28,7 @@ const Rent = () => {
       const endpoint = category ? category.endpoint : 'combined';
 
       const params = new URLSearchParams();
-      params.append('type', 'Rent');
+      params.append('acquisition', 'rent');
       if (filters.location) params.append('location', filters.location);
       if (filters.minPrice) params.append('minPrice', filters.minPrice);
       if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
@@ -50,7 +50,7 @@ const Rent = () => {
 
   return (
     <div className='relative w-full overflow-x-hidden pt-24 min-h-screen bg-white'>
-      <Navbar />
+      <Navbar hideSearch={true} />
       {/* Simple Hero */}
       <div className="bg-black text-white py-16 px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-playfair mb-4 font-serif">Rent Exclusive Assets</h1>
@@ -69,8 +69,8 @@ const Rent = () => {
             key={cat.name}
             onClick={() => setActiveCategory(cat.name)}
             className={`px-6 py-2 rounded-full border transition-all whitespace-nowrap font-medium ${activeCategory === cat.name
-                ? 'bg-black text-white border-black'
-                : 'bg-white text-black border-gray-200 hover:border-black'
+              ? 'bg-black text-white border-black'
+              : 'bg-white text-black border-gray-200 hover:border-black'
               }`}
           >
             {cat.name}

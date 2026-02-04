@@ -1,3 +1,4 @@
+import React from 'react';
 import Home from "./pages/Home"
 import CartPage from "./pages/CartPage";
 import Shop from "./pages/Shop";
@@ -38,15 +39,23 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Footer from "./components/Footer"
 import ScrollToTop from "./components/ScrollTop";
 
+import SplashScreen from "./components/SplashScreen";
+
 import { CartProvider } from "./contexts/CartContext";
 
 function App() {
   const location = useLocation();
-  const hideFooterRoutes = ['/admin'];
+  const hideFooterRoutes = ['/admin', '/login', '/signup', '/inventory'];
   const shouldShowFooter = !hideFooterRoutes.some(path => location.pathname.startsWith(path));
+
+  const [showSplash, setShowSplash] = React.useState(true);
+
+  // Removed sessionStorage check to allow splash on every refresh as requested
+
 
   return (
     <CartProvider>
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
       <ScrollToTop />
       <Routes>
 
