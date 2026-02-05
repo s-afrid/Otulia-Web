@@ -172,9 +172,9 @@ const PricingSection = () => {
                 {plan.name}
               </h3>
 
-              <div className="flex items-start mb-2">
-                <span className="text-2xl font-bold text-black mt-2">$</span>
-                <span className="text-7xl font-bold text-black tracking-tighter">
+              <div className="flex items-center mb-2 gap-1">
+                <span className="text-4xl font-bold text-black">$</span>
+                <span className="text-7xl font-bold text-black tracking-tighter leading-none">
                   {plan.price}
                 </span>
               </div>
