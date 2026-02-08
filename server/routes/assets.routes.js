@@ -22,34 +22,64 @@ router.get("/cars", async (req, res) => {
   try {
     const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, category, country, sort, acquisition } = req.query;
 
-    const query = search
-      ? { title: { $regex: search, $options: "i" } }
-      : {};
+    console.log("--- /api/assets/cars Request ---");
+    console.log("req.query:", req.query);
 
-    // Filter only Active (Public) assets
-    query.status = 'Active';
+    let query = { status: 'Active' };
+    const andClauses = [];
 
-    if (type) query.type = type;
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" };
+      andClauses.push({
+        $or: [
+          { title: searchRegex },
+          { description: searchRegex },
+          { brand: searchRegex },
+          { 'specification.model': searchRegex },
+          { keywords: searchRegex },
+          { location: searchRegex },
+          { 'specification.body': searchRegex },
+          { 'specification.fuel': searchRegex },
+          { 'specification.transmission': searchRegex },
+          { 'specification.exteriorColor': searchRegex },
+          { 'specification.engineType': searchRegex },
+        ]
+      });
+    }
+
+    if (type) andClauses.push({ type: type });
     if (acquisition) {
         if (acquisition === 'buy') {
-            query.acquisition = {$in: ['buy', 'rent/buy']};
+            andClauses.push({ acquisition: {$in: ['buy', 'rent/buy']} });
         } else if (acquisition === 'rent') {
-            query.acquisition = {$in: ['rent', 'rent/buy']};
+            andClauses.push({ acquisition: {$in: ['rent', 'rent/buy']} });
         }
     }
     if (location || country) {
-      const locations = location.split(',').map(l => l.trim());
-      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+      const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
+      if (locations.length > 0) {
+        andClauses.push({
+          $or: locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }))
+        });
+      }
     }
-    if (brand) query.brand = brand;
-    if (model) query['specification.model'] = { $regex: model, $options: "i" };
-    if (category) query.category = { $regex: category, $options: "i" }; // or specific field
+    if (brand) andClauses.push({ brand: brand });
+    if (model) andClauses.push({ 'specification.model': { $regex: model, $options: "i" } });
+    if (category) andClauses.push({ category: { $regex: category, $options: "i" } });
 
     if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+      const priceQuery = {};
+      if (minPrice) priceQuery.$gte = Number(minPrice);
+      if (maxPrice) priceQuery.$lte = Number(maxPrice);
+      andClauses.push({ price: priceQuery });
     }
+    
+    if (andClauses.length > 0) {
+      query.$and = andClauses;
+    }
+
+    console.log("andClauses:", JSON.stringify(andClauses, null, 2));
+    console.log("Final Mongoose Query:", JSON.stringify(query, null, 2));
 
     let sortOptions = { createdAt: -1 };
     if (sort === 'Low to High') sortOptions = { price: 1 };
@@ -60,8 +90,10 @@ router.get("/cars", async (req, res) => {
       .limit(Number(limit))
       .sort(sortOptions);
 
+    console.log("Results count:", data.length);
     res.json(data);
   } catch (err) {
+    console.error("Error in /api/assets/cars:", err);
     res.status(500).json({ message: "Failed to fetch vehicle assets" });
   }
 });
@@ -254,7 +286,7 @@ router.get("/all/estates", async (req, res) => {
   try {
     const data = await EstateAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
     res.json(data);
-  } catch (err) {
+  }  catch (err) {
     res.status(500).json({ message: "Failed to fetch all estate assets" });
   }
 });
@@ -273,7 +305,7 @@ router.get("/all/bikes", async (req, res) => {
 });
 
 /**
- * ALL YACHT ASSETS
+ * ALL YACHT ASSETS (NEW ENDPOINT)
  * /api/assets/all/yachts
  */
 router.get("/all/yachts", async (req, res) => {
@@ -450,8 +482,7 @@ router.get("/combined", async (req, res) => {
       const words = q.split(' ').filter(word => word.length > 0);
 
       const andQuery = words.map(word => {
-        const processedWord = word.toLowerCase().endsWith('s') ? word.slice(0, -1) : word;
-        const searchRegex = { $regex: processedWord, $options: "i" };
+        const searchRegex = { $regex: word, $options: "i" };
         return {
           $or: [
             { title: searchRegex },
@@ -480,7 +511,7 @@ router.get("/combined", async (req, res) => {
         };
       });
 
-      searchQuery = { $and: andQuery };
+      searchQuery = { $or: andQuery };
     }
 
     const query = { ...searchQuery, status: 'Active' };
