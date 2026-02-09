@@ -3,10 +3,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar'
 import { GoogleLogin } from '@react-oauth/google';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const { login, googleLogin } = useAuth();
     const navigate = useNavigate();
@@ -107,14 +109,27 @@ const LoginPage = () => {
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest group-focus-within:text-[#D48D2A] transition-colors">Password</label>
                                     <a href="#" className="text-[10px] text-gray-400 hover:text-white transition-colors uppercase tracking-wider font-bold">Forgot?</a>
                                 </div>
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    className="w-full px-5 py-4 bg-black/20 border border-white/10 text-white rounded-xl focus:outline-none focus:border-[#D48D2A] focus:bg-black/40 transition-all text-sm font-medium placeholder-white/20 hover:border-white/20"
-                                    placeholder="Enter your password"
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        className="w-full px-5 py-4 bg-black/20 border border-white/10 text-white rounded-xl focus:outline-none focus:border-[#D48D2A] focus:bg-black/40 transition-all text-sm font-medium placeholder-white/20 hover:border-white/20 pr-12" // Added pr-12 for icon spacing
+                                        placeholder="Enter your password"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none"
+                                    >
+                                        {showPassword ? (
+                                            <FaEye className="w-5 h-5" />
+                                        ) : (
+                                            <FaEyeSlash className="w-5 h-5" />
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
