@@ -33,7 +33,7 @@ const ProfileDropdown = ({text}) => {
             {/* TRIGGER */}
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center gap-3 cursor-pointer group p-1.5 rounded-full transition-all duration-300 text-black hover:bg-gray-500/50`}
+                className={`flex items-center gap-3 cursor-pointer group p-1.5 rounded-full transition-all duration-300 ${text} hover:bg-gray-400/50`}
             >
                 <div className="relative">
                     <img

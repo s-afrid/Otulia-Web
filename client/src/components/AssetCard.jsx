@@ -221,7 +221,8 @@ const AssetCard = ({ item }) => {
 
       {/* Content Section */}
       <div className="p-5 relative">
-        <h3 className="text-xl playfair-display text-black mb-1 font-sans truncate pr-14">
+        <h3 className="text-xl text-black mb-1 truncate pr-14"
+         style={{ fontFamily: '"Times New Roman", Times, serif' }}>
           {item.title}
         </h3>
         <p className="text-md font-bold text-black mb-1 font-sans">

@@ -117,8 +117,8 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
             {isAuthenticated && (
               // Added text-inherit to ensure it follows the navbar color logic
               <li className="flex gap-3 items-center justify-center text-inherit">
-                <ProfileDropdown text={isDarkText ? 'text-black' : 'text-white'} />
-                <Cart text={isDarkText ? 'text-black' : 'text-white'} />
+                <ProfileDropdown text={'text-black'} />
+                <Cart text={'text-black'} />
               </li>
             )}
           </>

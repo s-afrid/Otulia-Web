@@ -66,7 +66,7 @@ const CategorySection = () => {
 
                         <div className='absolute bottom-[10%] left-[7%] '>
                             <h1 className='text-white playfair-display text-2xl md:text-3xl font-medium'>{cat.name}</h1>
-                            <p className='text-gray-200 text-[9px] md:text-[11px] font-medium tracking-widest'>{cat.listing} LISTINGS </p>
+                            {/* <p className='text-gray-200 text-[9px] md:text-[11px] font-medium tracking-widest'>{cat.listing} LISTINGS </p> */}
                         </div>
                     </div>
                 ))}
