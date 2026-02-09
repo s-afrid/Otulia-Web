@@ -95,22 +95,7 @@ const Estate_Section = () => {
 
       <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white">
         <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
-          More From This Dealer
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-7">
-          {list.map((item, idx) => (
-            <div key={item._id || idx}>
-              <AssetCard item={item} idx={idx} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
-
-      <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white">
-        <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
-          Similar Listings
+          More Estates
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-7">
           {list.map((item, idx) => (
