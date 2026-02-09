@@ -1,146 +1,5 @@
 [{
   "_id": {
-    "$oid": "69708fe6c0f4cb46d1a17996"
-  },
-  "title": "2023 Ferrari SF90 Stradale",
-  "description": "The most powerful road-going Ferrari ever built. This plug-in hybrid masterpiece combines a twin-turbo V8 with three electric motors to deliver nearly 1,000 horsepower. Finished in Rosso Corsa with a Nero interior.",
-  "price": 625000,
-  "location": "Maranello, Italy",
-  "brand": "Ferrari",
-  "images": [
-    "https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1754523607810-50ee40ff1683?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8MjAyMyUyMEZlcnJhcmklMjBTRjkwJTIwU3RyYWRhbGV8ZW58MHx8MHx8fDA%3D",
-    "https://pictures.topspeed.com/IMG/jpg/202306/the-ferrari-sf90-xx.jpg",
-    "https://images.unsplash.com/photo-1616422285623-13ff0162193c?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "986 hp",
-    "mileage": "1,200 km",
-    "cylinderCapacity": "3990 cc"
-  },
-  "specification": {
-    "yearOfConstruction": "2023",
-    "model": "SF90 Stradale",
-    "body": "Coupe",
-    "series": "SF90",
-    "mileage": "1,200 km",
-    "power": "986 hp",
-    "cylinderCapacity": "3990 cc",
-    "co2Emission": "154 g/km",
-    "consumption": "6.1 L/100km",
-    "steering": "LHD",
-    "transmission": "8-Speed Dual Clutch",
-    "drive": "AWD",
-    "fuel": "Hybrid (Petrol/Electric)",
-    "configuration": "V8",
-    "interiorMaterial": "Alcantara/Carbon",
-    "interiorColor": "Nero",
-    "exteriorColor": "Rosso Corsa",
-    "manufacturerColorCode": "FER-322",
-    "matchingNumbers": "Yes",
-    "condition": "New",
-    "usageStatus": "Used",
-    "countryOfFirstDelivery": "Italy",
-    "numberOfOwners": 1,
-    "carLocation": "showroom"
-  },
-  "agent": {
-    "name": "Enzo Rossi",
-    "photo": "https://randomuser.me/api/portraits/men/32.jpg",
-    "phone": "+39 0536 949111",
-    "email": "enzo@ferrarisales.it",
-    "company": "Maranello Motors",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 6,
-  "views": 45004,
-  "likes": 1200,
-  "keywords": [
-    "ferrari",
-    "hybrid",
-    "supercar",
-    "red",
-    "fast"
-  ],
-  "updatedAt": {
-    "$date": "2026-01-24T03:45:41.196Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "69708fe6c0f4cb46d1a17997"
-  },
-  "title": "2022 Porsche 911 GT3 RS",
-  "description": "A race car for the road. This GT3 RS features the Weissach Package, magnesium wheels, and extensive carbon fiber upgrades. The ultimate track weapon.",
-  "price": 385000,
-  "location": "Stuttgart, Germany",
-  "brand": "Porsche",
-  "images": [
-    "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=800&q=80",
-    "https://plus.unsplash.com/premium_photo-1693637498402-857976d976b3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8MjAyMiUyMFBvcnNjaGUlMjA5MTElMjBHVDMlMjBSU3xlbnwwfHwwfHx8MA%3D%3D",
-    "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80",
-    "https://upload.wikimedia.org/wikipedia/commons/e/e6/2022_Porsche_911_%28992%29_GT3_RS.jpg",
-    "https://images.unsplash.com/photo-1599912027806-cfec9f5944b6?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "518 hp",
-    "mileage": "500 km",
-    "cylinderCapacity": "4.0 L"
-  },
-  "specification": {
-    "yearOfConstruction": "2022",
-    "model": "911 GT3 RS",
-    "body": "Coupe",
-    "series": "992",
-    "mileage": "500 km",
-    "power": "518 hp",
-    "cylinderCapacity": "4.0 L",
-    "co2Emission": "289 g/km",
-    "consumption": "12.7 L/100km",
-    "steering": "LHD",
-    "transmission": "PDK",
-    "drive": "RWD",
-    "fuel": "Petrol",
-    "configuration": "Flat-6",
-    "interiorMaterial": "Race-Tex",
-    "interiorColor": "Black/Guards Red",
-    "exteriorColor": "Guards Red",
-    "manufacturerColorCode": "POR-G1",
-    "matchingNumbers": "Yes",
-    "condition": "New",
-    "usageStatus": "Unused",
-    "countryOfFirstDelivery": "Germany",
-    "numberOfOwners": 0,
-    "carLocation": "warehouse"
-  },
-  "agent": {
-    "name": "Hans Muller",
-    "photo": "https://randomuser.me/api/portraits/men/44.jpg",
-    "phone": "+49 711 911 0",
-    "email": "hans@porschezentrum.de",
-    "company": "Porsche Zentrum",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 9,
-  "views": 32000,
-  "likes": 950,
-  "keywords": [
-    "porsche",
-    "911",
-    "track",
-    "racing",
-    "german"
-  ]
-},
-{
-  "_id": {
     "$oid": "69708fe6c0f4cb46d1a17998"
   },
   "title": "2021 Lamborghini Aventador SVJ",
@@ -149,11 +8,11 @@
   "location": "Miami, FL, USA",
   "brand": "Lamborghini",
   "images": [
-    "https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1711512972717-f487cdbe5969?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8MjAyMSUyMExhbWJvcmdoaW5pJTIwQXZlbnRhZG9yJTIwU1ZKfGVufDB8fDB8fHww",
-    "https://images.unsplash.com/photo-1664649991630-6370d315a074?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fDIwMjElMjBMYW1ib3JnaGluaSUyMEF2ZW50YWRvciUyMFNWSnxlbnwwfHwwfHx8MA%3D%3D",
-    "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?auto=format&fit=crop&w=800&q=80",
-    "https://media.ed.edmunds-media.com/lamborghini/aventador/2021/oem/2021_lamborghini_aventador_coupe_svj_fq_oem_1_1600.jpg"
+    "https://d2blhp03rkvfi4.cloudfront.net/cache/width_1920/car/car-536781/photo/2021-lamborghini-aventador--svj-1349890-1342862001.webp",
+    "https://d2blhp03rkvfi4.cloudfront.net/cache/width_1920/car/car-536781/photo/2021-lamborghini-aventador--svj-1349890-124908597.webp",
+    "https://d2blhp03rkvfi4.cloudfront.net/cache/width_1920/car/car-536781/photo/2021-lamborghini-aventador--svj-1349890-1957193673.webp",
+    "https://d2blhp03rkvfi4.cloudfront.net/cache/width_1920/car/car-536781/photo/2021-lamborghini-aventador--svj-1349890-754730152.webp",
+    "https://d2blhp03rkvfi4.cloudfront.net/cache/width_1920/car/car-536781/photo/2021-lamborghini-aventador--svj-1349890-646180753.webp"
   ],
   "keySpecifications": {
     "power": "759 hp",
@@ -198,7 +57,7 @@
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 52004,
+  "views": 52020,
   "likes": 1500,
   "keywords": [
     "lamborghini",
@@ -208,77 +67,16 @@
     "miami"
   ],
   "updatedAt": {
-    "$date": "2026-01-24T03:48:53.191Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "69708fe6c0f4cb46d1a17999"
+    "$date": "2026-02-08T13:54:23.428Z"
   },
-  "title": "2023 Rolls-Royce Phantom VIII",
-  "description": "The ultimate expression of luxury. This extended wheelbase Phantom features the Starlight Headliner, Privacy Suite, and bespoke Gallery dashboard art.",
-  "price": 650000,
-  "location": "London, UK",
-  "brand": "Rolls-Royce",
-  "images": [
-    "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1485291571150-772bcfc10da5?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "563 hp",
-    "mileage": "200 mi",
-    "cylinderCapacity": "6.75 L"
-  },
-  "specification": {
-    "yearOfConstruction": "2023",
-    "model": "Phantom VIII",
-    "body": "Sedan",
-    "series": "EWB",
-    "mileage": "200 mi",
-    "power": "563 hp",
-    "cylinderCapacity": "6.75 L",
-    "co2Emission": "345 g/km",
-    "consumption": "15 L/100km",
-    "steering": "RHD",
-    "transmission": "8-Speed Auto",
-    "drive": "RWD",
-    "fuel": "Petrol",
-    "configuration": "V12 Twin-Turbo",
-    "interiorMaterial": "Connolly Leather",
-    "interiorColor": "Seashell",
-    "exteriorColor": "Midnight Blue",
-    "manufacturerColorCode": "RR-MB",
-    "matchingNumbers": "Yes",
-    "condition": "New",
-    "usageStatus": "Unused",
-    "countryOfFirstDelivery": "UK",
-    "numberOfOwners": 0,
-    "carLocation": "showroom"
-  },
-  "agent": {
-    "name": "Arthur Sterling",
-    "photo": "https://randomuser.me/api/portraits/men/55.jpg",
-    "phone": "+44 20 7123 4567",
-    "email": "arthur@mayfaircars.com",
-    "company": "Mayfair Prestige",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": false,
-  "popularity": 7,
-  "views": 15000,
-  "likes": 400,
-  "keywords": [
-    "luxury",
-    "chauffeur",
-    "v12",
-    "british",
-    "comfortable"
-  ]
+  "__v": 1,
+  "category": "vehicles",
+  "documents": [],
+  "highlights": [],
+  "status": "Active",
+  "type": "Sale",
+  "acquisition": "rent/buy",
+  "brand_logo": "https://static.vecteezy.com/system/resources/thumbnails/020/502/583/small/lamborghini-brand-logo-car-symbol-black-design-italian-automobile-illustration-free-vector.jpg"
 },
 {
   "_id": {
@@ -290,11 +88,11 @@
   "location": "Oxfordshire, UK",
   "brand": "Aston Martin",
   "images": [
-    "https://images.unsplash.com/photo-1752846231642-191af22d9d31?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGFzdG9uJTIwbWFydGluJTIwZGI1fGVufDB8fDB8fHww",
-    "https://images.unsplash.com/photo-1626668893632-6f3a4466d22f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1532581140115-3e355d1ed1de?auto=format&fit=crop&w=800&q=80"
+    "https://cdn.dealeraccelerate.com/bagauction/18/3132/138515/1920x1440/1965-aston-martin-db5",
+    "https://www.cnet.com/a/img/resize/5bcfd779916b448fcdf383aa85a4f6e50a53f416/hub/2019/08/16/5c296a64-a2f3-451a-9c9e-04b30206897d/1965-aston-martin-db5-bond-car-0.jpg?auto=webp&width=1200",
+    "https://s.abcnews.com/images/Business/bond-aston-martin-01-ht-jt-190725_hpEmbed_3x2_992.jpg",
+    "https://www.artsandcollections.com/wp-content/uploads/2019/06/1965-Aston-Martin-DB5-22Bond-Car22-Simon-Clay-%C2%A92019-Courtesy-of-RM-Sothebys-6-640x475.jpg",
+    "https://s.abcnews.com/images/Business/bond-aston-martin-main-ht-jt-190725_hpMain_16x9_1600.jpg"
   ],
   "keySpecifications": {
     "power": "282 hp",
@@ -339,7 +137,7 @@
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 60000,
+  "views": 60017,
   "likes": 2000,
   "keywords": [
     "classic",
@@ -347,7 +145,18 @@
     "007",
     "british",
     "silver"
-  ]
+  ],
+  "updatedAt": {
+    "$date": "2026-02-08T12:25:20.670Z"
+  },
+  "__v": 1,
+  "category": "vehicles",
+  "documents": [],
+  "highlights": [],
+  "status": "Active",
+  "type": "Sale",
+  "acquisition": "buy",
+  "brand_logo": "https://cdn.worldvectorlogo.com/logos/aston-martin-1.svg"
 },
 {
   "_id": {
@@ -359,11 +168,11 @@
   "location": "Dubai, UAE",
   "brand": "Bugatti",
   "images": [
-    "https://images.unsplash.com/photo-1627454820516-dc767bcb4d3e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YnVnYXR0aSUyMGNoaXJvbnxlbnwwfHwwfHx8MA%3D%3D",
-    "https://images.unsplash.com/photo-1657197583255-f6ef13f848f9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8MjAyMCUyMEJ1Z2F0dGklMjBDaGlyb24lMjBTcG9ydHxlbnwwfHwwfHx8MA%3D%3D",
-    "https://images.unsplash.com/photo-1631828919729-b9b2d1e68528?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8MjAyMCUyMEJ1Z2F0dGklMjBDaGlyb24lMjBTcG9ydHxlbnwwfHwwfHx8MA%3D%3D",
-    "https://images.unsplash.com/photo-1566008885218-90abf9200ddb?auto=format&fit=crop&w=800&q=80",
-    "https://www.bugatti.com/media/f2omqvow/bugatti-chiron-sport-les-legendes-du-ciel-perspectives-5.jpg"
+    "https://hips.hearstapps.com/hmg-prod/images/02-ss300p-3i4-front-1567937037.jpg",
+    "https://www.supercars.net/blog/wp-content/uploads/2019/09/02_ss300p_ehra-lessien.jpg",
+    "https://s.yimg.com/ny/api/res/1.2/cFhZXt_EjflBfsigOK2qtQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTQyNw--/https://media-mbst-pub-ue1.s3.amazonaws.com/creatr-uploaded-images/2019-09/1dd84480-e0f6-11e9-bdbe-27c8d419d8ca",
+    "https://www.topgear.com/sites/default/files/2022/07/01%20BUGATTI_CSS300%2B-last-delivery_Record.jpg",
+    "https://i.ytimg.com/vi/ezF-o6jRCLQ/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB9ZHQRSNlv3cZZxZsVa9GTrS3r9w"
   ],
   "keySpecifications": {
     "power": "1500 hp",
@@ -408,7 +217,7 @@
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 85002,
+  "views": 85017,
   "likes": 2500,
   "keywords": [
     "hypercar",
@@ -418,494 +227,16 @@
     "luxury"
   ],
   "updatedAt": {
-    "$date": "2026-01-24T03:42:12.619Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "69708fe6c0f4cb46d1a1799c"
+    "$date": "2026-02-08T12:23:41.416Z"
   },
-  "title": "1955 Mercedes-Benz 300 SL Gullwing",
-  "description": "A legendary design icon. This 300 SL Gullwing is one of the few finished in Fire Engine Red with matching plaid interior. A true blue-chip investment vehicle.",
-  "price": 1650000,
-  "location": "Monaco",
-  "brand": "Mercedes-Benz",
-  "images": [
-    "https://images.unsplash.com/photo-1718944379410-7f84cb91b8b5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8MTk1NSUyME1lcmNlZGVzLUJlbnolMjAzMDAlMjBTTCUyMEd1bGx3aW5nfGVufDB8fDB8fHww",
-    "https://images.unsplash.com/photo-1710071792514-f9fd7c259ee7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fDE5NTUlMjBNZXJjZWRlcy1CZW56JTIwMzAwJTIwU0wlMjBHdWxsd2luZ3xlbnwwfHwwfHx8MA%3D%3D",
-    "https://plus.unsplash.com/premium_photo-1694687307138-b0cc8bc81241?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8MTk1NSUyME1lcmNlZGVzLUJlbnolMjAzMDAlMjBTTCUyMEd1bGx3aW5nfGVufDB8fDB8fHww",
-    "https://images.unsplash.com/photo-1550601366-3d2b2715015b?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1533008093099-e61392c29c83?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "215 hp",
-    "mileage": "34,000 km",
-    "cylinderCapacity": "3.0 L"
-  },
-  "specification": {
-    "yearOfConstruction": "1955",
-    "model": "300 SL",
-    "body": "Coupe",
-    "series": "W198",
-    "mileage": "34,000 km",
-    "power": "215 hp",
-    "cylinderCapacity": "3.0 L",
-    "co2Emission": "N/A",
-    "consumption": "N/A",
-    "steering": "LHD",
-    "transmission": "4-Speed Manual",
-    "drive": "RWD",
-    "fuel": "Petrol",
-    "configuration": "Inline-6",
-    "interiorMaterial": "Cloth/Leather",
-    "interiorColor": "Plaid",
-    "exteriorColor": "Fire Engine Red",
-    "manufacturerColorCode": "DB-534",
-    "matchingNumbers": "Yes",
-    "condition": "Restored",
-    "usageStatus": "Used",
-    "countryOfFirstDelivery": "Germany",
-    "numberOfOwners": 4,
-    "carLocation": "vault"
-  },
-  "agent": {
-    "name": "Jean-Pierre Beltoise",
-    "photo": "https://randomuser.me/api/portraits/men/66.jpg",
-    "phone": "+377 99 99 99 99",
-    "email": "jp@monacoclassics.mc",
-    "company": "Monaco Classics",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 9,
-  "views": 41000,
-  "likes": 1100,
-  "keywords": [
-    "classic",
-    "gullwing",
-    "mercedes",
-    "icon",
-    "vintage"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708fe6c0f4cb46d1a1799d"
-  },
-  "title": "2015 McLaren P1",
-  "description": "Part of the Holy Trinity of hypercars. This Volcano Orange P1 utilizes hybrid technology derived from Formula 1 to deliver blistering performance.",
-  "price": 1800000,
-  "location": "Los Angeles, CA, USA",
-  "brand": "McLaren",
-  "images": [
-    "https://images.unsplash.com/photo-1592199299806-e7349699f6a9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWNsYXJlbiUyMHAxfGVufDB8fDB8fHww",
-    "https://images.unsplash.com/photo-1516298252535-cf2ac5147f9b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWNsYXJlbiUyMHAxfGVufDB8fDB8fHww",
-    "https://images.unsplash.com/photo-1691981968241-d1b5da2443e0?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fG1jbGFyZW4lMjBwMXxlbnwwfHwwfHx8MA%3D%3D",
-    "https://images.unsplash.com/photo-1621689625345-4299b8207908?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "903 hp",
-    "mileage": "2,100 mi",
-    "cylinderCapacity": "3.8 L"
-  },
-  "specification": {
-    "yearOfConstruction": "2015",
-    "model": "P1",
-    "body": "Coupe",
-    "series": "Ultimate Series",
-    "mileage": "2,100 mi",
-    "power": "903 hp",
-    "cylinderCapacity": "3.8 L",
-    "co2Emission": "194 g/km",
-    "consumption": "8.3 L/100km",
-    "steering": "LHD",
-    "transmission": "7-Speed SSG",
-    "drive": "RWD",
-    "fuel": "Hybrid",
-    "configuration": "V8 Twin-Turbo",
-    "interiorMaterial": "Alcantara/Carbon",
-    "interiorColor": "Black",
-    "exteriorColor": "Volcano Orange",
-    "manufacturerColorCode": "MCL-VO",
-    "matchingNumbers": "Yes",
-    "condition": "Excellent",
-    "usageStatus": "Used",
-    "countryOfFirstDelivery": "USA",
-    "numberOfOwners": 2,
-    "carLocation": "showroom"
-  },
-  "agent": {
-    "name": "Sarah Connor",
-    "photo": "https://randomuser.me/api/portraits/women/11.jpg",
-    "phone": "+1 213 555 9876",
-    "email": "sarah@laperformance.com",
-    "company": "LA Performance",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 9,
-  "views": 38000,
-  "likes": 800,
-  "keywords": [
-    "mclaren",
-    "hypercar",
-    "hybrid",
-    "orange",
-    "fast"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708fe6c0f4cb46d1a1799e"
-  },
-  "title": "2022 Ford GT",
-  "description": "An American supercar born from Le Mans. Carbon fiber monocoque, active aerodynamics, and a twin-turbo EcoBoost V6 producing 660hp. Finished in Liquid Blue.",
-  "price": 1100000,
-  "location": "Detroit, MI, USA",
-  "brand": "Ford",
-  "images": [
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1616788494707-ec28f08d05a1?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1632993951368-593ca77ed4de?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Zm9yZCUyMGd0fGVufDB8fDB8fHww",
-    "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1563720223523-491ff04651de?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "660 hp",
-    "mileage": "400 mi",
-    "cylinderCapacity": "3.5 L"
-  },
-  "specification": {
-    "yearOfConstruction": "2022",
-    "model": "GT",
-    "body": "Coupe",
-    "series": "Gen 2",
-    "mileage": "400 mi",
-    "power": "660 hp",
-    "cylinderCapacity": "3.5 L",
-    "co2Emission": "350 g/km",
-    "consumption": "16.8 L/100km",
-    "steering": "LHD",
-    "transmission": "7-Speed Dual Clutch",
-    "drive": "RWD",
-    "fuel": "Petrol",
-    "configuration": "V6 Twin-Turbo",
-    "interiorMaterial": "Alcantara",
-    "interiorColor": "Launch Control",
-    "exteriorColor": "Liquid Blue",
-    "manufacturerColorCode": "FRD-LB",
-    "matchingNumbers": "Yes",
-    "condition": "New",
-    "usageStatus": "Used",
-    "countryOfFirstDelivery": "USA",
-    "numberOfOwners": 1,
-    "carLocation": "warehouse"
-  },
-  "agent": {
-    "name": "Bill Ford",
-    "photo": "https://randomuser.me/api/portraits/men/50.jpg",
-    "phone": "+1 313 555 1111",
-    "email": "bill@motorcitycars.com",
-    "company": "Motor City Exotics",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": false,
-  "popularity": 8,
-  "views": 25000,
-  "likes": 600,
-  "keywords": [
-    "ford",
-    "supercar",
-    "lemans",
-    "american",
-    "blue"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708fe6c0f4cb46d1a1799f"
-  },
-  "title": "2023 Bentley Continental GT Speed",
-  "description": "The ultimate Grand Tourer. W12 engine, rotating display, and diamond-quilted leather. Effortless power and supreme comfort for cross-continental journeys.",
-  "price": 340000,
-  "location": "Geneva, Switzerland",
-  "brand": "Bentley",
-  "images": [
-    "https://images.unsplash.com/photo-1630650231815-a567e2a96bb2?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1580274455191-1c62238fa333?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1541348263662-e068662d82af?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1632247413575-b9f074d28994?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "650 hp",
-    "mileage": "3,000 km",
-    "cylinderCapacity": "6.0 L"
-  },
-  "specification": {
-    "yearOfConstruction": "2023",
-    "model": "Continental GT",
-    "body": "Coupe",
-    "series": "Speed",
-    "mileage": "3,000 km",
-    "power": "650 hp",
-    "cylinderCapacity": "6.0 L",
-    "co2Emission": "308 g/km",
-    "consumption": "13.5 L/100km",
-    "steering": "LHD",
-    "transmission": "8-Speed Dual Clutch",
-    "drive": "AWD",
-    "fuel": "Petrol",
-    "configuration": "W12",
-    "interiorMaterial": "Leather/Wood",
-    "interiorColor": "Beluga",
-    "exteriorColor": "Verdant Green",
-    "manufacturerColorCode": "BEN-VG",
-    "matchingNumbers": "Yes",
-    "condition": "Excellent",
-    "usageStatus": "Used",
-    "countryOfFirstDelivery": "Switzerland",
-    "numberOfOwners": 1,
-    "carLocation": "showroom"
-  },
-  "agent": {
-    "name": "Pierre Dubois",
-    "photo": "https://randomuser.me/api/portraits/men/18.jpg",
-    "phone": "+41 22 555 7788",
-    "email": "pierre@swissluxury.ch",
-    "company": "Swiss Luxury Cars",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": false,
-  "popularity": 7,
-  "views": 18002,
-  "likes": 450,
-  "keywords": [
-    "bentley",
-    "luxury",
-    "gt",
-    "w12",
-    "comfort"
-  ],
-  "updatedAt": {
-    "$date": "2026-01-24T03:27:00.695Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "69708fe6c0f4cb46d1a179a0"
-  },
-  "title": "1961 Jaguar E-Type Series 1",
-  "description": "Enzo Ferrari called it 'the most beautiful car ever made'. This Series 1 Roadster features the covered headlights and toggle switches on the dash.",
-  "price": 275000,
-  "location": "Coventry, UK",
-  "brand": "Jaguar",
-  "images": [
-    "https://images.unsplash.com/photo-1542224566-6e85f2e6772f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1580274455191-1c62238fa333?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1533158388470-9a56699990c6?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1627454820574-8469d80d238b?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1619330615462-811c75947a12?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "265 hp",
-    "mileage": "60,000 mi",
-    "cylinderCapacity": "3.8 L"
-  },
-  "specification": {
-    "yearOfConstruction": "1961",
-    "model": "E-Type",
-    "body": "Roadster",
-    "series": "Series 1",
-    "mileage": "60,000 mi",
-    "power": "265 hp",
-    "cylinderCapacity": "3.8 L",
-    "co2Emission": "N/A",
-    "consumption": "N/A",
-    "steering": "RHD",
-    "transmission": "4-Speed Manual",
-    "drive": "RWD",
-    "fuel": "Petrol",
-    "configuration": "Inline-6",
-    "interiorMaterial": "Leather",
-    "interiorColor": "Red",
-    "exteriorColor": "British Racing Green",
-    "manufacturerColorCode": "JAG-BRG",
-    "matchingNumbers": "Yes",
-    "condition": "Restored",
-    "usageStatus": "Used",
-    "countryOfFirstDelivery": "UK",
-    "numberOfOwners": 5,
-    "carLocation": "garage"
-  },
-  "agent": {
-    "name": "Nigel Mansell",
-    "photo": "https://randomuser.me/api/portraits/men/88.jpg",
-    "phone": "+44 123 456 7890",
-    "email": "nigel@jaguarclassics.uk",
-    "company": "Jaguar Heritage",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 9,
-  "views": 42000,
-  "likes": 1300,
-  "keywords": [
-    "classic",
-    "jaguar",
-    "roadster",
-    "british",
-    "icon"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708fe6c0f4cb46d1a179a1"
-  },
-  "title": "2023 Rimac Nevera",
-  "description": "The future of speed. An all-electric hypercar producing nearly 2000hp. Holds the record for the fastest accelerating production car.",
-  "price": 2400000,
-  "location": "Zagreb, Croatia",
-  "brand": "Rimac",
-  "images": [
-    "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "1914 hp",
-    "mileage": "500 km",
-    "cylinderCapacity": "N/A (Electric)"
-  },
-  "specification": {
-    "yearOfConstruction": "2023",
-    "model": "Nevera",
-    "body": "Coupe",
-    "series": "Hypercar",
-    "mileage": "500 km",
-    "power": "1914 hp",
-    "cylinderCapacity": "N/A",
-    "co2Emission": "0 g/km",
-    "consumption": "30 kWh/100km",
-    "steering": "LHD",
-    "transmission": "Single Speed",
-    "drive": "AWD",
-    "fuel": "Electric",
-    "configuration": "Quad Motor",
-    "interiorMaterial": "Alcantara/Tech",
-    "interiorColor": "Black/Blue",
-    "exteriorColor": "Nemo Blue",
-    "manufacturerColorCode": "RIM-NB",
-    "matchingNumbers": "Yes",
-    "condition": "New",
-    "usageStatus": "Unused",
-    "countryOfFirstDelivery": "Croatia",
-    "numberOfOwners": 0,
-    "carLocation": "showroom"
-  },
-  "agent": {
-    "name": "Mate Rimac",
-    "photo": "https://randomuser.me/api/portraits/men/9.jpg",
-    "phone": "+385 1 234 5678",
-    "email": "mate@rimac-automobili.com",
-    "company": "Rimac Automobili",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 10,
-  "views": 75000,
-  "likes": 3000,
-  "keywords": [
-    "electric",
-    "hypercar",
-    "speed",
-    "future",
-    "tech"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708fe6c0f4cb46d1a179a2"
-  },
-  "title": "1994 Land Rover Defender 110",
-  "description": "A fully restored and customized Defender 110. Features an LS3 V8 engine swap, upgraded suspension, and a bespoke leather interior. Rugged yet refined.",
-  "price": 185000,
-  "location": "Austin, TX, USA",
-  "brand": "Land Rover",
-  "images": [
-    "https://images.unsplash.com/photo-1519245659634-54b215691974?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1621460349377-17b960c6d566?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1506015391300-4802dc74de2e?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1605218427306-022ba7c38581?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "power": "430 hp",
-    "mileage": "2,000 mi (Since Restore)",
-    "cylinderCapacity": "6.2 L"
-  },
-  "specification": {
-    "yearOfConstruction": "1994",
-    "model": "Defender 110",
-    "body": "SUV",
-    "series": "Restomod",
-    "mileage": "2,000 mi",
-    "power": "430 hp",
-    "cylinderCapacity": "6.2 L",
-    "co2Emission": "N/A",
-    "consumption": "15 L/100km",
-    "steering": "LHD",
-    "transmission": "6-Speed Auto",
-    "drive": "4WD",
-    "fuel": "Petrol",
-    "configuration": "V8 (Swap)",
-    "interiorMaterial": "Quilted Leather",
-    "interiorColor": "Tan",
-    "exteriorColor": "Keswick Green",
-    "manufacturerColorCode": "LR-KG",
-    "matchingNumbers": "No",
-    "condition": "Restored/Custom",
-    "usageStatus": "Used",
-    "countryOfFirstDelivery": "UK",
-    "numberOfOwners": 3,
-    "carLocation": "garage"
-  },
-  "agent": {
-    "name": "Tex Wheeler",
-    "photo": "https://randomuser.me/api/portraits/men/29.jpg",
-    "phone": "+1 512 555 4444",
-    "email": "tex@texasrovers.com",
-    "company": "Texas Rovers",
-    "companyLogo": "https://cdn.dribbble.com/userupload/19897674/file/original-2cb4a1a3f582a337b5fc6d3782e5bb2e.png",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": false,
-  "popularity": 7,
-  "views": 20000,
-  "likes": 800,
-  "keywords": [
-    "offroad",
-    "custom",
-    "suv",
-    "defender",
-    "rugged"
-  ]
+  "__v": 2,
+  "category": "vehicles",
+  "documents": [],
+  "status": "Active",
+  "type": "Sale",
+  "highlights": [],
+  "acquisition": "rent/buy",
+  "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/6/60/Bugatti_logo.svg"
 },
 {
   "_id": {
@@ -917,11 +248,11 @@
   "location": "Munich, Germany",
   "brand": "BMW",
   "images": [
-    "https://images.unsplash.com/photo-1555215696-99ac97298353?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1599912027806-cfec9f5944b6?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1554223090-7e482851df45?auto=format&fit=crop&w=800&q=80"
+    "https://images.classic.com/vehicles/6b549bfc-5dc3-443d-8d8f-625a8c644051.jpg?w=1200&h=676&fit=crop",
+    "https://images.classic.com/vehicles/83404932-273d-4811-9783-73b4aae1f1a6.jpg?w=1000",
+    "https://images.classic.com/vehicles/a5bb9459-9d8c-4096-9e23-12bf89ce294f.jpg?w=1000",
+    "https://images.classic.com/vehicles/d238e06f-306d-4ea9-a384-26546c1c2ed8.jpg?w=1000",
+    "https://images.classic.com/vehicles/3a26d8fe-f3b5-44fc-8998-104c5a48f3e1.jpg?w=1000"
   ],
   "keySpecifications": {
     "power": "273 hp",
@@ -966,7 +297,7 @@
   },
   "isTrending": true,
   "popularity": 8,
-  "views": 22000,
+  "views": 22002,
   "likes": 700,
   "keywords": [
     "classic",
@@ -974,7 +305,12 @@
     "mid-engine",
     "orange",
     "rare"
-  ]
+  ],
+  "acquisition": "buy",
+  "updatedAt": {
+    "$date": "2026-02-08T12:29:17.115Z"
+  },
+  "brand_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2f0UA3CphmYgkzmAZieqyjr-dpuQetw3TYw&s"
 },
 {
   "_id": {
@@ -986,11 +322,11 @@
   "location": "Tokyo, Japan",
   "brand": "Ferrari",
   "images": [
-    "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
-    "https://www.ultimatecarpage.com/images/gallery/10834/Ferrari-SF90-XX-Stradale-89827.jpg",
-    "https://images.unsplash.com/photo-1532911557891-d12f6b98dddc?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1616422285623-13ff0162193c?auto=format&fit=crop&w=800&q=80",
-    "https://pictures.topspeed.com/IMG/jpg/202306/the-ferrari-sf90-xx.jpg"
+    "https://cdn.dealeraccelerate.com/fusion/1/646/32081/1920x1440/2014-ferrari-laferrari-2dr-cpe",
+    "https://cdn-ds.com/blogs-media/sites/492/2021/02/22070209/2014-Ferrari-LaFerrari-B2_o.jpg",
+    "https://s.yimg.com/ny/api/res/1.2/qsGMRqSm6Kvctv1AhXWUUQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTk2MDtoPTU0MA--/https://media.zenfs.com/en/modern_car_collector_articles_878/f070d2e8c2ce5ea03dc6cd459cf887e5",
+    "https://cdn-ds.com/blogs-media/sites/492/2021/02/22070206/2014-Ferrari-LaFerrari-A_o.jpg",
+    "https://cdn-ds.com/blogs-media/sites/492/2017/09/04130242/2014-Ferrari-LaFerrari-Coupe_A_o.jpg"
   ],
   "keySpecifications": {
     "power": "950 hp",
@@ -1035,7 +371,7 @@
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 98000,
+  "views": 98002,
   "likes": 4000,
   "keywords": [
     "ferrari",
@@ -1043,7 +379,12 @@
     "v12",
     "hybrid",
     "red"
-  ]
+  ],
+  "acquisition": "rent/buy",
+  "updatedAt": {
+    "$date": "2026-02-08T12:34:13.955Z"
+  },
+  "brand_logo": "https://i.pinimg.com/736x/fd/f7/37/fdf73726681950078cf87bef7dacd10d.jpg"
 },
 {
   "_id": {
@@ -1055,11 +396,11 @@
   "location": "Modena, Italy",
   "brand": "Pagani",
   "images": [
-    "https://images.unsplash.com/photo-1566024287286-457247b70310?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1614200179396-230560b75a6e?auto=format&fit=crop&w=800&q=80",
-    "https://www.lambocars.com/wp-content/uploads/2020/08/aventador-svj-roadster-ad-personam-13.jpg",
-    "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&w=800&q=80"
+    "https://s1.cdn.autoevolution.com/images/gallery/PAGANI-Huayra-Roadster-6252_1.jpg",
+    "https://s1.cdn.autoevolution.com/images/gallery/PAGANI-Huayra-Roadster-6252_3.jpg",
+    "https://s1.cdn.autoevolution.com/images/gallery/PAGANI-Huayra-Roadster-6252_4.jpg",
+    "https://s1.cdn.autoevolution.com/images/gallery/PAGANI-Huayra-Roadster-6252_6.jpg",
+    "https://s1.cdn.autoevolution.com/images/gallery/PAGANI-Huayra-Roadster-6252_11.jpg"
   ],
   "keySpecifications": {
     "power": "754 hp",
@@ -1104,7 +445,7 @@
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 66000,
+  "views": 66003,
   "likes": 2200,
   "keywords": [
     "art",
@@ -1112,7 +453,12 @@
     "pagani",
     "convertible",
     "carbon"
-  ]
+  ],
+  "acquisition": "rent",
+  "updatedAt": {
+    "$date": "2026-02-08T12:41:56.036Z"
+  },
+  "brand_logo": "https://car-logos.org/wp-content/uploads/2022/08/pagani.png"
 },
 {
   "_id": {
@@ -1124,11 +470,11 @@
   "location": "Las Vegas, NV, USA",
   "brand": "Shelby",
   "images": [
-    "https://images.unsplash.com/photo-1585011664466-b7bcc99fbe0f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1622199653549-b00346383eb1?auto=format&fit=crop&w=800&q=80"
+    "https://cdn.dealeraccelerate.com/hillbank/1/649/23707/1920x1440/1965-shelby-cobra-427-s-c",
+    "https://cdn.dealeraccelerate.com/hillbank/1/649/23681/1920x1440/1965-shelby-cobra-427-s-c",
+    "https://cdn.dealeraccelerate.com/hillbank/1/649/23679/1920x1440/1965-shelby-cobra-427-s-c",
+    "https://cdn.dealeraccelerate.com/hillbank/1/649/23743/1920x1440/1965-shelby-cobra-427-s-c",
+    "https://cdn.dealeraccelerate.com/hillbank/1/649/23704/1920x1440/1965-shelby-cobra-427-s-c"
   ],
   "keySpecifications": {
     "power": "425 hp",
@@ -1173,7 +519,7 @@
   },
   "isTrending": true,
   "popularity": 9,
-  "views": 35000,
+  "views": 35010,
   "likes": 1200,
   "keywords": [
     "muscle",
@@ -1181,7 +527,12 @@
     "cobra",
     "v8",
     "american"
-  ]
+  ],
+  "acquisition": "rent/buy",
+  "updatedAt": {
+    "$date": "2026-02-08T13:21:51.216Z"
+  },
+  "brand_logo": "https://cdn.worldvectorlogo.com/logos/shelby-3.svg"
 },
 {
   "_id": {
@@ -1193,11 +544,11 @@
   "location": "Ingolstadt, Germany",
   "brand": "Audi",
   "images": [
-    "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1610884447640-41b8ec6e5b40?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1562911791-c7a97b729ec5?auto=format&fit=crop&w=800&q=80",
-    "https://www.bugatti.com/media/tqjnhwcz/bugatti-chiron-sport-les-legendes-du-ciel-perspectives-2.jpg",
-    "https://images.unsplash.com/photo-1590485455850-c8f77346fb8a?auto=format&fit=crop&w=800&q=80"
+    "https://hips.hearstapps.com/hmg-prod/images/2020-audi-r8-spyder-103-1586899600.jpg?crop=1xw:1xh;center,top",
+    "https://hips.hearstapps.com/hmg-prod/images/2020-audi-r8-spyder-104-1586899600.jpg?crop=1xw:1xh;center,top",
+    "https://hips.hearstapps.com/hmg-prod/images/2020-audi-r8-spyder-105-1586899623.jpg?crop=1xw:1xh;center,top",
+    "https://hips.hearstapps.com/hmg-prod/images/2020-audi-r8-spyder-110-1586899612.jpg?crop=1xw:1xh;center,top",
+    "https://hips.hearstapps.com/hmg-prod/images/2020-audi-r8-spyder-113-1586899659.jpg?crop=1xw:1xh;center,top"
   ],
   "keySpecifications": {
     "power": "602 hp",
@@ -1242,7 +593,7 @@
   },
   "isTrending": false,
   "popularity": 7,
-  "views": 21000,
+  "views": 21002,
   "likes": 500,
   "keywords": [
     "audi",
@@ -1250,7 +601,12 @@
     "supercar",
     "daily",
     "grey"
-  ]
+  ],
+  "acquisition": "rent",
+  "updatedAt": {
+    "$date": "2026-02-08T13:59:15.774Z"
+  },
+  "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/9/92/Audi-Logo_2016.svg"
 },
 {
   "_id": {
@@ -1262,11 +618,11 @@
   "location": "San Francisco, CA, USA",
   "brand": "Lexus",
   "images": [
-    "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80"
+    "https://images.classic.com/vehicles/eaa2ebd6a25ebbea3433ce2f20f7c8d1.jpeg?w=1000",
+    "https://images.classic.com/vehicles/33094c0c58fbc8405e453916c563140f.jpeg?w=1000",
+    "https://images.classic.com/vehicles/f71099283fee9486b5960f3bfeae2b1a.jpeg?w=1000",
+    "https://images.classic.com/vehicles/f59a09a5ae979cd188af7d5516b0246f.jpeg?w=1000",
+    "https://images.classic.com/vehicles/21f2a4373b317c26a6c70ca04b1338dc.jpeg?w=1000"
   ],
   "keySpecifications": {
     "power": "552 hp",
@@ -1311,7 +667,7 @@
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 58000,
+  "views": 58002,
   "likes": 2800,
   "keywords": [
     "lexus",
@@ -1319,7 +675,12 @@
     "sound",
     "japanese",
     "rare"
-  ]
+  ],
+  "acquisition": "buy",
+  "updatedAt": {
+    "$date": "2026-02-08T14:13:03.250Z"
+  },
+  "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/4/42/Lexus-cars-logo-emblem.jpg"
 },
 {
   "_id": {
@@ -1331,11 +692,11 @@
   "location": "Beverly Hills, CA, USA",
   "brand": "Mercedes-Benz",
   "images": [
-    "https://images.unsplash.com/photo-1553558756-d850d7d163a7?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1608535002897-47bc8d946d32?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1559416523-140ddc3d238c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1618585446211-1a3be055452d?auto=format&fit=crop&w=800&q=80"
+    "https://www.mercedes-amg.com/media/images/268fc3b8453aff7fbf1155ce4dc32bc11185f09f-1920x1080.jpg?auto=format&fit=max&q=75&w=1920",
+    "https://www.mercedes-amg.com/media/images/e4ce284b433bf5dad43b40051f89f627b9ad6ee4-1440x810.jpg?auto=format&fit=max&q=75&w=1440",
+    "https://www.mercedes-amg.com/media/images/f2934c017569a51e2646c8020d01e8227e3989a0-810x1080.jpg?auto=format&fit=max&q=75&w=810",
+    "https://www.mercedes-amg.com/media/images/8db7772e96571040899bde2139c7fb7f70af9042-1440x1440.jpg?auto=format&fit=max&q=75&w=1440",
+    "https://www.mercedes-amg.com/media/images/eeb419f4cd458922802e14748555abaebb773295-1352x1014.jpg?auto=format&fit=max&q=75&w=1352"
   ],
   "keySpecifications": {
     "power": "577 hp",
@@ -1380,7 +741,7 @@
   },
   "isTrending": true,
   "popularity": 9,
-  "views": 36000,
+  "views": 36002,
   "likes": 850,
   "keywords": [
     "suv",
@@ -1388,7 +749,12 @@
     "g-wagon",
     "mercedes",
     "black"
-  ]
+  ],
+  "acquisition": "rent/buy",
+  "updatedAt": {
+    "$date": "2026-02-08T14:18:10.436Z"
+  },
+  "brand_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnDUaBAl6t11-Mb4k5_hrviceetGWH_nHtmA&s"
 },
 {
   "_id": {
@@ -1400,11 +766,11 @@
   "location": "Rome, Italy",
   "brand": "Lamborghini",
   "images": [
-    "https://images.unsplash.com/photo-1621135802920-133df287f89c?auto=format&fit=crop&w=800&q=80",
-    "https://www.lambocars.com/wp-content/uploads/2020/08/aventador-svj-roadster-ad-personam-13.jpg",
-    "https://images.unsplash.com/photo-1566024287286-457247b70310?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1614200179396-230560b75a6e?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?auto=format&fit=crop&w=800&q=80"
+    "https://cdn.dealeraccelerate.com/bagauction/18/3230/149706/790x1024/1985-lamborghini-countach-5000-qv",
+    "https://cdn.dealeraccelerate.com/bagauction/18/3230/149716/1920x1440/1985-lamborghini-countach-5000-qv",
+    "https://i.pinimg.com/736x/81/b9/21/81b921a96ceb3d3edbc25f1e1375bbd4.jpg",
+    "https://c4.wallpaperflare.com/wallpaper/626/95/622/1985-classic-countach-lamborghini-wallpaper-preview.jpg",
+    "https://c4.wallpaperflare.com/wallpaper/741/100/972/1986-5000-classic-countach-wallpaper-preview.jpg"
   ],
   "keySpecifications": {
     "power": "455 hp",
@@ -1449,7 +815,7 @@
   },
   "isTrending": true,
   "popularity": 9,
-  "views": 44000,
+  "views": 44003,
   "likes": 1200,
   "keywords": [
     "classic",
@@ -1457,7 +823,12 @@
     "80s",
     "icon",
     "white"
-  ]
+  ],
+  "acquisition": "rent",
+  "updatedAt": {
+    "$date": "2026-02-08T14:22:01.124Z"
+  },
+  "brand_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_qjePDcj7juYj7A2suJaHv9t67IGwGPwAHw&s"
 },
 {
   "_id": {
@@ -1469,11 +840,11 @@
   "location": "London, UK",
   "brand": "Ferrari",
   "images": [
-    "https://images.unsplash.com/photo-1592198084033-aade902d1aae?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
-    "https://www.ultimatecarpage.com/images/gallery/10834/Ferrari-SF90-XX-Stradale-89827.jpg",
-    "https://pictures.topspeed.com/IMG/jpg/202306/the-ferrari-sf90-xx.jpg",
-    "https://images.unsplash.com/photo-1616422285623-13ff0162193c?auto=format&fit=crop&w=800&q=80"
+    "https://www.amalgamcollection.com/cdn/shop/products/M5376-3943GT-2_-_Ferrari_250_GTO_Nurburgring_No46_1963_1.8_Scale_-_Front_3.4_6c0480b2-c4a8-4faf-8e85-51f0646f31e5_4000x2677_crop_center.jpg?v=1601659612",
+    "https://www.amalgamcollection.com/cdn/shop/products/M5376-3943GT-2_-_Ferrari_250_GTO_Nurburgring_No46_1963_1.8_Scale_-_Front_End_High_4000x2677_crop_center.jpg?v=1601659612",
+    "https://www.amalgamcollection.com/cdn/shop/products/M5376-3943GT-2_-_Ferrari_250_GTO_Nurburgring_No46_1963_1.8_Scale_-_Rear_Higher_Doors_Open_4000x2677_crop_center.jpg?v=1601659612",
+    "https://www.amalgamcollection.com/cdn/shop/products/M5376-3943GT-2_-_Ferrari_250_GTO_Nurburgring_No46_1963_1.8_Scale_-_Left_Side_4000x2677_crop_center.jpg?v=1601659614",
+    "https://www.amalgamcollection.com/cdn/shop/products/M5376-3943GT-2_-_Ferrari_250_GTO_Nurburgring_No46_1963_1.8_Scale_-_Rear_3.4_Higher_4000x2677_crop_center.jpg?v=1601659614"
   ],
   "keySpecifications": {
     "power": "300 hp",
@@ -1518,7 +889,7 @@
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 150000,
+  "views": 150004,
   "likes": 5000,
   "keywords": [
     "ferrari",
@@ -1526,7 +897,12 @@
     "investment",
     "rare",
     "race"
-  ]
+  ],
+  "acquisition": "buy",
+  "updatedAt": {
+    "$date": "2026-02-08T14:25:21.497Z"
+  },
+  "brand_logo": "https://i.pinimg.com/736x/fd/f7/37/fdf73726681950078cf87bef7dacd10d.jpg"
 },
 {
   "_id": {
@@ -1538,11 +914,11 @@
   "location": "Stuttgart, Germany",
   "brand": "Porsche",
   "images": [
-    "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=800&q=80",
-    "https://upload.wikimedia.org/wikipedia/commons/e/e6/2022_Porsche_911_%28992%29_GT3_RS.jpg",
-    "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80",
-    "https://upload.wikimedia.org/wikipedia/commons/e/e6/2022_Porsche_911_%28992%29_GT3_RS.jpg",
-    "https://images.unsplash.com/photo-1599912027806-cfec9f5944b6?auto=format&fit=crop&w=800&q=80"
+    "https://sportscardigest.com/wp-content/uploads/2023/04/1-1570461169486@2x.jpg",
+    "https://sportscardigest.com/wp-content/uploads/2023/04/2-1570461170393@2x.jpg",
+    "https://sportscardigest.com/wp-content/uploads/2023/04/3-1570461171238@2x.jpg",
+    "https://sportscardigest.com/wp-content/uploads/2023/04/14-1570461245376@2x.jpg",
+    "https://sportscardigest.com/wp-content/uploads/2023/04/12-1570461208685@2x.jpg"
   ],
   "keySpecifications": {
     "power": "887 hp",
@@ -1587,7 +963,7 @@
   },
   "isTrending": false,
   "popularity": 8,
-  "views": 29000,
+  "views": 29002,
   "likes": 900,
   "keywords": [
     "porsche",
@@ -1595,7 +971,12 @@
     "hypercar",
     "silver",
     "convertible"
-  ]
+  ],
+  "acquisition": "rent/buy",
+  "updatedAt": {
+    "$date": "2026-02-08T14:30:48.746Z"
+  },
+  "brand_logo": "https://cdn.iconscout.com/icon/free/png-256/free-porsche-icon-svg-download-png-202881.png"
 },
 {
   "_id": {
@@ -1607,11 +988,11 @@
   "location": "New York, NY, USA",
   "brand": "Rolls-Royce",
   "images": [
-    "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1485291571150-772bcfc10da5?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80"
+    "https://hips.hearstapps.com/hmg-prod/images/2019-rolls-royce-cullinan-107-hdr-1572353209.jpg?crop=0.713xw:0.582xh;0.287xw,0.388xh&resize=1400:*",
+    "https://hips.hearstapps.com/hmg-prod/images/2019-rolls-royce-cullinan-194-hdr-1572353211.jpg?crop=1xw:1xh;center,top",
+    "https://hips.hearstapps.com/hmg-prod/images/2019-rolls-royce-cullinan-272-hdr-1572353219.jpg?crop=1xw:1xh;center,top",
+    "https://hips.hearstapps.com/hmg-prod/images/2019-rolls-royce-cullinan-119-hdr-1572353209.jpg?crop=1xw:1xh;center,top",
+    "https://hips.hearstapps.com/hmg-prod/images/2019-rolls-royce-cullinan-143-hdr-1572353206.jpg?crop=1xw:1xh;center,top"
   ],
   "keySpecifications": {
     "power": "563 hp",
@@ -1656,7 +1037,7 @@
   },
   "isTrending": true,
   "popularity": 9,
-  "views": 26000,
+  "views": 26002,
   "likes": 600,
   "keywords": [
     "suv",
@@ -1664,7 +1045,12 @@
     "rolls-royce",
     "black",
     "comfort"
-  ]
+  ],
+  "acquisition": "rent",
+  "updatedAt": {
+    "$date": "2026-02-08T14:35:16.873Z"
+  },
+  "brand_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9pzM2L3GEiVB9oOTlIQO9Hm8RKY-H13YQvw&s"
 },
 {
   "_id": {
@@ -1676,11 +1062,11 @@
   "location": "Angelholm, Sweden",
   "brand": "Koenigsegg",
   "images": [
-    "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80"
+    "https://www.topgear.com/sites/default/files/2024/07/MAIN.jpg?w=892&h=502",
+    "https://www.topgear.com/sites/default/files/2024/07/FOOTER_1.jpg?w=892&h=502",
+    "https://www.topgear.com/sites/default/files/2024/07/MF102707-Edit.jpg?w=892&h=502",
+    "https://hips.hearstapps.com/mtg-prod/65a0bc2ec7585e00086168b0/006-2024-koenigsegg-jesko-first-drive-review.jpg",
+    "https://pliki.well.pl/i/03/45/63/034563_r0_940.jpg"
   ],
   "keySpecifications": {
     "power": "1600 hp",
@@ -1725,7 +1111,7 @@
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 105000,
+  "views": 105003,
   "likes": 4500,
   "keywords": [
     "fastest",
@@ -1733,5 +1119,10 @@
     "swedish",
     "tech",
     "speed"
-  ]
+  ],
+  "acquisition": "buy",
+  "updatedAt": {
+    "$date": "2026-02-08T14:54:21.518Z"
+  },
+  "brand_logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWEJnKQKdKv1UMoZMX2ihIzKM5dap1uiPgUA&s"
 }]

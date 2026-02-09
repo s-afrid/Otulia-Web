@@ -1,79 +1,5 @@
 [{
   "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179b0"
-  },
-  "title": "The Azure Coast Mansion",
-  "description": "Perched on the cliffs of the French Riviera, this modern masterpiece offers panoramic views of the Mediterranean. Featuring floor-to-ceiling glass walls, an infinity pool that blends into the horizon, and a private helipad, this estate defines coastal luxury.",
-  "price": 25000000,
-  "location": "Nice, French Riviera, France",
-  "images": [
-    "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-    "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "landArea": "2 Acres",
-    "bathrooms": "8",
-    "bedrooms": "6",
-    "floors": "3",
-    "garage_capacity": "4 Cars",
-    "builtUpArea": "12,000 Sq Ft"
-  },
-  "specification": {
-    "yearOfConstruction": "2022",
-    "propertyType": "Mansion",
-    "architectureStyle": "Contemporary",
-    "builtUpArea": "12,000 Sq Ft",
-    "landArea": "2 Acres",
-    "floors": 3,
-    "bedrooms": 6,
-    "bathrooms": 8,
-    "ceilingHeight": "14 ft",
-    "parkingCapacity": 4,
-    "furnitureStatus": "Fully Furnished",
-    "ownershipType": "Freehold",
-    "view": "Ocean View",
-    "configuration": "Detached",
-    "interiorMaterial": "Italian Marble & Glass",
-    "interiorColorTheme": "White & Blue",
-    "exteriorFinish": "Stucco & Glass",
-    "outdoorSpaces": "Infinity Pool, Terrace",
-    "climateControl": "Central AC",
-    "smartHomeSystem": "Control4",
-    "security": "24/7 Patrol",
-    "condition": "New",
-    "usageStatus": "Vacant",
-    "country": "France"
-  },
-  "agent": {
-    "name": "Jean-Pierre Dubois",
-    "photo": "https://randomuser.me/api/portraits/men/1.jpg",
-    "phone": "+33 6 12 34 56 78",
-    "email": "jp.dubois@luxestates.fr",
-    "company": "Riviera Realty",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 9,
-  "views": 15422,
-  "likes": 340,
-  "keywords": [
-    "ocean view",
-    "modern",
-    "pool",
-    "france",
-    "luxury"
-  ],
-  "updatedAt": {
-    "$date": "2026-01-24T03:37:15.977Z"
-  }
-},
-{
-  "_id": {
     "$oid": "69708ff4c0f4cb46d1a179b1"
   },
   "title": "Beverly Hills Historic Estate",
@@ -81,11 +7,11 @@
   "price": 18500000,
   "location": "Beverly Hills, CA, USA",
   "images": [
-    "https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=800&q=80"
+    "https://hips.hearstapps.com/hmg-prod/images/q38g2b-826-greenway-drive-1-6878197da7226.jpg?crop=0.8438888888888889xw:1xh;center,top",
+    "https://hips.hearstapps.com/hmg-prod/images/q38g2b-826-greenway-drive-14-6877e7f3803fb.jpg?resize=980:*",
+    "https://hips.hearstapps.com/hmg-prod/images/q38g2b-826-greenway-drive-13-687819fabfdb6.jpg?resize=980:*",
+    "https://hips.hearstapps.com/hmg-prod/images/q38g2b-826-greenway-drive-18-68781afd008a9.jpg?resize=980:*",
+    "https://hips.hearstapps.com/hmg-prod/images/q38g2b-826-greenway-drive-26-68781b73b5d8d.jpg?resize=980:*"
   ],
   "keySpecifications": {
     "landArea": "1.5 Acres",
@@ -133,7 +59,7 @@
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 22101,
+  "views": 22116,
   "likes": 890,
   "keywords": [
     "historic",
@@ -143,79 +69,18 @@
     "celebrity"
   ],
   "updatedAt": {
-    "$date": "2026-01-24T03:56:17.767Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179b2"
+    "$date": "2026-02-09T04:20:13.573Z"
   },
-  "title": "Skyline Penthouse Dubai",
-  "description": "Occupying the entire 90th floor, this penthouse offers 360-degree views of the Burj Khalifa and the Persian Gulf. Includes private elevator access, a sky lounge, and bespoke gold fittings.",
-  "price": 45000000,
-  "location": "Downtown Dubai, UAE",
-  "images": [
-    "https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1597659840241-37e2b9c2f55f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "landArea": "N/A",
-    "bathrooms": "6",
-    "bedrooms": "5",
-    "floors": "1",
-    "garage_capacity": "3 Cars",
-    "builtUpArea": "8,500 Sq Ft"
-  },
-  "specification": {
-    "yearOfConstruction": "2023",
-    "propertyType": "Penthouse",
-    "architectureStyle": "Ultra Modern",
-    "builtUpArea": "8,500 Sq Ft",
-    "landArea": "N/A",
-    "floors": 1,
-    "bedrooms": 5,
-    "bathrooms": 6,
-    "ceilingHeight": "20 ft",
-    "parkingCapacity": 3,
-    "furnitureStatus": "Fully Furnished",
-    "ownershipType": "Leasehold",
-    "view": "City Skyline",
-    "configuration": "High Rise",
-    "interiorMaterial": "Marble & Gold",
-    "interiorColorTheme": "Gold & Black",
-    "exteriorFinish": "Glass Facade",
-    "outdoorSpaces": "Balcony",
-    "climateControl": "Central Climate",
-    "smartHomeSystem": "Full Integration",
-    "security": "Concierge",
-    "condition": "Brand New",
-    "usageStatus": "Vacant",
-    "country": "UAE"
-  },
-  "agent": {
-    "name": "Ahmed Al-Fayed",
-    "photo": "https://randomuser.me/api/portraits/men/3.jpg",
-    "phone": "+971 50 123 4567",
-    "email": "ahmed@dubaihighlife.ae",
-    "company": "Dubai High Life",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 8,
-  "views": 18000,
-  "likes": 560,
-  "keywords": [
-    "penthouse",
-    "dubai",
-    "view",
-    "skyscraper",
-    "luxury"
-  ]
+  "__v": 1,
+  "amenities": [],
+  "category": "estates",
+  "documents": [],
+  "highlights": [],
+  "smartHomeSystems": [],
+  "status": "Active",
+  "type": "Sale",
+  "viewTypes": [],
+  "acquisition": "buy"
 },
 {
   "_id": {
@@ -286,81 +151,8 @@
     "rustic",
     "wine",
     "villa"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179b4"
-  },
-  "title": "Aspen Mountain Chalet",
-  "description": "Ski-in, ski-out luxury chalet located at the base of Ajax Mountain. Features a massive stone fireplace, heated driveway, outdoor hot tub, and private ski locker room.",
-  "price": 14200000,
-  "location": "Aspen, CO, USA",
-  "images": [
-    "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&w=800&q=80"
   ],
-  "keySpecifications": {
-    "landArea": "0.5 Acres",
-    "bathrooms": "6",
-    "bedrooms": "5",
-    "floors": "3",
-    "garage_capacity": "3 Cars",
-    "builtUpArea": "6,500 Sq Ft"
-  },
-  "specification": {
-    "yearOfConstruction": "2018",
-    "propertyType": "Chalet",
-    "architectureStyle": "Alpine Contemporary",
-    "builtUpArea": "6,500 Sq Ft",
-    "landArea": "0.5 Acres",
-    "floors": 3,
-    "bedrooms": 5,
-    "bathrooms": 6,
-    "ceilingHeight": "18 ft",
-    "parkingCapacity": 3,
-    "furnitureStatus": "Fully Furnished",
-    "ownershipType": "Freehold",
-    "view": "Mountain",
-    "configuration": "Detached",
-    "interiorMaterial": "Timber & Stone",
-    "interiorColorTheme": "Brown & Cream",
-    "exteriorFinish": "Wood Siding",
-    "outdoorSpaces": "Deck, Hot Tub",
-    "climateControl": "Radiant Heating",
-    "smartHomeSystem": "Lutron",
-    "security": "Alarm System",
-    "condition": "Excellent",
-    "usageStatus": "Vacant",
-    "country": "USA"
-  },
-  "agent": {
-    "name": "Mike Denver",
-    "photo": "https://randomuser.me/api/portraits/men/5.jpg",
-    "phone": "+1 970 555 1212",
-    "email": "mike@aspenski.com",
-    "company": "Alpine Realty",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 9,
-  "views": 12304,
-  "likes": 450,
-  "keywords": [
-    "ski",
-    "mountain",
-    "snow",
-    "chalet",
-    "winter"
-  ],
-  "updatedAt": {
-    "$date": "2026-01-24T03:46:17.794Z"
-  }
+  "acquisition": "rent"
 },
 {
   "_id": {
@@ -423,7 +215,7 @@
   },
   "isTrending": false,
   "popularity": 6,
-  "views": 6706,
+  "views": 6707,
   "likes": 150,
   "keywords": [
     "zen",
@@ -433,8 +225,9 @@
     "peaceful"
   ],
   "updatedAt": {
-    "$date": "2026-01-24T03:56:13.554Z"
-  }
+    "$date": "2026-01-24T14:45:39.207Z"
+  },
+  "acquisition": "rent/buy"
 },
 {
   "_id": {
@@ -445,11 +238,11 @@
   "price": 12500000,
   "location": "New York, NY, USA",
   "images": [
-    "https://images.unsplash.com/photo-1464146072230-91cabc968266?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=800&q=80"
+    "https://tenberke.com/wp-content/uploads/2022/05/R_Manhattan-Townhouse_01.jpg",
+    "https://tenberke.com/wp-content/uploads/2022/05/R_Manhattan-Townhouse_04-scaled.jpg",
+    "https://tenberke.com/wp-content/uploads/2022/05/R_Manhattan-Townhouse_07-scaled.jpg",
+    "https://tenberke.com/wp-content/uploads/2022/05/R_Manhattan-Townhouse_12-scaled.jpg",
+    "https://tenberke.com/wp-content/uploads/2022/05/R_Manhattan-Townhouse_13-scaled.jpg"
   ],
   "keySpecifications": {
     "landArea": "2,000 Sq Ft (Lot)",
@@ -497,7 +290,7 @@
   },
   "isTrending": true,
   "popularity": 8,
-  "views": 14504,
+  "views": 14510,
   "likes": 320,
   "keywords": [
     "new york",
@@ -507,79 +300,18 @@
     "city"
   ],
   "updatedAt": {
-    "$date": "2026-01-24T03:42:47.536Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179b7"
+    "$date": "2026-02-09T04:31:28.730Z"
   },
-  "title": "Bali Rainforest Sanctuary",
-  "description": "Surrounded by lush jungle in Ubud, this bamboo eco-villa features open-air living spaces, a natural spring pool, and total seclusion. Perfect for wellness retreats.",
-  "price": 3200000,
-  "location": "Ubud, Bali, Indonesia",
-  "images": [
-    "https://images.unsplash.com/photo-1537726235470-8504e3beef77?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1573059225722-1d58231c6204?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1544642899-f0d6e5f6ed6f?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=80"
-  ],
-  "keySpecifications": {
-    "landArea": "1 Acre",
-    "bathrooms": "4",
-    "bedrooms": "3",
-    "floors": "2",
-    "garage_capacity": "2 Cars",
-    "builtUpArea": "4,000 Sq Ft"
-  },
-  "specification": {
-    "yearOfConstruction": "2020",
-    "propertyType": "Eco Villa",
-    "architectureStyle": "Bamboo Architecture",
-    "builtUpArea": "4,000 Sq Ft",
-    "landArea": "1 Acre",
-    "floors": 2,
-    "bedrooms": 3,
-    "bathrooms": 4,
-    "ceilingHeight": "15 ft",
-    "parkingCapacity": 2,
-    "furnitureStatus": "Fully Furnished",
-    "ownershipType": "Leasehold",
-    "view": "Jungle",
-    "configuration": "Detached",
-    "interiorMaterial": "Bamboo & Stone",
-    "interiorColorTheme": "Natural",
-    "exteriorFinish": "Bamboo",
-    "outdoorSpaces": "Pool, Yoga Deck",
-    "climateControl": "Natural Ventilation",
-    "smartHomeSystem": "None",
-    "security": "Night Guard",
-    "condition": "Excellent",
-    "usageStatus": "Vacant",
-    "country": "Indonesia"
-  },
-  "agent": {
-    "name": "Wayan Putra",
-    "photo": "https://randomuser.me/api/portraits/men/8.jpg",
-    "phone": "+62 81 234 567",
-    "email": "wayan@balieco.com",
-    "company": "Bali Eco Living",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 8,
-  "views": 10200,
-  "likes": 400,
-  "keywords": [
-    "jungle",
-    "bamboo",
-    "eco",
-    "bali",
-    "pool"
-  ]
+  "__v": 1,
+  "amenities": [],
+  "category": "estates",
+  "documents": [],
+  "highlights": [],
+  "smartHomeSystems": [],
+  "status": "Active",
+  "type": "Sale",
+  "viewTypes": [],
+  "acquisition": "rent"
 },
 {
   "_id": {
@@ -590,11 +322,11 @@
   "price": 18000000,
   "location": "London, UK",
   "images": [
-    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600607688527-6fb886090705?auto=format&fit=crop&w=800&q=80"
+    "https://media.onthemarket.com/properties/18488958/1588050612/image-0-1024x1024.webp",
+    "https://media.onthemarket.com/properties/18488958/1588050612/image-1-1024x1024.webp",
+    "https://media.onthemarket.com/properties/18488958/1588050612/image-3-1024x1024.webp",
+    "https://media.onthemarket.com/properties/18488958/1588050612/image-2-1024x1024.webp",
+    "https://media.onthemarket.com/properties/18488958/1588050612/image-4-1024x1024.webp"
   ],
   "keySpecifications": {
     "landArea": "N/A",
@@ -642,7 +374,7 @@
   },
   "isTrending": false,
   "popularity": 7,
-  "views": 8900,
+  "views": 8903,
   "likes": 280,
   "keywords": [
     "london",
@@ -650,78 +382,11 @@
     "park",
     "modern",
     "luxury"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179b9"
-  },
-  "title": "Cape Town Ocean Villa",
-  "description": "Located in Camps Bay, this architectural marvel offers unobstructed views of the Atlantic Ocean and the Twelve Apostles mountain range. Stunning sunset views guaranteed.",
-  "price": 5500000,
-  "location": "Cape Town, South Africa",
-  "images": [
-    "https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1527030280862-64139fba04ca?auto=format&fit=crop&w=800&q=80"
   ],
-  "keySpecifications": {
-    "landArea": "0.2 Acres",
-    "bathrooms": "5",
-    "bedrooms": "4",
-    "floors": "3",
-    "garage_capacity": "2 Cars",
-    "builtUpArea": "5,000 Sq Ft"
+  "updatedAt": {
+    "$date": "2026-02-09T04:38:21.520Z"
   },
-  "specification": {
-    "yearOfConstruction": "2019",
-    "propertyType": "Villa",
-    "architectureStyle": "Contemporary",
-    "builtUpArea": "5,000 Sq Ft",
-    "landArea": "0.2 Acres",
-    "floors": 3,
-    "bedrooms": 4,
-    "bathrooms": 5,
-    "ceilingHeight": "12 ft",
-    "parkingCapacity": 2,
-    "furnitureStatus": "Furnished",
-    "ownershipType": "Freehold",
-    "view": "Ocean & Mountain",
-    "configuration": "Detached",
-    "interiorMaterial": "Concrete & Wood",
-    "interiorColorTheme": "White & Grey",
-    "exteriorFinish": "Concrete",
-    "outdoorSpaces": "Pool Deck",
-    "climateControl": "AC",
-    "smartHomeSystem": "Integrated",
-    "security": "Electric Fence",
-    "condition": "New",
-    "usageStatus": "Vacant",
-    "country": "South Africa"
-  },
-  "agent": {
-    "name": "Charlize Van Der Merwe",
-    "photo": "https://randomuser.me/api/portraits/women/10.jpg",
-    "phone": "+27 21 555 1234",
-    "email": "charlize@caperealty.za",
-    "company": "Cape Realty",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 8,
-  "views": 11000,
-  "likes": 390,
-  "keywords": [
-    "ocean",
-    "mountain",
-    "cape town",
-    "modern",
-    "pool"
-  ]
+  "acquisition": "rent/buy"
 },
 {
   "_id": {
@@ -732,11 +397,11 @@
   "price": 9800000,
   "location": "Zermatt, Switzerland",
   "images": [
-    "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1502005229766-31bf0bed6b24?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1483825366482-1265f6ea2bc9?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1548777123-e216912df7d8?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1550928431-ee0ec6db30d3?auto=format&fit=crop&w=800&q=80"
+    "https://cdn.lecollectionist.com/__lecollectionist__/production/houses/645/photos/VavTeTceTnGS7CJ1p8ae_08491df1-cf39-48a0-b07b-a93e5fd35ec1.jpg?height=644&force_format=webp&q=80",
+    "https://cdn.lecollectionist.com/__collectionist__/production/uploads/photos/1368/chalet-shalimar-1695.jpg?width=1228&force_format=webp&q=80",
+    "https://cdn.lecollectionist.com/__collectionist__/production/uploads/photos/1369/chalet-shalimar-1697.jpg?width=1228&force_format=webp&q=80",
+    "https://cdn.lecollectionist.com/__collectionist__/production/uploads/photos/1370/chalet-shalimar-1698.jpg?width=1228&force_format=webp&q=80",
+    "https://cdn.lecollectionist.com/__collectionist__/production/uploads/photos/1387/chalet-shalimar-1658.jpg?width=1228&force_format=webp&q=80"
   ],
   "keySpecifications": {
     "landArea": "0.3 Acres",
@@ -784,7 +449,7 @@
   },
   "isTrending": false,
   "popularity": 7,
-  "views": 7800,
+  "views": 7802,
   "likes": 250,
   "keywords": [
     "snow",
@@ -792,78 +457,11 @@
     "matterhorn",
     "chalet",
     "cozy"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179bb"
-  },
-  "title": "Miami Waterfront Mansion",
-  "description": "Located on Star Island, this expansive estate features a private dock for your yacht, a tropical pool oasis, and ultra-modern interiors.",
-  "price": 32000000,
-  "location": "Miami Beach, FL, USA",
-  "images": [
-    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1516455207990-7a41ce80f7ee?auto=format&fit=crop&w=800&q=80"
   ],
-  "keySpecifications": {
-    "landArea": "1.2 Acres",
-    "bathrooms": "9",
-    "bedrooms": "8",
-    "floors": "2",
-    "garage_capacity": "5 Cars",
-    "builtUpArea": "14,000 Sq Ft"
-  },
-  "specification": {
-    "yearOfConstruction": "2021",
-    "propertyType": "Mansion",
-    "architectureStyle": "Modern Tropical",
-    "builtUpArea": "14,000 Sq Ft",
-    "landArea": "1.2 Acres",
-    "floors": 2,
-    "bedrooms": 8,
-    "bathrooms": 9,
-    "ceilingHeight": "16 ft",
-    "parkingCapacity": 5,
-    "furnitureStatus": "Fully Furnished",
-    "ownershipType": "Freehold",
-    "view": "Bay View",
-    "configuration": "Gated",
-    "interiorMaterial": "Marble & Glass",
-    "interiorColorTheme": "White",
-    "exteriorFinish": "Stucco",
-    "outdoorSpaces": "Dock, Pool, BBQ",
-    "climateControl": "Central AC",
-    "smartHomeSystem": "Full Smart Home",
-    "security": "Gated Community",
-    "condition": "New",
-    "usageStatus": "Vacant",
-    "country": "USA"
-  },
-  "agent": {
-    "name": "Ricardo Diaz",
-    "photo": "https://randomuser.me/api/portraits/men/12.jpg",
-    "phone": "+1 305 555 6789",
-    "email": "ricardo@miamivip.com",
-    "company": "Miami VIP Realty",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 9,
-  "views": 19500,
-  "likes": 720,
-  "keywords": [
-    "waterfront",
-    "yacht",
-    "pool",
-    "modern",
-    "miami"
-  ]
+  "acquisition": "buy",
+  "updatedAt": {
+    "$date": "2026-02-09T04:43:23.136Z"
+  }
 },
 {
   "_id": {
@@ -874,11 +472,11 @@
   "price": 6500000,
   "location": "Paris, France",
   "images": [
-    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1499916078039-922301b0eb9b?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1551522435-a13afa10f103?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1549488344-c7052fb51c5b?auto=format&fit=crop&w=800&q=80"
+    "https://asset.mansionglobal.com/editorial/paris-s-haussmann-style-homes-offer-a-refined-lifestyle/assets/dLstInx06O/20200702-2_27-1920x1280.webp",
+    "https://asset.mansionglobal.com/editorial/paris-s-haussmann-style-homes-offer-a-refined-lifestyle/assets/B7Svshy2JJ/178-rivoli-sb-4-2117x1406.webp",
+    "https://asset.mansionglobal.com/editorial/paris-s-haussmann-style-homes-offer-a-refined-lifestyle/assets/JE8ccNNsRW/178-rivoli-sb-23-2184x1450.webp",
+    "https://asset.mansionglobal.com/editorial/paris-s-haussmann-style-homes-offer-a-refined-lifestyle/assets/dAl2kgYC3y/stairs_flipped-1920x1280.webp",
+    "https://asset.mansionglobal.com/editorial/paris-s-haussmann-style-homes-offer-a-refined-lifestyle/assets/5efOn4KJCZ/20200706-1_06-1920x1280.webp"
   ],
   "keySpecifications": {
     "landArea": "N/A",
@@ -926,7 +524,7 @@
   },
   "isTrending": true,
   "popularity": 8,
-  "views": 10500,
+  "views": 10502,
   "likes": 310,
   "keywords": [
     "paris",
@@ -934,78 +532,11 @@
     "balcony",
     "elegant",
     "apartment"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179bd"
-  },
-  "title": "Santorini Cliffside Villa",
-  "description": "Iconic white-washed villa in Oia with a private plunge pool and breathtaking sunset views over the caldera. The ultimate Greek island experience.",
-  "price": 4200000,
-  "location": "Oia, Santorini, Greece",
-  "images": [
-    "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1601752943749-7dd8d89f407a?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1531581147762-5961e6e2e6b1?auto=format&fit=crop&w=800&q=80"
   ],
-  "keySpecifications": {
-    "landArea": "400 Sq Meters",
-    "bathrooms": "3",
-    "bedrooms": "3",
-    "floors": "2",
-    "garage_capacity": "0",
-    "builtUpArea": "2,500 Sq Ft"
-  },
-  "specification": {
-    "yearOfConstruction": "2015",
-    "propertyType": "Villa",
-    "architectureStyle": "Cycladic",
-    "builtUpArea": "2,500 Sq Ft",
-    "landArea": "400 Sq Meters",
-    "floors": 2,
-    "bedrooms": 3,
-    "bathrooms": 3,
-    "ceilingHeight": "9 ft",
-    "parkingCapacity": 0,
-    "furnitureStatus": "Fully Furnished",
-    "ownershipType": "Freehold",
-    "view": "Sea/Caldera",
-    "configuration": "Terraced",
-    "interiorMaterial": "Plaster & Stone",
-    "interiorColorTheme": "White & Blue",
-    "exteriorFinish": "White Plaster",
-    "outdoorSpaces": "Terrace, Pool",
-    "climateControl": "AC",
-    "smartHomeSystem": "None",
-    "security": "None",
-    "condition": "Excellent",
-    "usageStatus": "Vacant",
-    "country": "Greece"
-  },
-  "agent": {
-    "name": "Nikos Papadopoulos",
-    "photo": "https://randomuser.me/api/portraits/men/14.jpg",
-    "phone": "+30 2286 012345",
-    "email": "nikos@santorinilux.gr",
-    "company": "Santorini Lux",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 9,
-  "views": 16000,
-  "likes": 650,
-  "keywords": [
-    "sea",
-    "greece",
-    "white",
-    "view",
-    "sunset"
-  ]
+  "acquisition": "rent",
+  "updatedAt": {
+    "$date": "2026-02-09T04:47:55.244Z"
+  }
 },
 {
   "_id": {
@@ -1016,11 +547,11 @@
   "price": 11500000,
   "location": "Austin, TX, USA",
   "images": [
-    "https://images.unsplash.com/photo-1544984243-ec57ea16fe25?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1523755231516-e43fd2e8dca5?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1504194569470-87a371c64eb3?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1533282960533-51328aa49826?auto=format&fit=crop&w=800&q=80"
+    "https://s3.amazonaws.com/propertybase-clients/00Di0000000f7m6EAA/a0CNu00003CAoQa/8ysu92bij/MY-002.jpg",
+    "https://s3.amazonaws.com/propertybase-clients/00Di0000000f7m6EAA/a0CNu00003CAoQa/4iefz2l3z/MY-011.jpg",
+    "https://s3.amazonaws.com/propertybase-clients/00Di0000000f7m6EAA/a0CNu00003CAoQa/p842o8h57/MY-015.jpg",
+    "https://s3.amazonaws.com/propertybase-clients/00Di0000000f7m6EAA/a0CNu00003CAoQa/endd70dt9/MY-017.jpg",
+    "https://s3.amazonaws.com/propertybase-clients/00Di0000000f7m6EAA/a0CNu00003CAoQa/5fx0rzyml/MY-020.jpg"
   ],
   "keySpecifications": {
     "landArea": "200 Acres",
@@ -1068,7 +599,7 @@
   },
   "isTrending": false,
   "popularity": 6,
-  "views": 5400,
+  "views": 5402,
   "likes": 180,
   "keywords": [
     "ranch",
@@ -1076,78 +607,11 @@
     "horses",
     "lake",
     "land"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179bf"
-  },
-  "title": "Vancouver Glass House",
-  "description": "Nestled in the forests of West Vancouver, this home features floor-to-ceiling glass, blurring the lines between indoor living and the surrounding nature.",
-  "price": 8900000,
-  "location": "Vancouver, BC, Canada",
-  "images": [
-    "https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1521747116042-5a810fda9664?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1598228723793-52759bba239c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=800&q=80"
   ],
-  "keySpecifications": {
-    "landArea": "0.8 Acres",
-    "bathrooms": "4",
-    "bedrooms": "4",
-    "floors": "2",
-    "garage_capacity": "2 Cars",
-    "builtUpArea": "4,800 Sq Ft"
-  },
-  "specification": {
-    "yearOfConstruction": "2017",
-    "propertyType": "House",
-    "architectureStyle": "Modern West Coast",
-    "builtUpArea": "4,800 Sq Ft",
-    "landArea": "0.8 Acres",
-    "floors": 2,
-    "bedrooms": 4,
-    "bathrooms": 4,
-    "ceilingHeight": "14 ft",
-    "parkingCapacity": 2,
-    "furnitureStatus": "Unfurnished",
-    "ownershipType": "Freehold",
-    "view": "Forest/Ocean",
-    "configuration": "Detached",
-    "interiorMaterial": "Concrete & Wood",
-    "interiorColorTheme": "Grey & Brown",
-    "exteriorFinish": "Glass & Cedar",
-    "outdoorSpaces": "Deck",
-    "climateControl": "Radiant Floor",
-    "smartHomeSystem": "Lutron",
-    "security": "Alarm",
-    "condition": "Excellent",
-    "usageStatus": "Vacant",
-    "country": "Canada"
-  },
-  "agent": {
-    "name": "Jessica Lee",
-    "photo": "https://randomuser.me/api/portraits/women/16.jpg",
-    "phone": "+1 604 555 9876",
-    "email": "jessica@vancouverlux.ca",
-    "company": "VanCity Homes",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 8,
-  "views": 9200,
-  "likes": 340,
-  "keywords": [
-    "glass",
-    "forest",
-    "modern",
-    "nature",
-    "canada"
-  ]
+  "acquisition": "rent/buy",
+  "updatedAt": {
+    "$date": "2026-02-09T04:50:28.654Z"
+  }
 },
 {
   "_id": {
@@ -1158,11 +622,11 @@
   "price": 22000000,
   "location": "Sydney, NSW, Australia",
   "images": [
-    "https://images.unsplash.com/photo-1545465171-89307c87c02b?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1524168926442-f674693a6dc7?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1506126299667-805470d32dca?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?auto=format&fit=crop&w=800&q=80"
+    "https://img.jamesedition.com/listing_images/2025/11/07/13/30/43/1cb48898-67a4-4cf5-80eb-fcd633aaf921/je/1900xxs.jpg",
+    "https://img.jamesedition.com/listing_images/2025/11/07/13/30/43/ef0f9a62-3eca-424e-a36d-ee5141a547a8/je/1900xxs.jpg",
+    "https://img.jamesedition.com/listing_images/2025/11/07/13/30/43/bff04476-a9c8-4c4c-81d2-822656af90ce/je/1900xxs.jpg",
+    "https://img.jamesedition.com/listing_images/2025/11/07/13/30/43/3e1f5164-f4b1-4a9e-9379-3362579828db/je/1900xxs.jpg",
+    "https://img.jamesedition.com/listing_images/2025/11/07/13/30/43/1fbd0c34-aac4-40a1-8a4d-9324d929948a/je/1900xxs.jpg"
   ],
   "keySpecifications": {
     "landArea": "0.4 Acres",
@@ -1210,7 +674,7 @@
   },
   "isTrending": true,
   "popularity": 9,
-  "views": 13500,
+  "views": 13502,
   "likes": 510,
   "keywords": [
     "harbor",
@@ -1218,78 +682,11 @@
     "waterfront",
     "pool",
     "view"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179c1"
-  },
-  "title": "Marrakech Palmeraie Villa",
-  "description": "A stunning Moroccan palace set within the Palmeraie oasis. Intricate tile work, lush courtyards with fountains, and a hammam spa.",
-  "price": 4800000,
-  "location": "Marrakech, Morocco",
-  "images": [
-    "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1590059390239-1d374526d566?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1590725140246-20ac7013a10a?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1535063404189-e85494d6e156?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1523659141429-234b33346d75?auto=format&fit=crop&w=800&q=80"
   ],
-  "keySpecifications": {
-    "landArea": "3 Acres",
-    "bathrooms": "8",
-    "bedrooms": "8",
-    "floors": "2",
-    "garage_capacity": "4 Cars",
-    "builtUpArea": "10,000 Sq Ft"
-  },
-  "specification": {
-    "yearOfConstruction": "2005",
-    "propertyType": "Villa",
-    "architectureStyle": "Moorish",
-    "builtUpArea": "10,000 Sq Ft",
-    "landArea": "3 Acres",
-    "floors": 2,
-    "bedrooms": 8,
-    "bathrooms": 8,
-    "ceilingHeight": "14 ft",
-    "parkingCapacity": 4,
-    "furnitureStatus": "Fully Furnished",
-    "ownershipType": "Freehold",
-    "view": "Gardens",
-    "configuration": "Detached",
-    "interiorMaterial": "Tile & Plaster",
-    "interiorColorTheme": "Colorful",
-    "exteriorFinish": "Tadelakt",
-    "outdoorSpaces": "Pool, Gardens",
-    "climateControl": "AC/Heating",
-    "smartHomeSystem": "None",
-    "security": "Gated",
-    "condition": "Good",
-    "usageStatus": "Vacant",
-    "country": "Morocco"
-  },
-  "agent": {
-    "name": "Yasmine Benali",
-    "photo": "https://randomuser.me/api/portraits/women/18.jpg",
-    "phone": "+212 6 61 23 45 67",
-    "email": "yasmine@marrakechliving.ma",
-    "company": "Oasis Properties",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": false,
-  "popularity": 6,
-  "views": 7200,
-  "likes": 230,
-  "keywords": [
-    "morocco",
-    "palace",
-    "pool",
-    "garden",
-    "exotic"
-  ]
+  "acquisition": "buy",
+  "updatedAt": {
+    "$date": "2026-02-09T04:53:06.404Z"
+  }
 },
 {
   "_id": {
@@ -1300,11 +697,11 @@
   "price": 15500000,
   "location": "Orchard Road, Singapore",
   "images": [
-    "https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1550184850-252f8623267b?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1522050212171-61b01dd24579?auto=format&fit=crop&w=800&q=80"
+    "https://sg.tepcdn.com/public/usr/1hrsv2/eb2d78-R-View13-Closeup-of-Middle-Facade-11.jpg",
+    "https://sg.tepcdn.com/public/usr/1hrsv2/cb5a93-R-View19b-4BR-Living-Dining-Area-D3-08.jpg",
+    "https://sg.tepcdn.com/public/usr/1hrsv2/e23f89-R-View12-L33-Pool-MBS-View-08-250109-.jpg",
+    "https://sg.tepcdn.com/public/usr/1hrsv2/1ea015-R-View07-Upper-Register-Sports-Hub-View-04.jpg",
+    "https://img.tepcdn.com/img-style/simplecrop_article/88067433.jpg"
   ],
   "keySpecifications": {
     "landArea": "N/A",
@@ -1352,7 +749,7 @@
   },
   "isTrending": true,
   "popularity": 8,
-  "views": 11500,
+  "views": 11502,
   "likes": 420,
   "keywords": [
     "singapore",
@@ -1360,78 +757,11 @@
     "pool",
     "city",
     "luxury"
-  ]
-},
-{
-  "_id": {
-    "$oid": "69708ff4c0f4cb46d1a179c3"
-  },
-  "title": "Hamptons Beachfront Estate",
-  "description": "Classic shingle-style home right on the beach in East Hampton. Expansive lawns, a heated gunite pool, and private boardwalk access to the ocean.",
-  "price": 28000000,
-  "location": "East Hampton, NY, USA",
-  "images": [
-    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
   ],
-  "keySpecifications": {
-    "landArea": "3 Acres",
-    "bathrooms": "8",
-    "bedrooms": "7",
-    "floors": "2",
-    "garage_capacity": "4 Cars",
-    "builtUpArea": "9,000 Sq Ft"
-  },
-  "specification": {
-    "yearOfConstruction": "2008",
-    "propertyType": "Estate",
-    "architectureStyle": "Shingle Style",
-    "builtUpArea": "9,000 Sq Ft",
-    "landArea": "3 Acres",
-    "floors": 2,
-    "bedrooms": 7,
-    "bathrooms": 8,
-    "ceilingHeight": "10 ft",
-    "parkingCapacity": 4,
-    "furnitureStatus": "Furnished",
-    "ownershipType": "Freehold",
-    "view": "Ocean",
-    "configuration": "Detached",
-    "interiorMaterial": "Wood & White",
-    "interiorColorTheme": "Coastal White",
-    "exteriorFinish": "Cedar Shingles",
-    "outdoorSpaces": "Pool, Lawn",
-    "climateControl": "Central HVAC",
-    "smartHomeSystem": "Security",
-    "security": "Gated",
-    "condition": "Excellent",
-    "usageStatus": "Vacant",
-    "country": "USA"
-  },
-  "agent": {
-    "name": "Amanda Clarke",
-    "photo": "https://randomuser.me/api/portraits/women/20.jpg",
-    "phone": "+1 631 555 2468",
-    "email": "amanda@hamptonslux.com",
-    "company": "Hamptons Lux",
-    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
-    "id": "10",
-    "joined": 6
-  },
-  "isTrending": true,
-  "popularity": 9,
-  "views": 18200,
-  "likes": 550,
-  "keywords": [
-    "beach",
-    "hamptons",
-    "ocean",
-    "classic",
-    "summer"
-  ]
+  "acquisition": "rent",
+  "updatedAt": {
+    "$date": "2026-02-09T04:56:25.007Z"
+  }
 },
 {
   "_id": {
@@ -1442,11 +772,11 @@
   "price": 16000000,
   "location": "Bellagio, Italy",
   "images": [
-    "https://images.unsplash.com/photo-1572297838561-12c96c469b83?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1585543805890-6051f7829f98?auto=format&fit=crop&w=800&q=80"
+    "https://www.villadeste.com/assets/img/transform/_1920xAUTO_crop_center-center_80_none/14118/01-blocco-intro-villa-deste-desktop.webp",
+    "https://www.villadeste.com/assets/img/transform/_1050x790_crop_center-center_80_none/14902/02-imgtext-parallax-big.webp",
+    "https://www.villadeste.com/assets/img/transform/_800x640_crop_center-center_80_none/14903/04-blocco-camere-small.webp",
+    "https://www.villadeste.com/assets/img/transform/_800x920_crop_center-center_80_none/14906/05-blocco-camere-big.webp",
+    "https://www.villadeste.com/assets/img/transform/_930x750_crop_center-center_80_none/2790/03-image-room-single-deluxe.webp"
   ],
   "keySpecifications": {
     "landArea": "1 Acre",
@@ -1494,7 +824,7 @@
   },
   "isTrending": false,
   "popularity": 8,
-  "views": 10800,
+  "views": 10802,
   "likes": 300,
   "keywords": [
     "lake",
@@ -1502,7 +832,11 @@
     "history",
     "villa",
     "boat"
-  ]
+  ],
+  "acquisition": "rent/buy",
+  "updatedAt": {
+    "$date": "2026-02-09T05:01:16.675Z"
+  }
 },
 {
   "_id": {
@@ -1513,11 +847,11 @@
   "price": 5200000,
   "location": "Phuket, Thailand",
   "images": [
-    "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80"
+    "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6ODE4NzEwMw==/original/5fc2b446-3da7-44e6-9942-d4ef7f39dbb0.jpeg?im_w=1200",
+    "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6ODE4NzEwMw==/original/fad51280-3748-42a9-849e-110ea6461b57.jpeg?im_w=1200",
+    "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6ODE4NzEwMw==/original/747df3a8-2779-4ec8-ab7b-95365eeaee4c.jpeg?aki_policy=xx_large",
+    "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6ODE4NzEwMw==/original/2f99da91-e51d-4f7f-9443-54d8b23eb0b0.jpeg?aki_policy=xx_large",
+    "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6ODE4NzEwMw==/original/e51f1793-f643-4be8-9682-53f2a27c4629.jpeg?aki_policy=xx_large"
   ],
   "keySpecifications": {
     "landArea": "1.5 Acres",
@@ -1565,7 +899,7 @@
   },
   "isTrending": true,
   "popularity": 7,
-  "views": 8500,
+  "views": 8502,
   "likes": 290,
   "keywords": [
     "sea",
@@ -1573,7 +907,11 @@
     "tropical",
     "pool",
     "villa"
-  ]
+  ],
+  "acquisition": "rent",
+  "updatedAt": {
+    "$date": "2026-02-09T05:18:29.615Z"
+  }
 },
 {
   "_id": {
@@ -1584,11 +922,11 @@
   "price": 3500000,
   "location": "Barcelona, Spain",
   "images": [
-    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1550921026-66f6540c746e?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1524061511843-fd43443e3cb2?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=800&q=80"
+    "https://a0.muscache.com/im/pictures/miso/Hosting-51038595/original/2070edaa-77c4-4486-ab9a-cc3c36f0ec3a.jpeg?aki_policy=xx_large",
+    "https://a0.muscache.com/im/pictures/miso/Hosting-51038595/original/25c9b164-8d8d-41ad-810c-3932a0cc4e7b.jpeg?aki_policy=xx_large",
+    "https://a0.muscache.com/im/pictures/miso/Hosting-51038595/original/e5c1ada4-4f6e-4974-9dc7-cae08e6ce1a4.jpeg?aki_policy=xx_large",
+    "https://a0.muscache.com/im/pictures/miso/Hosting-51038595/original/eb260b59-7b68-4223-bc0a-1d52a2cd46be.jpeg?aki_policy=xx_large",
+    "https://a0.muscache.com/im/pictures/miso/Hosting-51038595/original/f57566e3-d139-4319-8eca-18cd4daf3d48.jpeg?aki_policy=xx_large"
   ],
   "keySpecifications": {
     "landArea": "N/A",
@@ -1636,7 +974,7 @@
   },
   "isTrending": false,
   "popularity": 7,
-  "views": 6200,
+  "views": 6202,
   "likes": 200,
   "keywords": [
     "barcelona",
@@ -1644,7 +982,11 @@
     "mosaic",
     "art",
     "apartment"
-  ]
+  ],
+  "acquisition": "buy",
+  "updatedAt": {
+    "$date": "2026-02-09T05:23:35.769Z"
+  }
 },
 {
   "_id": {
@@ -1655,11 +997,11 @@
   "price": 7500000,
   "location": "Inverness, Scotland, UK",
   "images": [
-    "https://images.unsplash.com/photo-1599596007621-39655761899e?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1533514114760-4389f572ae26?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1566634421590-c24734614e59?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1549297193-47029671d2b7?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1577085750059-3312c01994e6?auto=format&fit=crop&w=800&q=80"
+    "https://www.visitscotland.com/binaries/content/gallery/visitscotland/cms-images/2022/07/01/cawdor-castle-and-gardens?size=lg",
+    "https://www.cawdorcastle.com/wp-content/uploads/2021/04/cawdor-home-2-970x674.jpg",
+    "https://www.cawdorcastle.com/wp-content/uploads/2021/04/cawdor-home-3-970x674.jpg",
+    "https://www.cawdorcastle.com/wp-content/uploads/2021/04/cawdor-home-4-970x674.jpg",
+    "https://www.cawdorcastle.com/wp-content/uploads/2021/04/the-castle-img01.jpg"
   ],
   "keySpecifications": {
     "landArea": "500 Acres",
@@ -1707,7 +1049,7 @@
   },
   "isTrending": true,
   "popularity": 8,
-  "views": 14000,
+  "views": 14002,
   "likes": 500,
   "keywords": [
     "castle",
@@ -1715,7 +1057,11 @@
     "history",
     "land",
     "regal"
-  ]
+  ],
+  "acquisition": "rent/buy",
+  "updatedAt": {
+    "$date": "2026-02-09T05:51:10.460Z"
+  }
 },
 {
   "_id": {
@@ -1726,11 +1072,11 @@
   "price": 5800000,
   "location": "Tokyo, Japan",
   "images": [
-    "https://images.unsplash.com/photo-1551105378-78e609e1d238?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1493246318656-5bfd4cfb29b8?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1469022563428-aa04fef9f5a2?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1499955085172-a104c9463ece?auto=format&fit=crop&w=800&q=80"
+    "https://img.jamesedition.com/listing_images/2026/01/14/07/22/22/e748181f-9fe5-439d-a298-b412bce576d6/je/1900xxsxm.jpg",
+    "https://img.jamesedition.com/listing_images/2026/01/14/07/22/22/112524ed-c62c-4641-ac62-2cc70f3075fb/je/1900xxsxm.jpg",
+    "https://img.jamesedition.com/listing_images/2026/01/14/07/22/22/33230e2b-7477-4d58-be10-a31f3b11e506/je/1900xxsxm.jpg",
+    "https://img.jamesedition.com/listing_images/2026/01/14/07/22/22/72040f18-f96d-444c-a865-27d97cb53b4c/je/1900xxsxm.jpg",
+    "https://img.jamesedition.com/listing_images/2026/01/14/07/22/22/786cb7ec-31a6-4133-afcc-764d1188140c/je/1900xxsxm.jpg"
   ],
   "keySpecifications": {
     "landArea": "N/A",
@@ -1778,7 +1124,7 @@
   },
   "isTrending": true,
   "popularity": 8,
-  "views": 8000,
+  "views": 8002,
   "likes": 260,
   "keywords": [
     "tokyo",
@@ -1786,5 +1132,9 @@
     "view",
     "modern",
     "luxury"
-  ]
+  ],
+  "acquisition": "rent",
+  "updatedAt": {
+    "$date": "2026-02-09T05:54:27.047Z"
+  }
 }]

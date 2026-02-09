@@ -10,17 +10,12 @@ const axios = require("axios");
 const router = express.Router();
 
 /**
- * VEHICLE ASSETS
- * /api/assets/vehicles
- * Supports: ?search=&page=&limit=
- */
-/**
- * VEHICLE ASSETS
+ * CAR ASSETS
  * /api/assets/cars
  */
 router.get("/cars", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, category, country, sort, acquisition } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, model, category, country, sort, acquisition } = req.query;
 
     console.log("--- /api/assets/cars Request ---");
     console.log("req.query:", req.query);
@@ -169,7 +164,7 @@ router.get("/estates", async (req, res) => {
  */
 router.get("/bikes", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -220,7 +215,7 @@ router.get("/bikes", async (req, res) => {
  */
 router.get("/yachts", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
