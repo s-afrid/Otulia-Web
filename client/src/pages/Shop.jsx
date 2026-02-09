@@ -7,50 +7,116 @@ import SharedFilterBar from '../components/SharedFilterBar';
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [listings, setListings] = useState([]);
+  const [allSearchResults, setAllSearchResults] = useState([]); // Holds all results for a given search query
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ location: '', minPrice: '', maxPrice: '' });
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q');
 
   const categories = [
-    { name: 'All', endpoint: 'combined' },
-    { name: 'Cars', endpoint: 'cars' },
-    { name: 'Real Estate', endpoint: 'estates' },
-    { name: 'Bikes', endpoint: 'bikes' },
-    { name: 'Yachts', endpoint: 'yachts' },
+    { name: 'All', endpoint: 'combined', clientName: 'All' },
+    { name: 'Cars', endpoint: 'cars', clientName: 'Car' },
+    { name: 'Real Estate', endpoint: 'estates', clientName: 'Estate' },
+    { name: 'Bikes', endpoint: 'bikes', clientName: 'Bike' },
+    { name: 'Yachts', endpoint: 'yachts', clientName: 'Yacht' },
   ];
 
-  useEffect(() => {
-    fetchListings();
-  }, [activeCategory, filters, query]);
-
-  const fetchListings = async () => {
-    setLoading(true);
-    try {
-      let endpoint;
-      if (query) { // If there's a search query, always use the combined endpoint
-        endpoint = 'combined';
-      } else { // Otherwise, use the category-specific endpoint
-        const category = categories.find(c => c.name === activeCategory);
-        endpoint = category ? category.endpoint : 'combined';
-      }
-
-      const params = new URLSearchParams();
-      if (filters.location) params.append('location', filters.location);
-      if (filters.minPrice) params.append('minPrice', filters.minPrice);
-      if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
-      if (query) params.append('q', query);
-
-      const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
-      setListings(data);
-    } catch (error) {
-      console.error("Failed to fetch listings", error);
-    } finally {
-      setLoading(false);
+  // Helper function to determine category based on item properties
+  const getCategoryFromItem = (item) => {
+    if (item.category) {
+      const cat = item.category.toLowerCase();
+      if (['vehicles', 'car'].includes(cat)) return 'Car';
+      if (['bikes', 'bike'].includes(cat)) return 'Bike';
+      if (['yachts', 'yacht'].includes(cat)) return 'Yacht';
+      if (['estates', 'estate', 'real estate'].includes(cat)) return 'Estate';
     }
+    if (item.itemModel) {
+      const model = item.itemModel.toLowerCase();
+      if (model.includes('car')) return 'Car';
+      if (model.includes('estate')) return 'Estate';
+      if (model.includes('bike')) return 'Bike';
+      if (model.includes('yacht')) return 'Yacht';
+    }
+    // Fallback logic from AssetCard if needed, though category/itemModel should be primary
+    if (item.keySpecifications) {
+        const specs = item.keySpecifications;
+        if (specs.power || specs.mileage || specs.topSpeed) return 'Car';
+        if (specs.bedrooms || specs.bathrooms) return 'Estate';
+    }
+    return 'Unknown';
   };
+
+  // EFFECT 1: Fetch data when in BROWSE mode (no query)
+  useEffect(() => {
+    if (!query) {
+      const fetchBrowseListings = async () => {
+        setLoading(true);
+        try {
+          const category = categories.find(c => c.name === activeCategory);
+          const endpoint = category ? category.endpoint : 'combined';
+          
+          const params = new URLSearchParams();
+          if (filters.location) params.append('location', filters.location);
+          if (filters.minPrice) params.append('minPrice', filters.minPrice);
+          if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+
+          const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          setListings(data);
+        } catch (error) {
+          console.error("Failed to fetch browse listings", error);
+          setListings([]); // Clear on error
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchBrowseListings();
+    }
+  }, [activeCategory, filters, query]); // Reruns when these change ONLY if query is absent.
+
+  // EFFECT 2: Fetch all results when in SEARCH mode (query exists)
+  useEffect(() => {
+    if (query) {
+      const fetchSearchResults = async () => {
+        setLoading(true);
+        try {
+          const params = new URLSearchParams();
+          params.append('q', query);
+          if (filters.location) params.append('location', filters.location);
+          if (filters.minPrice) params.append('minPrice', filters.minPrice);
+          if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+
+          const response = await fetch(`/api/assets/combined?${params.toString()}`);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          setAllSearchResults(data); // Store master list
+        } catch (error) {
+          console.error("Failed to fetch search results", error);
+          setAllSearchResults([]); // Clear on error
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchSearchResults();
+    } else {
+      setAllSearchResults([]); // Clear master list if query is removed
+    }
+  }, [query, filters]); // Reruns ONLY when query or filters change.
+
+  // EFFECT 3: Filter search results on the client-side when category or master list changes
+  useEffect(() => {
+    if (query) {
+      if (activeCategory === 'All') {
+        setListings(allSearchResults);
+      } else {
+        const targetCategory = categories.find(c => c.name === activeCategory)?.clientName;
+        const filtered = allSearchResults.filter(item => getCategoryFromItem(item) === targetCategory);
+        setListings(filtered);
+      }
+    }
+    // No 'else' needed because BROWSE mode is handled by Effect 1
+  }, [activeCategory, allSearchResults, query]);
 
   const handleSearch = (filterData) => {
     setFilters(filterData);
