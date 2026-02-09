@@ -12,7 +12,7 @@ const Asset_Section = () => {
 
   return (
     <>
-      {(cat === 'car' || cat === 'vehicles') && (
+      {(cat === 'car' || cat === 'cars') && (
         <Car_Section key={path.pathname} />
       )}
 

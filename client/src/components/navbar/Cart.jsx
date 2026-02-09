@@ -11,7 +11,7 @@ const Cart = ({text}) => {
       <button
         type="button"
         onClick={() => navigate('/cart')}
-        className={`relative flex items-center justify-center transition-colors duration-300 focus:outline-none cursor-pointer ${text}`}
+        className={`relative flex items-center justify-center transition-colors duration-300 focus:outline-none cursor-pointer text-black`}
         aria-label="View Shopping Bag"
       >
         {/* Shopping Bag Icon */}
