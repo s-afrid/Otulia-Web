@@ -15,6 +15,7 @@ const Profile = () => {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [showCropModal, setShowCropModal] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Edit state
   const [isEditingPhone, setIsEditingPhone] = useState(false);
@@ -87,6 +88,7 @@ const Profile = () => {
   };
 
   const handleProfilePictureUpload = async (blob) => {
+    setIsUploading(true);
     const formData = new FormData();
     formData.append('profilePicture', blob, 'profile.png');
 
@@ -109,6 +111,8 @@ const Profile = () => {
     } catch (error) {
       console.error('Upload error:', error);
       alert('Error uploading profile picture.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -482,6 +486,7 @@ const Profile = () => {
             setShowCropModal(false);
             setImageToCrop(null);
           }}
+          isUploading={isUploading}
         />
       )}
     </div>

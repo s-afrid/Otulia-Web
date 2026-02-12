@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
-const ImageCropModal = ({ src, onCropComplete, onClose }) => {
+const ImageCropModal = ({ src, onCropComplete, onClose, isUploading }) => {
   const [crop, setCrop] = useState();
   const [completedCrop, setCompletedCrop] = useState();
   const imgRef = useRef(null);
@@ -83,10 +83,13 @@ const ImageCropModal = ({ src, onCropComplete, onClose }) => {
           </ReactCrop>
         </div>
         <div className="mt-4 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700">
+          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700" disabled={isUploading}>
             Cancel
           </button>
-          <button onClick={handleCrop} className="px-4 py-2 rounded-lg bg-blue-600 text-white">
+          <button onClick={handleCrop} className="px-4 py-2 rounded-lg bg-[#D48D2A] text-white flex items-center" disabled={isUploading}>
+            {isUploading && (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+            )}
             Save
           </button>
         </div>
