@@ -262,7 +262,7 @@ const PricingSection = () => {
                     style={{ layout: "vertical", shape: "rect", color: "gold", label: "pay" }}
                     createOrder={async (data, actions) => {
                       try {
-                        const response = await fetch('http://127.0.0.1:8000/api/payment/create-order', {
+                        const response = await fetch('/api/payment/create-order', {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
@@ -285,7 +285,7 @@ const PricingSection = () => {
                     }}
                     onApprove={async (data, actions) => {
                       try {
-                        const response = await fetch('http://127.0.0.1:8000/api/payment/capture-order', {
+                        const response = await fetch('/api/payment/capture-order', {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',

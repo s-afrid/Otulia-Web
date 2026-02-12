@@ -36,7 +36,7 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
 
     setActivityLoading(true);
     try {
-      await fetch('http://127.0.0.1:8000/api/activity/record', {
+      await fetch('/api/activity/record', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

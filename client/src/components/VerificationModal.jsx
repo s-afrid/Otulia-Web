@@ -45,7 +45,7 @@ const VerificationModal = ({ onClose, onUploadSuccess }) => {
         });
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/auth/submit-verification', {
+            const response = await fetch('/api/auth/submit-verification', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`

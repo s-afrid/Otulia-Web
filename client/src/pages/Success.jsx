@@ -20,7 +20,7 @@ const Success = () => {
             }
 
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/payment/verify-payment?session_id=${sessionId}`, {
+                const response = await fetch(`/api/payment/verify-payment?session_id=${sessionId}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`

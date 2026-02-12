@@ -30,7 +30,7 @@ const CartPage = () => {
 
     const handlePayPalCreateOrder = async (data, actions) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/payment/create-order', {
+            const response = await fetch('/api/payment/create-order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const CartPage = () => {
 
     const handlePayPalApprove = async (data, actions) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/payment/capture-order', {
+            const response = await fetch('/api/payment/capture-order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
