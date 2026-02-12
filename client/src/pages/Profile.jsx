@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
-import { FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, FiClock, FiActivity, FiXCircle, FiSettings, FiCheckCircle } from 'react-icons/fi';
+import { FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, FiClock, FiActivity, FiXCircle, FiSettings, FiCheckCircle, FiEdit } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import UserPlaceholder from '../assets/user.png';
 import VerificationModal from '../components/VerificationModal';
@@ -153,12 +153,15 @@ const Profile = () => {
           <div className="h-32 bg-gradient-to-r from-gray-900 to-black relative">
             <div className="absolute -bottom-12 left-8 md:left-12">
               <div className="relative">
-                <label className="relative cursor-pointer">
+                <label className="relative cursor-pointer group">
                   <img
                     src={user.profilePicture || UserPlaceholder}
                     alt={user.name}
                     className="w-24 h-24 rounded-full border-4 border-white object-cover shadow-lg"
                   />
+                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <FiEdit className="text-white text-2xl" />
+                  </div>
                   <input
                     type="file"
                     className="hidden"
