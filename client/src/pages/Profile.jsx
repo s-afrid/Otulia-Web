@@ -5,6 +5,7 @@ import { FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShopping
 import { useNavigate } from 'react-router-dom';
 import UserPlaceholder from '../assets/user.png';
 import VerificationModal from '../components/VerificationModal';
+import ImageCropModal from '../components/ImageCropModal';
 
 const Profile = () => {
   const { user, logout, refreshUser, token } = useAuth();
@@ -12,10 +13,16 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [cancelMessage, setCancelMessage] = useState('');
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [showCropModal, setShowCropModal] = useState(false);
 
   // Edit state
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
+
+  // Edit state for name
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [userName, setUserName] = useState('');
 
   const handleUploadSuccess = async () => {
     setShowVerificationModal(false);
@@ -35,7 +42,7 @@ const Profile = () => {
 
   const handleUpdatePhone = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/update-profile', {
+      const response = await fetch('/api/auth/update-profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -56,11 +63,60 @@ const Profile = () => {
     }
   };
 
+  const handleUpdateName = async () => {
+    try {
+      const response = await fetch('/api/auth/update-profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: userName })
+      });
+
+      if (response.ok) {
+        await refreshUser();
+        setIsEditingName(false);
+      } else {
+        alert('Failed to update name');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error updating profile');
+    }
+  };
+
+  const handleProfilePictureUpload = async (blob) => {
+    const formData = new FormData();
+    formData.append('profilePicture', blob, 'profile.png');
+
+    try {
+      const response = await fetch('/api/auth/upload-profile-picture', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        await refreshUser();
+        setShowCropModal(false);
+        setImageToCrop(null);
+      } else {
+        alert('Failed to upload profile picture.');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Error uploading profile picture.');
+    }
+  };
+
   const handleCancelSubscription = async () => {
     if (!window.confirm("Are you sure you want to cancel your subscription? You will lose premium benefits.")) return;
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/payment/cancel-subscription', {
+      const response = await fetch('/api/payment/cancel-subscription', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -97,12 +153,30 @@ const Profile = () => {
           <div className="h-32 bg-gradient-to-r from-gray-900 to-black relative">
             <div className="absolute -bottom-12 left-8 md:left-12">
               <div className="relative">
-                <img
-                  src={user.profilePicture || UserPlaceholder}
-                  alt={user.name}
-                  className="w-24 h-24 rounded-full border-4 border-white object-cover shadow-lg"
-                />
-                <div className="absolute bottom-1 right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full" title="Online"></div>
+                <label className="relative cursor-pointer">
+                  <img
+                    src={user.profilePicture || UserPlaceholder}
+                    alt={user.name}
+                    className="w-24 h-24 rounded-full border-4 border-white object-cover shadow-lg"
+                  />
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        const reader = new FileReader();
+                        reader.addEventListener('load', () =>
+                          setImageToCrop(reader.result?.toString() || ''),
+                        );
+                        reader.readAsDataURL(e.target.files[0]);
+                        setShowCropModal(true);
+                        e.target.value = null; // Reset input value
+                      }
+                    }}
+                  />
+                  <div className="absolute bottom-1 right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full" title="Online"></div>
+                </label>
               </div>
             </div>
           </div>
@@ -151,9 +225,31 @@ const Profile = () => {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
                   <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Personal Details</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100">
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 relative group">
                       <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm"><FiUser /></div>
-                      <div><p className="text-[10px] text-gray-400 font-bold uppercase">Full Name</p><p className="text-sm font-semibold text-gray-900">{user.name}</p></div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center">
+                          <p className="text-[10px] text-gray-400 font-bold uppercase">Full Name</p>
+                          {!isEditingName && (
+                            <button onClick={() => { setIsEditingName(true); setUserName(user.name || ''); }} className="text-[10px] text-blue-600 font-bold uppercase hover:underline opacity-0 group-hover:opacity-100 transition-opacity">Edit</button>
+                          )}
+                        </div>
+                        {isEditingName ? (
+                          <div className="flex gap-2 mt-1">
+                            <input
+                              type="text"
+                              value={userName}
+                              onChange={(e) => setUserName(e.target.value)}
+                              className="w-full text-sm border-b border-gray-300 focus:border-black outline-none py-1 bg-transparent"
+                              placeholder="Enter your name"
+                            />
+                            <button onClick={handleUpdateName} className="text-green-600 font-bold uppercase text-[10px]">Save</button>
+                            <button onClick={() => setIsEditingName(false)} className="text-red-500 font-bold uppercase text-[10px]">Cancel</button>
+                          </div>
+                        ) : (
+                          <p className="text-sm font-semibold text-gray-900">{user.name}</p>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100">
                       <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm"><FiMail /></div>
@@ -373,6 +469,16 @@ const Profile = () => {
         <VerificationModal
           onClose={() => setShowVerificationModal(false)}
           onUploadSuccess={handleUploadSuccess}
+        />
+      )}
+      {showCropModal && imageToCrop && (
+        <ImageCropModal
+          src={imageToCrop}
+          onCropComplete={handleProfilePictureUpload}
+          onClose={() => {
+            setShowCropModal(false);
+            setImageToCrop(null);
+          }}
         />
       )}
     </div>

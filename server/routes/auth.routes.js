@@ -5,6 +5,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
 const { OAuth2Client } = require("google-auth-library");
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { cloudinary } = require('../config/cloudinary');
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
@@ -53,7 +55,7 @@ router.post("/google-login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -109,7 +111,7 @@ router.post("/register", async (req, res) => {
     });
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -160,7 +162,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -346,6 +348,53 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
 /**
  * SUBMIT VERIFICATION DOCUMENTS
  */
+
+const profilePicStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: (req, file) => {
+    return {
+      folder: `users/${req.user.email}`,
+      public_id: `profile_pic_${Date.now()}`,
+      resource_type: 'auto',
+      allowed_formats: ['jpg', 'png', 'jpeg'],
+    };
+  },
+});
+
+const uploadProfilePic = multer({ storage: profilePicStorage });
+
+router.post("/upload-profile-picture", authMiddleware, uploadProfilePic.single('profilePicture'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "NO_FILE_UPLOADED" });
+    }
+
+    // Delete old profile picture from Cloudinary
+    const currentUser = await User.findById(req.user.id);
+    if (currentUser.profilePicturePublicId) {
+      cloudinary.uploader.destroy(currentUser.profilePicturePublicId, (error, result) => {
+        if (error) {
+          console.error("Failed to delete old profile picture from Cloudinary:", error);
+        }
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { 
+        profilePicture: req.file.path,
+        profilePicturePublicId: req.file.filename 
+      },
+      { new: true }
+    ).select("-password");
+
+    res.json({ message: "PROFILE_PICTURE_UPDATED_SUCCESSFULLY", user });
+  } catch (err) {
+    console.error("Profile Picture Upload Error:", err);
+    res.status(500).json({ error: "UPLOAD_FAILED" });
+  }
+});
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const dir = path.join(process.cwd(), 'uploads/verification');
