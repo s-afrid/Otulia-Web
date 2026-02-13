@@ -5,6 +5,11 @@ import {
     FiCheckCircle, FiInfo, FiMapPin, FiFileText
 } from 'react-icons/fi';
 import { useAuth } from '../../contexts/AuthContext';
+import carIcon from '../../assets/icons/car_icon.png'
+import estateIcon from '../../assets/icons/estate_icon.png'
+import bikeIcon from '../../assets/icons/bike_icon.png'
+import yachtIcon from '../../assets/icons/yacht_icon.png'
+import otherassetIcon from '../../assets/icons/other_asset_icon.png'
 
 const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const { token, user } = useAuth();
@@ -238,10 +243,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     };
 
     const types = [
-        { id: 'Car', label: 'Car', icon: '🚗' },
-        { id: 'Yacht', label: 'Yacht', icon: '⛵' },
-        { id: 'Estate', label: 'Real Estate', icon: '🏠' },
-        { id: 'Bike', label: 'Bike', icon: '🏍️' },
+        { id: 'Car', label: 'Car', icon: carIcon },
+        { id: 'Yacht', label: 'Yacht', icon: yachtIcon },
+        { id: 'Estate', label: 'Real Estate', icon: estateIcon },
+        { id: 'Bike', label: 'Bike', icon: bikeIcon },
     ];
 
     return (
@@ -280,7 +285,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     className="group bg-white border border-gray-100 p-10 rounded-[2rem] hover:border-[#D48D2A] hover:bg-[#F2E8DB]/20 hover:shadow-xl transition-all duration-300 text-center"
                                 >
                                     <div className="text-6xl mb-6 grayscale group-hover:grayscale-0 transition-all transform group-hover:scale-110 duration-500">
-                                        {type.icon}
+                                        <img className='w-fit h-fit object-contain' src={type.icon} alt="icon" title={type.label} />
                                     </div>
                                     <span className="text-xl font-bold text-gray-900 font-playfair">{type.label}</span>
                                 </button>
@@ -296,7 +301,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                             <div className="flex justify-between items-center pb-8 border-b border-gray-50">
                                 <div className="flex items-center gap-5">
                                     <div className="w-16 h-16 bg-[#FDF8F0] border border-[#F2E8DB] rounded-2xl flex items-center justify-center text-3xl shadow-sm">
-                                        {assetType === 'Car' ? '🚗' : assetType === 'Yacht' ? '⛵' : assetType === 'Estate' ? '🏠' : assetType === 'Bike' ? '🏍️' : '📦'}
+                                        <img className='w-fit object-contain' src={assetType === 'Car' ? carIcon : assetType === 'Yacht' ? yachtIcon : assetType === 'Estate' ? estateIcon : assetType === 'Bike' ? bikeIcon : otherassetIcon} alt={assetType} />  
                                     </div>
                                     <div>
                                         <h3 className="text-2xl font-bold text-gray-900 font-playfair">{assetType} Details</h3>
