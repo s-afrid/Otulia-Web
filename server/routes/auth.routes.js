@@ -395,26 +395,32 @@ router.post("/upload-profile-picture", authMiddleware, uploadProfilePic.single('
   }
 });
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const dir = path.join(process.cwd(), 'uploads/verification');
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+const verificationStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    // Check if user is authenticated and has an email
+    if (!req.user || !req.user.email) {
+      // This will prevent multer from processing the file and trigger an error
+      throw new Error('User authentication is required to upload verification documents.');
     }
-    cb(null, dir);
+
+    // For PDFs, we should use 'raw' resource type to prevent transformation and delivery issues.
+    // For other file types like images, 'image' is appropriate.
+    const isPdf = file.mimetype === 'application/pdf' || file.originalname.toLowerCase().endsWith('.pdf');
+    
+    return {
+      folder: `verification/${req.user.email}`,
+      public_id: `${file.fieldname}-${Date.now()}`,
+      resource_type: isPdf ? 'raw' : 'image',
+      allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'],
+    };
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-  }
 });
 
-const upload = multer({ storage: storage });
+const uploadVerification = multer({ storage: verificationStorage });
 
-router.post("/submit-verification", authMiddleware, upload.any(), async (req, res) => {
+router.post("/submit-verification", authMiddleware, uploadVerification.any(), async (req, res) => {
   try {
-    console.log("Received verification submission:", req.files, req.body);
     const files = req.files;
     if (!files || files.length === 0) {
       return res.status(400).json({ error: "NO_FILES_UPLOADED" });
@@ -423,9 +429,8 @@ router.post("/submit-verification", authMiddleware, upload.any(), async (req, re
     const verificationDocuments = {};
 
     files.forEach(file => {
-      // Public URL assuming 'uploads' static serve
-      const publicUrl = `/uploads/verification/${file.filename}`;
-      verificationDocuments[file.fieldname] = publicUrl;
+      // For Cloudinary, 'file.filename' contains the public_id
+      verificationDocuments[file.fieldname] = file.filename;
     });
 
     // Fetch current user to merge documents instead of overwriting
@@ -447,7 +452,7 @@ router.post("/submit-verification", authMiddleware, upload.any(), async (req, re
     res.json(user);
   } catch (err) {
     console.error("Verification Submit Error:", err);
-    res.status(500).json({ error: "SUBMISSION_FAILED" });
+    res.status(500).json({ error: "SUBMISSION_FAILED", details: err.message });
   }
 });
 

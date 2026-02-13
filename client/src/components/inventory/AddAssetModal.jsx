@@ -300,7 +300,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                             {/* Section Header */}
                             <div className="flex justify-between items-center pb-8 border-b border-gray-50">
                                 <div className="flex items-center gap-5">
-                                    <div className="w-16 h-16 bg-[#FDF8F0] border border-[#F2E8DB] rounded-2xl flex items-center justify-center text-3xl shadow-sm">
+                                    <div className="w-16 h-16 bg-[#FDF8F0] border border-[#F2E8DB] rounded-2xl flex items-center justify-center text-3xl shadow-sm p-1">
                                         <img className='w-fit object-contain' src={assetType === 'Car' ? carIcon : assetType === 'Yacht' ? yachtIcon : assetType === 'Estate' ? estateIcon : assetType === 'Bike' ? bikeIcon : otherassetIcon} alt={assetType} />  
                                     </div>
                                     <div>
@@ -424,7 +424,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                                     <div>
                                         <div className="flex items-center gap-2 mb-6">
-                                            <span className="text-orange-400 text-xl font-bold">✨</span>
+                                           
                                             <div>
                                                 <h4 className="text-lg font-bold text-gray-900 font-playfair">Key Highlights</h4>
                                                 <p className="text-xs text-gray-400 italic">These specific details will be highlighted on your listing</p>

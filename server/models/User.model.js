@@ -45,6 +45,10 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
+    company: [
+      
+    ],
+
     isVerified: {
       type: Boolean,
       default: false,
