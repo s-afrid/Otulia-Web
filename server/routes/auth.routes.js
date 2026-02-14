@@ -419,7 +419,23 @@ const verificationStorage = new CloudinaryStorage({
 
 const uploadVerification = multer({ storage: verificationStorage });
 
-router.post("/submit-verification", authMiddleware, uploadVerification.any(), async (req, res) => {
+const clearVerificationFolder = async (req, res, next) => {
+  if (req.user && req.user.email) {
+    const folder = `verification/${req.user.email}`;
+    try {
+      // We need to delete both image and raw files (for PDFs)
+      await Promise.all([
+        cloudinary.api.delete_resources_by_prefix(folder, { resource_type: 'image', invalidate: true }),
+        cloudinary.api.delete_resources_by_prefix(folder, { resource_type: 'raw', invalidate: true })
+      ]);
+    } catch (error) {
+      console.error(`Failed to clear Cloudinary folder ${folder}. This might leave orphaned files. Error:`, error);
+      // We won't block the request, but this is a situation to monitor.
+    }
+  }
+  next();
+};
+router.post("/submit-verification", authMiddleware, clearVerificationFolder, uploadVerification.any(), async (req, res) => {
   try {
     const files = req.files;
     if (!files || files.length === 0) {
@@ -427,24 +443,17 @@ router.post("/submit-verification", authMiddleware, uploadVerification.any(), as
     }
 
     const verificationDocuments = {};
-
     files.forEach(file => {
       // For Cloudinary, 'file.filename' contains the public_id
       verificationDocuments[file.fieldname] = file.filename;
     });
 
-    // Fetch current user to merge documents instead of overwriting
-    const currentUser = await User.findById(req.user.id);
-    const existingDocs = currentUser.verificationDocuments ? Object.fromEntries(currentUser.verificationDocuments) : {};
-
-    // Merge new files into existing docs
-    const updatedDocs = { ...existingDocs, ...verificationDocuments };
-
     const user = await User.findByIdAndUpdate(
       req.user.id,
       {
         verificationStatus: "Pending",
-        verificationDocuments: updatedDocs
+        // Overwrite the documents with the new submission
+        verificationDocuments: verificationDocuments
       },
       { new: true }
     ).select("-password");
