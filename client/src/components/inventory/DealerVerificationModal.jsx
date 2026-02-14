@@ -18,14 +18,20 @@ const DealerVerificationModal = ({ isOpen, onClose, onSubmit }) => {
         insuranceProof: null
     });
 
+    const [submitting, setSubmitting] = useState(false);
+
     const handleFileChange = (documentType, file) => {
         if (file) {
+            if (file.type !== 'application/pdf') {
+                alert('Only pdf files are allowed');
+                return;
+            }
             setDocuments(prev => ({ ...prev, [documentType]: file }));
             setUploadedFiles(prev => ({ ...prev, [documentType]: file.name }));
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // Check if at least the required documents are uploaded
         const requiredDocs = ['businessLicense', 'taxId', 'proofOfAddress'];
@@ -36,8 +42,12 @@ const DealerVerificationModal = ({ isOpen, onClose, onSubmit }) => {
             return;
         }
 
-        // Submit the documents
-        onSubmit(documents);
+        setSubmitting(true);
+        try {
+            await onSubmit(documents);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     if (!isOpen) return null;
@@ -138,7 +148,7 @@ const DealerVerificationModal = ({ isOpen, onClose, onSubmit }) => {
                                     <input
                                         type="file"
                                         onChange={(e) => handleFileChange(field.id, e.target.files[0])}
-                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        accept=".pdf"
                                         className="hidden"
                                     />
                                     <div className={`border-2 border-dashed rounded-xl p-6 cursor-pointer transition-all hover:border-[#D48D2A] hover:bg-white group ${uploadedFiles[field.id]
@@ -162,7 +172,7 @@ const DealerVerificationModal = ({ isOpen, onClose, onSubmit }) => {
                                                 </div>
                                                 <div>
                                                     <p className="text-sm font-bold">Click to upload</p>
-                                                    <p className="text-xs">PDF, JPG, PNG (Max 10MB)</p>
+                                                    <p className="text-xs">PDF only (Max 10MB)</p>
                                                 </div>
                                             </div>
                                         )}
@@ -182,9 +192,17 @@ const DealerVerificationModal = ({ isOpen, onClose, onSubmit }) => {
                             </button>
                             <button
                                 type="submit"
-                                className="flex-1 px-8 py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm shadow-lg shadow-[#D48D2A]/20 hover:bg-[#B5751C] transition-all"
+                                disabled={submitting}
+                                className="flex-1 px-8 py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm shadow-lg shadow-[#D48D2A]/20 hover:bg-[#B5751C] transition-all flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
                             >
-                                Submit for Verification
+                                {submitting ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                                        Submitting...
+                                    </>
+                                ) : (
+                                    'Submit for Verification'
+                                )}
                             </button>
                         </div>
                     </form>

@@ -146,7 +146,8 @@ const Inventory = () => {
                 setIsVerificationModalOpen(false);
                 setActiveTab('settings'); // Redirect to settings to see status
             } else {
-                alert('Failed to submit verification documents. Please try again.');
+                const data = await response.json();
+                alert(`Failed to submit verification documents: ${data.details || data.error || 'Please try again.'}`);
             }
         } catch (error) {
             console.error("Verification Submit Error:", error);
