@@ -1,0 +1,151 @@
+import React, { useState, useEffect } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import { FiDownload, FiArrowLeft, FiLoader } from 'react-icons/fi';
+
+const DocumentViewer = () => {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const docUrl = searchParams.get('url');
+    const docName = searchParams.get('name') || 'Document';
+
+    const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    const isPdf = docUrl?.toLowerCase().endsWith('.pdf');
+
+    useEffect(() => {
+        if (!docUrl) {
+            setError('No document URL provided.');
+            setLoading(false);
+            return;
+        }
+
+        if (isPdf) {
+            setLoading(true);
+            setError('');
+            fetch(docUrl)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return res.blob();
+                })
+                .then(blob => {
+                    const blobUrl = URL.createObjectURL(blob);
+                    setPdfBlobUrl(blobUrl);
+                })
+                .catch(err => {
+                    console.error("Failed to fetch PDF:", err);
+                    setError('Could not load the PDF file for viewing. You can still try to download it.');
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        } else {
+            // For images, no fetching needed, just stop loading
+            setLoading(false);
+        }
+
+        // Cleanup function to revoke the blob URL
+        return () => {
+            if (pdfBlobUrl) {
+                URL.revokeObjectURL(pdfBlobUrl);
+            }
+        };
+    }, [docUrl, isPdf]); // Effect depends on docUrl and isPdf
+
+
+    if (!docUrl || error && !loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-4">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">{error || 'No document URL provided.'}</h2>
+                <p className="text-gray-500 mb-8">Please return to the dashboard and try again.</p>
+                <Link to="/admin" className="px-6 py-3 bg-black text-white rounded-xl font-bold text-sm hover:bg-[#D48D2A] transition-colors">
+                    Back to Dashboard
+                </Link>
+            </div>
+        );
+    }
+
+    // Function to trigger download
+    const handleDownload = async () => {
+        try {
+            const response = await fetch(docUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            // Sanitize file name
+            const fileName = docName.replace(/[^a-z0-9_.-]/gi, '_');
+            a.download = fileName;
+            document.body.appendChild(a);
+a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error("Download failed:", error);
+            alert("Could not download the file.");
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-gray-100 flex flex-col montserrat">
+            <header className="bg-white shadow-sm sticky top-0 z-50">
+                <div className="container mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+                    <Link to="/admin" className="flex items-center gap-3 text-gray-600 hover:text-gray-900 transition-colors">
+                        <FiArrowLeft className="w-5 h-5" />
+                        <span className="text-sm font-bold">Back to Admin Dashboard</span>
+                    </Link>
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm font-semibold text-gray-800 hidden md:block truncate max-w-xs" title={docName}>
+                            {docName}
+                        </span>
+                        <button
+                            onClick={handleDownload}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-[#D48D2A] text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-[#B5751C] shadow-md shadow-[#D48D2A]/20 transition-all"
+                        >
+                            <FiDownload className="w-4 h-4" />
+                            <span>Download</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <main className="flex-1 flex flex-col p-4 sm:p-8">
+                <div className="flex-1 w-full max-w-6xl mx-auto flex items-center justify-center">
+                    {loading ? (
+                        <div className="text-center text-gray-500">
+                            <FiLoader className="animate-spin text-4xl mx-auto mb-4" />
+                            <p className="font-semibold">Loading Document...</p>
+                        </div>
+                    ) : isPdf ? (
+                        pdfBlobUrl ? (
+                            <iframe
+                                src={pdfBlobUrl}
+                                title={docName}
+                                className="w-full h-full rounded-2xl border-4 border-white shadow-2xl"
+                                style={{ minHeight: '80vh' }}
+                            />
+                        ) : (
+                           <div className="text-center text-red-500">
+                                <p>{error}</p>
+                           </div>
+                        )
+                    ) : (
+                        <div className="w-full h-full bg-white rounded-2xl border-4 border-white shadow-2xl p-4 flex justify-center items-center" style={{ minHeight: '80vh' }}>
+                            <img
+                                src={docUrl}
+                                alt={docName}
+                                className="max-w-full max-h-full object-contain"
+                            />
+                        </div>
+                    )}
+                </div>
+            </main>
+        </div>
+    );
+};
+
+export default DocumentViewer;

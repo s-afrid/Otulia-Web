@@ -26,6 +26,7 @@ import MyListings from "./pages/MyListings";
 import Inventory from "./pages/Inventory";
 import Favorites from "./pages/Favorites";
 import AdminDashboard from "./pages/AdminDashboard";
+import DocumentViewer from "./pages/DocumentViewer";
 
 // Policy pages
 import Terms from "./pages/policies/Terms";
@@ -45,7 +46,7 @@ import { CartProvider } from "./contexts/CartContext";
 
 function App() {
   const location = useLocation();
-  const hideFooterRoutes = ['/admin', '/login', '/signup', '/inventory'];
+  const hideFooterRoutes = ['/admin', '/admin/view-document', '/login', '/signup', '/inventory'];
   const shouldShowFooter = !hideFooterRoutes.some(path => location.pathname.startsWith(path));
 
   const [showSplash, setShowSplash] = React.useState(true);
@@ -82,10 +83,11 @@ function App() {
         {/* User routes */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/success" element={<Success />} />
-        <Route path="/listings" element={<MyListings />} />
+        <Route path="/listings"element={<MyListings />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/view-document" element={<DocumentViewer />} />
 
         {/* Policy Routes */}
         <Route path="/terms" element={<Terms />} />

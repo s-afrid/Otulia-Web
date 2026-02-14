@@ -104,7 +104,7 @@ const AdminDashboard = () => {
                     }
                     return p;
                 }));
-                alert(`Partner ${action}d successfully`);
+                alert(`Partner ${action} successfully`);
             } else {
                 alert('Action failed');
             }
@@ -600,7 +600,7 @@ const AdminDashboard = () => {
                                                 </div>
                                             </div>
                                             <a
-                                                href={url.startsWith('http') ? url : `/${url.replace(/^server\//, '').replace(/^\//, '')}`}
+                                                href={`/admin/view-document?url=${encodeURIComponent(url)}&name=${encodeURIComponent(type.replace(/([A-Z])/g, ' $1').trim())}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="px-6 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-black transition-colors"

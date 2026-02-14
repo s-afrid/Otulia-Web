@@ -398,21 +398,18 @@ router.post("/upload-profile-picture", authMiddleware, uploadProfilePic.single('
 const verificationStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
-    // Check if user is authenticated and has an email
     if (!req.user || !req.user.email) {
-      // This will prevent multer from processing the file and trigger an error
       throw new Error('User authentication is required to upload verification documents.');
     }
 
-    // For PDFs, we should use 'raw' resource type to prevent transformation and delivery issues.
-    // For other file types like images, 'image' is appropriate.
-    const isPdf = file.mimetype === 'application/pdf' || file.originalname.toLowerCase().endsWith('.pdf');
+    const fileExtension = path.extname(file.originalname).substring(1);
     
     return {
       folder: `verification/${req.user.email}`,
       public_id: `${file.fieldname}-${Date.now()}`,
-      resource_type: isPdf ? 'raw' : 'image',
+      resource_type: 'auto', // Let cloudinary detect the resource type
       allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'],
+      format: fileExtension, // Explicitly set the format as a hint
     };
   },
 });
