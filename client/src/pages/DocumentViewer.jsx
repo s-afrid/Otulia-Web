@@ -11,7 +11,7 @@ const DocumentViewer = () => {
     // Console log the URL as requested
     console.log('Received document URL:', docUrl);
 
-    const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
+    const [pdfBlobUrl, setPdfBlobUrl] = useState(null); // This state will now directly hold docUrl for PDFs
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -25,38 +25,19 @@ const DocumentViewer = () => {
         }
 
         if (isPdf) {
-            setLoading(true);
+            setLoading(false); // No fetching needed, so no loading state after initial check
             setError('');
-            fetch(docUrl)
-                .then(res => {
-                    if (!res.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return res.blob();
-                })
-                .then(blob => {
-                    const blobUrl = URL.createObjectURL(blob);
-                    setPdfBlobUrl(blobUrl);
-                })
-                .catch(err => {
-                    console.error("Failed to fetch PDF:", err);
-                    setError('Could not load the PDF file for viewing. You can still try to download it.');
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
+            // Directly use docUrl for iframe src, assuming browser can handle it
+            // Note: This approach might encounter CORS issues depending on server configuration.
+            setPdfBlobUrl(docUrl); 
         } else {
             // For images, no fetching needed, just stop loading
             setLoading(false);
         }
 
-        // Cleanup function to revoke the blob URL
-        return () => {
-            if (pdfBlobUrl) {
-                URL.revokeObjectURL(pdfBlobUrl);
-            }
-        };
-    }, [docUrl, isPdf]); // Effect depends on docUrl and isPdf
+        // Cleanup function is no longer needed as we don't create object URLs for PDFs
+        return () => {}; 
+    }, [docUrl, isPdf]);
 
 
     if (!docUrl || error && !loading) {
@@ -71,7 +52,7 @@ const DocumentViewer = () => {
         );
     }
 
-    // Function to trigger download
+    // Function to trigger download - still uses fetch and blob for robustness
     const handleDownload = async () => {
         try {
             const response = await fetch(docUrl);
@@ -84,7 +65,7 @@ const DocumentViewer = () => {
             const fileName = docName.replace(/[^a-z0-9_.-]/gi, '_');
             a.download = fileName;
             document.body.appendChild(a);
-a.click();
+            a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
         } catch (error) {
@@ -123,28 +104,14 @@ a.click();
                             <FiLoader className="animate-spin text-4xl mx-auto mb-4" />
                             <p className="font-semibold">Loading Document...</p>
                         </div>
-                    ) : isPdf ? (
-                        pdfBlobUrl ? (
-                            <iframe
-                                src={pdfBlobUrl}
-                                title={docName}
-                                className="w-full h-full rounded-2xl border-4 border-white shadow-2xl"
-                                style={{ minHeight: '80vh' }}
-                            />
-                        ) : (
-                           <div className="text-center text-red-500">
-                                <p>{error}</p>
-                           </div>
-                        )
                     ) : (
-                        <div className="w-full h-full bg-white rounded-2xl border-4 border-white shadow-2xl p-4 flex justify-center items-center" style={{ minHeight: '80vh' }}>
-                            <img
-                                src={docUrl}
-                                alt={docName}
-                                className="max-w-full max-h-full object-contain"
-                            />
-                        </div>
-                    )}
+                        <iframe
+                            src={docUrl} // Directly use docUrl
+                            title={docName}
+                            className="w-full h-full rounded-2xl border-4 border-white shadow-2xl"
+                            style={{ minHeight: '80vh' }}
+                        />
+                    ) }
                 </div>
             </main>
         </div>
