@@ -4,9 +4,12 @@ import { FiDownload, FiArrowLeft, FiLoader } from 'react-icons/fi';
 
 const DocumentViewer = () => {
     const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
-    const docUrl = searchParams.get('url');
-    const docName = searchParams.get('name') || 'Document';
+    
+    // Get data from navigation state
+    const { docUrl, docName = 'Document' } = location.state || {};
+
+    // Console log the URL as requested
+    console.log('Received document URL:', docUrl);
 
     const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
     const [loading, setLoading] = useState(true);

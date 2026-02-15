@@ -599,14 +599,17 @@ const AdminDashboard = () => {
                                                     <p className="text-xs text-gray-400">Document</p>
                                                 </div>
                                             </div>
-                                            <a
-                                                href={`/admin/view-document?url=${encodeURIComponent(url)}&name=${encodeURIComponent(type.replace(/([A-Z])/g, ' $1').trim())}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
+                                            <button
+                                                onClick={() => navigate('/admin/view-document', { 
+                                                    state: { 
+                                                        docUrl: url, 
+                                                        docName: type.replace(/([A-Z])/g, ' $1').trim() 
+                                                    } 
+                                                })}
                                                 className="px-6 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-black transition-colors"
                                             >
                                                 View File
-                                            </a>
+                                            </button>
                                         </div>
                                     ))}
                                 </div>

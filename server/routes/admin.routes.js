@@ -1,4 +1,5 @@
 const express = require("express");
+const { cloudinary } = require("../config/cloudinary");
 const router = express.Router();
 const User = require("../models/User.model");
 const Listing = require("../models/Listing.model"); // Assuming generic listing or assets
@@ -146,6 +147,17 @@ router.get("/partners", authMiddleware, adminCheck, async (req, res) => {
                 category = p.myListings[0].itemModel.replace('Asset', '');
             }
 
+            // Generate secure URLs for verification documents using Cloudinary SDK
+            const secureDocs = {};
+            if (p.verificationDocuments) {
+                for (const [key, publicId] of p.verificationDocuments.entries()) {
+                    secureDocs[key] = cloudinary.url(publicId, { 
+                        secure: true, 
+                        resource_type: 'image' // Set to image as per user's new URL example
+                    });
+                }
+            }
+
             return {
                 id: p._id,
                 name: p.name,
@@ -155,7 +167,7 @@ router.get("/partners", authMiddleware, adminCheck, async (req, res) => {
                 location: p.phone ? 'Verified Loc' : 'Unknown', // Placeholder
                 status: p.verificationStatus === 'Verified' ? 'Active' : p.verificationStatus,
                 verificationStatus: p.verificationStatus,
-                verificationDocuments: p.verificationDocuments ? Object.fromEntries(p.verificationDocuments) : {}, // Convert Map to Object
+                verificationDocuments: secureDocs,
                 totalSales: totalSales,
                 isVerified: p.isVerified
             };
