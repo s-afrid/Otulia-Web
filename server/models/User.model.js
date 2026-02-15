@@ -45,9 +45,12 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
-    company: [
-      
-    ],
+    company: {
+      companyName: String,
+      companyLogo: String,
+      address: String,
+      website: String,
+    },
 
     isVerified: {
       type: Boolean,
