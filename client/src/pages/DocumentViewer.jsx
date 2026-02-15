@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { FiDownload, FiArrowLeft, FiLoader } from 'react-icons/fi';
+import { useSearchParams } from 'react-router-dom';
 
 const DocumentViewer = () => {
     const location = useLocation();
     
-    // Get data from navigation state
-    const { docUrl, docName = 'Document' } = location.state || {};
+   const [searchParams] = useSearchParams();
+    
+    const docUrl = searchParams.get('url');
+    const docName = searchParams.get('name');
 
     // Console log the URL as requested
     console.log('Received document URL:', docUrl);
@@ -78,11 +81,8 @@ const DocumentViewer = () => {
         <div className="min-h-screen bg-gray-100 flex flex-col montserrat">
             <header className="bg-white shadow-sm sticky top-0 z-50">
                 <div className="container mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
-                    <Link to="/admin" className="flex items-center gap-3 text-gray-600 hover:text-gray-900 transition-colors">
-                        <FiArrowLeft className="w-5 h-5" />
-                        <span className="text-sm font-bold">Back to Admin Dashboard</span>
-                    </Link>
-                    <div className="flex items-center gap-4">
+                    
+                    
                         <span className="text-sm font-semibold text-gray-800 hidden md:block truncate max-w-xs" title={docName}>
                             {docName}
                         </span>
@@ -93,7 +93,7 @@ const DocumentViewer = () => {
                             <FiDownload className="w-4 h-4" />
                             <span>Download</span>
                         </button>
-                    </div>
+                    
                 </div>
             </header>
 

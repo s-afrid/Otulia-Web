@@ -600,12 +600,14 @@ const AdminDashboard = () => {
                                                 </div>
                                             </div>
                                             <button
-                                                onClick={() => navigate('/admin/view-document', { 
-                                                    state: { 
-                                                        docUrl: url, 
-                                                        docName: type.replace(/([A-Z])/g, ' $1').trim() 
-                                                    } 
-                                                })}
+                                                onClick={() => {
+        const docName = type.replace(/([A-Z])/g, ' $1').trim();
+        // Construct a URL with query parameters
+        const targetUrl = `/admin/view-document?url=${encodeURIComponent(url)}&name=${encodeURIComponent(docName)}`;
+        
+        // Open in a new tab
+        window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    }}
                                                 className="px-6 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-black transition-colors"
                                             >
                                                 View File
