@@ -364,7 +364,7 @@ const AdminDashboard = () => {
                                                     <span className="text-sm text-gray-500 font-medium">{partner.location}</span>
                                                 </td>
                                                 <td className="block md:table-cell px-8 py-5 text-right">
-                                                    <div className="flex justify-end gap-2">
+                                                    <div className="flex flex-wrap justify-end gap-2">
                                                         <button
                                                             onClick={() => viewDocs(partner)}
                                                             className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all text-xs font-bold uppercase border border-blue-100"
