@@ -69,7 +69,7 @@ const Estate_Section = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="w-[92%] md:w-[96%] h-px bg-black border-0 self-center my-10"></div>
+      
 
 
       <EstateGallery images={info.images} />

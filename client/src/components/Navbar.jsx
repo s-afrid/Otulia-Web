@@ -127,7 +127,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
       </ul >
 
       {(isHeroPage && !isScrolled) && (
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[96%] h-[1px] bg-gray-600"></div>
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[96%] h-[1px] bg-black"></div>
       )}
     </nav >
   );

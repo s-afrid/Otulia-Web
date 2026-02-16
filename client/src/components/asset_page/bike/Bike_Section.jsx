@@ -62,8 +62,7 @@ const Bike_Section = () => {
 
     return (
         <div className="flex flex-col">
-            <div className="w-[92%] md:w-[96%] h-px bg-black border-0 self-center my-10"></div>
-
+           
             <BikeGallery images={info.images} />
 
             <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>

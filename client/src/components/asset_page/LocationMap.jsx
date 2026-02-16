@@ -90,7 +90,7 @@ const LocationMap = ({ locationName }) => {
         center={[coordinates.lat, coordinates.lng]} 
         zoom={14} 
         scrollWheelZoom={false} 
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%' , zIndex: '-10' }}
       >
         <TileLayer
           attribution='&copy; OpenStreetMap contributors'
