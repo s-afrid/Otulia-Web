@@ -45,7 +45,7 @@ const Category_Navbar = () => {
             <nav className={navClasses}>
                 <NavLink to={'/'}>
                     <img
-                        className="w-[135px] md:w-[180px] h-[35px] md:h-[45px] object-contain"
+                        className="w-[100px] md:w-[120px] h-[40px] md:h-[50px] object-contain"
                         alt="logo"
                         src="/logos/logo.png"
                         title="Otulia"

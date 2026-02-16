@@ -31,7 +31,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
   // Override if forceTransparent is on
   const isDarkText = (!isHeroPage || isScrolled) && !forceTransparent;
 
-  const navClasses = `fixed top-0 left-0 w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${forceTransparent
+  const navClasses = `fixed top-0 left-0 h-[40px] md:h-[80px] w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${forceTransparent
       ? "bg-transparent text-white"
       : !isHeroPage
         ? "bg-white text-black"
@@ -49,7 +49,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
       {/* 1. Logo */}
       <NavLink to={"/"}>
         <img
-          className="w-[140px] md:w-[200px] h-[40px] md:h-[60px] object-contain"
+          className="w-[100px] md:w-[120px] h-[40px] md:h-[50px] object-contain"
           alt="logo"
           src={logoSrc}
           title="Otulia"
@@ -59,7 +59,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
       {/* 2. HAMBURGER (Dynamic Color) */}
       <button
         // Use 'isDarkText' to swap color so it is visible on white backgrounds
-        className={`block md:hidden focus:outline-none z-50 ${isDarkText ? "text-black" : "text-white"}`}
+        className={`block md:hidden focus:outline-none z-50 text-black`}
         onClick={() => setpanelFlag(true)}
       >
         <svg
@@ -125,6 +125,10 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
         )
         }
       </ul >
+
+      {(isHeroPage && !isScrolled) && (
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[96%] h-[1px] bg-gray-600"></div>
+      )}
     </nav >
   );
 };
