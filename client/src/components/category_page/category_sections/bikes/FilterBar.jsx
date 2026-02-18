@@ -183,7 +183,7 @@ const FilterBar = ({
             <button
               type="button"
               onClick={handleSearch}
-              className="w-full bg-[#9C824A] hover:bg-[#856d3a] text-white montserrat font-medium py-2.5 rounded-lg shadow-md transition-all"
+              className="w-full bg-[#2C2C2C] hover:bg-black text-white montserrat font-medium py-2.5 rounded-lg shadow-md transition-all"
             >
               Search
             </button>
@@ -198,7 +198,7 @@ const FilterBar = ({
           className="
             hidden xl:block
             w-auto 
-            bg-[#9C824A] hover:bg-[#856d3a] 
+            bg-[#2C2C2C] hover:bg-black 
             text-white montserrat text-lg 
             px-8 py-2.5 
             rounded-full 

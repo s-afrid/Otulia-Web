@@ -3,12 +3,12 @@ import Navbar from '../../components/Navbar';
 
 const Terms = () => {
     return (
-        <div className="w-full bg-white pt-40 pb-16">
+        <div className="w-full bg-white pt-40 pb-16 montserrat">
             <Navbar />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 className="text-4xl font-playfair font-bold text-gray-900 mb-8 text-center">Terms & Conditions</h1>
 
-                <div className="prose prose-lg max-w-none text-gray-600 font-sans">
+                <div className="prose prose-lg max-w-none text-gray-600">
                     <p className="mb-6">Last updated: January 26, 2026</p>
 
                     <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">1. Agreement to Terms</h2>

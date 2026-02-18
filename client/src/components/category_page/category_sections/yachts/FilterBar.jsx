@@ -72,7 +72,7 @@ const AutoWidthDropdown = ({ label, value, options, onChange }) => {
               onClick={() => handleSelect(opt)}
               className={`
                 px-4 py-2 cursor-pointer transition-colors montserrat text-sm
-                ${value === opt ? 'bg-[#9C824A]/10 text-[#9C824A] font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-black'}
+                ${value === opt ? 'bg-gray-400/10 text-black font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-black'}
               `}
             >
               {opt}
@@ -183,7 +183,7 @@ const FilterBar = ({
             <button
               type="button"
               onClick={handleSearch}
-              className="w-full bg-[#9C824A] hover:bg-[#856d3a] text-white montserrat font-medium py-2.5 rounded-lg shadow-md transition-all"
+              className="w-full bg-[#2C2C2C] hover:bg-black text-white montserrat font-medium py-2.5 rounded-lg shadow-md transition-all"
             >
               Search
             </button>
@@ -198,7 +198,7 @@ const FilterBar = ({
           className="
             hidden xl:block
             w-auto 
-            bg-[#9C824A] hover:bg-[#856d3a] 
+            bg-[#2C2C2C] hover:bg-black 
             text-white montserrat text-lg 
             px-8 py-2.5 
             rounded-full 

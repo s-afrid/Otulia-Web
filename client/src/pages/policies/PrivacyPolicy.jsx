@@ -3,12 +3,12 @@ import Navbar from '../../components/Navbar';
 
 const PrivacyPolicy = () => {
     return (
-        <div className="w-full bg-white pt-40 pb-16">
+        <div className="w-full bg-white pt-40 pb-16 montserrat">
             <Navbar />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 className="text-4xl font-playfair font-bold text-gray-900 mb-8 text-center">Privacy Policy</h1>
 
-                <div className="prose prose-lg max-w-none text-gray-600 font-sans">
+                <div className="prose prose-lg max-w-none text-gray-600">
                     <p className="mb-6">Effective Date: January 26, 2026</p>
 
                     <p>

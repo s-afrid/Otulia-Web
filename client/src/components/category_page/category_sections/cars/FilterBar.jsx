@@ -202,7 +202,7 @@ const FilterBar = ({
           className="
             hidden xl:block
             w-auto 
-            bg-[#9C824A] hover:bg-[#856d3a] 
+            bg-[#2C2C2C] hover:bg-black 
             text-white montserrat text-lg 
             px-8 py-2.5 
             rounded-full 

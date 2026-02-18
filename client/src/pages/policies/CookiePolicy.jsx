@@ -3,12 +3,12 @@ import Navbar from '../../components/Navbar';
 
 const CookiePolicy = () => {
     return (
-        <div className="w-full bg-white pt-40 pb-16">
+        <div className="w-full bg-white pt-40 pb-16 montserrat">
             <Navbar />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 className="text-4xl font-playfair font-bold text-gray-900 mb-8 text-center">Cookie Policy</h1>
 
-                <div className="prose prose-lg max-w-none text-gray-600 font-sans">
+                <div className="prose prose-lg max-w-none text-gray-600">
                     <p>
                         Otulia uses cookies and similar technologies to provide you with a personalized and premium user experience. This policy explains what cookies are, how we use them, and your choices regarding their use.
                     </p>

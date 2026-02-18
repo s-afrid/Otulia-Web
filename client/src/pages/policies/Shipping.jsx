@@ -3,12 +3,12 @@ import Navbar from '../../components/Navbar';
 
 const Shipping = () => {
     return (
-        <div className="w-full bg-white pt-40 pb-16">
+        <div className="w-full bg-white pt-40 pb-16 montserrat">
             <Navbar />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 className="text-4xl font-playfair font-bold text-gray-900 mb-8 text-center">Shipping & Delivery Information</h1>
 
-                <div className="prose prose-lg max-w-none text-gray-600 font-sans">
+                <div className="prose prose-lg max-w-none text-gray-600">
                     <p>
                         Otulia facilitates the global transport of luxury assets with white-glove service. Whether it's a supercar, a yacht, or a timepiece, we ensure your asset arrives safely and discreetly.
                     </p>
