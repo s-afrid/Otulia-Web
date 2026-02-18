@@ -66,6 +66,28 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const [galleryImages, setGalleryImages] = useState([]);
     const [documents, setDocuments] = useState([]);
 
+    const handleRemoveFile = (index, type) => {
+        if (type === 'cover') setCoverImage(null);
+        else if (type === 'gallery') setGalleryImages(galleryImages.filter((_, i) => i !== index));
+        else if (type === 'document') setDocuments(documents.filter((_, i) => i !== index));
+    };
+
+    const handleFileUpload = (e, type) => {
+        const files = Array.from(e.target.files);
+        if (type === 'cover' || type === 'gallery') {
+            const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
+            const invalidFiles = files.filter(f => !allowed.includes(f.type));
+            if (invalidFiles.length > 0) {
+                alert('Only .jpg, .png and .jpeg are allowed for images');
+                return;
+            }
+        }
+
+        if (type === 'cover') setCoverImage(files[0]);
+        else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 10));
+        else if (type === 'document') setDocuments(prev => [...prev, ...files].slice(0, 5));
+    };
+
     useEffect(() => {
         if (!isOpen) {
             setStep(0);
@@ -143,9 +165,19 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     };
 
     const handleFileUpload = (e, type) => {
-        if (type === 'cover') setCoverImage(e.target.files[0]);
-        else if (type === 'gallery') setGalleryImages([...galleryImages, ...Array.from(e.target.files)]);
-        else if (type === 'document') setDocuments([...documents, ...Array.from(e.target.files)]);
+        const files = Array.from(e.target.files);
+        if (type === 'cover' || type === 'gallery') {
+            const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
+            const invalidFiles = files.filter(f => !allowed.includes(f.type));
+            if (invalidFiles.length > 0) {
+                alert('Only .jpg, .png and .jpeg are allowed for images');
+                return;
+            }
+        }
+
+        if (type === 'cover') setCoverImage(files[0]);
+        else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 10));
+        else if (type === 'document') setDocuments(prev => [...prev, ...files].slice(0, 5));
     };
 
     const handleSubmit = async () => {
@@ -615,34 +647,92 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     )}
 
                                     {/* Media Section - Common to all */}
-                                    <div className="pt-10 border-t border-gray-100">
+                                    <div className="pt-10 border-t border-gray-100 space-y-10">
                                         <h3 className="text-xl font-bold text-gray-900 mb-8 font-playfair">Media</h3>
+                                        
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                                            <div>
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Cover Image *</p>
-                                                <label className="block w-full h-48 border-2 border-dashed border-gray-100 rounded-[2rem] hover:bg-white hover:border-[#D48D2A] transition-all cursor-pointer overflow-hidden group bg-white/50">
-                                                    {coverImage ? (
-                                                        <img src={URL.createObjectURL(coverImage)} className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <div className="flex flex-col items-center justify-center h-full gap-2">
-                                                            <FiImage className="text-3xl text-gray-200 group-hover:text-[#D48D2A] transition-colors" />
-                                                            <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Click to upload cover</span>
-                                                        </div>
-                                                    )}
-                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'cover')} />
-                                                </label>
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Gallery Images (min 5)</p>
-                                                <label className="block w-full h-48 border-2 border-dashed border-gray-100 rounded-[2rem] hover:bg-white hover:border-[#D48D2A] transition-all cursor-pointer overflow-hidden group bg-white/50">
-                                                    <div className="flex flex-col items-center justify-center h-full gap-2">
-                                                        <FiPlus className="text-3xl text-gray-200 group-hover:text-[#D48D2A] transition-colors" />
-                                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">{galleryImages.length} images added</span>
+                                            {/* Cover Image */}
+                                            <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
+                                                <div className="flex items-center gap-3 mb-6">
+                                                    <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-[#D48D2A]">
+                                                        <FiImage />
                                                     </div>
-                                                    <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'gallery')} />
+                                                    <div>
+                                                        <h4 className="text-sm font-bold text-gray-900">Cover Image</h4>
+                                                        <p className="text-xs text-gray-400">Primary display image for this asset</p>
+                                                    </div>
+                                                </div>
+
+                                                <label className="block">
+                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'cover')} />
+                                                    <div className={`border-2 border-dashed rounded-2xl p-8 cursor-pointer transition-all text-center ${coverImage ? 'border-emerald-200 bg-white' : 'border-gray-200 bg-white hover:border-[#D48D2A]'}`}>
+                                                        {coverImage ? (
+                                                            <div className="relative group">
+                                                                <img src={URL.createObjectURL(coverImage)} className="w-full h-40 object-cover rounded-xl" />
+                                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+                                                                    <p className="text-white text-xs font-bold uppercase tracking-widest">Click to Replace</p>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex flex-col items-center gap-2 text-gray-400">
+                                                                <FiUpload className="text-3xl" />
+                                                                <p className="text-xs font-bold uppercase tracking-widest">Select Cover Photo</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </label>
+
+                                                {coverImage && (
+                                                    <div className="mt-4 flex items-center gap-3 bg-white p-3 rounded-xl border border-emerald-100">
+                                                        <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                                                            <FiCheck />
+                                                        </div>
+                                                        <p className="text-xs font-bold text-gray-700 truncate flex-1">{coverImage.name}</p>
+                                                        <button type="button" onClick={() => handleRemoveFile(null, 'cover')} className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all">
+                                                            <FiTrash2 />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Gallery Images */}
+                                            <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
+                                                <div className="flex items-center gap-3 mb-6">
+                                                    <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-[#D48D2A]">
+                                                        <FiPlus />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-sm font-bold text-gray-900">Gallery</h4>
+                                                        <p className="text-xs text-gray-400">Additional interior and detail shots (Max 10)</p>
+                                                    </div>
+                                                </div>
+
+                                                <label className="block">
+                                                    <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'gallery')} />
+                                                    <div className="border-2 border-dashed border-gray-200 bg-white rounded-2xl p-8 cursor-pointer transition-all hover:border-[#D48D2A] text-center">
+                                                        <div className="flex flex-col items-center gap-2 text-gray-400">
+                                                            <FiUpload className="text-3xl" />
+                                                            <p className="text-xs font-bold uppercase tracking-widest">Add Gallery Photos</p>
+                                                        </div>
+                                                    </div>
+                                                </label>
+
+                                                <div className="mt-6 grid grid-cols-2 gap-3">
+                                                    {galleryImages.map((file, idx) => (
+                                                        <div key={idx} className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-emerald-100 shadow-sm">
+                                                            <div className="w-6 h-6 rounded-md bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                                                                <FiCheck className="text-[10px]" />
+                                                            </div>
+                                                            <p className="text-[10px] font-bold text-gray-700 truncate flex-1">{file.name}</p>
+                                                            <button type="button" onClick={() => handleRemoveFile(idx, 'gallery')} className="text-gray-400 hover:text-red-500 transition-colors">
+                                                                <FiX className="text-sm" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div className="mt-10">
                                             <InputField label="Video URL (YouTube/Vimeo)" name="videoUrl" value={formData.videoUrl} placeholder="https://youtube.com/watch?v=..." onChange={handleInputChange} />
                                         </div>
