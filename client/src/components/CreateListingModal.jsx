@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiX, FiUploadCloud, FiFileText } from 'react-icons/fi';
+import { FiX, FiUploadCloud, FiFileText, FiCheckCircle } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 
 const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
@@ -87,10 +87,18 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     });
 
     const [images, setImages] = useState([]);
-    const [documents, setDocuments] = useState([]);
+
+    const handleRemoveFile = (index, type) => {
+        if (type === 'images') {
+            setImages(images.filter((_, i) => i !== index));
+        }
+    };
 
     // Reset form when editData changes or modal closes/opens
     React.useEffect(() => {
+        if (!isOpen) {
+            setImages([]);
+        }
         if (editData) {
             const spec = editData.specification || {};
             const keySpec = editData.keySpecifications || {};
@@ -198,10 +206,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     };
 
     const handleFileChange = (e, type) => {
+        const files = Array.from(e.target.files);
         if (type === 'images') {
-            setImages([...e.target.files]);
-        } else {
-            setDocuments([...e.target.files]);
+            setImages(prev => [...prev, ...files].slice(0, 5));
         }
     };
 
@@ -250,7 +257,6 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         data.append('highlights', JSON.stringify(constructedHighlights));
 
         images.forEach(file => data.append('images', file));
-        documents.forEach(file => data.append('documents', file));
 
         try {
             const url = editData
@@ -485,27 +491,52 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         )}
                     </div>
 
-                    <div className="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-black/20 transition-colors">
-                        <label className="cursor-pointer flex flex-col items-center gap-2">
-                            <FiUploadCloud className="text-3xl text-gray-400" />
-                            <span className="text-sm font-medium text-gray-600">Upload Images (Max 5)</span>
-                            <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'images')} />
-                        </label>
-                        {images.length > 0 && <p className="text-xs text-center mt-2 text-green-600">{images.length} files selected</p>}
-                    </div>
+                    {/* Media Upload Section */}
+                    <div className="space-y-6 pt-4 border-t border-gray-100">
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4">Media & Documents</h3>
+                        
+                        {/* Image Upload */}
+                        <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-gray-400">
+                                    <FiUploadCloud />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-bold text-gray-900">Asset Images</h4>
+                                    <p className="text-xs text-gray-400">Upload high-quality images (Max 5)</p>
+                                </div>
+                            </div>
 
-                    <div className="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-black/20 transition-colors bg-blue-50/30 border-blue-100">
-                        <label className="cursor-pointer flex flex-col items-center gap-2">
-                            <FiFileText className="text-3xl text-blue-400" />
-                            <span className="text-sm font-medium text-blue-600">Upload Documents (PDF, Docs)</span>
-                            <input type="file" multiple accept=".pdf,.doc,.docx" className="hidden" onChange={(e) => handleFileChange(e, 'documents')} />
-                        </label>
-                        {documents.length > 0 && <p className="text-xs text-center mt-2 text-blue-600">{documents.length} docs selected</p>}
-                    </div>
+                            <label className="block">
+                                <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'images')} />
+                                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer transition-all hover:border-black hover:bg-white group text-center">
+                                    <div className="flex flex-col items-center gap-2 text-gray-400 group-hover:text-black">
+                                        <FiUploadCloud className="text-2xl" />
+                                        <p className="text-xs font-bold uppercase tracking-widest">Click to upload images</p>
+                                    </div>
+                                </div>
+                            </label>
 
-                    <div className="pt-4">
-                        <button disabled={loading} type="submit" className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50">
-                            {loading ? 'Creating...' : 'Submit Listing'}
+                                                        {images.length > 0 && (
+                                                            <div className="mt-4 space-y-2">
+                                                                {images.map((file, idx) => (
+                                                                    <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                                                                        <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                                                                            <FiCheckCircle className="text-sm" />
+                                                                        </div>
+                                                                        <p className="text-xs font-bold text-gray-700 truncate flex-1">{file.name}</p>
+                                                                        <button type="button" onClick={() => handleRemoveFile(idx, 'images')} className="p-1 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-all">
+                                                                            <FiX />
+                                                                        </button>
+                                                                    </div>
+                                                                ))}
+                                                                                            </div>
+                                                                                        )}
+                                                                                    </div>
+                                                                                </div>
+                                                            
+                                                                                <div className="pt-4">                        <button disabled={loading} type="submit" className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50">
+                            {loading ? 'Processing...' : (editData ? 'Update Listing' : 'Submit Listing')}
                         </button>
                     </div>
                 </form>

@@ -34,7 +34,15 @@ const upload = multer({
  * CREATE LISTING
  * POST /api/listings/create
  */
-router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount: 5 }, { name: 'documents', maxCount: 3 }]), async (req, res) => {
+router.post('/create', authMiddleware, upload.fields([
+    { name: 'images', maxCount: 5 },
+    { name: 'documents', maxCount: 3 },
+    { name: 'businessLicense', maxCount: 1 },
+    { name: 'taxId', maxCount: 1 },
+    { name: 'proofOfAddress', maxCount: 1 },
+    { name: 'dealershipCertificate', maxCount: 1 },
+    { name: 'insuranceProof', maxCount: 1 }
+]), async (req, res) => {
     try {
         let { title, price, category, location, description } = req.body;
         // Default location if missing
@@ -69,9 +77,21 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
         // Handle files
         const imageFiles = req.files['images'] || [];
         const docFiles = req.files['documents'] || [];
+        const businessLicense = req.files['businessLicense'] || [];
+        const taxId = req.files['taxId'] || [];
+        const proofOfAddress = req.files['proofOfAddress'] || [];
+        const dealershipCertificate = req.files['dealershipCertificate'] || [];
+        const insuranceProof = req.files['insuranceProof'] || [];
 
         const imageUrls = imageFiles.map(file => `/uploads/${file.filename}`);
-        const docUrls = docFiles.map(file => `/uploads/${file.filename}`);
+        const docUrls = [
+            ...docFiles.map(file => `/uploads/${file.filename}`),
+            ...businessLicense.map(file => `/uploads/${file.filename}`),
+            ...taxId.map(file => `/uploads/${file.filename}`),
+            ...proofOfAddress.map(file => `/uploads/${file.filename}`),
+            ...dealershipCertificate.map(file => `/uploads/${file.filename}`),
+            ...insuranceProof.map(file => `/uploads/${file.filename}`)
+        ];
 
         // Define Base Data
         const baseData = {

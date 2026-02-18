@@ -4,16 +4,18 @@ import Navbar from '../components/Navbar';
 import AssetCard from '../components/AssetCard';
 import CreateListingModal from '../components/CreateListingModal';
 import ConfirmationModal from '../components/ConfirmationModal';
+import DealerVerificationModal from '../components/inventory/DealerVerificationModal';
 import { FiGrid, FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import UpgradeModal from '../components/UpgradeModal';
 
 const MyListings = () => {
-    const { token, isAuthenticated, user } = useAuth();
+    const { token, isAuthenticated, user, login } = useAuth();
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const [editingListing, setEditingListing] = useState(null);
 
@@ -57,7 +59,50 @@ const MyListings = () => {
         }
     };
 
+    const handleVerificationSubmit = async (documents) => {
+        try {
+            const formData = new FormData();
+            Object.keys(documents).forEach(key => {
+                if (documents[key]) formData.append(key, documents[key]);
+            });
+
+            const response = await fetch('/api/auth/submit-verification', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                alert('Verification documents submitted successfully! Status updated to Pending.');
+                if (login) login(token, updatedUser);
+                setIsVerificationModalOpen(false);
+                window.location.reload(); 
+            } else {
+                const data = await response.json();
+                alert(`Failed to submit: ${data.error || 'Please try again.'}`);
+            }
+        } catch (error) {
+            console.error("Verification error:", error);
+            alert("An error occurred during submission.");
+        }
+    };
+
     const handleCreateClick = () => {
+        if (user?.verificationStatus === 'Pending') {
+            alert("Your dealer verification is currently pending approval. You will be notified once approved.");
+            return;
+        }
+
+        if (user?.verificationStatus === 'None' || user?.verificationStatus === 'Rejected') {
+            const msg = user?.verificationStatus === 'Rejected' 
+                ? "Your previous verification was rejected. Please re-submit valid documents to continue."
+                : "Please complete dealer verification before creating a listing.";
+            alert(msg);
+            setIsVerificationModalOpen(true);
+            return;
+        }
+
         const currentCount = listings.length;
         const currentPlan = user?.plan || 'Freemium';
 
@@ -158,6 +203,12 @@ const MyListings = () => {
                 onClose={() => setDeleteModalOpen(false)}
                 onConfirm={handleDelete}
                 message="Are you sure you want to delete this listing? This cannot be undone."
+            />
+
+            <DealerVerificationModal 
+                isOpen={isVerificationModalOpen}
+                onClose={() => setIsVerificationModalOpen(false)}
+                onSubmit={handleVerificationSubmit}
             />
 
             <div className="pt-28 max-w-7xl mx-auto px-6">
