@@ -134,7 +134,7 @@ const Cars_Search = () => {
           <button
             onClick={() => setActiveType('Buy')}
             className={`
-              px-6 py-2 rounded-md font-sans font-medium transition-colors duration-300
+              px-6 py-2 rounded-md montserrat font-medium transition-colors duration-300
               ${activeType === 'Buy'
                 ? 'bg-black text-white'
                 : 'bg-white text-black hover:bg-gray-50'
@@ -148,7 +148,7 @@ const Cars_Search = () => {
           <button
             onClick={() => setActiveType('Rent')}
             className={`
-              px-6 py-2 rounded-md font-sans font-medium transition-colors duration-300
+              px-6 py-2 rounded-md montserrat font-medium transition-colors duration-300
               ${activeType === 'Rent'
                 ? 'bg-black text-white'
                 : 'bg-white text-black hover:bg-gray-50'
@@ -168,10 +168,10 @@ const Cars_Search = () => {
           px-10 md:px-12 
           bg-[#2C2C2C] hover:bg-black /* Darker Gold/Brown */
           text-white 
-          montserrat text-xl md:text-2xl 
+          montserrat text-md md:text-xl 
           flex items-center justify-center
           transition-colors duration-300
-          rounded-r-full
+          rounded-full
         ">
           Search
         </button>
