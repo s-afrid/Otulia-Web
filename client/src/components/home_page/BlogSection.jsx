@@ -18,7 +18,7 @@ const BlogSection = () => {
             title: "Top 7 Most Expensive Cars in the World (2026 Edition)",
             date: '21 Jan 2026',
             snippet: 'Ultra expensive cars exist far beyond the realm of simple transportation. ',
-            image: 'https://www.motozite.com/blog/wp-content/uploads/2026/01/Top-7-Most-Expensive-Cars-in-the-World-2026-Edition-1024x683.jpg',
+            image: 'https://robbreport.com/wp-content/uploads/2025/07/RR_20250715_Most_Expensive_Cars_update_Lead.jpg?w=1000',
             navigate: 'https://www.motozite.com/blog/most-expensive-cars-in-the-world/'
         },
         {

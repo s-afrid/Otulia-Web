@@ -17,6 +17,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
 
   const location = useLocation();
   const isHeroPage = location.pathname === "/";
+  const isProductPage = location.pathname.startsWith("/asset/")
 
   useEffect(() => {
     const handleScroll = () => {
@@ -126,7 +127,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
         }
       </ul >
 
-      {(isHeroPage && !isScrolled) && (
+      {((isHeroPage || isProductPage) && !isScrolled) && (
         <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[96%] h-[1px] bg-black"></div>
       )}
     </nav >

@@ -72,10 +72,10 @@ const Cars_Search = () => {
       <div className="
         w-full max-w-[900px]
         bg-white 
-        border border-[#B8860B] /* Gold Border */
+        border border-black /* Gold Border */
         rounded-2xl md:rounded-full 
         flex flex-col md:flex-row items-center 
-        shadow-sm
+        shadow-sm p-2 md:h-14
       " ref={searchContainerRef}>
 
         {/* 1. INPUT SECTION */}
@@ -88,7 +88,7 @@ const Cars_Search = () => {
             onBlur={() => setActiveSuggestion(-1)}
             placeholder="Search By Location"
             className="
-              w-full h-14 md:h-16 
+              w-full h-13 md:h-10 
               px-6 
               text-gray-700 placeholder-gray-400 
               montserrat text-sm md:text-base 
@@ -122,7 +122,7 @@ const Cars_Search = () => {
         </div>
 
         {/* DIVIDER (Desktop Only) */}
-        <div className="hidden md:block h-8 w-px bg-[#B8860B] opacity-50"></div>
+        <div className="hidden md:block h-6 w-px bg-gray-500 opacity-50"></div>
 
         {/* 2. TOGGLE SECTION (Buy / Rent) */}
         <div className="
@@ -136,7 +136,7 @@ const Cars_Search = () => {
             className={`
               px-6 py-2 rounded-md font-sans font-medium transition-colors duration-300
               ${activeType === 'Buy'
-                ? 'bg-[#C5A059] text-black'
+                ? 'bg-black text-white'
                 : 'bg-white text-black hover:bg-gray-50'
               }
             `}
@@ -150,7 +150,7 @@ const Cars_Search = () => {
             className={`
               px-6 py-2 rounded-md font-sans font-medium transition-colors duration-300
               ${activeType === 'Rent'
-                ? 'bg-[#C5A059] text-black'
+                ? 'bg-black text-white'
                 : 'bg-white text-black hover:bg-gray-50'
               }
             `}
@@ -164,9 +164,9 @@ const Cars_Search = () => {
           onClick={handleSearch}
           className="
           w-full md:w-auto 
-          h-14 md:h-16 
+          h-13 md:h-10 
           px-10 md:px-12 
-          bg-[#9C824A] hover:bg-[#856d3a] /* Darker Gold/Brown */
+          bg-[#2C2C2C] hover:bg-black /* Darker Gold/Brown */
           text-white 
           montserrat text-xl md:text-2xl 
           flex items-center justify-center
