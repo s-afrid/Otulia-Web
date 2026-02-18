@@ -36,7 +36,7 @@ const Category_Navbar = () => {
     
     const navClasses = `fixed left-0 z-50 h-15 transition-all duration-200 flex items-center justify-between p-4 ${
         isScrolled 
-            ? "bg-[#7a7a79] text-white w-screen" // NOTE: I changed text-black to text-white for visibility on dark bg
+            ? "bg-white text-black w-screen" // NOTE: I changed text-black to text-white for visibility on dark bg
             : "bg-white/40 m-6 text-white w-[calc(100vw-48px)] rounded-xl"
     }`;
     
@@ -47,7 +47,7 @@ const Category_Navbar = () => {
                     <img
                         className="w-[100px] md:w-[120px] h-[40px] md:h-[50px] object-contain"
                         alt="logo"
-                        src="/logos/logo.png"
+                        src={isScrolled? `/logos/logo_inverted.png`:`/logos/logo.png`}
                         title="Otulia"
                     />
                 </NavLink>
@@ -57,7 +57,7 @@ const Category_Navbar = () => {
                         <NavLink 
                             key={link.to}
                             to={link.to} 
-                            className={({ isActive }) => isActive ? 'bg-black text-white rounded-2xl py-2 px-3 montserrat' : 'py-2 px-3 montserrat text-white'}
+                            className={({ isActive }) => isActive ? 'bg-black text-white rounded-2xl py-2 px-3 montserrat' : `py-2 px-3 montserrat ${isScrolled?'text-black':'text-white'}`}
                         >
                             {link.text}
                         </NavLink>
@@ -74,10 +74,10 @@ const Category_Navbar = () => {
                         <>
                             {isAuthenticated ? (
                                 <>
-                                    <Profile_dropdown text={'text-white'} />
+                                    <Profile_dropdown text={isScrolled?'text-black':'text-white'} />
                                     {/* Removed 'text-white' wrapper so Cart takes nav color */}
                                     <div className='text-inherit'> 
-                                        <Cart text={'text-white'}/>
+                                        <Cart text={isScrolled?'text-black':'text-white'}/>
                                     </div>
                                 </>
                             ) : (
