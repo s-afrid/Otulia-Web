@@ -59,7 +59,7 @@ const PropertyFilterBar = ({ onFilter }) => {
                 whitespace-nowrap
                 ${(selectedFilters[filter.key] && selectedFilters[filter.key] !== 'Any' && selectedFilters[filter.key] !== 'Any Price' && selectedFilters[filter.key] !== 'Any SqFt') || activeFilter === filter.label
                   ? 'bg-black text-white border-black' // Active Style
-                  : 'bg-white text-black border-gray-300 hover:border-[#B8860B] hover:text-[#B8860B]' // Inactive Style
+                  : 'bg-white text-black border-gray-300 hover:border-gray-700 hover:text-gray-700' // Inactive Style
                 }
               `}
             >
@@ -82,7 +82,7 @@ const PropertyFilterBar = ({ onFilter }) => {
                   {filter.options.map((option, idx) => (
                     <div
                       key={idx}
-                      className={`px-4 py-3 text-sm cursor-pointer transition-colors ${selectedFilters[filter.key] === option ? 'bg-gray-100 text-[#B8860B] font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-[#B8860B]'}`}
+                      className={`px-4 py-3 text-sm cursor-pointer transition-colors ${selectedFilters[filter.key] === option ? 'bg-gray-400/10 text-black font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-black'}`}
                       onClick={() => handleSelect(filter.key, option)}
                     >
                       {option}
@@ -99,8 +99,7 @@ const PropertyFilterBar = ({ onFilter }) => {
           onClick={handleSearch}
           className="
             px-8 py-2.5
-            bg-[#C5A059] hover:bg-[#9C824A]
-            border border-[#C5A059] hover:border-[#9C824A]
+            bg-[#2C2C2C] hover:bg-black
             rounded-lg
             text-white montserrat text-sm md:text-base font-medium
             shadow-sm hover:shadow-md

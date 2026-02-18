@@ -220,11 +220,32 @@ const AssetCard = ({ item }) => {
       </div>
 
       {/* Content Section */}
-      <div className="p-5 relative">
-        <h3 className="text-lg lg:text-xl text-black mb-1 w-1/2 truncate pr-14"
-         style={{ fontFamily: '"Times New Roman", Times, serif' }}>
-          {item.title}
-        </h3>
+      <div className="p-5">
+        <div className="flex justify-between items-start gap-2 mb-1">
+          <div className="flex-1 min-w-0">
+            <h3 className={`text-black leading-tight break-words ${
+              item.title.length > 40 
+                ? 'text-[10px] sm:text-xs md:text-sm lg:text-base'
+                : item.title.length > 25
+                ? 'text-xs sm:text-sm md:text-base lg:text-lg'
+                : 'text-sm sm:text-base md:text-lg lg:text-xl'
+            }`}
+              style={{ fontFamily: '"Times New Roman", Times, serif' }}>
+              {item.title}
+            </h3>
+          </div>
+
+          {!homepage && item.agent && (
+            <div className="flex-shrink-0 flex gap-2 items-center p-1.5 border border-gray-200 rounded-lg bg-white shadow-sm -mt-1">
+              <img className="w-6 h-6 lg:w-8 lg:h-8 rounded-full object-cover" src={item.agent.photo} alt="agent" />
+              {/* UPDATED RESPONSIVENESS: Hidden on mobile/tablet, visible on XL screens */}
+              <p className="text-[10px] hidden xl:block text-gray-500 font-medium uppercase tracking-wider truncate max-w-[80px]">
+                {item.agent.name}
+              </p>
+            </div>
+          )}
+        </div>
+
         <p className="text-md font-bold text-black mb-1 font-sans">
           {typeof item.price === 'number' ? `$ ${numberWithCommas(item.price)}` : item.price}
           {item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal"> / day</span>}
@@ -233,16 +254,6 @@ const AssetCard = ({ item }) => {
         <p className="text-[10px] text-gray-400 mb-2 font-normal uppercase tracking-widest truncate">
           {item.location}
         </p>
-
-        {!homepage && (
-          <div className='absolute top-5 right-4 flex gap-2 items-center p-2 border border-gray-200 rounded-lg bg-white shadow-sm'>
-            <img className='w-8 h-8 rounded-full object-cover' src={item.agent.photo} alt="agent" />
-            {/* UPDATED RESPONSIVENESS: Hidden on mobile/tablet, visible on XL screens */}
-            <p className="text-[10px] hidden xl:block text-gray-500 font-medium uppercase tracking-wider truncate max-w-[80px]">
-              {item.agent.name}
-            </p>
-          </div>
-        )}
 
         <div className="w-full h-px bg-gray-100 mb-2"></div>
 

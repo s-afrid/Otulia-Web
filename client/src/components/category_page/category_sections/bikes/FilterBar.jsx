@@ -72,7 +72,7 @@ const AutoWidthDropdown = ({ label, value, options, onChange }) => {
               onClick={() => handleSelect(opt)}
               className={`
                 px-4 py-2 cursor-pointer transition-colors montserrat text-sm
-                ${value === opt ? 'bg-[#9C824A]/10 text-[#9C824A] font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-black'}
+                ${value === opt ? 'bg-gray-400/10 text-black font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-black'}
               `}
             >
               {opt}
