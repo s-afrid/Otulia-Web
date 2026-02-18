@@ -88,10 +88,12 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
                 id: user._id,
                 name: user.name, // Now cleanly coming from DB
                 email: user.email,
+                phone: user.phone,
                 photo: user.profilePicture,
                 company: 'Otulia Private Seller',
                 companyLogo: user.profilePicture,
-                joined: new Date(user.createdAt).getFullYear()
+                joined: new Date(user.createdAt).getFullYear(),
+                createdAt: user.createdAt
             }
         };
 

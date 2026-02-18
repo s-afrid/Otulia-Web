@@ -20,6 +20,7 @@ const activityRoutes = require("./routes/activity.routes.js");
 const paymentRoutes = require("./routes/payment.routes.js");
 const createListingRoutes = require("./routes/create_listing.routes.js");
 const inventoryRoutes = require("./routes/inventory.routes.js");
+const leadRoutes = require("./routes/lead.routes.js");
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use("/api/seller", sellerRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/inventory", inventoryRoutes);
+app.use("/api/leads", leadRoutes);
 app.use("/api/admin", require("./routes/admin.routes.js"));
 
 

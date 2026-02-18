@@ -446,7 +446,7 @@ const Inventory = () => {
                                         <tr className="bg-gray-50/50">
                                             <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Buyer</th>
                                             <th className="px-4 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Asset</th>
-                                            <th className="px-4 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
+                                            <th className="px-4 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Message</th>
                                             <th className="px-4 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
                                             <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Status</th>
                                         </tr>
@@ -455,13 +455,25 @@ const Inventory = () => {
                                         {data.leads.slice(0, 5).map((lead) => (
                                             <tr key={lead.id} className="hover:bg-gray-50/30 transition-all">
                                                 <td className="px-8 py-4">
-                                                    <p className="text-sm font-bold text-gray-900">{lead.buyerName}</p>
+                                                    <div className="flex items-center gap-3">
+                                                        <img 
+                                                            src={lead.buyerPhoto || '/assets/user.png'} 
+                                                            className="w-8 h-8 rounded-full border border-gray-100 object-cover" 
+                                                            alt="Buyer" 
+                                                            onError={(e) => e.target.src = '/assets/user.png'}
+                                                        />
+                                                        <div>
+                                                            <p className="text-sm font-bold text-gray-900">{lead.buyerName}</p>
+                                                            {user.plan === 'Business VIP' && <p className="text-[10px] text-gray-600 font-medium">{lead.buyerPhone}</p>}
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-4">
-                                                    <p className="text-sm font-medium text-gray-500 truncate max-w-[250px]">{lead.assetName}</p>
-                                                </td>
-                                                <td className="px-4 py-4">
+                                                    <p className="text-sm font-medium text-gray-500 truncate max-w-[200px]">{lead.assetName}</p>
                                                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{lead.category?.replace('Asset', '')}</span>
+                                                </td>
+                                                <td className="px-4 py-4">
+                                                    <p className="text-xs text-gray-500 truncate max-w-[150px]">{lead.message}</p>
                                                 </td>
                                                 <td className="px-4 py-4 text-xs font-medium text-gray-400">
                                                     {new Date(lead.date).toLocaleDateString()}
@@ -720,7 +732,7 @@ const Inventory = () => {
                                         <tr className="bg-gray-50/50 border-b border-gray-100">
                                             <th className="px-10 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Buyer</th>
                                             <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Asset</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Message</th>
                                             <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
                                             <th className="px-10 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Status</th>
                                         </tr>
@@ -736,18 +748,36 @@ const Inventory = () => {
                                             .map((lead) => (
                                                 <tr key={lead.id} className="hover:bg-gray-50/50 transition-all group">
                                                     <td className="px-10 py-6">
-                                                        <p className="text-sm font-bold text-gray-900">{lead.buyerName}</p>
-                                                        {user.plan === 'Business VIP' && <p className="text-xs text-blue-500 font-medium mt-1">{lead.customerContact}</p>}
+                                                        <div className="flex items-center gap-4">
+                                                            <img 
+                                                                src={lead.buyerPhoto || '/assets/user.png'} 
+                                                                className="w-10 h-10 rounded-full border border-gray-100 object-cover" 
+                                                                alt="Buyer" 
+                                                                onError={(e) => e.target.src = '/assets/user.png'}
+                                                            />
+                                                            <div>
+                                                                <p className="text-sm font-bold text-gray-900">{lead.buyerName}</p>
+                                                                {user.plan === 'Business VIP' ? (
+                                                                    <div className="mt-1">
+                                                                        <p className="text-[11px] text-gray-600 font-medium">{lead.customerContact}</p>
+                                                                        <p className="text-[11px] text-gray-600 font-medium">{lead.buyerPhone}</p>
+                                                                    </div>
+                                                                ) : (
+                                                                    <p className="text-[10px] text-gray-400 font-medium italic mt-1">Contact Hidden (Upgrade to VIP)</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td className="px-6 py-6">
-                                                        <p className="text-sm font-medium text-gray-600 truncate max-w-[300px]">{lead.assetName}</p>
-                                                    </td>
-                                                    <td className="px-6 py-6">
-                                                        <span className="px-3 py-1 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-tight">
+                                                        <p className="text-sm font-medium text-gray-600 truncate max-w-[200px]">{lead.assetName}</p>
+                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
                                                             {lead.category === 'CarAsset' ? 'Cars' : lead.category === 'YachtAsset' ? 'Yachts' : lead.category === 'EstateAsset' ? 'Real Estate' : lead.category?.replace('Asset', 's') || 'General'}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-6 text-sm text-gray-400 font-medium">
+                                                    <td className="px-6 py-6">
+                                                        <p className="text-sm text-gray-500 line-clamp-2 max-w-[250px]">{lead.message}</p>
+                                                    </td>
+                                                    <td className="px-6 py-6 text-sm text-gray-400 font-medium shrink-0">
                                                         {new Date(lead.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                                     </td>
                                                     <td className="px-10 py-6 text-right">

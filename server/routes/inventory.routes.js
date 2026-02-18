@@ -7,6 +7,7 @@ const EstateAsset = require('../models/EstateAsset.model');
 const BikeAsset = require('../models/BikeAsset.model');
 const YachtAsset = require('../models/YachtAsset.model');
 const UserActivity = require('../models/UserActivity.model');
+const Lead = require('../models/Lead.model');
 
 /**
  * GET INVENTORY DASHBOARD DATA
@@ -55,28 +56,50 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             };
         });
 
-        // 2. Fetch Leads (Activities)
+        // 2. Fetch Leads (from Lead model and Activities)
         const assetIds = detailedItems.map(i => i.id);
+        
+        const newLeads = await Lead.find({ agentId: userId })
+            .populate('sender', 'name email phone profilePicture')
+            .sort({ createdAt: -1 });
+
         const activities = await UserActivity.find({
             assetId: { $in: assetIds },
             activityType: { $in: ['CALL_AGENT', 'INQUIRY', 'RENT_REQUEST', 'BUY_REQUEST'] }
         })
-            .populate('userId', 'name email')
+            .populate('userId', 'name email phone profilePicture')
             .sort({ createdAt: -1 });
 
-        stats.totalLeads = activities.length;
+        stats.totalLeads = newLeads.length + activities.length;
         stats.avgConversion = stats.totalViews > 0 ? ((stats.totalLeads / stats.totalViews) * 100).toFixed(2) : 0;
 
         // 3. Lead Details (Formatted for the Leads Table)
-        const leadsTable = activities.map(act => ({
-            id: act._id,
-            buyerName: act.userId?.name || 'Anonymous Client',
-            assetName: detailedItems.find(i => i.id.toString() === act.assetId.toString())?.title || 'Unknown Asset',
-            category: detailedItems.find(i => i.id.toString() === act.assetId.toString())?.category || 'General',
-            date: act.createdAt,
-            status: act.status || 'New',
-            customerContact: user.plan === 'Business VIP' ? act.userId?.email : 'Upgrade to VIP to view email'
-        }));
+        const leadsTable = [
+            ...newLeads.map(l => ({
+                id: l._id,
+                buyerName: l.sender?.name || 'Anonymous Client',
+                buyerPhoto: l.sender?.profilePicture,
+                buyerPhone: l.sender?.phone || 'No Phone Provided',
+                assetName: l.assetTitle || 'Unknown Asset',
+                category: l.assetModel || 'General',
+                date: l.createdAt,
+                status: l.status || 'New',
+                message: l.message,
+                customerContact: user.plan === 'Business VIP' ? l.sender?.email : 'Upgrade to VIP to view contact'
+            })),
+            ...activities.map(act => ({
+                id: act._id,
+                buyerName: act.userId?.name || 'Anonymous Client',
+                buyerPhoto: act.userId?.profilePicture,
+                buyerPhone: act.userId?.phone || 'No Phone Provided',
+                assetName: detailedItems.find(i => i.id.toString() === act.assetId.toString())?.title || 'Unknown Asset',
+                category: detailedItems.find(i => i.id.toString() === act.assetId.toString())?.category || 'General',
+                date: act.createdAt,
+                status: act.status || 'New',
+                message: 'Activity: ' + act.activityType,
+                customerContact: user.plan === 'Business VIP' ? act.userId?.email : 'Upgrade to VIP to view contact'
+            }))
+        ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
         // 4. Analytics Data aggregation
         const now = new Date();

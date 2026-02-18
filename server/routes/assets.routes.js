@@ -325,7 +325,16 @@ router.get("/car/:id", async (req, res) => {
       return res.status(404).json({ message: "Car asset not found" });
     }
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id) {
+      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     console.error("Error fetching car asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch car asset" });
@@ -345,7 +354,16 @@ router.get("/estate/:id", async (req, res) => {
       return res.status(404).json({ message: "Estate asset not found" });
     }
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id) {
+      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     console.error("Error fetching estate asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch estate asset" });
@@ -365,7 +383,16 @@ router.get("/bike/:id", async (req, res) => {
       return res.status(404).json({ message: "Bike asset not found" });
     }
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id) {
+      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     console.error("Error fetching bike asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch bike asset" });
@@ -385,7 +412,16 @@ router.get("/yacht/:id", async (req, res) => {
       return res.status(404).json({ message: "Yacht asset not found" });
     }
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id) {
+      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     console.error("Error fetching yacht asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch yacht asset" });
@@ -411,7 +447,16 @@ router.get("/:type/:id", async (req, res) => {
 
     if (!asset) return res.status(404).json({ message: "Asset not found" });
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id) {
+      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch asset detail" });
   }

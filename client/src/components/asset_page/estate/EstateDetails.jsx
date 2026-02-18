@@ -9,6 +9,8 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [activityLoading, setActivityLoading] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
+  const [message, setMessage] = useState('');
 
   // Rental State
   const [startDate, setStartDate] = useState('');
@@ -34,24 +36,39 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
       return;
     }
 
+    if (!message.trim()) {
+      alert("Please enter a message.");
+      return;
+    }
+
     setActivityLoading(true);
     try {
-      await fetch('/api/activity/record', {
+      const response = await fetch('/api/leads/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
+          agentId: agent.id,
           assetId: _id,
           assetModel: modelName,
-          activityType: 'CALL_AGENT',
-          metadata: { agentName: agent.name, company: agent.company }
+          assetTitle: title,
+          message: message,
+          agentEmail: agent.email,
+          agentName: agent.name
         })
       });
-      alert(`Request sent! Agent ${agent.name} will call you shortly.`);
+
+      if (response.ok) {
+        alert(`Message sent! Agent ${agent.name} will be notified.`);
+        setMessage('');
+      } else {
+        throw new Error("Failed to send lead");
+      }
     } catch (error) {
-      console.error("Failed to record activity:", error);
+      console.error("Failed to send lead:", error);
+      alert("Something went wrong. Please try again.");
     } finally {
       setActivityLoading(false);
     }
@@ -106,10 +123,17 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
     }
   };
 
-  function convertMonthsToYears(totalMonths) {
-    if (!totalMonths || totalMonths < 12) return "Recently";
-    const years = Math.floor(totalMonths / 12);
-    return `${years} years ago`;
+  function getTimeSinceJoined(createdAt) {
+    if (!createdAt) return 'Recently';
+    const joinedDate = new Date(createdAt);
+    const now = new Date();
+    const diffInMonths = (now.getFullYear() - joinedDate.getFullYear()) * 12 + (now.getMonth() - joinedDate.getMonth());
+    
+    if (diffInMonths < 12) {
+      return diffInMonths <= 0 ? 'this month' : `${diffInMonths} months ago`;
+    }
+    const years = Math.floor(diffInMonths / 12);
+    return `${years} ${years === 1 ? 'year' : 'years'} ago`;
   }
 
   return (
@@ -242,26 +266,38 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
               <img src={agent.photo} alt={agent.name} className="w-14 h-14 rounded-full object-cover border border-gray-100" />
               <div>
                 <h3 className="text-lg font-bold text-black">{agent.name}</h3>
-                <p className="text-sm text-gray-400">{`Joined ${convertMonthsToYears(agent.joined)}`}</p>
+                <p className="text-sm text-gray-400">{`Joined ${getTimeSinceJoined(agent.createdAt)}`}</p>
               </div>
             </div>
 
-            <button
-              onClick={handleCallAgent}
-              disabled={activityLoading}
-              className="w-full flex items-center justify-center gap-2 border border-black text-black py-4 rounded-sm font-medium mb-6 hover:bg-gray-50 transition-all montserrat disabled:opacity-50"
-            >
-              Contact Specialist
-            </button>
-
-            <div className="mb-8 montserrat">
+            {/* Contact Action */}
+            <div className="flex gap-2 mb-4 montserrat">
               <input
                 type="text"
                 placeholder="What can we help you with?"
-                className="w-full border border-gray-200 p-3 text-sm outline-none focus:border-gray-400 transition-colors"
-                defaultValue={type === 'Rent' ? "I'm interested in leasing this property." : ""}
+                className="flex-1 border border-gray-200 p-3 text-sm outline-none focus:border-gray-400 transition-colors"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
               />
+              <button 
+                onClick={handleCallAgent}
+                disabled={activityLoading}
+                className="bg-black text-white px-6 py-2 rounded-sm text-sm font-medium hover:bg-gray-800 transition-all disabled:opacity-50"
+              >
+                {activityLoading ? '...' : 'Send'}
+              </button>
             </div>
+
+            {/* Show Phone Number */}
+            <button
+              onClick={() => setShowPhone(!showPhone)}
+              className="w-full flex items-center justify-center gap-2 border border-black text-black py-4 rounded-sm font-medium mb-6 hover:bg-gray-50 transition-all montserrat"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+              </svg>
+              {showPhone ? (agent.phone || 'Not Available') : 'Show phone number'}
+            </button>
 
             <div className="w-full h-px bg-gray-100 mb-4"></div>
 
