@@ -85,6 +85,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 date: l.createdAt,
                 status: l.status || 'New',
                 message: l.message,
+                isActivity: false,
                 customerContact: user.plan === 'Business VIP' ? l.sender?.email : 'Upgrade to VIP to view contact'
             })),
             ...activities.map(act => ({
@@ -97,6 +98,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 date: act.createdAt,
                 status: act.status || 'New',
                 message: 'Activity: ' + act.activityType,
+                isActivity: true,
                 customerContact: user.plan === 'Business VIP' ? act.userId?.email : 'Upgrade to VIP to view contact'
             }))
         ].sort((a, b) => new Date(b.date) - new Date(a.date));

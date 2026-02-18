@@ -43,6 +43,29 @@ const Inventory = () => {
     const [isVerifiedDealer, setIsVerifiedDealer] = useState(user?.isVerified || false);
     const [upgradePlan, setUpgradePlan] = useState(null); // 'Premium Basic' or 'Business VIP'
 
+    const handleStatusChange = async (id, newStatus, isActivity) => {
+        try {
+            const response = await fetch(`/api/leads/status/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: newStatus, isActivity })
+            });
+
+            if (response.ok) {
+                // Refresh data to reflect change
+                fetchDashboard();
+            } else {
+                throw new Error("Failed to update status");
+            }
+        } catch (error) {
+            console.error("Status Update Error:", error);
+            alert("Failed to update status.");
+        }
+    };
+
     useEffect(() => {
         if (user) {
             setIsVerifiedDealer(user.isVerified);
@@ -734,7 +757,8 @@ const Inventory = () => {
                                             <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Asset</th>
                                             <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Message</th>
                                             <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
-                                            <th className="px-10 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Status</th>
+                                            <th className="px-4 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Status</th>
+                                            <th className="px-10 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Contact</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-50">
@@ -780,15 +804,54 @@ const Inventory = () => {
                                                     <td className="px-6 py-6 text-sm text-gray-400 font-medium shrink-0">
                                                         {new Date(lead.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                                     </td>
+                                                    <td className="px-4 py-6 text-center">
+                                                        <select
+                                                            value={lead.status || 'New'}
+                                                            onChange={(e) => handleStatusChange(lead.id, e.target.value, lead.isActivity)}
+                                                            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wide cursor-pointer focus:outline-none border-0 ${lead.status === 'New' ? 'bg-blue-50 text-blue-600' :
+                                                                lead.status === 'Contacted' ? 'bg-orange-50 text-orange-600' :
+                                                                    lead.status === 'Negotiating' ? 'bg-yellow-50 text-yellow-700' :
+                                                                        lead.status === 'Closed' ? 'bg-emerald-50 text-emerald-600' :
+                                                                            'bg-gray-100 text-gray-500'
+                                                                }`}
+                                                        >
+                                                            <option value="New">New</option>
+                                                            <option value="Contacted">Contacted</option>
+                                                            <option value="Negotiating">Negotiating</option>
+                                                            <option value="Closed">Closed</option>
+                                                        </select>
+                                                    </td>
                                                     <td className="px-10 py-6 text-right">
-                                                        <span className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wide inline-flex items-center justify-center min-w-[100px] ${lead.status === 'New' ? 'bg-blue-50 text-blue-600' :
-                                                            lead.status === 'Contacted' ? 'bg-orange-50 text-orange-600' :
-                                                                lead.status === 'Negotiating' ? 'bg-yellow-50 text-yellow-700' :
-                                                                    lead.status === 'Closed' ? 'bg-emerald-50 text-emerald-600' :
-                                                                        'bg-gray-100 text-gray-500'
-                                                            }`}>
-                                                            {lead.status}
-                                                        </span>
+                                                        <div className="flex items-center justify-end gap-2">
+                                                            {user.plan === 'Business VIP' ? (
+                                                                <>
+                                                                    <a 
+                                                                        href={`https://wa.me/${lead.buyerPhone?.replace(/[^0-9]/g, '')}`} 
+                                                                        target="_blank" 
+                                                                        rel="noopener noreferrer"
+                                                                        className="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all"
+                                                                        title="WhatsApp Message"
+                                                                    >
+                                                                        <FiPhone className="text-lg" />
+                                                                    </a>
+                                                                    <a 
+                                                                        href={`mailto:${lead.customerContact}`}
+                                                                        className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-all"
+                                                                        title="Send Email"
+                                                                    >
+                                                                        <FiMail className="text-lg" />
+                                                                    </a>
+                                                                </>
+                                                            ) : (
+                                                                <button 
+                                                                    disabled 
+                                                                    className="p-2 bg-gray-50 text-gray-300 rounded-lg cursor-not-allowed opacity-50"
+                                                                    title="Upgrade to Business VIP to Contact"
+                                                                >
+                                                                    <FiLock className="text-lg" />
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             ))}

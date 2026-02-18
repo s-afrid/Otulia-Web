@@ -32,7 +32,7 @@ const leadSchema = new mongoose.Schema(
         status: {
             type: String,
             default: "New",
-            enum: ["New", "Contacted", "Closed"],
+            enum: ["New", "Contacted", "Negotiating", "Closed"],
         },
     },
     { timestamps: true }

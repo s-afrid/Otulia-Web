@@ -80,4 +80,27 @@ router.get("/agent", authMiddleware, async (req, res) => {
     }
 });
 
+/**
+ * UPDATE LEAD STATUS
+ * PUT /api/leads/status/:id
+ */
+router.put("/status/:id", authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status, isActivity } = req.body;
+
+        if (isActivity) {
+            const UserActivity = require("../models/UserActivity.model");
+            const activity = await UserActivity.findByIdAndUpdate(id, { status }, { new: true });
+            return res.json({ message: "STATUS_UPDATED", activity });
+        } else {
+            const lead = await Lead.findByIdAndUpdate(id, { status }, { new: true });
+            return res.json({ message: "STATUS_UPDATED", lead });
+        }
+    } catch (error) {
+        console.error("Update Status Error:", error);
+        res.status(500).json({ error: "FAILED_TO_UPDATE_STATUS" });
+    }
+});
+
 module.exports = router;
