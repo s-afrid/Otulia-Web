@@ -71,6 +71,22 @@ const deleteFromCloudinary = async (url) => {
     }
 };
 
+const deleteFolderFromCloudinary = async (folderPath) => {
+    try {
+        // Delete all resources in the folder first (images, raw files, and videos)
+        await cloudinary.api.delete_resources_by_prefix(folderPath, { resource_type: 'image' });
+        await cloudinary.api.delete_resources_by_prefix(folderPath, { resource_type: 'raw' });
+        await cloudinary.api.delete_resources_by_prefix(folderPath, { resource_type: 'video' });
+        
+        // Then delete the folder itself
+        await cloudinary.api.delete_folder(folderPath);
+        console.log(`Cloudinary folder deleted: ${folderPath}`);
+    } catch (err) {
+        // If folder doesn't exist or other error, log it but don't crash
+        console.error(`Cloudinary folder deletion error (${folderPath}):`, err.message);
+    }
+};
+
 /**
  * CREATE LISTING
  * POST /api/listings/create
@@ -560,17 +576,17 @@ router.delete('/:id', authMiddleware, async (req, res) => {
         const listing = await Model.findById(id);
         if (!listing) return res.status(404).json({ error: "Listing not found." });
 
-        // Delete files from Cloudinary
-        if (listing.images && listing.images.length > 0) {
-            for (const url of listing.images) {
-                await deleteFromCloudinary(url);
-            }
+        // Delete the entire asset folder from Cloudinary
+        let categoryName;
+        switch (modelName) {
+            case 'CarAsset': categoryName = 'Car'; break;
+            case 'BikeAsset': categoryName = 'Bike'; break;
+            case 'YachtAsset': categoryName = 'Yacht'; break;
+            case 'EstateAsset': categoryName = 'Estate'; break;
+            default: categoryName = 'General';
         }
-        if (listing.documents && listing.documents.length > 0) {
-            for (const url of listing.documents) {
-                await deleteFromCloudinary(url);
-            }
-        }
+        const folderPath = `${categoryName}/${id}`;
+        await deleteFolderFromCloudinary(folderPath);
 
         await Model.findByIdAndDelete(id);
         await User.findByIdAndUpdate(req.user.id, { $pull: { myListings: { item: id } } });
