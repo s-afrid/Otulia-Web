@@ -124,6 +124,18 @@ const userSchema = new mongoose.Schema(
       }
     ],
 
+    notifications: [
+      {
+        type: { type: String, default: "LEAD" },
+        message: String,
+        assetId: mongoose.Schema.Types.ObjectId,
+        assetTitle: String,
+        assetModel: String,
+        leadId: mongoose.Schema.Types.ObjectId,
+        createdAt: { type: Date, default: Date.now }
+      }
+    ],
+
   },
   { timestamps: true }
 );

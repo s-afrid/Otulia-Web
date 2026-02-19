@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Lead = require("../models/Lead.model");
+const User = require("../models/User.model");
 const authMiddleware = require("../middleware/auth.middleware");
 const nodemailer = require("nodemailer");
 
@@ -32,7 +33,22 @@ router.post("/send", authMiddleware, async (req, res) => {
 
         await lead.save();
 
+        // Create Notification for Agent
+        await User.findByIdAndUpdate(agentId, {
+            $push: {
+                notifications: {
+                    type: "LEAD",
+                    message: `New lead for your ${assetModel.replace('Asset', '')}: ${assetTitle}`,
+                    assetId,
+                    assetTitle,
+                    assetModel,
+                    leadId: lead._id
+                }
+            }
+        });
+
         // Send Email to Agent
+        const inventoryLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/inventory`;
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: agentEmail,
@@ -43,7 +59,7 @@ You have received a new lead for your asset "${assetTitle}".
 
 Message: ${message}
 
-Check your inventory for more details.`,
+View details in your inventory: ${inventoryLink}`,
         };
 
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
@@ -62,6 +78,21 @@ Check your inventory for more details.`,
     } catch (error) {
         console.error("Lead Error:", error);
         res.status(500).json({ error: "FAILED_TO_SEND_LEAD" });
+    }
+});
+
+/**
+ * REMOVE NOTIFICATION
+ * DELETE /api/leads/notification/:id
+ */
+router.delete("/notification/:id", authMiddleware, async (req, res) => {
+    try {
+        await User.findByIdAndUpdate(req.user.id, {
+            $pull: { notifications: { _id: req.params.id } }
+        });
+        res.json({ message: "NOTIFICATION_REMOVED" });
+    } catch (error) {
+        res.status(500).json({ error: "FAILED_TO_REMOVE_NOTIFICATION" });
     }
 });
 

@@ -48,6 +48,25 @@ const Inventory = () => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [listingToDelete, setListingToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
+
+    const handleRemoveNotification = async (notificationId) => {
+        try {
+            const response = await fetch(`/api/leads/notification/${notificationId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                // Remove from local state immediately for snappy feel
+                setData(prev => ({
+                    ...prev,
+                    notifications: prev.notifications.filter(n => n._id !== notificationId)
+                }));
+            }
+        } catch (error) {
+            console.error("Remove Notification Error:", error);
+        }
+    };
 
     const handleStatusChange = async (id, newStatus, isActivity) => {
         try {
@@ -320,9 +339,83 @@ const Inventory = () => {
 
                         {/* Icons Section */}
                         <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
-                            <div className="relative w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-all">
-                                <FiBell className="text-gray-400 text-lg" />
-                                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
+                                    className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-all focus:outline-none"
+                                >
+                                    <FiBell className="text-gray-400 text-lg" />
+                                    {data?.notifications?.length > 0 && (
+                                        <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-[9px] text-white font-bold flex items-center justify-center">
+                                            {data.notifications.length}
+                                        </span>
+                                    )}
+                                </button>
+
+                                {/* Notification Dropdown */}
+                                {isNotificationDropdownOpen && (
+                                    <div 
+                                        className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 py-3 animate-in fade-in slide-in-from-top-2 duration-200 z-[60]"
+                                        onMouseLeave={() => setIsNotificationDropdownOpen(false)}
+                                    >
+                                        <div className="px-4 pb-2 border-b border-gray-50 flex justify-between items-center">
+                                            <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Recent Notifications</h4>
+                                            <span className="text-[10px] font-bold text-[#D48D2A]">{data?.notifications?.length || 0} New</span>
+                                        </div>
+                                        <div className="max-h-80 overflow-y-auto custom-scrollbar">
+                                            {(!data?.notifications || data.notifications.length === 0) ? (
+                                                <div className="py-8 px-4 text-center">
+                                                    <FiBell className="mx-auto text-gray-200 text-3xl mb-2" />
+                                                    <p className="text-xs text-gray-400 font-medium">No new lead notifications</p>
+                                                </div>
+                                            ) : (
+                                                data.notifications.map((notif) => (
+                                                    <div 
+                                                        key={notif._id} 
+                                                        onClick={() => {
+                                                            handleRemoveNotification(notif._id);
+                                                            setActiveTab('leads');
+                                                            setIsNotificationDropdownOpen(false);
+                                                        }}
+                                                        className="px-4 py-3 hover:bg-gray-50 border-b border-gray-50 cursor-pointer transition-colors group relative"
+                                                    >
+                                                        <div className="flex gap-3">
+                                                            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
+                                                                <FiUsers className="text-sm" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-bold text-gray-900 leading-tight mb-1">{notif.message}</p>
+                                                                <p className="text-[10px] text-gray-400 font-medium">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Click to view leads</p>
+                                                            </div>
+                                                        </div>
+                                                        <button 
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleRemoveNotification(notif._id);
+                                                            }}
+                                                            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 p-1 hover:bg-red-50 hover:text-red-500 rounded text-gray-300 transition-all"
+                                                        >
+                                                            <FiTrash2 className="text-xs" />
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                        {data?.notifications?.length > 0 && (
+                                            <div className="px-4 pt-2 text-center">
+                                                <button 
+                                                    onClick={() => {
+                                                        setActiveTab('leads');
+                                                        setIsNotificationDropdownOpen(false);
+                                                    }}
+                                                    className="text-[10px] font-bold text-gray-400 hover:text-[#D48D2A] uppercase tracking-widest transition-colors"
+                                                >
+                                                    View Lead Management
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
 

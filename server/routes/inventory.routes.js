@@ -165,6 +165,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             stats,
             inventory: detailedItems,
             leads: leadsTable,
+            notifications: user.notifications || [],
             topAssets,
             analytics: {
                 performanceTrend: performanceHistory,
