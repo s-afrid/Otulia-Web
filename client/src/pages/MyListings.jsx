@@ -22,6 +22,7 @@ const MyListings = () => {
     // Delete Confirmation State
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [listingToDelete, setListingToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const fetchListings = async () => {
@@ -146,6 +147,7 @@ const MyListings = () => {
     const handleDelete = async () => {
         if (!listingToDelete) return;
         const id = listingToDelete;
+        setIsDeleting(true);
 
         try {
             const response = await fetch(`/api/listings/${id}`, {
@@ -157,6 +159,7 @@ const MyListings = () => {
 
             if (response.ok) {
                 setListings(listings.filter(item => item._id !== id));
+                setDeleteModalOpen(false);
             } else {
                 const data = await response.json();
                 alert(data.error || "Failed to delete listing");
@@ -165,7 +168,7 @@ const MyListings = () => {
             console.error("Delete error:", error);
             alert("Connection error while deleting");
         } finally {
-            setDeleteModalOpen(false);
+            setIsDeleting(false);
             setListingToDelete(null);
         }
     };
@@ -203,6 +206,7 @@ const MyListings = () => {
                 onClose={() => setDeleteModalOpen(false)}
                 onConfirm={handleDelete}
                 message="Are you sure you want to delete this listing? This cannot be undone."
+                isLoading={isDeleting}
             />
 
             <DealerVerificationModal 

@@ -13,6 +13,7 @@ import {
 } from 'react-icons/fi';
 import Navbar from '../components/Navbar';
 import AddAssetModal from '../components/inventory/AddAssetModal';
+import ConfirmationModal from '../components/ConfirmationModal';
 import DealerVerificationModal from '../components/inventory/DealerVerificationModal';
 import numberWithCommas from '../modules/numberwithcomma';
 
@@ -42,6 +43,11 @@ const Inventory = () => {
     const [inventoryCategoryFilter, setInventoryCategoryFilter] = useState('All Categories');
     const [isVerifiedDealer, setIsVerifiedDealer] = useState(user?.isVerified || false);
     const [upgradePlan, setUpgradePlan] = useState(null); // 'Premium Basic' or 'Business VIP'
+
+    // Delete Confirmation State
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [listingToDelete, setListingToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleStatusChange = async (id, newStatus, isActivity) => {
         try {
@@ -180,6 +186,40 @@ const Inventory = () => {
 
     const handlePlanChange = (newPlan) => {
         setUpgradePlan(newPlan);
+    };
+
+    const confirmDelete = (id) => {
+        setListingToDelete(id);
+        setDeleteModalOpen(true);
+    };
+
+    const handleDelete = async () => {
+        if (!listingToDelete) return;
+        const id = listingToDelete;
+        setIsDeleting(true);
+
+        try {
+            const response = await fetch(`/api/listings/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                await fetchDashboard();
+                setDeleteModalOpen(false);
+            } else {
+                const errData = await response.json();
+                alert(errData.error || "Failed to delete listing");
+            }
+        } catch (error) {
+            console.error("Delete error:", error);
+            alert("Connection error while deleting");
+        } finally {
+            setIsDeleting(false);
+            setListingToDelete(null);
+        }
     };
 
     if (loading) {
@@ -685,7 +725,10 @@ const Inventory = () => {
                                                             >
                                                                 <FiEdit2 className="text-base" />
                                                             </button>
-                                                            <button className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
+                                                            <button
+                                                                onClick={() => confirmDelete(item.id)}
+                                                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                                            >
                                                                 <FiTrash2 className="text-base" />
                                                             </button>
                                                         </div>
@@ -1493,6 +1536,14 @@ const Inventory = () => {
                     setIsAddModalOpen(false);
                     setEditingItem(null);
                 }}
+            />
+
+            <ConfirmationModal
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={handleDelete}
+                message="Are you sure you want to delete this listing? This cannot be undone."
+                isLoading={isDeleting}
             />
 
             <DealerVerificationModal

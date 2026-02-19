@@ -87,6 +87,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     });
 
     const [images, setImages] = useState([]);
+    const [existingImages, setExistingImages] = useState(editData?.images || []);
 
     const handleRemoveFile = (index, type) => {
         if (type === 'images') {
@@ -100,6 +101,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             setImages([]);
         }
         if (editData) {
+            setExistingImages(editData.images || []);
             const spec = editData.specification || {};
             const keySpec = editData.keySpecifications || {};
             setFormData({
@@ -506,6 +508,26 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <p className="text-xs text-gray-400">Upload high-quality images (Max 5)</p>
                                 </div>
                             </div>
+
+                            {/* Show existing images if editing */}
+                            {editData && existingImages.length > 0 && (
+                                <div className="mb-6">
+                                    <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Current Images</label>
+                                    <div className="grid grid-cols-5 gap-3">
+                                        {existingImages.map((img, idx) => (
+                                            <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-gray-100 group">
+                                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <span className="text-[8px] text-white font-bold uppercase tracking-wider">Existing</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="text-[10px] text-amber-600 mt-3 font-bold uppercase tracking-wider bg-amber-50 p-2 rounded-lg border border-amber-100">
+                                        ⚠️ Uploading new images will replace all current ones.
+                                    </p>
+                                </div>
+                            )}
 
                             <label className="block">
                                 <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'images')} />

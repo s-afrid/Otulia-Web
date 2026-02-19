@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     FiX, FiArrowLeft, FiImage, FiPlus,
     FiTrash2, FiVideo, FiCheck, FiChevronRight,
-    FiCheckCircle, FiInfo, FiMapPin, FiFileText
+    FiCheckCircle, FiInfo, FiMapPin, FiFileText, FiUploadCloud
 } from 'react-icons/fi';
 import { useAuth } from '../../contexts/AuthContext';
 import carIcon from '../../assets/icons/car_icon.png'
@@ -64,6 +64,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const [formData, setFormData] = useState(initialFormState);
     const [coverImage, setCoverImage] = useState(null);
     const [galleryImages, setGalleryImages] = useState([]);
+    const [existingImages, setExistingImages] = useState([]);
     const [documents, setDocuments] = useState([]);
 
     const handleRemoveFile = (index, type) => {
@@ -94,11 +95,24 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             setAssetType(null);
             setCoverImage(null);
             setGalleryImages([]);
+            setExistingImages([]);
             setDocuments([]);
             setFormData(initialFormState);
         } else if (editData) {
             setStep(1);
-            setAssetType(editData.category?.replace('Asset', ''));
+            
+            // Map model or category string to assetType
+            let type = 'Car';
+            const model = editData.itemModel || '';
+            const cat = editData.category || '';
+            
+            if (model.includes('Car') || cat === 'vehicles') type = 'Car';
+            else if (model.includes('Bike') || cat === 'bikes') type = 'Bike';
+            else if (model.includes('Yacht') || cat === 'yachts') type = 'Yacht';
+            else if (model.includes('Estate') || cat === 'estates') type = 'Estate';
+            
+            setAssetType(type);
+            setExistingImages(editData.images || []);
             const spec = editData.specification || {};
             const keySpec = editData.keySpecifications || {};
 
@@ -162,22 +176,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 return { ...prev, [listName]: [...currentList, value] };
             }
         });
-    };
-
-    const handleFileUpload = (e, type) => {
-        const files = Array.from(e.target.files);
-        if (type === 'cover' || type === 'gallery') {
-            const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
-            const invalidFiles = files.filter(f => !allowed.includes(f.type));
-            if (invalidFiles.length > 0) {
-                alert('Only .jpg, .png and .jpeg are allowed for images');
-                return;
-            }
-        }
-
-        if (type === 'cover') setCoverImage(files[0]);
-        else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 10));
-        else if (type === 'document') setDocuments(prev => [...prev, ...files].slice(0, 5));
     };
 
     const handleSubmit = async () => {
@@ -260,7 +258,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
             if (response.ok) {
                 const result = await response.json();
-                onCreated(result);
+                onCreated(result, !!editData);
                 onClose();
             } else {
                 const err = await response.json();
@@ -650,6 +648,27 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     <div className="pt-10 border-t border-gray-100 space-y-10">
                                         <h3 className="text-xl font-bold text-gray-900 mb-8 font-playfair">Media</h3>
                                         
+                                        {/* Show existing images if editing */}
+                                        {editData && existingImages.length > 0 && (
+                                            <div className="bg-amber-50/50 p-8 rounded-[2rem] border border-amber-100">
+                                                <label className="block text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-4">Current Asset Images</label>
+                                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                                    {existingImages.map((img, idx) => (
+                                                        <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-amber-200 group shadow-sm">
+                                                            <img src={img} alt="" className="w-full h-full object-cover" />
+                                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                                <span className="text-[10px] text-white font-bold uppercase tracking-wider">Existing</span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <p className="text-[10px] text-amber-700 mt-4 font-bold uppercase tracking-widest flex items-center gap-2">
+                                                    <FiInfo className="text-sm" />
+                                                    Uploading any new photo (Cover or Gallery) will replace all existing images.
+                                                </p>
+                                            </div>
+                                        )}
+
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                                             {/* Cover Image */}
                                             <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
@@ -675,7 +694,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                             </div>
                                                         ) : (
                                                             <div className="flex flex-col items-center gap-2 text-gray-400">
-                                                                <FiUpload className="text-3xl" />
+                                                                <FiUploadCloud className="text-3xl" />
                                                                 <p className="text-xs font-bold uppercase tracking-widest">Select Cover Photo</p>
                                                             </div>
                                                         )}
@@ -711,7 +730,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'gallery')} />
                                                     <div className="border-2 border-dashed border-gray-200 bg-white rounded-2xl p-8 cursor-pointer transition-all hover:border-[#D48D2A] text-center">
                                                         <div className="flex flex-col items-center gap-2 text-gray-400">
-                                                            <FiUpload className="text-3xl" />
+                                                            <FiUploadCloud className="text-3xl" />
                                                             <p className="text-xs font-bold uppercase tracking-widest">Add Gallery Photos</p>
                                                         </div>
                                                     </div>

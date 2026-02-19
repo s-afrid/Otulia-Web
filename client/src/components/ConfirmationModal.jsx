@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ConfirmationModal = ({ isOpen, onClose, onConfirm, message }) => {
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, message, isLoading }) => {
     if (!isOpen) return null;
 
     return (
@@ -10,19 +10,27 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, message }) => {
                     {message || "Are you sure you want to proceed?"}
                 </p>
 
-                <div className="flex justify-end gap-6">
-                    <button
-                        onClick={onClose}
-                        className="text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm uppercase tracking-wide"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={onConfirm}
-                        className="text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm uppercase tracking-wide"
-                    >
-                        OK
-                    </button>
+                <div className="flex justify-end gap-6 items-center">
+                    {isLoading ? (
+                        <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                        <>
+                            <button
+                                onClick={onClose}
+                                className="text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm uppercase tracking-wide disabled:opacity-50"
+                                disabled={isLoading}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={onConfirm}
+                                className="text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm uppercase tracking-wide disabled:opacity-50"
+                                disabled={isLoading}
+                            >
+                                OK
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

@@ -43,6 +43,34 @@ const upload = multer({
     }
 });
 
+// Cloudinary Helpers
+const getPublicId = (url) => {
+    if (!url || !url.includes('cloudinary')) return null;
+    const parts = url.split('/');
+    const uploadIndex = parts.indexOf('upload');
+    if (uploadIndex === -1) return null;
+
+    let publicIdWithExtension;
+    // Check if the part after 'upload' is a version (starts with 'v' followed by numbers)
+    if (parts[uploadIndex + 1].startsWith('v') && !isNaN(parts[uploadIndex + 1].substring(1))) {
+        publicIdWithExtension = parts.slice(uploadIndex + 2).join('/');
+    } else {
+        publicIdWithExtension = parts.slice(uploadIndex + 1).join('/');
+    }
+    return publicIdWithExtension.split('.')[0];
+};
+
+const deleteFromCloudinary = async (url) => {
+    const publicId = getPublicId(url);
+    if (publicId) {
+        try {
+            await cloudinary.uploader.destroy(publicId);
+        } catch (err) {
+            console.error(`Failed to delete ${publicId} from Cloudinary:`, err);
+        }
+    }
+};
+
 /**
  * CREATE LISTING
  * POST /api/listings/create
@@ -210,7 +238,7 @@ router.post('/create', authMiddleware, upload.fields([
             };
             updateData.specification = {
                 yearOfConstruction: req.body.year,
-                builder: req.body.builder,
+                brandBuilder: req.body.builder,
                 model: req.body.model,
                 length: req.body.length,
                 beam: req.body.beam,
@@ -323,33 +351,50 @@ router.put('/:id', authMiddleware, upload.fields([
         const folderPath = `${categoryName}/${id}`;
 
         if (req.files['images']) {
+            // Delete old images from Cloudinary
+            if (listing.images && listing.images.length > 0) {
+                for (const oldUrl of listing.images) {
+                    await deleteFromCloudinary(oldUrl);
+                }
+            }
+
             const newImageUrls = [];
             for (const file of req.files['images']) {
                 const result = await cloudinary.uploader.upload(file.path, { folder: folderPath });
                 newImageUrls.push(result.secure_url);
                 fs.unlinkSync(file.path);
             }
-            listing.images = [...listing.images, ...newImageUrls].slice(0, 5);
+            listing.images = newImageUrls.slice(0, 5);
         }
 
         const docFields = ['documents', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
         for (const field of docFields) {
             if (req.files[field]) {
+                // Delete old documents from Cloudinary
+                if (listing.documents && listing.documents.length > 0) {
+                    for (const oldUrl of listing.documents) {
+                        await deleteFromCloudinary(oldUrl);
+                    }
+                }
+
                 const newDocUrls = [];
                 for (const file of req.files[field]) {
                     const result = await cloudinary.uploader.upload(file.path, { folder: folderPath, resource_type: 'auto' });
                     newDocUrls.push(result.secure_url);
                     fs.unlinkSync(file.path);
                 }
-                listing.documents = [...(listing.documents || []), ...newDocUrls].slice(0, 10);
+                listing.documents = newDocUrls.slice(0, 10);
             }
         }
 
         if (title) listing.title = title;
-        if (price) listing.price = Number(price);
+        if (price !== undefined) listing.price = Number(price);
         if (location) listing.location = location;
         if (description) listing.description = description;
-        if (type) listing.type = type;
+        if (type) {
+            listing.type = type;
+            listing.acquisition = (type === 'Rent' ? 'rent' : 'buy');
+        }
         if (videoUrl !== undefined) listing.videoUrl = videoUrl;
         if (isPublic !== undefined) listing.status = (isPublic === 'true' || isPublic === true) ? 'Active' : 'Draft';
 
@@ -393,11 +438,13 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.accidentFree) spec.accidentFree = req.body.accidentFree;
             if (req.body.accidentHistory) spec.accidentHistory = req.body.accidentHistory;
             if (req.body.countryOfFirstDelivery) spec.countryOfFirstDelivery = req.body.countryOfFirstDelivery;
-            if (req.body.numberOfOwners) spec.numberOfOwners = req.body.numberOfOwners;
+            if (req.body.numberOfOwners) spec.numberOfOwners = Number(req.body.numberOfOwners);
             if (req.body.currentCarLocation || location) spec.carLocation = req.body.currentCarLocation || location;
 
             listing.specification = spec;
             listing.keySpecifications = keySpec;
+            listing.markModified('specification');
+            listing.markModified('keySpecifications');
 
         } else if (modelName === 'BikeAsset') {
             if (req.body.brand) listing.brand = req.body.brand;
@@ -408,17 +455,19 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.brand) spec.brand = req.body.brand;
             if (req.body.model) spec.model = req.body.model;
             if (req.body.variant) spec.variant = req.body.variant;
-            if (req.body.engineCapacity) { spec.engineCapacityCC = req.body.engineCapacity; keySpec.engineCapacity = req.body.engineCapacity; }
-            if (req.body.mileage) { spec.mileageKM = req.body.mileage; keySpec.mileage = req.body.mileage; }
+            if (req.body.engineCapacity) { spec.engineCapacityCC = Number(req.body.engineCapacity); keySpec.engineCapacity = req.body.engineCapacity; }
+            if (req.body.mileage) { spec.mileageKM = Number(req.body.mileage); keySpec.mileage = req.body.mileage; }
             if (req.body.fuelType) { spec.fuelType = req.body.fuelType; keySpec.fuelType = req.body.fuelType; }
             if (req.body.transmission) { spec.transmission = req.body.transmission; keySpec.transmission = req.body.transmission; }
             if (req.body.color) { spec.color = req.body.color; keySpec.color = req.body.color; }
             if (req.body.condition) spec.condition = req.body.condition;
-            if (req.body.ownershipCount) spec.ownershipCount = req.body.ownershipCount;
+            if (req.body.ownershipCount) spec.ownershipCount = Number(req.body.ownershipCount);
             if (req.body.accidentHistory) spec.accidentHistory = req.body.accidentHistory;
 
             listing.specification = spec;
             listing.keySpecifications = keySpec;
+            listing.markModified('specification');
+            listing.markModified('keySpecifications');
 
         } else if (modelName === 'YachtAsset') {
             if (req.body.builder) listing.builder = req.body.builder;
@@ -426,7 +475,7 @@ router.put('/:id', authMiddleware, upload.fields([
             const keySpec = listing.keySpecifications || {};
 
             if (req.body.year) spec.yearOfConstruction = req.body.year;
-            if (req.body.builder) spec.builder = req.body.builder;
+            if (req.body.builder) spec.brandBuilder = req.body.builder;
             if (req.body.model) spec.model = req.body.model;
             if (req.body.length) { spec.length = req.body.length; keySpec.length = req.body.length; }
             if (req.body.beam) { spec.beam = req.body.beam; keySpec.beam = req.body.beam; }
@@ -439,6 +488,8 @@ router.put('/:id', authMiddleware, upload.fields([
 
             listing.specification = spec;
             listing.keySpecifications = keySpec;
+            listing.markModified('specification');
+            listing.markModified('keySpecifications');
 
         } else if (modelName === 'EstateAsset') {
             if (req.body.propertyName) listing.propertyName = req.body.propertyName;
@@ -453,9 +504,9 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.propertyType) { spec.propertyType = req.body.propertyType; keySpec.propertyType = req.body.propertyType; }
             if (req.body.builtUpArea) { spec.builtUpArea = req.body.builtUpArea; keySpec.builtUpArea = req.body.builtUpArea; }
             if (req.body.landArea) { spec.landArea = req.body.landArea; keySpec.landArea = req.body.landArea; }
-            if (req.body.floors) { spec.floors = req.body.floors; keySpec.floors = req.body.floors; }
-            if (req.body.bedrooms) { spec.bedrooms = req.body.bedrooms; keySpec.bedrooms = req.body.bedrooms; }
-            if (req.body.bathrooms) { spec.bathrooms = req.body.bathrooms; keySpec.bathrooms = req.body.bathrooms; }
+            if (req.body.floors) { spec.floors = Number(req.body.floors); keySpec.floors = req.body.floors; }
+            if (req.body.bedrooms) { spec.bedrooms = Number(req.body.bedrooms); keySpec.bedrooms = req.body.bedrooms; }
+            if (req.body.bathrooms) { spec.bathrooms = Number(req.body.bathrooms); keySpec.bathrooms = req.body.bathrooms; }
             if (req.body.architectureStyle) spec.architectureStyle = req.body.architectureStyle;
             if (req.body.furnishingStatus) spec.furnishingStatus = req.body.furnishingStatus;
             if (req.body.configuration) spec.configuration = req.body.configuration;
@@ -474,6 +525,8 @@ router.put('/:id', authMiddleware, upload.fields([
 
             listing.specification = spec;
             listing.keySpecifications = keySpec;
+            listing.markModified('specification');
+            listing.markModified('keySpecifications');
         }
 
         const updatedListing = await listing.save();
@@ -507,8 +560,17 @@ router.delete('/:id', authMiddleware, async (req, res) => {
         const listing = await Model.findById(id);
         if (!listing) return res.status(404).json({ error: "Listing not found." });
 
-        // Note: Files on Cloudinary are typically NOT deleted automatically here unless handled.
-        // For simplicity, we just delete DB record.
+        // Delete files from Cloudinary
+        if (listing.images && listing.images.length > 0) {
+            for (const url of listing.images) {
+                await deleteFromCloudinary(url);
+            }
+        }
+        if (listing.documents && listing.documents.length > 0) {
+            for (const url of listing.documents) {
+                await deleteFromCloudinary(url);
+            }
+        }
 
         await Model.findByIdAndDelete(id);
         await User.findByIdAndUpdate(req.user.id, { $pull: { myListings: { item: id } } });
