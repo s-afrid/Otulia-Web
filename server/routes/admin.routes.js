@@ -4,6 +4,16 @@ const router = express.Router();
 const User = require("../models/User.model");
 const Listing = require("../models/Listing.model"); // Assuming generic listing or assets
 const authMiddleware = require("../middleware/auth.middleware");
+const nodemailer = require("nodemailer");
+
+// Email Transporter
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
 
 // Middleware to ensure user is admin
 const adminCheck = async (req, res, next) => {
@@ -23,6 +33,7 @@ const adminCheck = async (req, res, next) => {
  */
 router.get("/stats", authMiddleware, adminCheck, async (req, res) => {
     try {
+        const user = await User.findById(req.user.id);
         const totalUsers = await User.countDocuments({ role: "user" });
         const partnerStores = await User.countDocuments({ role: { $ne: 'user' }, role: { $ne: 'admin' } }); // agents/partners
         const pendingVerifications = await User.countDocuments({ verificationStatus: "Pending" });
@@ -36,7 +47,8 @@ router.get("/stats", authMiddleware, adminCheck, async (req, res) => {
             totalUsers: totalUsers + partnerStores,
             newUsersThisMonth: await User.countDocuments({ createdAt: { $gte: new Date(new Date().setDate(1)) } }), // Users created this month
             partnerStores,
-            views: 2100000 // Mock platform views
+            views: 2100000, // Mock platform views
+            notifications: user.notifications || []
         });
     } catch (err) {
         res.status(500).json({ error: "FETCH_STATS_FAILED" });
@@ -206,6 +218,49 @@ router.post("/verify-partner", authMiddleware, adminCheck, async (req, res) => {
         }
 
         const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+
+        // Create Notification for User
+        const notificationMsg = action === 'approve' 
+            ? "Congratulations! Your dealer verification has been approved. You can now list assets." 
+            : "Your dealer verification was unfortunately rejected. Please check your settings to re-submit documents.";
+        
+        await User.findByIdAndUpdate(userId, {
+            $push: {
+                notifications: {
+                    type: "VERIFICATION",
+                    message: notificationMsg,
+                    targetTab: action === 'approve' ? 'inventory' : 'settings',
+                    createdAt: new Date()
+                }
+            }
+        });
+
+        // Send Email to User
+        const inventoryLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/inventory`;
+        const settingsLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/inventory`; // Settings is a tab in inventory
+        
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: `Dealer Verification ${action === 'approve' ? 'Approved' : 'Rejected'} - Otulia`,
+            text: `Hi ${user.name},
+
+${notificationMsg}
+
+${action === 'approve' 
+    ? `Get started by listing your first asset: ${inventoryLink}` 
+    : `Review our requirements and re-submit: ${settingsLink}`
+}
+
+Best regards,
+The Otulia Team`,
+        };
+
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) console.error("Verification Email Error:", error);
+            });
+        }
 
         // Side Effect: Update Listings Status
         if (user.myListings && user.myListings.length > 0) {

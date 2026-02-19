@@ -39,6 +39,7 @@ router.post("/send", authMiddleware, async (req, res) => {
                 notifications: {
                     type: "LEAD",
                     message: `New lead for your ${assetModel.replace('Asset', '')}: ${assetTitle}`,
+                    targetTab: "leads",
                     assetId,
                     assetTitle,
                     assetModel,

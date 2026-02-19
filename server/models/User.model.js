@@ -128,6 +128,7 @@ const userSchema = new mongoose.Schema(
       {
         type: { type: String, default: "LEAD" },
         message: String,
+        targetTab: String,
         assetId: mongoose.Schema.Types.ObjectId,
         assetTitle: String,
         assetModel: String,

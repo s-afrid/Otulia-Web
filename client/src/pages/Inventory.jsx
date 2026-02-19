@@ -374,7 +374,11 @@ const Inventory = () => {
                                                         key={notif._id} 
                                                         onClick={() => {
                                                             handleRemoveNotification(notif._id);
-                                                            setActiveTab('leads');
+                                                            if (notif.targetTab) {
+                                                                setActiveTab(notif.targetTab);
+                                                            } else {
+                                                                setActiveTab(notif.type === 'LEAD' ? 'leads' : 'dashboard');
+                                                            }
                                                             setIsNotificationDropdownOpen(false);
                                                         }}
                                                         className="px-4 py-3 hover:bg-gray-50 border-b border-gray-50 cursor-pointer transition-colors group relative"
@@ -385,7 +389,7 @@ const Inventory = () => {
                                                             </div>
                                                             <div>
                                                                 <p className="text-xs font-bold text-gray-900 leading-tight mb-1">{notif.message}</p>
-                                                                <p className="text-[10px] text-gray-400 font-medium">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Click to view leads</p>
+                                                                <p className="text-[10px] text-gray-400 font-medium">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Click to view</p>
                                                             </div>
                                                         </div>
                                                         <button 

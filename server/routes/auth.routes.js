@@ -10,6 +10,7 @@ const { cloudinary } = require('../config/cloudinary');
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const nodemailer = require("nodemailer");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const router = express.Router();
@@ -454,6 +455,103 @@ router.post("/submit-verification", authMiddleware, clearVerificationFolder, upl
       },
       { new: true }
     ).select("-password");
+
+    // 1. Notify User (In-app)
+    try {
+        await User.findByIdAndUpdate(req.user.id, {
+            $push: {
+                notifications: {
+                    type: "VERIFICATION_PENDING",
+                    message: "Your verification documents have been received and are under review.",
+                    targetTab: "settings",
+                    createdAt: new Date()
+                }
+            }
+        });
+    } catch (userNotifError) {
+        console.error("Failed to notify user in-app:", userNotifError);
+    }
+
+    // 2. Notify User (Email)
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+        const userMailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: "Verification Documents Received - Otulia",
+            text: `Hi ${user.name},
+
+We have received your dealer verification documents. Our team will review them within 24-48 hours. 
+
+You will receive another notification once the review is complete.
+
+Best regards,
+The Otulia Team`,
+        };
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+
+        transporter.sendMail(userMailOptions, (error, info) => {
+            if (error) console.error("User Verification Receipt Email Error:", error);
+        });
+    }
+
+    // 3. Notify Admins
+    try {
+        const admins = await User.find({ role: 'admin' });
+        
+        // 1. In-app notifications
+        await User.updateMany(
+            { role: 'admin' },
+            {
+                $push: {
+                    notifications: {
+                        type: "VERIFICATION_SUBMITTED",
+                        message: `New verification request from ${user.name}`,
+                        targetTab: "partners",
+                        createdAt: new Date()
+                    }
+                }
+            }
+        );
+
+        // 2. Email notifications
+        const adminDashboardLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/admin`;
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            subject: `New Verification Request: ${user.name}`,
+            text: `A new dealer verification request has been submitted.
+
+User Details:
+Name: ${user.name}
+Email: ${user.email}
+
+Review documents in the admin dashboard: ${adminDashboardLink}`,
+        };
+
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+
+            for (const admin of admins) {
+                transporter.sendMail({ ...mailOptions, to: admin.email }, (error, info) => {
+                    if (error) console.error(`Admin Notification Email Error (${admin.email}):`, error);
+                });
+            }
+        }
+    } catch (adminNotifError) {
+        console.error("Failed to notify admins:", adminNotifError);
+    }
 
     res.json(user);
   } catch (err) {
