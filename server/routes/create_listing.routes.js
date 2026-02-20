@@ -111,6 +111,47 @@ router.post('/create', authMiddleware, upload.fields([
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ error: "User not found" });
 
+        // Enforce tiered limits
+        const planLimits = {
+            'Freemium': 5,
+            'Premium Basic': 25,
+            'Business VIP': 100
+        };
+
+        const currentLimit = planLimits[user.plan] || 5;
+
+        if (user.myListings.length >= currentLimit) {
+            return res.status(403).json({
+                error: "LIMIT_REACHED",
+                message: `You have reached the listing limit for your ${user.plan} plan (${currentLimit} assets). Please upgrade to list more.`
+            });
+        }
+
+        // Featured listing based on plan
+        // Premium Basic: 5 days featured
+        // Business VIP: 13 days featured
+        // Freemium: No featured
+        let isFeatured = false;
+        let featuredExpiresAt = null;
+
+        if (user.plan === 'Premium Basic') {
+            isFeatured = true;
+            featuredExpiresAt = new Date();
+            featuredExpiresAt.setDate(featuredExpiresAt.getDate() + 5); // 5 days
+        } else if (user.plan === 'Business VIP') {
+            isFeatured = true;
+            featuredExpiresAt = new Date();
+            featuredExpiresAt.setDate(featuredExpiresAt.getDate() + 13); // 13 days
+        }
+
+        // Handle files
+        const imageFiles = req.files['images'] || [];
+        const docFiles = req.files['documents'] || [];
+
+        const imageUrls = imageFiles.map(file => `/uploads/${file.filename}`);
+        const docUrls = docFiles.map(file => `/uploads/${file.filename}`);
+
+        // Define Base Data
         const baseData = {
             title,
             price: Number(price),
