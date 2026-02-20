@@ -1,10 +1,11 @@
 const authMiddleware = require("../middleware/auth.middleware");
-
+const mongoose = require("mongoose");
 const express = require("express");
 const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
+const User = require("../models/User.model");
 
 const axios = require("axios");
 const router = express.Router();
@@ -319,6 +320,11 @@ router.get("/all/yachts", async (req, res) => {
 router.get("/car/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid car asset ID" });
+    }
+
     const asset = await CarAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
@@ -326,8 +332,8 @@ router.get("/car/:id", async (req, res) => {
     }
 
     const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id) {
-      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
@@ -348,6 +354,11 @@ router.get("/car/:id", async (req, res) => {
 router.get("/estate/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid estate asset ID" });
+    }
+
     const asset = await EstateAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
@@ -355,8 +366,8 @@ router.get("/estate/:id", async (req, res) => {
     }
 
     const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id) {
-      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
@@ -377,6 +388,11 @@ router.get("/estate/:id", async (req, res) => {
 router.get("/bike/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid bike asset ID" });
+    }
+
     const asset = await BikeAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
@@ -384,8 +400,8 @@ router.get("/bike/:id", async (req, res) => {
     }
 
     const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id) {
-      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
@@ -406,6 +422,11 @@ router.get("/bike/:id", async (req, res) => {
 router.get("/yacht/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid yacht asset ID" });
+    }
+
     const asset = await YachtAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
@@ -413,8 +434,8 @@ router.get("/yacht/:id", async (req, res) => {
     }
 
     const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id) {
-      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
@@ -435,6 +456,11 @@ router.get("/yacht/:id", async (req, res) => {
 router.get("/:type/:id", async (req, res) => {
   try {
     const { type, id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid asset ID" });
+    }
+
     let Model;
 
     if (type === "cars") Model = CarAsset;
@@ -448,8 +474,8 @@ router.get("/:type/:id", async (req, res) => {
     if (!asset) return res.status(404).json({ message: "Asset not found" });
 
     const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id) {
-      const agentUser = await require('../models/User.model').findById(assetObj.agent.id);
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;

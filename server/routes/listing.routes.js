@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const Listing = require("../models/Listing.model");
 
 const  router = express.Router();
@@ -14,7 +15,13 @@ const  router = express.Router();
 
 router.get("/:id", async (req, res) => {
     try {
-        const listing = await Listing.findById(req.params.id);
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid listing ID" });
+        }
+
+        const listing = await Listing.findById(id);
 
         if(!listing) {
             return res.status(404).json({ message: "Listing not found" });
