@@ -2,7 +2,11 @@ const express = require("express");
 const { cloudinary } = require("../config/cloudinary");
 const router = express.Router();
 const User = require("../models/User.model");
-const Listing = require("../models/Listing.model"); // Assuming generic listing or assets
+const Listing = require("../models/Listing.model"); 
+const CarAsset = require("../models/CarAsset.model");
+const EstateAsset = require("../models/EstateAsset.model");
+const BikeAsset = require("../models/BikeAsset.model");
+const YachtAsset = require("../models/YachtAsset.model");
 const authMiddleware = require("../middleware/auth.middleware");
 const nodemailer = require("nodemailer");
 
@@ -280,22 +284,21 @@ The Otulia Team`,
 
         // Side Effect: Update Listings Status
         if (user.myListings && user.myListings.length > 0) {
-            const CarAsset = require("../models/CarAsset.model");
-            const EstateAsset = require("../models/EstateAsset.model");
-            const BikeAsset = require("../models/BikeAsset.model");
-            const YachtAsset = require("../models/YachtAsset.model");
-
             for (const listing of user.myListings) {
                 let Model = null;
                 if (listing.itemModel === 'CarAsset') Model = CarAsset;
                 else if (listing.itemModel === 'EstateAsset') Model = EstateAsset;
                 else if (listing.itemModel === 'BikeAsset') Model = BikeAsset;
                 else if (listing.itemModel === 'YachtAsset') Model = YachtAsset;
+                else if (listing.itemModel === 'Listing') Model = Listing;
 
                 if (Model) {
                     if (action === 'reject') {
                         // Force hide listings if rejected
                         await Model.findByIdAndUpdate(listing.item, { status: 'Draft' });
+                    } else if (action === 'approve') {
+                        // Restore listings to Active if approved
+                        await Model.findByIdAndUpdate(listing.item, { status: 'Active' });
                     }
                 }
             }

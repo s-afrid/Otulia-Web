@@ -5,6 +5,7 @@ const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
+const Listing = require("../models/Listing.model");
 const User = require("../models/User.model");
 
 const axios = require("axios");
@@ -618,7 +619,7 @@ router.get("/combined", async (req, res) => {
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    const [carAssets, estateAssets, bikeAssets, yachtAssets] =
+    const [carAssets, estateAssets, bikeAssets, yachtAssets, otherAssets] =
       await Promise.all([
         CarAsset.find(query)
           .skip((page - 1) * limit)
@@ -636,6 +637,10 @@ router.get("/combined", async (req, res) => {
           .skip((page - 1) * limit)
           .limit(Number(limit))
           .sort({ createdAt: -1 }),
+        Listing.find(query)
+          .skip((page - 1) * limit)
+          .limit(Number(limit))
+          .sort({ createdAt: -1 }),
       ]);
 
     const combinedAssets = [
@@ -643,6 +648,7 @@ router.get("/combined", async (req, res) => {
       ...estateAssets,
       ...bikeAssets,
       ...yachtAssets,
+      ...otherAssets,
     ];
 
     // Optionally, sort the combined assets by createdAt if needed
