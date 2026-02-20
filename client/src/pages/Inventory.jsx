@@ -229,30 +229,34 @@ const Inventory = () => {
 
                     <div className="flex items-center gap-4">
                         {/* Last 30 Days Dropdown */}
-                        <div className="relative">
-                            <select className="appearance-none bg-white border border-gray-200 rounded-lg py-2 pl-4 pr-10 text-sm font-medium text-gray-600 focus:outline-none focus:border-[#D48D2A] cursor-pointer">
-                                <option>Last 30 days</option>
-                                <option>Last 7 days</option>
-                                <option>Last 90 days</option>
-                                <option>This year</option>
-                            </select>
-                            <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-sm" />
-                        </div>
+                        {activeTab === 'dashboard' && (
+                            <>
+                                <div className="relative">
+                                    <select className="appearance-none bg-white border border-gray-200 rounded-lg py-2 pl-4 pr-10 text-sm font-medium text-gray-600 focus:outline-none focus:border-[#D48D2A] cursor-pointer">
+                                        <option>Last 30 days</option>
+                                        <option>Last 7 days</option>
+                                        <option>Last 90 days</option>
+                                        <option>This year</option>
+                                    </select>
+                                    <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-sm" />
+                                </div>
 
-                        {/* Day/Week/Month Tabs */}
-                        <div className="flex items-center rounded-lg bg-gray-50 p-1">
-                            {['Day', 'Week', 'Month'].map((t) => (
-                                <button
-                                    key={t}
-                                    onClick={() => setTimeframe(t)}
-                                    className={`px-5 py-2 text-sm font-semibold transition-all rounded-md ${timeframe === t
-                                        ? 'bg-[#D48D2A] text-white shadow-sm'
-                                        : 'text-gray-600 hover:text-gray-900'}`}
-                                >
-                                    {t}
-                                </button>
-                            ))}
-                        </div>
+                                {/* Day/Week/Month Tabs */}
+                                <div className="flex items-center rounded-lg bg-gray-50 p-1">
+                                    {['Day', 'Week', 'Month'].map((t) => (
+                                        <button
+                                            key={t}
+                                            onClick={() => setTimeframe(t)}
+                                            className={`px-5 py-2 text-sm font-semibold transition-all rounded-md ${timeframe === t
+                                                ? 'bg-[#D48D2A] text-white shadow-sm'
+                                                : 'text-gray-600 hover:text-gray-900'}`}
+                                        >
+                                            {t}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
 
                         {/* Icons Section */}
                         <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
