@@ -10,49 +10,18 @@ const router = express.Router();
 
 /**
  * FEATURED LISTINGS
- * Logic: isFeatured = true AND featuredExpiresAt > now (or null)
- * Premium Basic: 5 days featured
- * Business VIP: 13 days featured
+ * Logic: isFeatured = true
  */
 
 router.get("/featured", async (req, res) => {
   try {
-    const now = new Date();
-    
-    // Query condition: isFeatured = true AND (featuredExpiresAt is null OR featuredExpiresAt > now)
-    const featuredQuery = {
-      isFeatured: true,
-      $or: [
-        { featuredExpiresAt: null },
-        { featuredExpiresAt: { $gt: now } }
-      ]
-    };
+    const listings = await Listing.find({ isFeatured: true })
+      .limit(6)
+      .select("title images price category location dealer");
 
-    // Fetch from all collections
-    const [listings, carAssets, estateAssets, bikeAssets, yachtAssets] = await Promise.all([
-      Listing.find(featuredQuery).limit(6).select("title images price category location dealer"),
-      CarAsset.find(featuredQuery).limit(6).select("title images price category location agent"),
-      EstateAsset.find(featuredQuery).limit(6).select("title images price category location agent"),
-      BikeAsset.find(featuredQuery).limit(6).select("title images price category location agent"),
-      YachtAsset.find(featuredQuery).limit(6).select("title images price category location agent"),
-    ]);
-
-    // Combine all featured items
-    const allFeatured = [
-      ...listings.map(item => ({ ...item.toObject(), model: 'Listing' })),
-      ...carAssets.map(item => ({ ...item.toObject(), model: 'CarAsset' })),
-      ...estateAssets.map(item => ({ ...item.toObject(), model: 'EstateAsset' })),
-      ...bikeAssets.map(item => ({ ...item.toObject(), model: 'BikeAsset' })),
-      ...yachtAssets.map(item => ({ ...item.toObject(), model: 'YachtAsset' })),
-    ];
-
-    // Limit to 6 total
-    const limitedFeatured = allFeatured.slice(0, 6);
-
-    res.json(limitedFeatured);
+    res.json(listings);
 
   } catch (error) {
-    console.error("Featured listings error:", error);
     res.status(500).json({ message: "Failed to fetch featured listings" });
   }
 });

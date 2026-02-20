@@ -73,9 +73,6 @@ const estateAssetSchema = new mongoose.Schema(
 
     isTrending: { type: Boolean, default: false },
 
-    isFeatured: { type: Boolean, default: false },
-    featuredExpiresAt: { type: Date, default: null },
-
     popularity: { type: Number, min: 1, max: 10 },
 
     views: { type: Number, default: 0 },

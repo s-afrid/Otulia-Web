@@ -45,13 +45,11 @@ router.get("/cars", async (req, res) => {
 
     if (type) andClauses.push({ type: type });
     if (acquisition) {
-
-      if (acquisition === 'buy') {
-        andClauses.push({ $or: [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }] });
-      } else if (acquisition === 'rent') {
-        andClauses.push({ $or: [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }] });
-      }
-
+        if (acquisition === 'buy') {
+            andClauses.push({ acquisition: {$in: ['buy', 'rent/buy']} });
+        } else if (acquisition === 'rent') {
+            andClauses.push({ acquisition: {$in: ['rent', 'rent/buy']} });
+        }
     }
     if (location || country) {
       const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
@@ -72,13 +70,6 @@ router.get("/cars", async (req, res) => {
       andClauses.push({ price: priceQuery });
     }
     
-    if (andClauses.length > 0) {
-      query.$and = andClauses;
-    }
-
-    console.log("andClauses:", JSON.stringify(andClauses, null, 2));
-    console.log("Final Mongoose Query:", JSON.stringify(query, null, 2));
-
     if (andClauses.length > 0) {
       query.$and = andClauses;
     }
@@ -119,11 +110,11 @@ router.get("/estates", async (req, res) => {
     query.status = 'Active';
 
     if (acquisition) {
-      if (acquisition === 'buy') {
-        query.$or = [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }];
-      } else if (acquisition === 'rent') {
-        query.$or = [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }];
-      }
+        if (acquisition === 'buy') {
+            query.acquisition = {$in: ['buy', 'rent/buy']};
+        } else if (acquisition === 'rent') {
+            query.acquisition = {$in: ['rent', 'rent/buy']};
+        }
     }
     if (location || country) {
       const locations = location.split(',').map(l => l.trim());
@@ -185,27 +176,16 @@ router.get("/bikes", async (req, res) => {
 
     if (type) query.type = type;
     if (acquisition) {
-      if (acquisition === 'buy') {
-        query.$or = [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }];
-      } else if (acquisition === 'rent') {
-        query.$or = [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }];
-      }
+        if (acquisition === 'buy') {
+            query.acquisition = {$in: ['buy', 'rent/buy']};
+        } else if (acquisition === 'rent') {
+            query.acquisition = {$in: ['rent', 'rent/buy']};
+        }
     }
     if (location || country) {
-      const locQuery = location || country;
-      if (query.$or) {
-        // If we already have an $or (from acquisition), we MUST wrap in $and
-        const locs = locQuery.split(',').map(l => l.trim());
-        const locFilters = { $or: locs.map(loc => ({ location: { $regex: loc, $options: "i" } })) };
-        query.$and = [{ $or: query.$or }, locFilters];
-        delete query.$or;
-      } else {
-        const locs = locQuery.split(',').map(l => l.trim());
-        query.$or = locs.map(loc => ({ location: { $regex: loc, $options: "i" } }));
-      }
+      const locations = location.split(',').map(l => l.trim());
+      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
     }
-    const { category } = req.query;
-    if (category && category !== 'Any') query.category = category;
     if (brand) query.brand = brand;
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
 
@@ -247,26 +227,16 @@ router.get("/yachts", async (req, res) => {
 
     if (type) query.type = type;
     if (acquisition) {
-      if (acquisition === 'buy') {
-        query.$or = [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }];
-      } else if (acquisition === 'rent') {
-        query.$or = [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }];
-      }
+        if (acquisition === 'buy') {
+            query.acquisition = {$in: ['buy', 'rent/buy']};
+        } else if (acquisition === 'rent') {
+            query.acquisition = {$in: ['rent', 'rent/buy']};
+        }
     }
     if (location || country) {
-      const locQuery = location || country;
-      if (query.$or) {
-        const locs = locQuery.split(',').map(l => l.trim());
-        const locFilters = { $or: locs.map(loc => ({ location: { $regex: loc, $options: "i" } })) };
-        query.$and = [{ $or: query.$or }, locFilters];
-        delete query.$or;
-      } else {
-        const locs = locQuery.split(',').map(l => l.trim());
-        query.$or = locs.map(loc => ({ location: { $regex: loc, $options: "i" } }));
-      }
+      const locations = location.split(',').map(l => l.trim());
+      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
     }
-    const { category } = req.query;
-    if (category && category !== 'Any') query.category = category;
     if (brand) query.brand = brand;
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
 
@@ -571,7 +541,7 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
  */
 router.get("/combined", async (req, res) => {
   try {
-    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition } = req.query;
+    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
 
     let searchQuery = {};
     if (q) {
@@ -613,19 +583,6 @@ router.get("/combined", async (req, res) => {
     const query = { ...searchQuery, status: 'Active' };
 
     if (type) query.type = type;
-    if (acquisition) {
-      if (acquisition === 'buy') {
-        const buyFilter = { $or: [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }] };
-        if (query.$and) query.$and.push(buyFilter);
-        else if (query.$or) query = { $and: [{ $or: query.$or }, buyFilter] };
-        else query.$or = buyFilter.$or;
-      } else if (acquisition === 'rent') {
-        const rentFilter = { $or: [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }] };
-        if (query.$and) query.$and.push(rentFilter);
-        else if (query.$or) query = { $and: [{ $or: query.$or }, rentFilter] };
-        else query.$or = rentFilter.$or;
-      }
-    }
     if (location) query.location = { $regex: location, $options: "i" };
     if (minPrice || maxPrice) {
       query.price = {};
@@ -796,13 +753,11 @@ router.get("/suggestions", async (req, res) => {
     processAssets(titles, 'title', 'Asset');
     processAssets(models, 'model', 'Model');
 
-
     // 3. Combine, deduplicate, and send
     const combined = [...googleSuggestions.map(s => ({ value: s, type: 'Global' })), ...Object.values(localSuggestions)];
     const uniqueValues = {};
     const uniqueSuggestions = [];
-
-
+    
     for (const suggestion of combined) {
       if (!uniqueValues[suggestion.value]) {
         uniqueValues[suggestion.value] = true;
