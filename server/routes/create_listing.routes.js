@@ -69,7 +69,7 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
         // Featured listing based on plan
         // Premium Basic: 5 days featured
         // Business VIP: 13 days featured
-        // Freemium: No featured (default)
+        // Freemium: No featured
         let isFeatured = false;
         let featuredExpiresAt = null;
 
