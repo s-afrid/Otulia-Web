@@ -1,54 +1,81 @@
 const authMiddleware = require("../middleware/auth.middleware");
-
+const mongoose = require("mongoose");
 const express = require("express");
 const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
+const User = require("../models/User.model");
 
+const axios = require("axios");
 const router = express.Router();
 
 /**
- * VEHICLE ASSETS
- * /api/assets/vehicles
- * Supports: ?search=&page=&limit=
- */
-/**
- * VEHICLE ASSETS
+ * CAR ASSETS
  * /api/assets/cars
  */
 router.get("/cars", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, category, country, sort, acquisition } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, model, category, country, sort, acquisition } = req.query;
 
-    const query = search
-      ? { title: { $regex: search, $options: "i" } }
-      : {};
+    console.log("--- /api/assets/cars Request ---");
+    console.log("req.query:", req.query);
 
-    // Filter only Active (Public) assets
-    query.status = 'Active';
+    let query = { status: 'Active' };
+    const andClauses = [];
 
-    if (type) query.type = type;
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" };
+      andClauses.push({
+        $or: [
+          { title: searchRegex },
+          { description: searchRegex },
+          { brand: searchRegex },
+          { 'specification.model': searchRegex },
+          { keywords: searchRegex },
+          { location: searchRegex },
+          { 'specification.body': searchRegex },
+          { 'specification.fuel': searchRegex },
+          { 'specification.transmission': searchRegex },
+          { 'specification.exteriorColor': searchRegex },
+          { 'specification.engineType': searchRegex },
+        ]
+      });
+    }
+
+    if (type) andClauses.push({ type: type });
     if (acquisition) {
-        if (acquisition === 'buy') {
-            query.acquisition = {$in: ['buy', 'rent/buy']};
-        } else if (acquisition === 'rent') {
-            query.acquisition = {$in: ['rent', 'rent/buy']};
-        }
+      if (acquisition === 'buy') {
+        andClauses.push({ $or: [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }] });
+      } else if (acquisition === 'rent') {
+        andClauses.push({ $or: [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }] });
+      }
     }
     if (location || country) {
-      const locations = location.split(',').map(l => l.trim());
-      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+      const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
+      if (locations.length > 0) {
+        andClauses.push({
+          $or: locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }))
+        });
+      }
     }
-    if (brand) query.brand = brand;
-    if (model) query['specification.model'] = { $regex: model, $options: "i" };
-    if (category) query.category = { $regex: category, $options: "i" }; // or specific field
+    if (brand) andClauses.push({ brand: brand });
+    if (model) andClauses.push({ 'specification.model': { $regex: model, $options: "i" } });
+    if (category) andClauses.push({ category: { $regex: category, $options: "i" } });
 
     if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+      const priceQuery = {};
+      if (minPrice) priceQuery.$gte = Number(minPrice);
+      if (maxPrice) priceQuery.$lte = Number(maxPrice);
+      andClauses.push({ price: priceQuery });
     }
+
+    if (andClauses.length > 0) {
+      query.$and = andClauses;
+    }
+
+    console.log("andClauses:", JSON.stringify(andClauses, null, 2));
+    console.log("Final Mongoose Query:", JSON.stringify(query, null, 2));
 
     let sortOptions = { createdAt: -1 };
     if (sort === 'Low to High') sortOptions = { price: 1 };
@@ -59,8 +86,10 @@ router.get("/cars", async (req, res) => {
       .limit(Number(limit))
       .sort(sortOptions);
 
+    console.log("Results count:", data.length);
     res.json(data);
   } catch (err) {
+    console.error("Error in /api/assets/cars:", err);
     res.status(500).json({ message: "Failed to fetch vehicle assets" });
   }
 });
@@ -81,11 +110,11 @@ router.get("/estates", async (req, res) => {
     query.status = 'Active';
 
     if (acquisition) {
-        if (acquisition === 'buy') {
-            query.acquisition = {$in: ['buy', 'rent/buy']};
-        } else if (acquisition === 'rent') {
-            query.acquisition = {$in: ['rent', 'rent/buy']};
-        }
+      if (acquisition === 'buy') {
+        query.$or = [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }];
+      } else if (acquisition === 'rent') {
+        query.$or = [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }];
+      }
     }
     if (location || country) {
       const locations = location.split(',').map(l => l.trim());
@@ -136,7 +165,7 @@ router.get("/estates", async (req, res) => {
  */
 router.get("/bikes", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -147,16 +176,27 @@ router.get("/bikes", async (req, res) => {
 
     if (type) query.type = type;
     if (acquisition) {
-        if (acquisition === 'buy') {
-            query.acquisition = {$in: ['buy', 'rent/buy']};
-        } else if (acquisition === 'rent') {
-            query.acquisition = {$in: ['rent', 'rent/buy']};
-        }
+      if (acquisition === 'buy') {
+        query.$or = [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }];
+      } else if (acquisition === 'rent') {
+        query.$or = [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }];
+      }
     }
     if (location || country) {
-      const locations = location.split(',').map(l => l.trim());
-      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+      const locQuery = location || country;
+      if (query.$or) {
+        // If we already have an $or (from acquisition), we MUST wrap in $and
+        const locs = locQuery.split(',').map(l => l.trim());
+        const locFilters = { $or: locs.map(loc => ({ location: { $regex: loc, $options: "i" } })) };
+        query.$and = [{ $or: query.$or }, locFilters];
+        delete query.$or;
+      } else {
+        const locs = locQuery.split(',').map(l => l.trim());
+        query.$or = locs.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+      }
     }
+    const { category } = req.query;
+    if (category && category !== 'Any') query.category = category;
     if (brand) query.brand = brand;
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
 
@@ -187,7 +227,7 @@ router.get("/bikes", async (req, res) => {
  */
 router.get("/yachts", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -198,16 +238,26 @@ router.get("/yachts", async (req, res) => {
 
     if (type) query.type = type;
     if (acquisition) {
-        if (acquisition === 'buy') {
-            query.acquisition = {$in: ['buy', 'rent/buy']};
-        } else if (acquisition === 'rent') {
-            query.acquisition = {$in: ['rent', 'rent/buy']};
-        }
+      if (acquisition === 'buy') {
+        query.$or = [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }];
+      } else if (acquisition === 'rent') {
+        query.$or = [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }];
+      }
     }
     if (location || country) {
-      const locations = location.split(',').map(l => l.trim());
-      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+      const locQuery = location || country;
+      if (query.$or) {
+        const locs = locQuery.split(',').map(l => l.trim());
+        const locFilters = { $or: locs.map(loc => ({ location: { $regex: loc, $options: "i" } })) };
+        query.$and = [{ $or: query.$or }, locFilters];
+        delete query.$or;
+      } else {
+        const locs = locQuery.split(',').map(l => l.trim());
+        query.$or = locs.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+      }
     }
+    const { category } = req.query;
+    if (category && category !== 'Any') query.category = category;
     if (brand) query.brand = brand;
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
 
@@ -272,7 +322,7 @@ router.get("/all/bikes", async (req, res) => {
 });
 
 /**
- * ALL YACHT ASSETS
+ * ALL YACHT ASSETS (NEW ENDPOINT)
  * /api/assets/all/yachts
  */
 router.get("/all/yachts", async (req, res) => {
@@ -291,13 +341,27 @@ router.get("/all/yachts", async (req, res) => {
 router.get("/car/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid car asset ID" });
+    }
+
     const asset = await CarAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
       return res.status(404).json({ message: "Car asset not found" });
     }
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     console.error("Error fetching car asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch car asset" });
@@ -311,13 +375,27 @@ router.get("/car/:id", async (req, res) => {
 router.get("/estate/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid estate asset ID" });
+    }
+
     const asset = await EstateAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
       return res.status(404).json({ message: "Estate asset not found" });
     }
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     console.error("Error fetching estate asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch estate asset" });
@@ -331,13 +409,27 @@ router.get("/estate/:id", async (req, res) => {
 router.get("/bike/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid bike asset ID" });
+    }
+
     const asset = await BikeAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
       return res.status(404).json({ message: "Bike asset not found" });
     }
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     console.error("Error fetching bike asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch bike asset" });
@@ -351,13 +443,27 @@ router.get("/bike/:id", async (req, res) => {
 router.get("/yacht/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid yacht asset ID" });
+    }
+
     const asset = await YachtAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
       return res.status(404).json({ message: "Yacht asset not found" });
     }
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     console.error("Error fetching yacht asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch yacht asset" });
@@ -371,6 +477,11 @@ router.get("/yacht/:id", async (req, res) => {
 router.get("/:type/:id", async (req, res) => {
   try {
     const { type, id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid asset ID" });
+    }
+
     let Model;
 
     if (type === "cars") Model = CarAsset;
@@ -383,7 +494,16 @@ router.get("/:type/:id", async (req, res) => {
 
     if (!asset) return res.status(404).json({ message: "Asset not found" });
 
-    res.json(asset);
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      }
+    }
+
+    res.json(assetObj);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch asset detail" });
   }
@@ -442,15 +562,14 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
  */
 router.get("/combined", async (req, res) => {
   try {
-    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
+    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition } = req.query;
 
     let searchQuery = {};
     if (q) {
       const words = q.split(' ').filter(word => word.length > 0);
 
       const andQuery = words.map(word => {
-        const processedWord = word.toLowerCase().endsWith('s') ? word.slice(0, -1) : word;
-        const searchRegex = { $regex: processedWord, $options: "i" };
+        const searchRegex = { $regex: word, $options: "i" };
         return {
           $or: [
             { title: searchRegex },
@@ -479,12 +598,25 @@ router.get("/combined", async (req, res) => {
         };
       });
 
-      searchQuery = { $and: andQuery };
+      searchQuery = { $or: andQuery };
     }
 
     const query = { ...searchQuery, status: 'Active' };
 
     if (type) query.type = type;
+    if (acquisition) {
+      if (acquisition === 'buy') {
+        const buyFilter = { $or: [{ acquisition: { $in: ['buy', 'rent/buy'] } }, { type: 'Sale' }] };
+        if (query.$and) query.$and.push(buyFilter);
+        else if (query.$or) query = { $and: [{ $or: query.$or }, buyFilter] };
+        else query.$or = buyFilter.$or;
+      } else if (acquisition === 'rent') {
+        const rentFilter = { $or: [{ acquisition: { $in: ['rent', 'rent/buy'] } }, { type: 'Rent' }] };
+        if (query.$and) query.$and.push(rentFilter);
+        else if (query.$or) query = { $and: [{ $or: query.$or }, rentFilter] };
+        else query.$or = rentFilter.$or;
+      }
+    }
     if (location) query.location = { $regex: location, $options: "i" };
     if (minPrice || maxPrice) {
       query.price = {};
@@ -613,36 +745,64 @@ router.get("/suggestions", async (req, res) => {
       return res.json([]);
     }
 
-    const searchRegex = { $regex: q, $options: "i" };
+    // 1. Fetch suggestions from Google's unofficial API
+    const googleApiUrl = `https://suggestqueries.google.com/complete/search?client=firefox&ds=&q=${encodeURIComponent(q)}`;
+    let googleSuggestions = [];
+    try {
+      const response = await axios.get(googleApiUrl);
+      if (response.data && Array.isArray(response.data) && response.data.length > 1) {
+        googleSuggestions = response.data[1];
+      }
+    } catch (apiErr) {
+      console.error("Google Suggestion API Error:", apiErr.message);
+      // Don't fail the request, just proceed with local suggestions
+    }
 
-    const [carTitles, estateTitles, bikeTitles, yachtTitles, carBrands, bikeBrands, yachtBrands, categories, locations] = await Promise.all([
-      CarAsset.distinct("title", { title: searchRegex }),
-      EstateAsset.distinct("title", { title: searchRegex }),
-      BikeAsset.distinct("title", { title: searchRegex }),
-      YachtAsset.distinct("title", { title: searchRegex }),
-      CarAsset.distinct("brand", { brand: searchRegex }),
-      BikeAsset.distinct("brand", { brand: searchRegex }),
-      YachtAsset.distinct("brand", { brand: searchRegex }),
-      CarAsset.distinct("category", { category: searchRegex }),
-      EstateAsset.distinct("location", { location: searchRegex }),
+    // 2. Fetch suggestions from the local database (as a supplement)
+    const searchRegex = { $regex: `^${q}`, $options: "i" };
+    const [brands, titles, models] = await Promise.all([
+      CarAsset.find({ brand: searchRegex }).limit(5),
+      CarAsset.find({ title: searchRegex }).limit(5),
+      CarAsset.find({ 'specification.model': searchRegex }).limit(5),
+      BikeAsset.find({ brand: searchRegex }).limit(5),
+      BikeAsset.find({ title: searchRegex }).limit(5),
+      BikeAsset.find({ 'specification.model': searchRegex }).limit(5),
+      YachtAsset.find({ brand: searchRegex }).limit(5),
+      YachtAsset.find({ title: searchRegex }).limit(5),
+      YachtAsset.find({ 'specification.model': searchRegex }).limit(5),
+      EstateAsset.find({ title: searchRegex }).limit(5)
     ]);
 
-    const suggestions = [
-      ...carTitles,
-      ...estateTitles,
-      ...bikeTitles,
-      ...yachtTitles,
-      ...carBrands,
-      ...bikeBrands,
-      ...yachtBrands,
-      ...categories,
-      ...locations,
-    ];
+    const localSuggestions = {};
+    const processAssets = (assets, field, type) => {
+      assets.forEach(asset => {
+        const value = asset[field] || (asset.specification && asset.specification.model);
+        if (value && !localSuggestions[value]) {
+          localSuggestions[value] = { value, type };
+        }
+      });
+    };
 
-    const uniqueSuggestions = [...new Set(suggestions)];
+    processAssets(brands, 'brand', 'Brand');
+    processAssets(titles, 'title', 'Asset');
+    processAssets(models, 'model', 'Model');
+
+    // 3. Combine, deduplicate, and send
+    const combined = [...googleSuggestions.map(s => ({ value: s, type: 'Global' })), ...Object.values(localSuggestions)];
+    const uniqueValues = {};
+    const uniqueSuggestions = [];
+
+    for (const suggestion of combined) {
+      if (!uniqueValues[suggestion.value]) {
+        uniqueValues[suggestion.value] = true;
+        uniqueSuggestions.push(suggestion);
+      }
+    }
 
     res.json(uniqueSuggestions.slice(0, 10));
+
   } catch (err) {
+    console.error("Suggestions Error:", err);
     res.status(500).json({ message: "Failed to fetch suggestions" });
   }
 });
@@ -659,8 +819,31 @@ router.get("/location-suggestions", async (req, res) => {
       return res.json([]);
     }
 
-    const searchRegex = { $regex: q, $options: "i" };
+    const photonApiUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=5&lang=en`;
 
+    try {
+      const response = await axios.get(photonApiUrl);
+      if (response.data && response.data.features) {
+        const suggestions = response.data.features.map(feature => {
+          const { name, city, country } = feature.properties;
+          let suggestion = name;
+          if (city && name !== city) {
+            suggestion += `, ${city}`;
+          }
+          if (country && name !== country && city !== country) {
+            suggestion += `, ${country}`;
+          }
+          return suggestion;
+        });
+        return res.json(suggestions);
+      }
+    } catch (apiErr) {
+      console.error("Photon API Error:", apiErr.message);
+      // Fallback to local search if Photon API fails
+    }
+
+    // Fallback to local database search
+    const searchRegex = { $regex: q, $options: "i" };
     const [carLocations, estateLocations, bikeLocations, yachtLocations] = await Promise.all([
       CarAsset.distinct("location", { location: searchRegex }),
       EstateAsset.distinct("location", { location: searchRegex }),
@@ -677,8 +860,10 @@ router.get("/location-suggestions", async (req, res) => {
 
     const uniqueLocations = [...new Set(combinedLocations)];
 
-    res.json(uniqueLocations.slice(0, 10)); // Limit to 10 suggestions
+    res.json(uniqueLocations.slice(0, 10));
+
   } catch (err) {
+    console.error("Location Suggestions Error:", err);
     res.status(500).json({ message: "Failed to fetch location suggestions" });
   }
 });

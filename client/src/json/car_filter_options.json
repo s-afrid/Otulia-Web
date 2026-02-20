@@ -1,0 +1,70 @@
+{
+    "Supercars": {
+        "Ferrari": [
+            "SF90 Stradale",
+            "F8 Tributo",
+            "812 Superfast",
+            "488 Pista",
+            "Roma"
+        ],
+        "Lamborghini": [
+            "Aventador SVJ",
+            "Huracan EVO",
+            "Urus",
+            "Revuelto"
+        ],
+        "Bugatti": [
+            "Chiron Sport",
+            "Veyron",
+            "Divo"
+        ],
+        "McLaren": [
+            "P1",
+            "720S",
+            "765LT",
+            "Artura"
+        ],
+        "Porsche": [
+            "911 GT3 RS",
+            "Taycan Turbo S",
+            "918 Spyder"
+        ]
+    },
+    "Luxury Sedans": {
+        "Rolls-Royce": [
+            "Phantom VIII",
+            "Ghost",
+            "Cullinan"
+        ],
+        "Bentley": [
+            "Continental GT Speed",
+            "Flying Spur",
+            "Bentayga"
+        ],
+        "Mercedes-Benz": [
+            "S-Class Maybach",
+            "EQS",
+            "G-Wagon"
+        ],
+        "BMW": [
+            "7 Series",
+            "i7",
+            "M8"
+        ]
+    },
+    "Classic Cars": {
+        "Aston Martin": [
+            "DB5",
+            "Vantage",
+            "DBS"
+        ],
+        "Mercedes-Benz": [
+            "300 SL Gullwing",
+            "280 SL Pagoda"
+        ],
+        "Jaguar": [
+            "E-Type Series 1",
+            "XK120"
+        ]
+    }
+}

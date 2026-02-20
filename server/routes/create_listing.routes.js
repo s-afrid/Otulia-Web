@@ -66,6 +66,23 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
             });
         }
 
+        // Featured listing based on plan
+        // Premium Basic: 5 days featured
+        // Business VIP: 13 days featured
+        // Freemium: No featured (default)
+        let isFeatured = false;
+        let featuredExpiresAt = null;
+
+        if (user.plan === 'Premium Basic') {
+            isFeatured = true;
+            featuredExpiresAt = new Date();
+            featuredExpiresAt.setDate(featuredExpiresAt.getDate() + 5); // 5 days
+        } else if (user.plan === 'Business VIP') {
+            isFeatured = true;
+            featuredExpiresAt = new Date();
+            featuredExpiresAt.setDate(featuredExpiresAt.getDate() + 13); // 13 days
+        }
+
         // Handle files
         const imageFiles = req.files['images'] || [];
         const docFiles = req.files['documents'] || [];
@@ -84,6 +101,8 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
             status: req.body.isPublic === 'true' || req.body.isPublic === true ? 'Active' : 'Draft',
             type: req.body.type || 'Sale',
             acquisition: (req.body.type === 'Rent' ? 'rent' : 'buy'), // Map Sale->buy, Rent->rent
+            isFeatured: isFeatured,
+            featuredExpiresAt: featuredExpiresAt,
             agent: {
                 id: user._id,
                 name: user.name, // Now cleanly coming from DB

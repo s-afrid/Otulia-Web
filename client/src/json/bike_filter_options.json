@@ -1,0 +1,49 @@
+{
+    "Sport Bikes": {
+        "Ducati": [
+            "Panigale V4 S",
+            "SuperSport 950",
+            "Streetfighter V4"
+        ],
+        "BMW": [
+            "S1000RR",
+            "M1000RR"
+        ],
+        "Kawasaki": [
+            "Ninja H2R",
+            "Ninja ZX-10R"
+        ],
+        "Yamaha": [
+            "YZF-R1M",
+            "MT-10"
+        ]
+    },
+    "Cruisers": {
+        "Harley-Davidson": [
+            "Fat Boy 114",
+            "Street Glide Special",
+            "Road King"
+        ],
+        "Indian": [
+            "Chieftain Elite",
+            "Scout Rogue"
+        ],
+        "Triumph": [
+            "Rocket 3 R",
+            "Bonneville T120"
+        ]
+    },
+    "Adventure": {
+        "BMW": [
+            "R 1250 GS Adventure",
+            "F 850 GS"
+        ],
+        "Ducati": [
+            "Multistrada V4 Pikes Peak",
+            "DesertX"
+        ],
+        "KTM": [
+            "1290 Super Adventure R"
+        ]
+    }
+}

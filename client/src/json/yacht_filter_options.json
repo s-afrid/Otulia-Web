@@ -1,0 +1,51 @@
+{
+    "Motor Yachts": {
+        "Sunseeker": [
+            "Manhattan 68",
+            "Predator 74",
+            "Ocean 90"
+        ],
+        "Azimut": [
+            "Grande 27m",
+            "S8",
+            "Fly 72"
+        ],
+        "Princess": [
+            "Y85",
+            "S78",
+            "V65"
+        ],
+        "Ferretti": [
+            "920",
+            "780"
+        ]
+    },
+    "Mega Yachts": {
+        "Lurssen": [
+            "Custom 100m+",
+            "Project X"
+        ],
+        "Feadship": [
+            "Custom 80m",
+            "Heritage Series"
+        ],
+        "Benetti": [
+            "B.Now 50m",
+            "Oasis 40m"
+        ]
+    },
+    "Sailing Yachts": {
+        "Perini Navi": [
+            "Sybaris",
+            "Seven"
+        ],
+        "Wally": [
+            "Wallygator",
+            "Wallynano"
+        ],
+        "Oyster": [
+            "885 Series 2",
+            "745"
+        ]
+    }
+}

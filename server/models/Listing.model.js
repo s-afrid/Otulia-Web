@@ -40,6 +40,11 @@ const listingSchema = new mongoose.Schema(
             default: false,
         },
 
+        featuredExpiresAt: {
+            type: Date,
+            default: null,
+        },
+
         views: {
             type: Number,
             default: 0,
