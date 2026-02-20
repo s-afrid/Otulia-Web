@@ -42,12 +42,12 @@ const Yacht_Section = () => {
             const priceRange = searchParams.get('priceRange');
             if (priceRange) {
                 if (priceRange.includes('+')) {
-                    const min = parseInt(priceRange.replace(/£|M|\+/g, '')) * 1000000;
+                    const min = parseInt(priceRange.replace(/\$|M|\+/g, '')) * 1000000;
                     searchParams.set('minPrice', min);
                 } else {
                     const [minStr, maxStr] = priceRange.split(' – ');
-                    const min = parseInt(minStr.replace(/£|K|M/g, '')) * (minStr.includes('M') ? 1000000 : 1000);
-                    const max = parseInt(maxStr.replace(/£|K|M/g, '')) * (maxStr.includes('M') ? 1000000 : 1000);
+                    const min = parseInt(minStr.replace(/\$|K|M/g, '')) * (minStr.includes('M') ? 1000000 : 1000);
+                    const max = parseInt(maxStr.replace(/\$|K|M/g, '')) * (maxStr.includes('M') ? 1000000 : 1000);
                     searchParams.set('minPrice', min);
                     searchParams.set('maxPrice', max);
                 }
@@ -124,11 +124,11 @@ const Yacht_Section = () => {
     };
 
     const priceRanges = [
-        '£1M – £3M',
-        '£3M – £8M',
-        '£8M – £20M',
-        '£20M – £50M',
-        '£50M+'
+        '$1M – $3M',
+        '$3M – $8M',
+        '$8M – $20M',
+        '$20M – $50M',
+        '$50M+'
     ];
 
     return (

@@ -42,12 +42,12 @@ const Bike_Section = () => {
             const priceRange = searchParams.get('priceRange');
             if (priceRange) {
                 if (priceRange.includes('+')) {
-                    const min = parseInt(priceRange.replace(/£|K|\+/g, '')) * 1000;
+                    const min = parseInt(priceRange.replace(/\$|K|\+/g, '')) * 1000;
                     searchParams.set('minPrice', min);
                 } else {
                     const [minStr, maxStr] = priceRange.split(' – ');
-                    const min = parseInt(minStr.replace(/£|K/g, '')) * 1000;
-                    const max = parseInt(maxStr.replace(/£|K/g, '')) * 1000;
+                    const min = parseInt(minStr.replace(/\$|K/g, '')) * 1000;
+                    const max = parseInt(maxStr.replace(/\$|K/g, '')) * 1000;
                     searchParams.set('minPrice', min);
                     searchParams.set('maxPrice', max);
                 }
@@ -124,11 +124,11 @@ const Bike_Section = () => {
     };
 
     const priceRanges = [
-        '£15K – £30K',
-        '£30K – £60K',
-        '£60K – £120K',
-        '£120K – £250K',
-        '£250K+'
+        '$15K – $30K',
+        '$30K – $60K',
+        '$60K – $120K',
+        '$120K – $250K',
+        '$250K+'
     ];
 
     return (
