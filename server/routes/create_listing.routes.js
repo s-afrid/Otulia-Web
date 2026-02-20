@@ -94,6 +94,9 @@ const deleteFolderFromCloudinary = async (folderPath) => {
 router.post('/create', authMiddleware, upload.fields([
     { name: 'images', maxCount: 5 },
     { name: 'documents', maxCount: 3 },
+    { name: 'registrationRC', maxCount: 1 },
+    { name: 'insurance', maxCount: 1 },
+    { name: 'serviceHistory', maxCount: 1 },
     { name: 'businessLicense', maxCount: 1 },
     { name: 'taxId', maxCount: 1 },
     { name: 'proofOfAddress', maxCount: 1 },
@@ -104,8 +107,21 @@ router.post('/create', authMiddleware, upload.fields([
         let { title, price, category, location, description } = req.body;
         if (!location) location = 'Unspecified';
 
-        if (!title && req.body.make && req.body.model) {
-            title = `${req.body.make} ${req.body.model} ${req.body.variant || ''}`.trim();
+        // Auto-generate title if not provided
+        if (!title) {
+            const makeOrBrand = req.body.make || req.body.brand || req.body.builder || '';
+            const model = req.body.model || '';
+            const variant = req.body.variant || '';
+            
+            if (makeOrBrand || model) {
+                title = `${makeOrBrand} ${model} ${variant}`.trim();
+            } else if (req.body.propertyName) {
+                title = req.body.propertyName;
+            } else if (req.body.yachtName) {
+                title = req.body.yachtName;
+            } else {
+                title = `Untitled ${category} Asset`;
+            }
         }
 
         const user = await User.findById(req.user.id);
@@ -188,7 +204,8 @@ router.post('/create', authMiddleware, upload.fields([
         const assetId = savedListing._id.toString();
         const folderPath = `${category}/${assetId}`;
 
-        
+        const imageUrls = [];
+        const docUrls = [];
 
         try {
             if (req.files['images']) {
@@ -198,7 +215,7 @@ router.post('/create', authMiddleware, upload.fields([
                     fs.unlinkSync(file.path);
                 }
             }
-            const docFields = ['documents', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
+            const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
             for (const field of docFields) {
                 if (req.files[field]) {
                     for (const file of req.files[field]) {
@@ -375,6 +392,9 @@ router.post('/create', authMiddleware, upload.fields([
 router.put('/:id', authMiddleware, upload.fields([
     { name: 'images', maxCount: 5 },
     { name: 'documents', maxCount: 3 },
+    { name: 'registrationRC', maxCount: 1 },
+    { name: 'insurance', maxCount: 1 },
+    { name: 'serviceHistory', maxCount: 1 },
     { name: 'businessLicense', maxCount: 1 },
     { name: 'taxId', maxCount: 1 },
     { name: 'proofOfAddress', maxCount: 1 },
@@ -422,7 +442,7 @@ router.put('/:id', authMiddleware, upload.fields([
             listing.images = newImageUrls.slice(0, 5);
         }
 
-        const docFields = ['documents', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
+        const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
         for (const field of docFields) {
             if (req.files[field]) {
                 // Delete old documents from Cloudinary
@@ -518,6 +538,17 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.condition) spec.condition = req.body.condition;
             if (req.body.ownershipCount) spec.ownershipCount = Number(req.body.ownershipCount);
             if (req.body.accidentHistory) spec.accidentHistory = req.body.accidentHistory;
+
+            // Handle Specific Bike Documents (Sync with Cloudinary logic)
+            const bikeDocFields = ['registrationRC', 'insurance', 'serviceHistory'];
+            for (const field of bikeDocFields) {
+                if (req.files[field]) {
+                    // Extract existing URL from documents array if present (this part is tricky since they are all in one array)
+                    // For simplicity, we are appending all to 'documents' field in the model.
+                    // If you need specific fields in the model for these, they should be added to the schema.
+                    // Currently everything uploaded as a doc goes into listing.documents.
+                }
+            }
 
             listing.specification = spec;
             listing.keySpecifications = keySpec;

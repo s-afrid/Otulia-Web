@@ -65,16 +65,24 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const [coverImage, setCoverImage] = useState(null);
     const [galleryImages, setGalleryImages] = useState([]);
     const [existingImages, setExistingImages] = useState([]);
-    const [documents, setDocuments] = useState([]);
+    const [documents, setDocuments] = useState([]); // General docs
+    const [registrationRC, setRegistrationRC] = useState(null);
+    const [insurance, setInsurance] = useState(null);
+    const [serviceHistory, setServiceHistory] = useState(null);
 
     const handleRemoveFile = (index, type) => {
         if (type === 'cover') setCoverImage(null);
         else if (type === 'gallery') setGalleryImages(galleryImages.filter((_, i) => i !== index));
         else if (type === 'document') setDocuments(documents.filter((_, i) => i !== index));
+        else if (type === 'registrationRC') setRegistrationRC(null);
+        else if (type === 'insurance') setInsurance(null);
+        else if (type === 'serviceHistory') setServiceHistory(null);
     };
 
     const handleFileUpload = (e, type) => {
         const files = Array.from(e.target.files);
+        
+        // Image validation
         if (type === 'cover' || type === 'gallery') {
             const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
             const invalidFiles = files.filter(f => !allowed.includes(f.type));
@@ -84,9 +92,20 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             }
         }
 
+        // PDF validation for bike specific docs
+        if (['registrationRC', 'insurance', 'serviceHistory'].includes(type)) {
+            if (files[0] && files[0].type !== 'application/pdf') {
+                alert('Only PDF files are allowed for these documents.');
+                return;
+            }
+        }
+
         if (type === 'cover') setCoverImage(files[0]);
         else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 10));
         else if (type === 'document') setDocuments(prev => [...prev, ...files].slice(0, 5));
+        else if (type === 'registrationRC') setRegistrationRC(files[0]);
+        else if (type === 'insurance') setInsurance(files[0]);
+        else if (type === 'serviceHistory') setServiceHistory(files[0]);
     };
 
     useEffect(() => {
@@ -97,6 +116,9 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             setGalleryImages([]);
             setExistingImages([]);
             setDocuments([]);
+            setRegistrationRC(null);
+            setInsurance(null);
+            setServiceHistory(null);
             setFormData(initialFormState);
         } else if (editData) {
             setStep(1);
@@ -242,6 +264,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         if (coverImage) data.append('images', coverImage);
         galleryImages.forEach(img => data.append('images', img));
         documents.forEach(doc => data.append('documents', doc));
+
+        // Bike Specific Documents
+        if (assetType === 'Bike') {
+            if (registrationRC) data.append('registrationRC', registrationRC);
+            if (insurance) data.append('insurance', insurance);
+            if (serviceHistory) data.append('serviceHistory', serviceHistory);
+        }
 
         try {
             const url = editData
@@ -524,31 +553,34 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             </div>
 
                                             <div className="pt-10 border-t border-gray-100">
-                                                <h4 className="text-lg font-bold text-gray-900 font-playfair mb-8">Documents</h4>
+                                                <h4 className="text-lg font-bold text-gray-900 font-playfair mb-8">Documents (PDF Only)</h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                                     <div className="space-y-3">
                                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Registration (RC)</label>
-                                                        <label className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl cursor-pointer hover:bg-white transition-all">
-                                                            <FiFileText className="text-gray-400" />
-                                                            <span className="text-xs font-bold text-gray-500">CHOOSE FILE</span>
-                                                            <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'document')} />
+                                                        <label className={`flex items-center gap-3 px-4 py-3 border rounded-xl cursor-pointer transition-all ${registrationRC ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-100 hover:bg-white'}`}>
+                                                            <FiFileText className={registrationRC ? 'text-emerald-500' : 'text-gray-400'} />
+                                                            <span className="text-xs font-bold text-gray-500 truncate">{registrationRC ? registrationRC.name : 'CHOOSE PDF'}</span>
+                                                            <input type="file" className="hidden" accept=".pdf" onChange={(e) => handleFileUpload(e, 'registrationRC')} />
                                                         </label>
+                                                        {registrationRC && <button onClick={() => handleRemoveFile(null, 'registrationRC')} className="text-[10px] text-red-500 font-bold hover:underline">Remove</button>}
                                                     </div>
                                                     <div className="space-y-3">
                                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Insurance</label>
-                                                        <label className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl cursor-pointer hover:bg-white transition-all">
-                                                            <FiFileText className="text-gray-400" />
-                                                            <span className="text-xs font-bold text-gray-500">CHOOSE FILE</span>
-                                                            <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'document')} />
+                                                        <label className={`flex items-center gap-3 px-4 py-3 border rounded-xl cursor-pointer transition-all ${insurance ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-100 hover:bg-white'}`}>
+                                                            <FiFileText className={insurance ? 'text-emerald-500' : 'text-gray-400'} />
+                                                            <span className="text-xs font-bold text-gray-500 truncate">{insurance ? insurance.name : 'CHOOSE PDF'}</span>
+                                                            <input type="file" className="hidden" accept=".pdf" onChange={(e) => handleFileUpload(e, 'insurance')} />
                                                         </label>
+                                                        {insurance && <button onClick={() => handleRemoveFile(null, 'insurance')} className="text-[10px] text-red-500 font-bold hover:underline">Remove</button>}
                                                     </div>
                                                     <div className="space-y-3">
                                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Service History</label>
-                                                        <label className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl cursor-pointer hover:bg-white transition-all">
-                                                            <FiFileText className="text-gray-400" />
-                                                            <span className="text-xs font-bold text-gray-500">CHOOSE FILE</span>
-                                                            <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'document')} />
+                                                        <label className={`flex items-center gap-3 px-4 py-3 border rounded-xl cursor-pointer transition-all ${serviceHistory ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-100 hover:bg-white'}`}>
+                                                            <FiFileText className={serviceHistory ? 'text-emerald-500' : 'text-gray-400'} />
+                                                            <span className="text-xs font-bold text-gray-500 truncate">{serviceHistory ? serviceHistory.name : 'CHOOSE PDF'}</span>
+                                                            <input type="file" className="hidden" accept=".pdf" onChange={(e) => handleFileUpload(e, 'serviceHistory')} />
                                                         </label>
+                                                        {serviceHistory && <button onClick={() => handleRemoveFile(null, 'serviceHistory')} className="text-[10px] text-red-500 font-bold hover:underline">Remove</button>}
                                                     </div>
                                                 </div>
                                             </div>

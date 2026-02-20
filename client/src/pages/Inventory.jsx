@@ -43,6 +43,7 @@ const Inventory = () => {
     const [inventoryCategoryFilter, setInventoryCategoryFilter] = useState('All Categories');
     const [isVerifiedDealer, setIsVerifiedDealer] = useState(user?.isVerified || false);
     const [upgradePlan, setUpgradePlan] = useState(null); // 'Premium Basic' or 'Business VIP'
+    const [logoLoading, setLogoLoading] = useState(false);
 
     // Delete Confirmation State
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -98,17 +99,17 @@ const Inventory = () => {
         }
     }, [user]);
     const [companyInfo, setCompanyInfo] = useState({
-        name: 'Prestige Motors & Yachts',
-        email: 'contact@prestigemotors.com',
-        phone: '+1 555 0100',
-        address: '123 Luxury Avenue, Beverly Hills, CA 90210',
-        website: 'www.prestigemotors.com',
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        website: '',
         logo: null
     });
 
     useEffect(() => {
         fetchDashboard();
-    }, [token, user]);
+    }, [token]);
 
     const fetchDashboard = async () => {
         try {
@@ -128,13 +129,14 @@ const Inventory = () => {
                         });
                     }
 
+                    const comp = resData.userProfile.company || {};
                     setCompanyInfo({
-                        name: resData.userProfile.name || companyInfo.name,
-                        email: resData.userProfile.email || companyInfo.email,
-                        phone: resData.userProfile.phone || companyInfo.phone,
-                        address: companyInfo.address, // Address not in user profile yet
-                        website: companyInfo.website,
-                        logo: resData.userProfile.profilePicture
+                        name: comp.companyName || '',
+                        email: resData.userProfile.email || '',
+                        phone: resData.userProfile.phone || '',
+                        address: comp.address || '',
+                        website: comp.website || '',
+                        logo: comp.companyLogo || null
                     });
                 }
             }
@@ -142,6 +144,43 @@ const Inventory = () => {
             console.error("Fetch Error:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleLogoUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (isVerifiedDealer) {
+            alert("Verified dealers cannot change their company logo. Please contact support for assistance.");
+            return;
+        }
+
+        setLogoLoading(true);
+        const formData = new FormData();
+        formData.append('companyLogo', file);
+
+        try {
+            const response = await fetch('/api/auth/upload-company-logo', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                setCompanyInfo(prev => ({ ...prev, logo: result.companyLogo }));
+                alert("Company logo updated successfully!");
+                if (refreshUser) refreshUser();
+            } else {
+                const err = await response.json();
+                alert(err.error || "Failed to upload logo");
+            }
+        } catch (error) {
+            console.error("Logo upload error:", error);
+            alert("Error uploading logo");
+        } finally {
+            setLogoLoading(false);
         }
     };
 
@@ -168,6 +207,45 @@ const Inventory = () => {
             console.error("Toggle Error:", error);
         } finally {
             setUpdatingId(null);
+        }
+    };
+
+    const handleSaveSettings = async () => {
+        if (isVerifiedDealer) {
+            // Only website is editable if verified
+        }
+
+        setLoading(true);
+        try {
+            const response = await fetch('/api/auth/update-profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    phone: companyInfo.phone,
+                    company: {
+                        companyName: companyInfo.name,
+                        companyLogo: companyInfo.logo,
+                        address: companyInfo.address,
+                        website: companyInfo.website
+                    }
+                })
+            });
+
+            if (response.ok) {
+                alert("Settings saved successfully!");
+                await fetchDashboard();
+            } else {
+                const err = await response.json();
+                alert(err.error || "Failed to save settings");
+            }
+        } catch (error) {
+            console.error("Save settings error:", error);
+            alert("Error saving settings");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -1284,29 +1362,49 @@ const Inventory = () => {
                                     {/* Logo Upload */}
                                     <div className="lg:col-span-4 space-y-4">
                                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Company Logo</p>
-                                        <label className="block w-full h-64 border-2 border-dashed border-gray-100 rounded-[2rem] hover:bg-gray-50 hover:border-[#D48D2A] transition-all cursor-pointer overflow-hidden group bg-gray-50/50">
-                                            <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-6">
-                                                <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center text-gray-300 group-hover:text-[#D48D2A] transition-colors">
-                                                    <FiUpload className="text-2xl" />
+                                        <label className={`block w-full h-64 border-2 border-dashed rounded-[2rem] transition-all cursor-pointer overflow-hidden group ${isVerifiedDealer ? 'border-emerald-100 bg-emerald-50/20' : 'border-gray-100 bg-gray-50/50 hover:bg-gray-50 hover:border-[#D48D2A]'}`}>
+                                            {companyInfo.logo ? (
+                                                <div className="relative h-full w-full">
+                                                    <img src={companyInfo.logo} className="w-full h-full object-contain p-4" alt="Company Logo" />
+                                                    {!isVerifiedDealer && (
+                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2">
+                                                            <FiUpload className="text-xl" />
+                                                            <span className="text-xs font-bold uppercase tracking-widest">Change Logo</span>
+                                                        </div>
+                                                    )}
+                                                    {isVerifiedDealer && (
+                                                        <div className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-emerald-500">
+                                                            <FiCheckCircle />
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                <div>
-                                                    <p className="text-sm font-bold text-gray-400">Click to upload logo</p>
-                                                    <p className="text-[10px] text-gray-300 font-medium mt-1">PNG, JPG up to 5MB</p>
+                                            ) : (
+                                                <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-6">
+                                                    <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center text-gray-300 group-hover:text-[#D48D2A] transition-colors">
+                                                        {logoLoading ? <FiLoader className="text-2xl animate-spin" /> : <FiUpload className="text-2xl" />}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-bold text-gray-400">{logoLoading ? 'Uploading...' : 'Click to upload logo'}</p>
+                                                        <p className="text-[10px] text-gray-300 font-medium mt-1">PNG, JPG up to 5MB</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <input type="file" className="hidden" />
+                                            )}
+                                            {!isVerifiedDealer && <input type="file" className="hidden" onChange={handleLogoUpload} accept=".jpg,.jpeg,.png" disabled={logoLoading} />}
                                         </label>
+                                        {isVerifiedDealer && <p className="text-[10px] text-emerald-600 font-bold text-center italic">Verified Logo - Locked</p>}
                                     </div>
 
                                     {/* Form Fields */}
                                     <div className="lg:col-span-8 space-y-8">
-                                        <SettingsInputField label="Company Name" value={companyInfo.name} readOnly={isVerifiedDealer} />
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            <SettingsInputField label="Email" value={companyInfo.email} icon={<FiMail />} readOnly={isVerifiedDealer} />
-                                            <SettingsInputField label="Phone" value={companyInfo.phone} icon={<FiPhone />} readOnly={isVerifiedDealer} />
+                                            <SettingsInputField label="Company Name" value={companyInfo.name} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({...companyInfo, name: e.target.value})} />
+                                            <SettingsInputField label="Website" value={companyInfo.website} icon={<FiGlobe />} readOnly={false} onChange={(e) => setCompanyInfo({...companyInfo, website: e.target.value})} />
                                         </div>
-                                        <SettingsInputField label="Address" value={companyInfo.address} icon={<FiMapPin />} readOnly={isVerifiedDealer} />
-                                        <SettingsInputField label="Website" value={companyInfo.website} icon={<FiGlobe />} readOnly={false} />
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <SettingsInputField label="Public Email" value={companyInfo.email} icon={<FiMail />} readOnly={true} />
+                                            <SettingsInputField label="Public Phone" value={companyInfo.phone} icon={<FiPhone />} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({...companyInfo, phone: e.target.value})} />
+                                        </div>
+                                        <SettingsInputField label="Office Address" value={companyInfo.address} icon={<FiMapPin />} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({...companyInfo, address: e.target.value})} />
                                     </div>
                                 </div>
                             </div>
@@ -1405,7 +1503,10 @@ const Inventory = () => {
 
                             {/* Footer Action */}
                             <div className="flex justify-end pt-4 pb-10">
-                                <button className="bg-[#D48D2A] text-white px-10 py-4 rounded-xl flex items-center gap-2 font-bold text-sm shadow-xl shadow-[#D48D2A]/20 hover:bg-[#B5751C] transition-all">
+                                <button 
+                                    onClick={handleSaveSettings}
+                                    className="bg-[#D48D2A] text-white px-10 py-4 rounded-xl flex items-center gap-2 font-bold text-sm shadow-xl shadow-[#D48D2A]/20 hover:bg-[#B5751C] transition-all"
+                                >
                                     Save Changes
                                 </button>
                             </div>
@@ -1755,7 +1856,7 @@ const AnalyticsCard = ({ title, value, growth, icon }) => (
     </div>
 );
 
-const SettingsInputField = ({ label, value, icon, readOnly }) => (
+const SettingsInputField = ({ label, value, icon, readOnly, onChange }) => (
     <div>
         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
             {icon && <span className="text-gray-400">{icon}</span>}
@@ -1764,8 +1865,9 @@ const SettingsInputField = ({ label, value, icon, readOnly }) => (
         </label>
         <input
             type="text"
-            defaultValue={value}
+            value={value}
             readOnly={readOnly}
+            onChange={onChange}
             className={`w-full border-transparent rounded-[1.25rem] px-6 py-4 text-sm font-bold focus:outline-none transition-all shadow-inner ${readOnly
                 ? 'bg-gray-50 text-gray-500 cursor-not-allowed'
                 : 'bg-[#E5E7EB]/30 text-gray-900 focus:border-[#D48D2A] focus:bg-white'

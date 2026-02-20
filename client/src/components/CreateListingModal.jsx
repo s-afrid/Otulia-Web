@@ -88,17 +88,25 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
     const [images, setImages] = useState([]);
     const [existingImages, setExistingImages] = useState(editData?.images || []);
+    const [registrationRC, setRegistrationRC] = useState(null);
+    const [insurance, setInsurance] = useState(null);
+    const [serviceHistory, setServiceHistory] = useState(null);
 
     const handleRemoveFile = (index, type) => {
         if (type === 'images') {
             setImages(images.filter((_, i) => i !== index));
-        }
+        } else if (type === 'registrationRC') setRegistrationRC(null);
+        else if (type === 'insurance') setInsurance(null);
+        else if (type === 'serviceHistory') setServiceHistory(null);
     };
 
     // Reset form when editData changes or modal closes/opens
     React.useEffect(() => {
         if (!isOpen) {
             setImages([]);
+            setRegistrationRC(null);
+            setInsurance(null);
+            setServiceHistory(null);
         }
         if (editData) {
             setExistingImages(editData.images || []);
@@ -260,6 +268,13 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
         images.forEach(file => data.append('images', file));
 
+        // Bike Specific Documents
+        if (formData.category === 'Bike') {
+            if (registrationRC) data.append('registrationRC', registrationRC);
+            if (insurance) data.append('insurance', insurance);
+            if (serviceHistory) data.append('serviceHistory', serviceHistory);
+        }
+
         try {
             const url = editData
                 ? `/api/listings/${editData._id}`
@@ -393,6 +408,28 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic']} onChange={handleInputChange} />
                                     <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} />
                                     <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
+                                    
+                                    {/* Bike Docs */}
+                                    <div className="md:col-span-2 space-y-4 pt-4 border-t border-gray-100">
+                                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Documents (PDF Only)</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2">Registration (RC)</label>
+                                                <input type="file" accept=".pdf" className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800" 
+                                                    onChange={(e) => setRegistrationRC(e.target.files[0])} />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2">Insurance</label>
+                                                <input type="file" accept=".pdf" className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800"
+                                                    onChange={(e) => setInsurance(e.target.files[0])} />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2">Service History</label>
+                                                <input type="file" accept=".pdf" className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800"
+                                                    onChange={(e) => setServiceHistory(e.target.files[0])} />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </>
                             )}
 

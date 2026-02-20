@@ -4,6 +4,11 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
+const CarAsset = require("../models/CarAsset.model");
+const BikeAsset = require("../models/BikeAsset.model");
+const YachtAsset = require("../models/YachtAsset.model");
+const EstateAsset = require("../models/EstateAsset.model");
+const Listing = require("../models/Listing.model");
 const { OAuth2Client } = require("google-auth-library");
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const { cloudinary } = require('../config/cloudinary');
@@ -332,16 +337,40 @@ router.post("/upgrade-plan", authMiddleware, async (req, res) => {
  */
 router.put("/update-profile", authMiddleware, async (req, res) => {
   try {
-    const { name, phone, profilePicture } = req.body;
+    const { name, phone, profilePicture, company } = req.body;
 
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { name, phone, profilePicture },
-      { new: true }
-    ).select("-password");
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
+
+    // Lock certain fields if verified
+    if (user.isVerified) {
+      if (name && name !== user.name) return res.status(403).json({ error: "VERIFIED_NAME_LOCKED" });
+      if (phone && phone !== user.phone) return res.status(403).json({ error: "VERIFIED_PHONE_LOCKED" });
+      
+      if (company) {
+        if (company.companyName && company.companyName !== user.company?.companyName) 
+          return res.status(403).json({ error: "VERIFIED_COMPANY_NAME_LOCKED" });
+        if (company.address && company.address !== user.company?.address) 
+          return res.status(403).json({ error: "VERIFIED_ADDRESS_LOCKED" });
+      }
+    }
+
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+    if (profilePicture) user.profilePicture = profilePicture;
+    
+    if (company) {
+      user.company = {
+        ...user.company,
+        ...company
+      };
+    }
+
+    await user.save();
 
     res.json({ message: "PROFILE_UPDATED_SUCCESSFULLY", user });
   } catch (err) {
+    console.error("Update Profile Error:", err);
     res.status(500).json({ error: "UPDATE_FAILED" });
   }
 });
@@ -392,6 +421,80 @@ router.post("/upload-profile-picture", authMiddleware, uploadProfilePic.single('
     res.json({ message: "PROFILE_PICTURE_UPDATED_SUCCESSFULLY", user });
   } catch (err) {
     console.error("Profile Picture Upload Error:", err);
+    res.status(500).json({ error: "UPLOAD_FAILED" });
+  }
+});
+
+/**
+ * UPLOAD COMPANY LOGO
+ */
+const companyLogoStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: (req, file) => {
+    return {
+      folder: `users/${req.user.email}`,
+      public_id: `company_logo_${Date.now()}`,
+      resource_type: 'auto',
+      allowed_formats: ['jpg', 'png', 'jpeg'],
+    };
+  },
+});
+
+const uploadCompanyLogo = multer({ storage: companyLogoStorage });
+
+router.post("/upload-company-logo", authMiddleware, uploadCompanyLogo.single('companyLogo'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "NO_FILE_UPLOADED" });
+    }
+
+    const currentUser = await User.findById(req.user.id);
+    
+    // Check if verified - lock update
+    if (currentUser.isVerified) {
+      return res.status(403).json({ error: "VERIFIED_USER_CANNOT_CHANGE_LOGO" });
+    }
+
+    // Delete old company logo if exists
+    if (currentUser.company && currentUser.company.companyLogo) {
+      // We need to extract public_id if we don't store it explicitly for company logo
+      // For now, let's assume we might need a publicId field or parse it from URL
+      // If we don't have it, we'll just skip deletion for now to be safe or try to parse
+      // But standard practice is storing it. 
+      // Existing code for profile pic used 'profilePicturePublicId'.
+      // Let's assume we'll just update the URL for now, or if you want I can add a field.
+      // Given user instructions, I'll just focus on updating.
+    }
+
+    const logoUrl = req.file.path;
+
+    // Update User Model
+    currentUser.company = {
+      ...currentUser.company,
+      companyLogo: logoUrl
+    };
+    await currentUser.save();
+
+    // Update ALL assets created by this user
+    const agentId = currentUser._id.toString();
+    const updateQuery = { "agent.id": agentId };
+    const updateData = { $set: { "agent.companyLogo": logoUrl } };
+
+    await Promise.all([
+      CarAsset.updateMany(updateQuery, updateData),
+      BikeAsset.updateMany(updateQuery, updateData),
+      YachtAsset.updateMany(updateQuery, updateData),
+      EstateAsset.updateMany(updateQuery, updateData),
+      Listing.updateMany(updateQuery, updateData)
+    ]);
+
+    res.json({ 
+      message: "COMPANY_LOGO_UPDATED_SUCCESSFULLY", 
+      companyLogo: logoUrl,
+      user: currentUser 
+    });
+  } catch (err) {
+    console.error("Company Logo Upload Error:", err);
     res.status(500).json({ error: "UPLOAD_FAILED" });
   }
 });

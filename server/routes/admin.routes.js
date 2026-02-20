@@ -147,41 +147,57 @@ router.get("/partners", authMiddleware, adminCheck, async (req, res) => {
     try {
         const partners = await User.find({})
             .select("-password")
-            .sort({ createdAt: -1 });
+            .sort({ updatedAt: -1 });
 
         // Map to format suitable for table
         const formattedPartners = partners.map(p => {
-            const totalSales = p.soldHistory ? p.soldHistory.reduce((acc, curr) => acc + (curr.amount || 0), 0) : 0;
+            const userObj = p.toObject();
+            const totalSales = userObj.soldHistory ? userObj.soldHistory.reduce((acc, curr) => acc + (curr.amount || 0), 0) : 0;
 
             // Infer category
             let category = 'General';
-            if (p.myListings && p.myListings.length > 0 && p.myListings[0].itemModel) {
-                category = p.myListings[0].itemModel.replace('Asset', '');
+            if (userObj.myListings && userObj.myListings.length > 0 && userObj.myListings[0].itemModel) {
+                category = userObj.myListings[0].itemModel.replace('Asset', '');
             }
 
             // Generate secure URLs for verification documents using Cloudinary SDK
             const secureDocs = {};
-            if (p.verificationDocuments) {
-                for (const [key, publicId] of p.verificationDocuments.entries()) {
+            if (userObj.verificationDocuments) {
+                // Handle Map or Object
+                const docs = userObj.verificationDocuments instanceof Map 
+                    ? Object.fromEntries(userObj.verificationDocuments) 
+                    : userObj.verificationDocuments;
+
+                for (const [key, publicId] of Object.entries(docs)) {
                     secureDocs[key] = cloudinary.url(publicId, { 
                         secure: true, 
-                        resource_type: 'image' // Set to image as per user's new URL example
+                        resource_type: 'image' 
                     });
                 }
             }
 
+            const companyInfo = userObj.company || null;
+            if (companyInfo && companyInfo.companyLogo) {
+                companyInfo.companyLogo = cloudinary.url(companyInfo.companyLogo, {
+                    secure: true,
+                    resource_type: 'image'
+                });
+            }
+
             return {
-                id: p._id,
-                name: p.name,
-                email: p.email,
+                id: userObj._id,
+                name: userObj.name,
+                email: userObj.email,
                 category: category,
-                level: p.plan === 'Business VIP' ? 'Platinum' : p.plan === 'Premium Basic' ? 'Gold' : 'Silver',
-                location: p.phone ? 'Verified Loc' : 'Unknown', // Placeholder
-                status: p.verificationStatus === 'Verified' ? 'Active' : p.verificationStatus,
-                verificationStatus: p.verificationStatus,
+                plan: userObj.plan,
+                level: userObj.plan === 'Business VIP' ? 'Platinum' : userObj.plan === 'Premium Basic' ? 'Gold' : 'Silver',
+                location: userObj.phone ? 'Verified Loc' : 'Unknown', // Placeholder
+                status: userObj.verificationStatus === 'Verified' ? 'Active' : userObj.verificationStatus,
+                verificationStatus: userObj.verificationStatus,
                 verificationDocuments: secureDocs,
+                company: companyInfo,
                 totalSales: totalSales,
-                isVerified: p.isVerified
+                isVerified: userObj.isVerified
             };
         });
 
