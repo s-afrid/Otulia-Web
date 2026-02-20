@@ -345,6 +345,10 @@ router.get("/car/:id", async (req, res) => {
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+        }
       }
     }
 
@@ -379,6 +383,10 @@ router.get("/estate/:id", async (req, res) => {
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+        }
       }
     }
 
@@ -413,6 +421,10 @@ router.get("/bike/:id", async (req, res) => {
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+        }
       }
     }
 
@@ -447,6 +459,10 @@ router.get("/yacht/:id", async (req, res) => {
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+        }
       }
     }
 
@@ -487,6 +503,10 @@ router.get("/:type/:id", async (req, res) => {
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+        }
       }
     }
 
