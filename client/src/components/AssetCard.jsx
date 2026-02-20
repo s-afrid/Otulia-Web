@@ -60,10 +60,10 @@ const AssetCard = ({ item }) => {
 
   if (item.category) {
     const cat = item.category.toLowerCase();
-    if (cat === 'vehicles' || cat === 'car') category = 'car';
-    else if (cat === 'bikes' || cat === 'bike') category = 'bike';
-    else if (cat === 'yachts' || cat === 'yacht') category = 'yacht';
-    else if (cat === 'estates' || cat === 'estate' || cat === 'real estate') category = 'estate';
+    if (cat === 'vehicles' || cat === 'car' || cat === 'carasset') category = 'car';
+    else if (cat === 'bikes' || cat === 'bike' || cat === 'bikeasset') category = 'bike';
+    else if (cat === 'yachts' || cat === 'yacht' || cat === 'yachtasset') category = 'yacht';
+    else if (cat === 'estates' || cat === 'estate' || cat === 'real estate' || cat === 'estateasset') category = 'estate';
     else category = cat;
   } else if (item.itemModel) {
     const model = item.itemModel.toLowerCase();

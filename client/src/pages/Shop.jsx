@@ -25,10 +25,10 @@ const Shop = () => {
   const getCategoryFromItem = (item) => {
     if (item.category) {
       const cat = item.category.toLowerCase();
-      if (['vehicles', 'car'].includes(cat)) return 'Car';
-      if (['bikes', 'bike'].includes(cat)) return 'Bike';
-      if (['yachts', 'yacht'].includes(cat)) return 'Yacht';
-      if (['estates', 'estate', 'real estate'].includes(cat)) return 'Estate';
+      if (['vehicles', 'car', 'carasset'].includes(cat)) return 'Car';
+      if (['bikes', 'bike', 'bikeasset'].includes(cat)) return 'Bike';
+      if (['yachts', 'yacht', 'yachtasset'].includes(cat)) return 'Yacht';
+      if (['estates', 'estate', 'real estate', 'estateasset'].includes(cat)) return 'Estate';
     }
     if (item.itemModel) {
       const model = item.itemModel.toLowerCase();

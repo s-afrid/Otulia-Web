@@ -84,13 +84,31 @@ const LocationMap = ({ locationName }) => {
   if (error) return <div style={{...boxStyle, color: 'red'}}>{error}</div>;
   if (!coordinates) return null;
 
+  const handleMapClick = () => {
+    const url = `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`;
+    window.open(url, '_blank');
+  };
+
   return (
-    <div style={{ height: '400px', width: '90%', border: '2px solid #ddd' }}>
+    <div 
+      onClick={handleMapClick}
+      className="transition-all duration-300 hover:shadow-xl hover:scale-[1.01] active:scale-95 cursor-pointer group relative"
+      style={{ height: '400px', width: '90%', border: '2px solid #ddd', borderRadius: '12px', overflow: 'hidden' }}
+    >
+      {/* Overlay to show "Click to view on Google Maps" on hover */}
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-[20] flex items-center justify-center">
+        <span className="bg-white/90 text-black px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+          View on Google Maps
+        </span>
+      </div>
+
       <MapContainer 
         center={[coordinates.lat, coordinates.lng]} 
         zoom={14} 
         scrollWheelZoom={false} 
-        style={{ height: '100%', width: '100%' , zIndex: '-10' }}
+        dragging={false} // Disable dragging to prioritize click-to-open
+        zoomControl={false} // Disable zoom control for cleaner look if it's just a preview
+        style={{ height: '100%', width: '100%' , zIndex: '10' }}
       >
         <TileLayer
           attribution='&copy; OpenStreetMap contributors'
