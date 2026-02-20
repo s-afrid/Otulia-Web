@@ -148,8 +148,7 @@ router.post('/create', authMiddleware, upload.fields([
         const imageFiles = req.files['images'] || [];
         const docFiles = req.files['documents'] || [];
 
-        const imageUrls = imageFiles.map(file => `/uploads/${file.filename}`);
-        const docUrls = docFiles.map(file => `/uploads/${file.filename}`);
+        
 
         // Define Base Data
         const baseData = {
@@ -189,8 +188,7 @@ router.post('/create', authMiddleware, upload.fields([
         const assetId = savedListing._id.toString();
         const folderPath = `${category}/${assetId}`;
 
-        const imageUrls = [];
-        const docUrls = [];
+        
 
         try {
             if (req.files['images']) {
