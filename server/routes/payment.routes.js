@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const User = require('../models/User.model');
+const Coupon = require('../models/Coupon.model');
 const authMiddleware = require('../middleware/auth.middleware');
 
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
@@ -34,7 +35,7 @@ async function generateAccessToken() {
 
 // Create Order (Unified for Plan or Cart)
 router.post('/create-order', authMiddleware, async (req, res) => {
-    const { plan, cartItems } = req.body;
+    const { plan, cartItems, couponCode } = req.body;
 
     let totalAmount = 0;
     let description = "";
@@ -52,6 +53,33 @@ router.post('/create-order', authMiddleware, async (req, res) => {
         description = "Cart Checkout";
     } else {
         return res.status(400).json({ error: 'Invalid request data' });
+    }
+
+    // Apply Coupon if exists
+    if (couponCode) {
+        try {
+            // Check user account age first
+            const user = await User.findById(req.user.id);
+            const accountAgeInMs = Date.now() - new Date(user.createdAt).getTime();
+            const threeMonthsInMs = 3 * 30 * 24 * 60 * 60 * 1000;
+
+            if (user && accountAgeInMs <= threeMonthsInMs) {
+                const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
+                if (coupon && coupon.isValid()) {
+                    if (coupon.discountType === 'percentage') {
+                        totalAmount = totalAmount * (1 - coupon.discountValue / 100);
+                    } else if (coupon.discountType === 'fixed') {
+                        totalAmount = Math.max(0, totalAmount - coupon.discountValue);
+                    }
+                    description += ` (Coupon: ${couponCode})`;
+                }
+            }
+        } catch (couponErr) {
+            console.error("Coupon error during order creation:", couponErr);
+            // We proceed with full amount if coupon logic fails, or we could return error.
+            // For better UX, let's assume if they provided a coupon it MUST be valid if we reach here
+            // but the frontend should have validated it first.
+        }
     }
 
     try {
@@ -84,7 +112,7 @@ router.post('/create-order', authMiddleware, async (req, res) => {
 
 // Capture Order & Fulfill
 router.post('/capture-order', authMiddleware, async (req, res) => {
-    const { orderID, plan, cartItems } = req.body;
+    const { orderID, plan, cartItems, couponCode } = req.body;
 
     if (!orderID) return res.status(400).json({ error: "Missing Order ID" });
 
@@ -103,6 +131,18 @@ router.post('/capture-order', authMiddleware, async (req, res) => {
             // Payment successful, fulfill order
             const user = await User.findById(req.user.id);
             if (!user) return res.status(404).json({ error: 'User not found' });
+
+            // Increment Coupon Usage if used
+            if (couponCode) {
+                try {
+                    await Coupon.findOneAndUpdate(
+                        { code: couponCode.toUpperCase() },
+                        { $inc: { usageCount: 1 } }
+                    );
+                } catch (couponErr) {
+                    console.error("Failed to increment coupon usage:", couponErr);
+                }
+            }
 
             if (plan) {
                 // Update Plan Logic

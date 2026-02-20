@@ -13,11 +13,60 @@ const PricingSection = () => {
   const [loadingPlanId, setLoadingPlanId] = useState(null);
   const [statusMessage, setStatusMessage] = useState({ text: '', type: '' });
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
   const paypalOptions = {
     "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
     currency: "USD",
     intent: "capture",
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    
+    setIsValidatingCoupon(true);
+    setCouponError('');
+    
+    try {
+      const response = await fetch(`/api/coupons/validate/${couponCode}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      
+      if (data.valid) {
+        setAppliedCoupon(data);
+      } else {
+        setCouponError(data.message || 'Invalid coupon code');
+        setAppliedCoupon(null);
+      }
+    } catch (err) {
+      setCouponError('Error validating coupon');
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const calculateDiscountedPrice = (originalPrice) => {
+    if (!appliedCoupon) return originalPrice;
+    
+    const price = parseFloat(originalPrice);
+    if (appliedCoupon.discountType === 'percentage') {
+      return (price * (1 - appliedCoupon.discountValue / 100)).toFixed(2);
+    } else {
+      return Math.max(0, price - appliedCoupon.discountValue).toFixed(2);
+    }
+  };
+
+  const isEligibleForDiscount = () => {
+    if (!user || !user.createdAt) return true; // Fallback to true, server will re-verify
+    const accountAgeInMs = Date.now() - new Date(user.createdAt).getTime();
+    const threeMonthsInMs = 3 * 30 * 24 * 60 * 60 * 1000;
+    return accountAgeInMs <= threeMonthsInMs;
   };
 
   const plans = [
@@ -240,7 +289,12 @@ const PricingSection = () => {
                 <p className="text-sm text-gray-500">Upgrade to {selectedPlan.name}</p>
               </div>
               <button
-                onClick={() => setSelectedPlan(null)}
+                onClick={() => {
+                  setSelectedPlan(null);
+                  setCouponCode('');
+                  setAppliedCoupon(null);
+                  setCouponError('');
+                }}
                 className="text-gray-400 hover:text-gray-600 p-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -251,9 +305,59 @@ const PricingSection = () => {
 
             {/* Body */}
             <div className="p-6">
+              {!isEligibleForDiscount() ? (
+                <div className="mb-6 p-4 bg-orange-50 border border-orange-100 rounded-lg text-orange-800 text-xs">
+                  <p className="font-bold mb-1">Coupon Eligibility Expired</p>
+                  Discounts are only available for the first 3 months of membership. Your account is now eligible for standard pricing.
+                </div>
+              ) : (
+                <>
+                  <div className="mb-4 flex justify-between items-center">
+                    <span className="text-gray-600 font-medium">Original Price</span>
+                    <span className="text-lg font-medium text-gray-400 line-through">${selectedPlan.price}</span>
+                  </div>
+
+                  {/* Coupon Section */}
+                  <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                      Have a Coupon?
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        placeholder="Enter Code"
+                        className="flex-1 px-3 py-2 border border-gray-200 rounded text-sm focus:outline-none focus:border-black"
+                      />
+                      <button
+                        onClick={handleApplyCoupon}
+                        disabled={isValidatingCoupon || !couponCode.trim()}
+                        className="px-4 py-2 bg-black text-white text-xs font-bold rounded uppercase hover:bg-gray-800 disabled:bg-gray-300"
+                      >
+                        {isValidatingCoupon ? '...' : 'Apply'}
+                      </button>
+                    </div>
+                    {couponError && <p className="text-red-500 text-[10px] mt-1 font-medium">{couponError}</p>}
+                    {appliedCoupon && (
+                      <div className="flex justify-between items-center mt-2 text-emerald-600 text-xs font-bold">
+                        <span>Coupon "{appliedCoupon.code}" Applied!</span>
+                        <span>
+                          -{appliedCoupon.discountType === 'percentage' 
+                            ? `${appliedCoupon.discountValue}%` 
+                            : `$${appliedCoupon.discountValue}`}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
               <div className="mb-6 flex justify-between items-center">
                 <span className="text-gray-600 font-medium">Total Amount</span>
-                <span className="text-2xl font-bold text-black">${selectedPlan.price}</span>
+                <span className="text-2xl font-bold text-black">
+                  ${calculateDiscountedPrice(selectedPlan.price)}
+                </span>
               </div>
 
               <div className="min-h-[150px] flex flex-col justify-center">
@@ -268,7 +372,10 @@ const PricingSection = () => {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
                           },
-                          body: JSON.stringify({ plan: selectedPlan.name })
+                          body: JSON.stringify({ 
+                            plan: selectedPlan.name,
+                            couponCode: appliedCoupon ? appliedCoupon.code : null
+                          })
                         });
                         if (!response.ok) {
                           const err = await response.json();
@@ -278,7 +385,6 @@ const PricingSection = () => {
                         return order.id;
                       } catch (err) {
                         console.error("Create Order Error:", err);
-                        // setStatusMessage will render behind modal, so maybe alert or just log
                         alert("Failed to initialize payment: " + err.message);
                         throw err;
                       }
@@ -293,7 +399,8 @@ const PricingSection = () => {
                           },
                           body: JSON.stringify({
                             orderID: data.orderID,
-                            plan: selectedPlan.name
+                            plan: selectedPlan.name,
+                            couponCode: appliedCoupon ? appliedCoupon.code : null
                           })
                         });
                         const details = await response.json();
@@ -301,6 +408,9 @@ const PricingSection = () => {
                           setStatusMessage({ text: `Successfully upgraded to ${selectedPlan.name}!`, type: 'success' });
                           await refreshUser();
                           setSelectedPlan(null); // Close modal
+                          setCouponCode('');
+                          setAppliedCoupon(null);
+                          setCouponError('');
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         } else {
                           alert("Payment failed: " + details.error);
