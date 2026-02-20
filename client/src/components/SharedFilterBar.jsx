@@ -5,6 +5,7 @@ const SharedFilterBar = ({ onSearch, initialLocation = '' }) => {
     const [location, setLocation] = useState(initialLocation);
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
+    const [sort, setSort] = useState('Newest');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const locationRef = useRef(null);
@@ -47,7 +48,7 @@ const SharedFilterBar = ({ onSearch, initialLocation = '' }) => {
 
     const handleSearch = (e) => {
         if (e) e.preventDefault();
-        onSearch({ q: query, location, minPrice, maxPrice });
+        onSearch({ q: query, location, minPrice, maxPrice, sort });
         setShowSuggestions(false);
     };
 
@@ -99,7 +100,7 @@ const SharedFilterBar = ({ onSearch, initialLocation = '' }) => {
                         )}
                     </div>
 
-                    <div className="hidden lg:block h-8 w-px bg-gray-200"></div>
+                    <div className="hidden lg:block h-8 w-px bg-gray-100"></div>
 
                     {/* Min Price */}
                     <div className="relative w-full lg:flex-1 px-4">
@@ -112,7 +113,7 @@ const SharedFilterBar = ({ onSearch, initialLocation = '' }) => {
                         />
                     </div>
 
-                    <div className="hidden lg:block h-8 w-px bg-gray-200"></div>
+                    <div className="hidden lg:block h-8 w-px bg-gray-100"></div>
 
                     {/* Max Price */}
                     <div className="relative w-full lg:flex-1 px-4">
@@ -123,6 +124,22 @@ const SharedFilterBar = ({ onSearch, initialLocation = '' }) => {
                             onChange={(e) => setMaxPrice(e.target.value)}
                             className="w-full p-2.5 outline-none text-sm font-sans placeholder:text-gray-400 text-black font-medium"
                         />
+                    </div>
+
+                    <div className="hidden lg:block h-8 w-px bg-gray-100"></div>
+
+                    {/* Sort */}
+                    <div className="relative w-full lg:flex-1 px-4">
+                        <select
+                            value={sort}
+                            onChange={(e) => setSort(e.target.value)}
+                            className="w-full p-2.5 outline-none text-sm font-sans text-gray-400 font-medium bg-transparent cursor-pointer appearance-none"
+                        >
+                            <option value="Newest">Newest First</option>
+                            <option value="Oldest">Oldest First</option>
+                            <option value="Low to High">Price: Low to High</option>
+                            <option value="High to Low">Price: High to Low</option>
+                        </select>
                     </div>
 
                 </div>

@@ -10,6 +10,7 @@ const Estate_Section = () => {
   const [list, setlist] = useState([]);
   const [limit, setLimit] = useState(10);
   const [filters, setFilters] = useState({});
+  const [currentSort, setCurrentSort] = useState('Newest');
   const [filterBarKey, setFilterBarKey] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
@@ -19,6 +20,15 @@ const Estate_Section = () => {
   const datafetch = async () => {
     const searchParams = new URLSearchParams(location.search);
     searchParams.set('limit', limit);
+
+    // Ensure sort is set from state if not in URL, or sync from URL
+    if (!searchParams.has('sort')) {
+        searchParams.set('sort', currentSort);
+    } else {
+        if (searchParams.get('sort') !== currentSort) {
+            setCurrentSort(searchParams.get('sort'));
+        }
+    }
 
     const priceRange = searchParams.get('priceRange');
     if (priceRange && !priceRange.startsWith('Any')) {
@@ -90,12 +100,21 @@ const Estate_Section = () => {
   }, [location.search, limit]);
 
   const handleFilter = (newFilters) => {
-    const searchParams = new URLSearchParams();
+    const searchParams = new URLSearchParams(location.search);
     for (const key in newFilters) {
       if (newFilters[key]) {
         searchParams.set(key, newFilters[key]);
+      } else {
+        searchParams.delete(key);
       }
     }
+    navigate(`?${searchParams.toString()}`, { replace: true });
+  };
+
+  const handleSortChange = (newSort) => {
+    setCurrentSort(newSort);
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('sort', newSort);
     navigate(`?${searchParams.toString()}`, { replace: true });
   };
 
@@ -233,7 +252,7 @@ const Estate_Section = () => {
           <h2 className="text-3xl md:text-4xl playfair-display text-black mb-7 text-center flex justify-between">
             <span>Featured List</span>
             <span>
-              <SortDropdown />
+              <SortDropdown onSortChange={handleSortChange} currentSort={currentSort} />
             </span>
           </h2>
 

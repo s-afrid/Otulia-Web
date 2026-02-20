@@ -12,6 +12,7 @@ const Bike_Section = () => {
     const [limit, setLimit] = useState(12);
     const [hasMore, setHasMore] = useState(true);
     const [filters, setFilters] = useState({});
+    const [currentSort, setCurrentSort] = useState('Newest');
     const [filterBarKey, setFilterBarKey] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
@@ -28,9 +29,13 @@ const Bike_Section = () => {
         searchParams.set('limit', limit);
         searchParams.set('page', reset ? 1 : page);
 
-        if (searchParams.has('price')) {
-            searchParams.set('sort', searchParams.get('price'));
-            searchParams.delete('price');
+        // Ensure sort is set from state if not in URL, or sync from URL
+        if (!searchParams.has('sort')) {
+            searchParams.set('sort', currentSort);
+        } else {
+            if (searchParams.get('sort') !== currentSort) {
+                setCurrentSort(searchParams.get('sort'));
+            }
         }
 
         if (searchParams.has('priceRange')) {
@@ -100,14 +105,23 @@ const Bike_Section = () => {
     }
 
     const handleFilter = (newFilters) => {
-        const searchParams = new URLSearchParams();
+        const searchParams = new URLSearchParams(location.search);
         for (const key in newFilters) {
             if (newFilters[key]) {
                 searchParams.set(key, newFilters[key]);
+            } else {
+                searchParams.delete(key);
             }
         }
         navigate(`?${searchParams.toString()}`, { replace: true });
     }
+
+    const handleSortChange = (newSort) => {
+        setCurrentSort(newSort);
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.set('sort', newSort);
+        navigate(`?${searchParams.toString()}`, { replace: true });
+    };
 
     const priceRanges = [
         '£15K – £30K',
@@ -156,7 +170,7 @@ const Bike_Section = () => {
                 <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white pb-32">
                     <h2 className="text-3xl md:text-4xl playfair-display text-black mb-8 flex justify-between items-center px-4">
                         <span className='font-light tracking-tight'>Featured Superbikes</span>
-                        <SortDropdown />
+                        <SortDropdown onSortChange={handleSortChange} currentSort={currentSort} />
                     </h2>
 
                     <div className="w-[92%] md:w-full h-px bg-gray-200 border-0 mb-12"></div>

@@ -14,7 +14,8 @@ const PropertyFilterBar = ({ onFilter, initialLocation = '' }) => {
     sizeLand: 'Any SqFt',
     bathrooms: 'Any',
     architecture: 'Any',
-    amenities: 'Any'
+    amenities: 'Any',
+    sort: 'Newest'
   });
 
   const [suggestions, setSuggestions] = useState([]);
@@ -63,7 +64,8 @@ const PropertyFilterBar = ({ onFilter, initialLocation = '' }) => {
     { label: 'Size & Land', key: 'sizeLand', options: ['Any SqFt', '5000+ sqft', '10,000+ sqft'] },
     { label: 'Bathrooms', key: 'bathrooms', options: ['Any', '2+', '3+', '4+'] },
     { label: 'Architecture', key: 'architecture', options: ['Any', 'Modern', 'Classic', 'Mediterranean', 'Colonial'] },
-    { label: 'Amenities', key: 'amenities', options: ['Any', 'Pool', 'Gym', 'Helipad', 'Theater'] }
+    { label: 'Amenities', key: 'amenities', options: ['Any', 'Pool', 'Gym', 'Helipad', 'Theater'] },
+    { label: 'Sort', key: 'sort', options: ['Newest', 'Oldest', 'Low to High', 'High to Low'] }
   ];
 
   const toggleFilter = (label) => {

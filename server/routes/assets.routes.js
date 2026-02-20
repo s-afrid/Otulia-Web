@@ -80,6 +80,8 @@ router.get("/cars", async (req, res) => {
     let sortOptions = { createdAt: -1 };
     if (sort === 'Low to High') sortOptions = { price: 1 };
     if (sort === 'High to Low') sortOptions = { price: -1 };
+    if (sort === 'Newest') sortOptions = { createdAt: -1 };
+    if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
     const data = await CarAsset.find(query)
       .skip((page - 1) * limit)
@@ -147,6 +149,8 @@ router.get("/estates", async (req, res) => {
     let sortOptions = { createdAt: -1 };
     if (sort === 'Low to High') sortOptions = { price: 1 };
     if (sort === 'High to Low') sortOptions = { price: -1 };
+    if (sort === 'Newest') sortOptions = { createdAt: -1 };
+    if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
     const data = await EstateAsset.find(query)
       .skip((page - 1) * limit)
@@ -198,6 +202,8 @@ router.get("/bikes", async (req, res) => {
     let sortOptions = { createdAt: -1 };
     if (sort === 'Low to High') sortOptions = { price: 1 };
     if (sort === 'High to Low') sortOptions = { price: -1 };
+    if (sort === 'Newest') sortOptions = { createdAt: -1 };
+    if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
     const data = await BikeAsset.find(query)
       .skip((page - 1) * limit)
@@ -249,6 +255,8 @@ router.get("/yachts", async (req, res) => {
     let sortOptions = { createdAt: -1 };
     if (sort === 'Low to High') sortOptions = { price: 1 };
     if (sort === 'High to Low') sortOptions = { price: -1 };
+    if (sort === 'Newest') sortOptions = { createdAt: -1 };
+    if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
     const data = await YachtAsset.find(query)
       .skip((page - 1) * limit)

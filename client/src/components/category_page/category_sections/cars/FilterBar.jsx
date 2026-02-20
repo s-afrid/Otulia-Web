@@ -247,7 +247,7 @@ const FilterBar = ({
           <AutoWidthDropdown
             label="Sort"
             value={filters.sort}
-            options={['Low to High', 'High to Low']}
+            options={['Newest', 'Oldest', 'Low to High', 'High to Low']}
             onChange={(val) => handleFilterChange('sort', val)}
           />
 

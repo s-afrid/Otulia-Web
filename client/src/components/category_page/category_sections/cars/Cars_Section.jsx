@@ -11,6 +11,7 @@ const Cars_Section = () => {
   const [list, setlist] = useState([]);
   const [limit, setLimit] = useState(10);
   const [filters, setFilters] = useState({});
+  const [currentSort, setCurrentSort] = useState('Newest');
   const [filterBarKey, setFilterBarKey] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,10 +22,13 @@ const Cars_Section = () => {
     const searchParams = new URLSearchParams(location.search);
     searchParams.set('limit', limit);
 
-    // The 'price' filter from FilterBar is used for sorting as 'sort'
-    if (searchParams.has('price')) {
-        searchParams.set('sort', searchParams.get('price'));
-        searchParams.delete('price');
+    // Ensure sort is set from state if not in URL, or sync from URL
+    if (!searchParams.has('sort')) {
+        searchParams.set('sort', currentSort);
+    } else {
+        if (searchParams.get('sort') !== currentSort) {
+            setCurrentSort(searchParams.get('sort'));
+        }
     }
 
     if (searchParams.has('priceRange')) {
@@ -78,12 +82,21 @@ const Cars_Section = () => {
   }, [location.search, limit]);
 
   const handleFilter = (newFilters) => {
-    const searchParams = new URLSearchParams();
+    const searchParams = new URLSearchParams(location.search); // Preserve existing params (like sort)
     for (const key in newFilters) {
       if (newFilters[key]) {
         searchParams.set(key, newFilters[key]);
+      } else {
+        searchParams.delete(key);
       }
     }
+    navigate(`?${searchParams.toString()}`, { replace: true });
+  };
+
+  const handleSortChange = (newSort) => {
+    setCurrentSort(newSort);
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('sort', newSort);
     navigate(`?${searchParams.toString()}`, { replace: true });
   };
 
@@ -161,7 +174,7 @@ const Cars_Section = () => {
           <h2 className="text-3xl md:text-4xl playfair-display text-black mb-7 text-center flex justify-between">
             <span>Featured List</span>
             <span>
-              <SortDropdown />
+              <SortDropdown onSortChange={handleSortChange} currentSort={currentSort} />
             </span>
           </h2>
 
