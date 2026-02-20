@@ -23,6 +23,13 @@ const coupons = [
         discountValue: 20,
         expiresAt: new Date('2026-12-31'),
         usageLimit: 10
+    },
+    {
+        code: 'FREE100',
+        discountType: 'percentage',
+        discountValue: 100,
+        expiresAt: new Date('2026-12-31'),
+        usageLimit: 5
     }
 ];
 

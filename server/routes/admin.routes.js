@@ -35,7 +35,7 @@ router.get("/stats", authMiddleware, adminCheck, async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         const totalUsers = await User.countDocuments({ role: "user" });
-        const partnerStores = await User.countDocuments({ role: { $ne: 'user' }, role: { $ne: 'admin' } }); // agents/partners
+        const partnerStores = await User.countDocuments({ role: { $in: ['agent', 'admin'] } }); // agents/partners (including admins)
         const pendingVerifications = await User.countDocuments({ verificationStatus: "Pending" });
 
         // Mock revenue for now (integration with Payment/Order model required for real value)
@@ -44,7 +44,7 @@ router.get("/stats", authMiddleware, adminCheck, async (req, res) => {
         res.json({
             revenue,
             revenueGrowth: 18.2,
-            totalUsers: totalUsers + partnerStores,
+            totalUsers: await User.countDocuments({}), 
             newUsersThisMonth: await User.countDocuments({ createdAt: { $gte: new Date(new Date().setDate(1)) } }), // Users created this month
             partnerStores,
             views: 2100000, // Mock platform views
@@ -60,7 +60,7 @@ router.get("/stats", authMiddleware, adminCheck, async (req, res) => {
  */
 router.get("/users", authMiddleware, adminCheck, async (req, res) => {
     try {
-        const users = await User.find({ role: { $ne: 'admin' } })
+        const users = await User.find({})
             .select("-password")
             .sort({ createdAt: -1 });
 
@@ -145,7 +145,7 @@ router.get("/payouts", authMiddleware, adminCheck, async (req, res) => {
  */
 router.get("/partners", authMiddleware, adminCheck, async (req, res) => {
     try {
-        const partners = await User.find({ role: { $ne: 'admin' } })
+        const partners = await User.find({})
             .select("-password")
             .sort({ createdAt: -1 });
 
