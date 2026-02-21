@@ -266,8 +266,8 @@ const Inventory = () => {
                 const updatedUser = await response.json();
                 alert('Verification documents submitted successfully! Status updated to Pending.');
 
-                // Update local context
-                if (login) login(token, updatedUser);
+                // Sync latest data
+                await fetchDashboard();
 
                 setIsVerificationModalOpen(false);
                 setActiveTab('settings'); // Redirect to settings to see status

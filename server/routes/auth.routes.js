@@ -513,98 +513,95 @@ router.post("/upload-company-logo", authMiddleware, uploadCompanyLogo.single('co
   }
 });
 
-const verificationStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: async (req, file) => {
-    if (!req.user || !req.user.email) {
-      throw new Error('User authentication is required to upload verification documents.');
+const verificationDiskStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, '../uploads/temp');
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
     }
-
-    const fileExtension = path.extname(file.originalname).substring(1);
-    
-    return {
-      folder: `verification/${req.user.email}`,
-      public_id: `${file.fieldname}-${Date.now()}`,
-      resource_type: 'auto', // Let cloudinary detect the resource type
-      allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'],
-      format: fileExtension, // Explicitly set the format as a hint
-    };
+    cb(null, uploadPath);
   },
+  filename: (req, file, cb) => {
+    cb(null, `verify-${Date.now()}-${file.originalname.replace(/\s/g, '_')}`);
+  }
 });
 
-const uploadVerification = multer({ storage: verificationStorage });
+const uploadVerification = multer({ 
+  storage: verificationDiskStorage,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
 
-const clearVerificationFolder = async (req, res, next) => {
-  if (req.user && req.user.email) {
-    const folder = `verification/${req.user.email}`;
-    try {
-      // We need to delete both image and raw files (for PDFs)
-      await Promise.all([
-        cloudinary.api.delete_resources_by_prefix(folder, { resource_type: 'image', invalidate: true }),
-        cloudinary.api.delete_resources_by_prefix(folder, { resource_type: 'raw', invalidate: true })
-      ]);
-    } catch (error) {
-      console.error(`Failed to clear Cloudinary folder ${folder}. This might leave orphaned files. Error:`, error);
-      // We won't block the request, but this is a situation to monitor.
-    }
-  }
-  next();
-};
-router.post("/submit-verification", authMiddleware, clearVerificationFolder, uploadVerification.any(), async (req, res) => {
+router.post("/submit-verification", authMiddleware, uploadVerification.any(), async (req, res) => {
   try {
     const files = req.files;
     if (!files || files.length === 0) {
+      console.log("No files received in request body");
       return res.status(400).json({ error: "NO_FILES_UPLOADED" });
     }
 
+    console.log(`Received ${files.length} files for verification from ${req.user.email}`);
+
     const verificationDocuments = {};
-    files.forEach(file => {
-      // For Cloudinary, 'file.filename' contains the public_id
-      verificationDocuments[file.fieldname] = file.filename;
-    });
+    const folder = `verification/${req.user.email}`;
+
+    // Upload files to Cloudinary manually
+    for (const file of files) {
+      try {
+        console.log(`Uploading ${file.fieldname} to Cloudinary...`);
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: folder,
+          resource_type: 'auto',
+          public_id: `${file.fieldname}-${Date.now()}`
+        });
+        
+        verificationDocuments[file.fieldname] = result.secure_url;
+        console.log(`Successfully uploaded ${file.fieldname}: ${result.secure_url}`);
+        
+        // Remove local file
+        fs.unlinkSync(file.path);
+      } catch (uploadErr) {
+        console.error(`Failed to upload ${file.fieldname} to Cloudinary:`, uploadErr);
+        // Clean up remaining files if one fails
+        files.forEach(f => { if(fs.existsSync(f.path)) fs.unlinkSync(f.path); });
+        throw new Error(`Cloudinary upload failed for ${file.fieldname}: ${uploadErr.message}`);
+      }
+    }
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
       {
         verificationStatus: "Pending",
-        // Overwrite the documents with the new submission
         verificationDocuments: verificationDocuments
       },
       { new: true }
     ).select("-password");
 
-    // 1. Notify User (In-app)
-    try {
-        await User.findByIdAndUpdate(req.user.id, {
-            $push: {
-                notifications: {
-                    type: "VERIFICATION_PENDING",
-                    message: "Your verification documents have been received and are under review.",
-                    targetTab: "settings",
-                    createdAt: new Date()
-                }
-            }
-        });
-    } catch (userNotifError) {
-        console.error("Failed to notify user in-app:", userNotifError);
+    if (!user) {
+        throw new Error("User not found during status update");
     }
+
+    console.log(`Verification status updated to Pending for user ${user.email}`);
+    
+    // Send response immediately
+    res.json(user);
+
+    // Non-blocking notifications
+    // ... rest of the code remains the same for notifications ...
+    
+    // 1. Notify User (In-app)
+    User.findByIdAndUpdate(req.user.id, {
+        $push: {
+            notifications: {
+                type: "VERIFICATION_PENDING",
+                message: "Your verification documents have been received and are under review.",
+                targetTab: "settings",
+                createdAt: new Date()
+            }
+        }
+    }).catch(err => console.error("In-app notification failed:", err));
 
     // 2. Notify User (Email)
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-        const userMailOptions = {
-            from: process.env.EMAIL_USER,
-            to: user.email,
-            subject: "Verification Documents Received - Otulia",
-            text: `Hi ${user.name},
-
-We have received your dealer verification documents. Our team will review them within 24-48 hours. 
-
-You will receive another notification once the review is complete.
-
-Best regards,
-The Otulia Team`,
-        };
-
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -613,17 +610,19 @@ The Otulia Team`,
             },
         });
 
-        transporter.sendMail(userMailOptions, (error, info) => {
-            if (error) console.error("User Verification Receipt Email Error:", error);
-        });
+        const userMailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: "Verification Documents Received - Otulia",
+            text: `Hi ${user.name},\n\nWe have received your dealer verification documents. Our team will review them within 24-48 hours.\n\nYou will receive another notification once the review is complete.\n\nBest regards,\nThe Otulia Team`,
+        };
+
+        transporter.sendMail(userMailOptions).catch(error => console.error("User email failed:", error));
     }
 
     // 3. Notify Admins
-    try {
-        const admins = await User.find({ role: 'admin' });
-        
-        // 1. In-app notifications
-        await User.updateMany(
+    User.find({ role: 'admin' }).then(admins => {
+        User.updateMany(
             { role: 'admin' },
             {
                 $push: {
@@ -635,23 +634,10 @@ The Otulia Team`,
                     }
                 }
             }
-        );
-
-        // 2. Email notifications
-        const adminDashboardLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/admin`;
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            subject: `New Verification Request: ${user.name}`,
-            text: `A new dealer verification request has been submitted.
-
-User Details:
-Name: ${user.name}
-Email: ${user.email}
-
-Review documents in the admin dashboard: ${adminDashboardLink}`,
-        };
+        ).catch(err => console.error("Admin in-app notification failed:", err));
 
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            const adminDashboardLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/admin`;
             const transporter = nodemailer.createTransport({
                 service: "gmail",
                 auth: {
@@ -660,20 +646,22 @@ Review documents in the admin dashboard: ${adminDashboardLink}`,
                 },
             });
 
-            for (const admin of admins) {
-                transporter.sendMail({ ...mailOptions, to: admin.email }, (error, info) => {
-                    if (error) console.error(`Admin Notification Email Error (${admin.email}):`, error);
-                });
-            }
+            admins.forEach(admin => {
+                transporter.sendMail({
+                    from: process.env.EMAIL_USER,
+                    to: admin.email,
+                    subject: `New Verification Request: ${user.name}`,
+                    text: `A new dealer verification request has been submitted by ${user.name} (${user.email}). Review it here: ${adminDashboardLink}`
+                }).catch(err => console.error(`Admin email failed for ${admin.email}:`, err));
+            });
         }
-    } catch (adminNotifError) {
-        console.error("Failed to notify admins:", adminNotifError);
-    }
+    }).catch(err => console.error("Admin lookup failed:", err));
 
-    res.json(user);
   } catch (err) {
     console.error("Verification Submit Error:", err);
-    res.status(500).json({ error: "SUBMISSION_FAILED", details: err.message });
+    if (!res.headersSent) {
+        res.status(500).json({ error: "SUBMISSION_FAILED", details: err.message });
+    }
   }
 });
 

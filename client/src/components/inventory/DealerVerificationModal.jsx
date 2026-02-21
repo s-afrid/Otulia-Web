@@ -45,6 +45,9 @@ const DealerVerificationModal = ({ isOpen, onClose, onSubmit }) => {
         setSubmitting(true);
         try {
             await onSubmit(documents);
+        } catch (error) {
+            console.error("Submission error:", error);
+            alert("An error occurred during submission. Please check your connection and try again.");
         } finally {
             setSubmitting(false);
         }
