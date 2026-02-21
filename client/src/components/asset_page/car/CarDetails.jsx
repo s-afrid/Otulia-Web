@@ -139,7 +139,7 @@ const CarDetails = ({ item, modelName = 'CarAsset' }) => {
   }
 
   return (
-    <div className="w-full max-w-[90%] mx-auto p-4 md:p-8 bg-white font-sans">
+    <div className="w-full max-w-[93%] mx-auto p-4 md:p-8 bg-white font-sans">
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
 
