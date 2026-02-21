@@ -34,35 +34,70 @@ const LocationMap = ({ locationName }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!locationName) return;
+    if (!locationName || typeof locationName !== 'string') return;
 
-    const fetchCoords = async () => {
-      setLoading(true);
-      setError(null);
-      console.log("Searching for:", locationName); // DEBUG LOG
-
+    const fetchCoords = async (query) => {
       try {
-        // --- FIX 2: ROBUST API CALL ---
-        // We add addressdetails=1 to get better data
-        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationName)}&format=json&limit=1`;
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&addressdetails=1`;
         
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Network response was not ok");
+        const response = await fetch(url, {
+          headers: {
+            'Accept-Language': 'en' // Prefer English results
+          }
+        });
+        
+        if (response.status === 429) {
+          throw new Error("Too many requests. Please wait.");
+        }
+        
+        if (!response.ok) throw new Error("Map service unavailable");
         
         const data = await response.json();
-        console.log("API Result:", data); // DEBUG LOG
-
+        
         if (data && data.length > 0) {
-          setCoordinates({ 
-            lat: parseFloat(data[0].lat), 
-            lng: parseFloat(data[0].lon) 
-          });
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+          
+          if (!isNaN(lat) && !isNaN(lon)) {
+            return { lat, lon };
+          }
+        }
+        return null;
+      } catch (err) {
+        console.error("Geocoding error for query:", query, err);
+        throw err;
+      }
+    };
+
+    const performSearch = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Attempt 1: Full location name
+        let coords = await fetchCoords(locationName);
+        
+        // Attempt 2: Fallback - if location contains commas, try the last part (e.g. "Miami, FL, USA" -> "Miami, USA")
+        if (!coords && locationName.includes(',')) {
+          const parts = locationName.split(',').map(p => p.trim());
+          if (parts.length > 2) {
+            const simplified = `${parts[0]}, ${parts[parts.length - 1]}`;
+            coords = await fetchCoords(simplified);
+          }
+          
+          // Attempt 3: Just the first part (e.g. "Miami")
+          if (!coords) {
+            coords = await fetchCoords(parts[0]);
+          }
+        }
+
+        if (coords) {
+          setCoordinates({ lat: coords.lat, lng: coords.lon });
         } else {
-          setError("Location not found");
+          setError("Location not found on map");
         }
       } catch (err) {
-        console.error("Geocoding error:", err);
-        setError("Error fetching location");
+        setError(err.message || "Error loading map");
       } finally {
         setLoading(false);
       }
@@ -70,18 +105,51 @@ const LocationMap = ({ locationName }) => {
 
     // Debounce to prevent API spam
     const timer = setTimeout(() => {
-        fetchCoords();
-    }, 1000);
+      performSearch();
+    }, 800);
 
     return () => clearTimeout(timer);
   }, [locationName]);
 
   // --- RENDER ---
-  const boxStyle = { height: '400px', width: '100%', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' };
+  const boxStyle = { 
+    height: '400px', 
+    width: '90%', 
+    background: '#f8f8f8', 
+    display: 'flex', 
+    flexDirection: 'column',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    borderRadius: '12px',
+    border: '2px solid #ddd',
+    color: '#666',
+    fontFamily: 'Montserrat, sans-serif'
+  };
 
-  if (!locationName) return <div style={boxStyle}>Enter a location name</div>;
-  if (loading) return <div style={boxStyle}>Loading map...</div>;
-  if (error) return <div style={{...boxStyle, color: 'red'}}>{error}</div>;
+  if (!locationName) return <div style={boxStyle}>No location provided</div>;
+  if (loading) return <div style={boxStyle}><div className="animate-pulse">Locating on map...</div></div>;
+  
+  if (error) {
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationName)}`;
+    return (
+      <div style={{...boxStyle, color: '#444', padding: '20px', textAlign: 'center'}}>
+        <div style={{fontSize: '32px', marginBottom: '12px'}}>📍</div>
+        <div className="font-bold text-lg mb-2 text-gray-800">{error}</div>
+        <p className="text-sm mb-6 text-gray-500 max-w-[280px]">We couldn't pin this specific location on the map, but you can view it directly on Google Maps.</p>
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open(googleMapsUrl, '_blank');
+          }}
+          className="bg-black text-white px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-gray-800 transition-all shadow-lg active:scale-95 cursor-pointer"
+        >
+          Open in Google Maps
+        </button>
+        <div style={{fontSize: '10px', marginTop: '15px', color: '#bbb', fontStyle: 'italic'}}>Location: {locationName}</div>
+      </div>
+    );
+  }
+
   if (!coordinates) return null;
 
   const handleMapClick = () => {
@@ -103,11 +171,12 @@ const LocationMap = ({ locationName }) => {
       </div>
 
       <MapContainer 
+        key={`${coordinates.lat}-${coordinates.lng}`}
         center={[coordinates.lat, coordinates.lng]} 
         zoom={14} 
         scrollWheelZoom={false} 
-        dragging={false} // Disable dragging to prioritize click-to-open
-        zoomControl={false} // Disable zoom control for cleaner look if it's just a preview
+        dragging={false} 
+        zoomControl={false} 
         style={{ height: '100%', width: '100%' , zIndex: '10' }}
       >
         <TileLayer

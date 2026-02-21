@@ -41,7 +41,7 @@ const CategorySection = () => {
     ]
 
     return (
-        <section className='w-full px-3 md:px-16 md:pt-16 pb-6 bg-white' id='Category'>
+        <section className='w-full px-3 md:px-16 md:pt-14 pb-6 bg-white' id='Category'>
             {/* Header */}
             <div className='flex flex-col md:flex-row items-center gap-4 md:justify-between mb-12'>
                 <h2 className='text-4xl md:text-5xl playfair-display font-normal text-black'>
