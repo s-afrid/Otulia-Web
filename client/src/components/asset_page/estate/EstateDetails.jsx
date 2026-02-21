@@ -197,10 +197,10 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
 
         {/* RIGHT COLUMN: Price & Card */}
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
-          <div className="w-full text-left lg:text-right">
+          <div className="w-full text-center">
             {/* PRICE: Times New Roman + Larger Size (text-5xl) */}
             <h2 
-              className="text-3xl md:text-5xl font-bold text-black"
+              className="text-3xl md:text-6xl font-bold text-black"
               style={{ fontFamily: '"Times New Roman", Times, serif' }}
             >
               $ {numberWithCommas(price)} {type === 'Rent' && <span className="text-lg font-normal text-gray-500 font-sans">/ day</span>}
