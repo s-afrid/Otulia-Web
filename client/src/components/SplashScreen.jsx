@@ -39,7 +39,7 @@ const SplashScreen = ({ onFinish }) => {
                     alt="Otulia"
                     className="w-64 md:w-96 h-auto object-contain mb-6 drop-shadow-2xl"
                 />
-                <p className="text-white text-sm md:text-base uppercase tracking-[0.4em] font-medium montserrat animate-fade-in text-center w-full pl-[0.4em]">
+                <p className="text-white text-sm md:text-base uppercase tracking-[0.4em] font-medium montserrat animate-fade-in text-center w-fit ml-6 md:ml-12">
                     Luxury Redefined
                 </p>
             </div>
