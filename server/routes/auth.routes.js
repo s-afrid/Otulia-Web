@@ -265,9 +265,17 @@ router.get("/my-listings", authMiddleware, async (req, res) => {
       .filter(entry => entry.item) // Filter out nulls if any
       .map(entry => {
         const item = entry.item.toObject();
+        // Simplify category name (e.g., CarAsset -> Car)
+        let simplifiedCategory = entry.itemModel;
+        if (simplifiedCategory.endsWith('Asset')) {
+          simplifiedCategory = simplifiedCategory.replace('Asset', '');
+        }
+        if (simplifiedCategory === 'Estate') simplifiedCategory = 'Estate'; // Already correct
+
         return {
           ...item,
-          category: entry.itemModel // Ensure category is available for UI logic if needed
+          itemModel: entry.itemModel,
+          category: simplifiedCategory
         };
       });
 
@@ -292,9 +300,15 @@ router.get("/favorites", authMiddleware, async (req, res) => {
       .filter(entry => entry.assetId) // Filter out nulls
       .map(entry => {
         const item = entry.assetId.toObject();
+        let simplifiedCategory = entry.assetModel;
+        if (simplifiedCategory.endsWith('Asset')) {
+          simplifiedCategory = simplifiedCategory.replace('Asset', '');
+        }
+
         return {
           ...item,
-          category: entry.assetModel // Ensure category is available
+          assetModel: entry.assetModel,
+          category: simplifiedCategory
         };
       });
 

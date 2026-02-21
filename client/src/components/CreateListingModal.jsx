@@ -5,10 +5,21 @@ import { useAuth } from '../contexts/AuthContext';
 const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     const { token } = useAuth();
     const [loading, setLoading] = useState(false);
+
+    const normalizeCategory = (data) => {
+        if (!data) return 'Car';
+        const cat = (data.category || data.itemModel || '').toLowerCase();
+        if (cat.includes('car') || cat === 'vehicles') return 'Car';
+        if (cat.includes('bike') || cat === 'bikes') return 'Bike';
+        if (cat.includes('yacht')) return 'Yacht';
+        if (cat.includes('estate')) return 'Estate';
+        return 'Car';
+    };
+
     const [formData, setFormData] = useState({
         title: editData?.title || '',
         price: editData?.price || '',
-        category: editData?.category || (editData?.itemModel === 'CarAsset' ? 'Car' : editData?.itemModel === 'EstateAsset' ? 'Estate' : editData?.itemModel === 'BikeAsset' ? 'Bike' : editData?.itemModel === 'YachtAsset' ? 'Yacht' : 'Car'),
+        category: normalizeCategory(editData),
         type: editData?.type || 'Sale',
         location: editData?.location || '',
         description: editData?.description || '',
@@ -115,7 +126,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             setFormData({
                 title: editData.title || '',
                 price: editData.price || '',
-                category: editData.itemModel === 'CarAsset' ? 'Car' : editData.itemModel === 'EstateAsset' ? 'Estate' : editData.itemModel === 'BikeAsset' ? 'Bike' : editData.itemModel === 'YachtAsset' ? 'Yacht' : 'Car',
+                category: normalizeCategory(editData),
                 type: editData.type || 'Sale',
                 location: editData.location || '',
                 description: editData.description || '',
