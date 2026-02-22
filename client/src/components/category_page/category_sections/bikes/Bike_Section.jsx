@@ -6,6 +6,18 @@ import AssetCard from '../../../AssetCard';
 import bikeFilterOptions from '../../../../json/bike_filter_options.json';
 import SortDropdown from '../SortDropdown';
 
+// Import Logos
+import ducatiLogo from '../../../../assets/bike_brands/Ducati.png';
+import kawasakiLogo from '../../../../assets/bike_brands/Kawasaki.png';
+import bmwBikeLogo from '../../../../assets/bike_brands/BMW.png';
+import yamahaLogo from '../../../../assets/bike_brands/Yamaha.png';
+import harleyLogo from '../../../../assets/bike_brands/Harley-Davidson.png';
+import indianLogo from '../../../../assets/bike_brands/Indian_Motorcycles.jpg';
+import ktmLogo from '../../../../assets/bike_brands/KTM.svg';
+import triumphLogo from '../../../../assets/bike_brands/Triumph.jpg';
+import hondaLogo from '../../../../assets/bike_brands/Honda.svg';
+import royalEnfieldLogo from '../../../../assets/bike_brands/Royal-Enfield.png';
+
 const Bike_Section = () => {
     const [list, setlist] = useState([]);
     const [page, setPage] = useState(1);
@@ -18,18 +30,19 @@ const Bike_Section = () => {
     const navigate = useNavigate();
     const featuredListRef = useRef(null);
 
-    const brands = [
-        { id: 1, name: 'Ducati', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/66/Ducati_red_logo.PNG' },
-        { id: 2, name: 'Kawasaki', logo: 'https://www.freepnglogos.com/uploads/kawasaki-png-logo/kawasaki-green-emblem-png-logo-1.png' },
-        { id: 3, name: 'BMW', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/BMW_logo_%28gray%29.svg/1200px-BMW_logo_%28gray%29.svg.png' },
-        { id: 4, name: 'Yamaha', logo: 'https://www.freepnglogos.com/uploads/yamaha-png-logo/company-yamaha-png-logo-1.png' },
-        { id: 5, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
-        { id: 6, name: 'Indian Motorcycles', logo: 'https://mma.prnewswire.com/media/2006407/Indian_Motorcycle_Headdress_logo_Logo.jpg?w=200' },
-        { id: 7, name: 'KTM', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/KTM_Bike_Industries_ArtWW.svg' },
-        { id: 8, name: 'Triumph Motorcycles', logo: 'https://i.pinimg.com/1200x/0a/6f/f7/0a6ff736811270c3e3613ff5994410ca.jpg' },
-        { id: 9, name: 'Honda Motors', logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Honda_Logo.svg' },
-        { id: 10, name: 'Royal Enfield', logo: 'https://listcarbrands.com/wp-content/uploads/2022/12/Royal-Enfield-Logo.png' },
-    ];    const datafetch = async (reset = false) => {
+        const brands = [
+            { id: 1, name: 'Ducati', logo: ducatiLogo },
+            { id: 2, name: 'Kawasaki', logo: kawasakiLogo },
+            { id: 3, name: 'BMW', logo: bmwBikeLogo },
+            { id: 4, name: 'Yamaha', logo: yamahaLogo },
+            { id: 5, name: 'Harley-Davidson', logo: harleyLogo },
+            { id: 6, name: 'Indian Motorcycles', logo: indianLogo },
+            { id: 7, name: 'KTM', logo: ktmLogo },
+            { id: 8, name: 'Triumph Motorcycles', logo: triumphLogo },
+            { id: 9, name: 'Honda Motors', logo: hondaLogo },
+            { id: 10, name: 'Royal Enfield', logo: royalEnfieldLogo },
+        ];
+        const datafetch = async (reset = false) => {
         const searchParams = new URLSearchParams(location.search);
         searchParams.set('limit', limit);
         searchParams.set('page', reset ? 1 : page);

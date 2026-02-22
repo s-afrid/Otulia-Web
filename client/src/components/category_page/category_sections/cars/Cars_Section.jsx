@@ -7,6 +7,18 @@ import SortDropdown from '../SortDropdown';
 import carFilterOptions from '../../../../json/car_filter_options.json';
 import Cars_Search from './Cars_Search';
 
+// Import Logos
+import astonMartinLogo from '../../../../assets/car_brands/Aston_Martin_Wings.svg';
+import audiLogo from '../../../../assets/car_brands/Audi.svg';
+import bmwLogo from '../../../../assets/car_brands/BMW.svg';
+import bugattiLogo from '../../../../assets/car_brands/Bugatti.svg';
+import ferrariLogo from '../../../../assets/car_brands/Ferrari.jpg';
+import koenigseggLogo from '../../../../assets/car_brands/Koenigsegg_Automotive_AB.jfif';
+import lexusLogo from '../../../../assets/car_brands/Lexus.jpg';
+import mercedesLogo from '../../../../assets/car_brands/Mercedes-Benz.svg';
+import porscheLogo from '../../../../assets/car_brands/Porsche.jpg';
+import shelbyLogo from '../../../../assets/car_brands/Shelby_American.svg';
+
 const Cars_Section = () => {
   const [list, setlist] = useState([]);
   const [limit, setLimit] = useState(10);
@@ -104,52 +116,52 @@ const Cars_Section = () => {
     {
       id: 1,
       name: 'Bugatti',
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/6/60/Bugatti_logo.svg',
+      logo: bugattiLogo,
     },
     {
       id: 2,
       name: 'Mercedes-Benz',
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Mercedes-Benz_Logo_2010.svg',
+      logo: mercedesLogo,
     },
     {
       id: 3,
       name: 'BMW',
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/f/f4/BMW_logo_%28gray%29.svg',
+      logo: bmwLogo,
     },
     {
       id: 4,
       name: 'Aston Martin Wings',
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b7/Aston_Martin_wordmark.svg',
+      logo: astonMartinLogo,
     },
     {
       id: 5,
       name: 'Audi',
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Audi-Logo_2016.svg',
+      logo: audiLogo,
     },
     {
       id: 6,
       name: 'Porsche',
-      logo: 'https://cdn.iconscout.com/icon/free/png-256/free-porsche-icon-svg-download-png-202881.png',
+      logo: porscheLogo,
     },
     {
       id: 7,
       name: 'Lexus',
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/4/42/Lexus-cars-logo-emblem.jpg',
+      logo: lexusLogo,
     },
     {
       id: 8,
       name: 'Koenigsegg Automotive AB',
-      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWEJnKQKdKv1UMoZMX2ihIzKM5dap1uiPgUA&s',
+      logo: koenigseggLogo,
     },
     {
       id: 9,
-      name: 'Ferrai',
-      logo: 'https://i.pinimg.com/736x/fd/f7/37/fdf73726681950078cf87bef7dacd10d.jpg',
+      name: 'Ferrari',
+      logo: ferrariLogo,
     },
     {
       id: 10,
       name: 'Shelby American',
-      logo: 'https://cdn.worldvectorlogo.com/logos/shelby-3.svg',
+      logo: shelbyLogo,
     },
   ];
 

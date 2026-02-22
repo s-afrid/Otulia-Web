@@ -6,6 +6,18 @@ import AssetCard from '../../../AssetCard';
 import yachtFilterOptions from '../../../../json/yacht_filter_options.json';
 import SortDropdown from '../SortDropdown';
 
+// Import Logos
+import azimutLogo from '../../../../assets/yacht_brands/Azimut_Yachts.png';
+import sunseekerLogo from '../../../../assets/yacht_brands/Sunseeker.jfif';
+import princessLogo from '../../../../assets/yacht_brands/Princess-Yachts.jpg';
+import ferrettiLogo from '../../../../assets/yacht_brands/Ferretti_Yachts.png';
+import benettiLogo from '../../../../assets/yacht_brands/Benetti.svg';
+import heesenLogo from '../../../../assets/yacht_brands/Heesen.jpg';
+import wallyLogo from '../../../../assets/yacht_brands/Wally.jfif';
+import rivaLogo from '../../../../assets/yacht_brands/Riva.jpg';
+import customLineLogo from '../../../../assets/yacht_brands/Custom_Line.jpg';
+import pershingLogo from '../../../../assets/yacht_brands/Pershing.png';
+
 const Yacht_Section = () => {
     const [list, setlist] = useState([]);
     const [page, setPage] = useState(1);
@@ -18,18 +30,19 @@ const Yacht_Section = () => {
     const navigate = useNavigate();
     const featuredListRef = useRef(null);
 
-    const brands = [
-        { id: 1, name: 'Azimut', logo: 'https://brandlogos.net/wp-content/uploads/2025/06/azimut_yachts-logo_brandlogos.net_svens-512x118.png' },
-        { id: 2, name: 'Sunseeker', logo: 'https://cdn.worldvectorlogo.com/logos/sunseeker.svg' },
-        { id: 3, name: 'Princess', logo: 'https://www.kpsfund.com/images/default-source/default-album/princess-yachts-logo.jpg?sfvrsn=ea309b5a_0' },
-        { id: 4, name: 'Ferretti', logo: 'https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/122011/ferretti_yachts_0.png?itok=dOa4Se4L' },
-        { id: 5, name: 'Benetti', logo: 'https://waterrevolutionfoundation.org/wp-content/uploads/2020/12/Benetti-logo.png' },
-        { id: 6, name: 'Heesen Yachts', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Heesen_logo_blue-gold_RGB.jpg' },
-        { id: 7, name: 'Wally Yachts', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFfUEKMdam8L4L02JhQU9Nnw-ppSmNrMldGA&s' },
-        { id: 8, name: 'Riva', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Logo-riva-yacht.jpg' },
-        { id: 9, name: 'Custom Line', logo: 'https://upload.wikimedia.org/wikipedia/en/6/67/Custom_Line_Logo.jpg' },
-        { id: 10, name: 'Pershing Yachts', logo: 'https://ruyachts.com/images/pershing/shipyard/logo/pershing-shipyard-logo-1.png' },
-    ];    const datafetch = async (reset = false) => {
+        const brands = [
+            { id: 1, name: 'Azimut', logo: azimutLogo },
+            { id: 2, name: 'Sunseeker', logo: sunseekerLogo },
+            { id: 3, name: 'Princess', logo: princessLogo },
+            { id: 4, name: 'Ferretti', logo: ferrettiLogo },
+            { id: 5, name: 'Benetti', logo: benettiLogo },
+            { id: 6, name: 'Heesen Yachts', logo: heesenLogo },
+            { id: 7, name: 'Wally Yachts', logo: wallyLogo },
+            { id: 8, name: 'Riva', logo: rivaLogo },
+            { id: 9, name: 'Custom Line', logo: customLineLogo },
+            { id: 10, name: 'Pershing Yachts', logo: pershingLogo },
+        ];
+        const datafetch = async (reset = false) => {
         const searchParams = new URLSearchParams(location.search);
         searchParams.set('limit', limit);
         searchParams.set('page', reset ? 1 : page);
