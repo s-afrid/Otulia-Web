@@ -25,10 +25,10 @@ const Bike_Section = () => {
         { id: 4, name: 'Yamaha', logo: 'https://www.freepnglogos.com/uploads/yamaha-png-logo/company-yamaha-png-logo-1.png' },
         { id: 5, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
         { id: 6, name: 'Indian Motorcycles', logo: 'https://mma.prnewswire.com/media/2006407/Indian_Motorcycle_Headdress_logo_Logo.jpg?w=200' },
-        { id: 7, name: '', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
-        { id: 8, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
-        { id: 9, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
-        { id: 10, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
+        { id: 7, name: 'KTM', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/KTM_Bike_Industries_ArtWW.svg' },
+        { id: 8, name: 'Triumph Motorcycles', logo: 'https://i.pinimg.com/1200x/0a/6f/f7/0a6ff736811270c3e3613ff5994410ca.jpg' },
+        { id: 9, name: 'Honda Motors', logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Honda_Logo.svg' },
+        { id: 10, name: 'Royal Enfield', logo: 'https://listcarbrands.com/wp-content/uploads/2022/12/Royal-Enfield-Logo.png' },
     ];    const datafetch = async (reset = false) => {
         const searchParams = new URLSearchParams(location.search);
         searchParams.set('limit', limit);
