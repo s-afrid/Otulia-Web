@@ -71,6 +71,7 @@ const deleteFromCloudinary = async (url) => {
     }
 };
 
+// Cloudinary folder deletion helper
 const deleteFolderFromCloudinary = async (folderPath) => {
     try {
         // Delete all resources in the folder first (images, raw files, and videos)
@@ -85,6 +86,60 @@ const deleteFolderFromCloudinary = async (folderPath) => {
         // If folder doesn't exist or other error, log it but don't crash
         console.error(`Cloudinary folder deletion error (${folderPath}):`, err.message);
     }
+};
+
+// Brand Logo Mappings
+const BRAND_LOGOS = {
+    'Car': {
+        'Aston Martin': 'Aston_Martin_Wings.svg',
+        'Audi': 'Audi.svg',
+        'BMW': 'BMW.svg',
+        'Bugatti': 'Bugatti.svg',
+        'Ferrari': 'Ferrari.jpg',
+        'Koenigsegg': 'Koenigsegg_Automotive_AB.jfif',
+        'Lexus': 'Lexus.jpg',
+        'Mercedes-Benz': 'Mercedes-Benz.svg',
+        'Porsche': 'Porsche.jpg',
+        'Shelby': 'Shelby_American.svg'
+    },
+    'Bike': {
+        'BMW': 'BMW.png',
+        'Ducati': 'Ducati.png',
+        'Harley-Davidson': 'Harley-Davidson.png',
+        'Honda': 'Honda.svg',
+        'Indian': 'Indian_Motorcycles.jpg',
+        'Kawasaki': 'Kawasaki.png',
+        'KTM': 'KTM.svg',
+        'Royal Enfield': 'Royal-Enfield.png',
+        'Triumph': 'Triumph.jpg',
+        'Yamaha': 'Yamaha.png'
+    },
+    'Yacht': {
+        'Azimut': 'Azimut_Yachts.png',
+        'Benetti': 'Benetti.svg',
+        'Custom Line': 'Custom_Line.jpg',
+        'Ferretti': 'Ferretti_Yachts.png',
+        'Heesen': 'Heesen.jpg',
+        'Pershing': 'Pershing.png',
+        'Princess': 'Princess-Yachts.jpg',
+        'Riva': 'Riva.jpg',
+        'Sunseeker': 'Sunseeker.jfif',
+        'Wally': 'Wally.jfif'
+    }
+};
+
+const getBrandLogoPath = (category, brandName) => {
+    if (!BRAND_LOGOS[category] || !brandName) return null;
+    const fileName = BRAND_LOGOS[category][brandName];
+    if (!fileName) return null;
+
+    const folderMap = {
+        'Car': 'car_brands',
+        'Bike': 'bike_brands',
+        'Yacht': 'yacht_brands'
+    };
+
+    return path.join(__dirname, `../../client/src/assets/${folderMap[category]}/${fileName}`);
 };
 
 /**
@@ -230,6 +285,28 @@ router.post('/create', authMiddleware, upload.fields([
         }
 
         const updateData = { images: imageUrls, documents: docUrls };
+
+        // Auto-assign brand logo from local assets if matching brand is found
+        let brandNameForLogo = null;
+        if (category === 'Car') brandNameForLogo = req.body.make;
+        else if (category === 'Bike') brandNameForLogo = req.body.brand;
+        else if (category === 'Yacht') brandNameForLogo = req.body.builder;
+
+        if (brandNameForLogo) {
+            const logoPath = getBrandLogoPath(category, brandNameForLogo);
+            if (logoPath && fs.existsSync(logoPath)) {
+                try {
+                    const logoResult = await cloudinary.uploader.upload(logoPath, {
+                        folder: `${category}/${assetId}/brand_logo`,
+                        public_id: 'logo'
+                    });
+                    updateData.brand_logo = logoResult.secure_url;
+                } catch (logoErr) {
+                    console.error("Brand Logo Upload Error:", logoErr);
+                }
+            }
+        }
+
         if (category === 'Car') {
             updateData.brand = req.body.make || 'Unknown';
             updateData.variant = req.body.variant;
@@ -485,7 +562,24 @@ router.put('/:id', authMiddleware, upload.fields([
         // --- TYPE SPECIFIC UPDATES ---
 
         if (modelName === 'CarAsset') {
-            if (req.body.make) listing.brand = req.body.make;
+            if (req.body.make) {
+                // If brand name changed, try to update logo too
+                if (listing.brand !== req.body.make) {
+                    const logoPath = getBrandLogoPath('Car', req.body.make);
+                    if (logoPath && fs.existsSync(logoPath)) {
+                        try {
+                            const logoResult = await cloudinary.uploader.upload(logoPath, {
+                                folder: `Car/${id}/brand_logo`,
+                                public_id: 'logo'
+                            });
+                            listing.brand_logo = logoResult.secure_url;
+                        } catch (logoErr) {
+                            console.error("Brand Logo Update Error:", logoErr);
+                        }
+                    }
+                }
+                listing.brand = req.body.make;
+            }
             if (req.body.variant) listing.variant = req.body.variant;
 
             const spec = listing.specification || {};
@@ -524,7 +618,23 @@ router.put('/:id', authMiddleware, upload.fields([
             listing.markModified('keySpecifications');
 
         } else if (modelName === 'BikeAsset') {
-            if (req.body.brand) listing.brand = req.body.brand;
+            if (req.body.brand) {
+                if (listing.brand !== req.body.brand) {
+                    const logoPath = getBrandLogoPath('Bike', req.body.brand);
+                    if (logoPath && fs.existsSync(logoPath)) {
+                        try {
+                            const logoResult = await cloudinary.uploader.upload(logoPath, {
+                                folder: `Bike/${id}/brand_logo`,
+                                public_id: 'logo'
+                            });
+                            listing.brand_logo = logoResult.secure_url;
+                        } catch (logoErr) {
+                            console.error("Brand Logo Update Error:", logoErr);
+                        }
+                    }
+                }
+                listing.brand = req.body.brand;
+            }
             const spec = listing.specification || {};
             const keySpec = listing.keySpecifications || {};
 
@@ -558,7 +668,23 @@ router.put('/:id', authMiddleware, upload.fields([
             listing.markModified('keySpecifications');
 
         } else if (modelName === 'YachtAsset') {
-            if (req.body.builder) listing.builder = req.body.builder;
+            if (req.body.builder) {
+                if (listing.builder !== req.body.builder) {
+                    const logoPath = getBrandLogoPath('Yacht', req.body.builder);
+                    if (logoPath && fs.existsSync(logoPath)) {
+                        try {
+                            const logoResult = await cloudinary.uploader.upload(logoPath, {
+                                folder: `Yacht/${id}/brand_logo`,
+                                public_id: 'logo'
+                            });
+                            listing.brand_logo = logoResult.secure_url;
+                        } catch (logoErr) {
+                            console.error("Brand Logo Update Error:", logoErr);
+                        }
+                    }
+                }
+                listing.builder = req.body.builder;
+            }
             const spec = listing.specification || {};
             const keySpec = listing.keySpecifications || {};
 
