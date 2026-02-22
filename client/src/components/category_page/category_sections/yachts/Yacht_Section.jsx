@@ -24,6 +24,11 @@ const Yacht_Section = () => {
         { id: 3, name: 'Princess', logo: 'https://www.kpsfund.com/images/default-source/default-album/princess-yachts-logo.jpg?sfvrsn=ea309b5a_0' },
         { id: 4, name: 'Ferretti', logo: 'https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/122011/ferretti_yachts_0.png?itok=dOa4Se4L' },
         { id: 5, name: 'Benetti', logo: 'https://waterrevolutionfoundation.org/wp-content/uploads/2020/12/Benetti-logo.png' },
+        { id: 6, name: 'Heesen Yachts', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Heesen_logo_blue-gold_RGB.jpg' },
+        { id: 7, name: 'Wally Yachts', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFfUEKMdam8L4L02JhQU9Nnw-ppSmNrMldGA&s' },
+        { id: 8, name: 'Riva', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Logo-riva-yacht.jpg' },
+        { id: 9, name: 'Custom Line', logo: 'https://upload.wikimedia.org/wikipedia/en/6/67/Custom_Line_Logo.jpg' },
+        { id: 10, name: 'Pershing Yachts', logo: 'https://ruyachts.com/images/pershing/shipyard/logo/pershing-shipyard-logo-1.png' },
     ];    const datafetch = async (reset = false) => {
         const searchParams = new URLSearchParams(location.search);
         searchParams.set('limit', limit);
