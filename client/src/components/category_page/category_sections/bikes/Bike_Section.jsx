@@ -24,6 +24,11 @@ const Bike_Section = () => {
         { id: 3, name: 'BMW', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/BMW_logo_%28gray%29.svg/1200px-BMW_logo_%28gray%29.svg.png' },
         { id: 4, name: 'Yamaha', logo: 'https://www.freepnglogos.com/uploads/yamaha-png-logo/company-yamaha-png-logo-1.png' },
         { id: 5, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
+        { id: 6, name: 'Indian Motorcycles', logo: 'https://mma.prnewswire.com/media/2006407/Indian_Motorcycle_Headdress_logo_Logo.jpg?w=200' },
+        { id: 7, name: '', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
+        { id: 8, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
+        { id: 9, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
+        { id: 10, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
     ];    const datafetch = async (reset = false) => {
         const searchParams = new URLSearchParams(location.search);
         searchParams.set('limit', limit);

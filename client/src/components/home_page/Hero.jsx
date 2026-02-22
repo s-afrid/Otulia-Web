@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 const Hero = () => {
   return (
     <>
-    <div className='flex flex-col hero-banner h-[calc(100vh-230px)] w-full'>
+    <div className='flex flex-col hero-banner h-[calc(100vh-80px)] w-full'>
         <video className='absolute top-0 -z-11 h-[83vh] md:h-screen w-screen object-cover' src={heroUrl} muted autoPlay />
         
         <div className='absolute top-[5%] md:top-[9%] left-[3%] md:left-[5%] flex flex-col gap-4'>

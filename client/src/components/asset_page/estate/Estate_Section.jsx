@@ -61,7 +61,7 @@ const Estate_Section = () => {
 
   if (!info) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-[60vh] items-center justify-center">
         <div className="text-xl montserrat text-gray-500">Loading Asset Details...</div>
       </div>
     );
