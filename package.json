@@ -1,0 +1,11 @@
+{
+  "name": "otulia-marketplace",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server/index.js",
+    "build": "npm install --legacy-peer-deps && cd client && npm install && npm run build"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}
