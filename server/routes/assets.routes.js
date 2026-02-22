@@ -600,7 +600,7 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
  */
 router.get("/combined", async (req, res) => {
   try {
-    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
+    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition } = req.query;
 
     let searchQuery = {};
     if (q) {
@@ -642,6 +642,13 @@ router.get("/combined", async (req, res) => {
     const query = { ...searchQuery, status: 'Active' };
 
     if (type) query.type = type;
+    if (acquisition) {
+      if (acquisition === 'buy') {
+        query.acquisition = { $in: ['buy', 'rent/buy'] };
+      } else if (acquisition === 'rent') {
+        query.acquisition = { $in: ['rent', 'rent/buy'] };
+      }
+    }
     if (location) query.location = { $regex: location, $options: "i" };
     if (minPrice || maxPrice) {
       query.price = {};
@@ -721,8 +728,21 @@ router.get("/car", async (req, res) => {
  */
 router.get("/estate", async (req, res) => {
   try {
-    const { limit = 15 } = req.query;
-    const data = await EstateAsset.find({ status: 'Active' })
+    const { limit = 15, location, acquisition } = req.query;
+    const query = { status: 'Active' };
+
+    if (location) {
+      query.location = { $regex: location, $options: "i" };
+    }
+    if (acquisition) {
+      if (acquisition === 'buy') {
+        query.acquisition = { $in: ['buy', 'rent/buy'] };
+      } else if (acquisition === 'rent') {
+        query.acquisition = { $in: ['rent', 'rent/buy'] };
+      }
+    }
+
+    const data = await EstateAsset.find(query)
       .sort({ createdAt: -1 })
       .limit(Number(limit));
     res.json(data);
@@ -737,8 +757,21 @@ router.get("/estate", async (req, res) => {
  */
 router.get("/bike", async (req, res) => {
   try {
-    const { limit = 15 } = req.query;
-    const data = await BikeAsset.find({ status: 'Active' })
+    const { limit = 15, location, acquisition } = req.query;
+    const query = { status: 'Active' };
+
+    if (location) {
+      query.location = { $regex: location, $options: "i" };
+    }
+    if (acquisition) {
+      if (acquisition === 'buy') {
+        query.acquisition = { $in: ['buy', 'rent/buy'] };
+      } else if (acquisition === 'rent') {
+        query.acquisition = { $in: ['rent', 'rent/buy'] };
+      }
+    }
+
+    const data = await BikeAsset.find(query)
       .sort({ createdAt: -1 })
       .limit(Number(limit));
     res.json(data);
@@ -753,8 +786,21 @@ router.get("/bike", async (req, res) => {
  */
 router.get("/yacht", async (req, res) => {
   try {
-    const { limit = 15 } = req.query;
-    const data = await YachtAsset.find({ status: 'Active' })
+    const { limit = 15, location, acquisition } = req.query;
+    const query = { status: 'Active' };
+
+    if (location) {
+      query.location = { $regex: location, $options: "i" };
+    }
+    if (acquisition) {
+      if (acquisition === 'buy') {
+        query.acquisition = { $in: ['buy', 'rent/buy'] };
+      } else if (acquisition === 'rent') {
+        query.acquisition = { $in: ['rent', 'rent/buy'] };
+      }
+    }
+
+    const data = await YachtAsset.find(query)
       .sort({ createdAt: -1 })
       .limit(Number(limit));
     res.json(data);

@@ -16,10 +16,10 @@ const Rent = () => {
 
   const categories = [
     { name: 'All', endpoint: 'combined' },
-    { name: 'Cars', endpoint: 'vehicles' },
-    { name: 'Real Estate', endpoint: 'estates' },
-    { name: 'Bikes', endpoint: 'bikes' },
-    { name: 'Yachts', endpoint: 'yachts' },
+    { name: 'Cars', endpoint: 'car' },
+    { name: 'Real Estate', endpoint: 'estate' },
+    { name: 'Bikes', endpoint: 'bike' },
+    { name: 'Yachts', endpoint: 'yacht' },
   ];
 
   useEffect(() => {
