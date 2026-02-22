@@ -833,10 +833,10 @@ const Inventory = () => {
                                     <tbody className="divide-y divide-gray-100">
                                         {data.inventory.filter(item => {
                                             const matchesCategory = inventoryCategoryFilter === 'All Categories' ||
-                                                (item.category === 'CarAsset' && inventoryCategoryFilter === 'Cars') ||
-                                                (item.category === 'YachtAsset' && inventoryCategoryFilter === 'Yachts') ||
-                                                (item.category === 'EstateAsset' && inventoryCategoryFilter === 'Real Estate') ||
-                                                (item.category === 'BikeAsset' && inventoryCategoryFilter === 'Bikes');
+                                                ((item.category === 'CarAsset' || item.category === 'vehicles') && inventoryCategoryFilter === 'Cars') ||
+                                                ((item.category === 'YachtAsset' || item.category === 'yachts') && inventoryCategoryFilter === 'Yachts') ||
+                                                ((item.category === 'EstateAsset' || item.category === 'estates') && inventoryCategoryFilter === 'Real Estate') ||
+                                                ((item.category === 'BikeAsset' || item.category === 'bikes') && inventoryCategoryFilter === 'Bikes');
 
                                             const matchesStatus = inventoryStatusFilter === 'All Status' ||
                                                 (inventoryStatusFilter === 'Active' && item.status === 'Active') ||
@@ -844,12 +844,14 @@ const Inventory = () => {
 
                                             return matchesCategory && matchesStatus;
                                         }).map((item) => {
-                                            const categoryIcon = item.category === 'CarAsset' ? <FiPackage /> :
-                                                item.category === 'YachtAsset' ? <FiAnchor /> :
+                                            const categoryIcon = (item.category === 'CarAsset' || item.category === 'vehicles') ? <FiPackage /> :
+                                                (item.category === 'YachtAsset' || item.category === 'yachts') ? <FiAnchor /> :
+                                                (item.category === 'BikeAsset' || item.category === 'bikes') ? <FiPackage /> :
                                                     <FiHome />;
-                                            const categoryName = item.category === 'CarAsset' ? 'Cars' :
-                                                item.category === 'YachtAsset' ? 'Yachts' :
-                                                    item.category === 'EstateAsset' ? 'Real Estate' :
+                                            const categoryName = (item.category === 'CarAsset' || item.category === 'vehicles') ? 'Cars' :
+                                                (item.category === 'YachtAsset' || item.category === 'yachts') ? 'Yachts' :
+                                                (item.category === 'BikeAsset' || item.category === 'bikes') ? 'Bikes' :
+                                                    (item.category === 'EstateAsset' || item.category === 'estates') ? 'Real Estate' :
                                                         item.category?.replace('Asset', 's');
 
                                             return (

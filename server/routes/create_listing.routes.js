@@ -286,29 +286,21 @@ router.post('/create', authMiddleware, upload.fields([
 
         const updateData = { images: imageUrls, documents: docUrls };
 
-        // Auto-assign brand logo from local assets if matching brand is found
-        let brandNameForLogo = null;
-        if (category === 'Car') brandNameForLogo = req.body.make;
-        else if (category === 'Bike') brandNameForLogo = req.body.brand;
-        else if (category === 'Yacht') brandNameForLogo = req.body.builder;
-
-        if (brandNameForLogo) {
-            const logoPath = getBrandLogoPath(category, brandNameForLogo);
+        if (category === 'Car') {
+            updateData.brand = req.body.make || 'Unknown';
+            
+            // Assign brand logo
+            const logoPath = getBrandLogoPath('Car', updateData.brand);
             if (logoPath && fs.existsSync(logoPath)) {
                 try {
                     const logoResult = await cloudinary.uploader.upload(logoPath, {
-                        folder: `${category}/${assetId}/brand_logo`,
+                        folder: `Car/${assetId}/brand_logo`,
                         public_id: 'logo'
                     });
                     updateData.brand_logo = logoResult.secure_url;
-                } catch (logoErr) {
-                    console.error("Brand Logo Upload Error:", logoErr);
-                }
+                } catch (logoErr) { console.error(logoErr); }
             }
-        }
 
-        if (category === 'Car') {
-            updateData.brand = req.body.make || 'Unknown';
             updateData.variant = req.body.variant;
             updateData.highlights = req.body.highlights ? JSON.parse(req.body.highlights) : [];
             updateData.videoUrl = req.body.videoUrl;
@@ -349,6 +341,19 @@ router.post('/create', authMiddleware, upload.fields([
             };
         } else if (category === 'Bike') {
             updateData.brand = req.body.brand;
+
+            // Assign brand logo
+            const logoPath = getBrandLogoPath('Bike', updateData.brand);
+            if (logoPath && fs.existsSync(logoPath)) {
+                try {
+                    const logoResult = await cloudinary.uploader.upload(logoPath, {
+                        folder: `Bike/${assetId}/brand_logo`,
+                        public_id: 'logo'
+                    });
+                    updateData.brand_logo = logoResult.secure_url;
+                } catch (logoErr) { console.error(logoErr); }
+            }
+
             updateData.variant = req.body.variant;
             updateData.highlights = req.body.highlights ? JSON.parse(req.body.highlights) : [];
             updateData.videoUrl = req.body.videoUrl;
@@ -375,6 +380,19 @@ router.post('/create', authMiddleware, upload.fields([
             };
         } else if (category === 'Yacht') {
             updateData.builder = req.body.builder;
+
+            // Assign brand logo
+            const logoPath = getBrandLogoPath('Yacht', updateData.builder);
+            if (logoPath && fs.existsSync(logoPath)) {
+                try {
+                    const logoResult = await cloudinary.uploader.upload(logoPath, {
+                        folder: `Yacht/${assetId}/brand_logo`,
+                        public_id: 'logo'
+                    });
+                    updateData.brand_logo = logoResult.secure_url;
+                } catch (logoErr) { console.error(logoErr); }
+            }
+
             updateData.highlights = req.body.highlights ? JSON.parse(req.body.highlights) : [];
             updateData.videoUrl = req.body.videoUrl;
             updateData.keySpecifications = {
@@ -573,6 +591,7 @@ router.put('/:id', authMiddleware, upload.fields([
                                 public_id: 'logo'
                             });
                             listing.brand_logo = logoResult.secure_url;
+                            listing.markModified('brand_logo');
                         } catch (logoErr) {
                             console.error("Brand Logo Update Error:", logoErr);
                         }
@@ -628,6 +647,7 @@ router.put('/:id', authMiddleware, upload.fields([
                                 public_id: 'logo'
                             });
                             listing.brand_logo = logoResult.secure_url;
+                            listing.markModified('brand_logo');
                         } catch (logoErr) {
                             console.error("Brand Logo Update Error:", logoErr);
                         }
@@ -678,6 +698,7 @@ router.put('/:id', authMiddleware, upload.fields([
                                 public_id: 'logo'
                             });
                             listing.brand_logo = logoResult.secure_url;
+                            listing.markModified('brand_logo');
                         } catch (logoErr) {
                             console.error("Brand Logo Update Error:", logoErr);
                         }
