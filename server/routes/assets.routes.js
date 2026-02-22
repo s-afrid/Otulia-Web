@@ -17,7 +17,7 @@ const router = express.Router();
  */
 router.get("/cars", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, model, category, country, sort, acquisition } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, category, country, sort, acquisition } = req.query;
 
     console.log("--- /api/assets/cars Request ---");
     console.log("req.query:", req.query);
@@ -32,6 +32,7 @@ router.get("/cars", async (req, res) => {
           { title: searchRegex },
           { description: searchRegex },
           { brand: searchRegex },
+          { builder: searchRegex },
           { 'specification.model': searchRegex },
           { keywords: searchRegex },
           { location: searchRegex },
@@ -60,7 +61,16 @@ router.get("/cars", async (req, res) => {
         });
       }
     }
-    if (brand) andClauses.push({ brand: brand });
+    
+    if (brand || builder) {
+      const brandVal = brand || builder;
+      andClauses.push({
+        $or: [
+          { brand: { $regex: brandVal, $options: "i" } },
+          { builder: { $regex: brandVal, $options: "i" } }
+        ]
+      });
+    }
     if (model) andClauses.push({ 'specification.model': { $regex: model, $options: "i" } });
     if (category) andClauses.push({ category: { $regex: category, $options: "i" } });
 
@@ -172,7 +182,7 @@ router.get("/estates", async (req, res) => {
  */
 router.get("/bikes", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, sort, acquisition, country } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -195,7 +205,14 @@ router.get("/bikes", async (req, res) => {
         query.$or = locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }));
       }
     }
-    if (brand) query.brand = brand;
+
+    if (brand || builder) {
+      const brandVal = brand || builder;
+      query.$or = [
+        { brand: { $regex: brandVal, $options: "i" } },
+        { builder: { $regex: brandVal, $options: "i" } }
+      ];
+    }
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
 
     if (minPrice || maxPrice) {
@@ -227,7 +244,7 @@ router.get("/bikes", async (req, res) => {
  */
 router.get("/yachts", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, sort, acquisition, country } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -250,7 +267,14 @@ router.get("/yachts", async (req, res) => {
         query.$or = locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }));
       }
     }
-    if (brand) query.brand = brand;
+
+    if (brand || builder) {
+      const brandVal = brand || builder;
+      query.$or = [
+        { brand: { $regex: brandVal, $options: "i" } },
+        { builder: { $regex: brandVal, $options: "i" } }
+      ];
+    }
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
 
     if (minPrice || maxPrice) {

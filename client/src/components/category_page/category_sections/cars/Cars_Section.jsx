@@ -112,6 +112,16 @@ const Cars_Section = () => {
     navigate(`?${searchParams.toString()}`, { replace: true });
   };
 
+  const handleBrandClick = (brandName) => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('brand', brandName);
+    navigate(`?${searchParams.toString()}`, { replace: true });
+    
+    if (featuredListRef.current) {
+      featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const brands = [
     {
       id: 1,
@@ -130,7 +140,7 @@ const Cars_Section = () => {
     },
     {
       id: 4,
-      name: 'Aston Martin Wings',
+      name: 'Aston Martin',
       logo: astonMartinLogo,
     },
     {
@@ -150,7 +160,7 @@ const Cars_Section = () => {
     },
     {
       id: 8,
-      name: 'Koenigsegg Automotive AB',
+      name: 'Koenigsegg',
       logo: koenigseggLogo,
     },
     {
@@ -160,7 +170,7 @@ const Cars_Section = () => {
     },
     {
       id: 10,
-      name: 'Shelby American',
+      name: 'Shelby',
       logo: shelbyLogo,
     },
   ];
@@ -193,6 +203,7 @@ const Cars_Section = () => {
                   <img
                     src={item.logo}
                     alt={item.name}
+                    onClick={() => handleBrandClick(item.name)}
                     className="h-16 md:h-20 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-pointer mix-blend-multiply"
                   />
                 </div>

@@ -30,18 +30,28 @@ const Yacht_Section = () => {
     const navigate = useNavigate();
     const featuredListRef = useRef(null);
 
-        const brands = [
-            { id: 1, name: 'Azimut', logo: azimutLogo },
-            { id: 2, name: 'Sunseeker', logo: sunseekerLogo },
-            { id: 3, name: 'Princess', logo: princessLogo },
-            { id: 4, name: 'Ferretti', logo: ferrettiLogo },
-            { id: 5, name: 'Benetti', logo: benettiLogo },
-            { id: 6, name: 'Heesen Yachts', logo: heesenLogo },
-            { id: 7, name: 'Wally Yachts', logo: wallyLogo },
-            { id: 8, name: 'Riva', logo: rivaLogo },
-            { id: 9, name: 'Custom Line', logo: customLineLogo },
-            { id: 10, name: 'Pershing Yachts', logo: pershingLogo },
-        ];
+    const handleBrandClick = (brandName) => {
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.set('brand', brandName);
+        navigate(`?${searchParams.toString()}`, { replace: true });
+
+        if (featuredListRef.current) {
+            featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    const brands = [
+        { id: 1, name: 'Azimut', logo: azimutLogo },
+        { id: 2, name: 'Sunseeker', logo: sunseekerLogo },
+        { id: 3, name: 'Princess', logo: princessLogo },
+        { id: 4, name: 'Ferretti', logo: ferrettiLogo },
+        { id: 5, name: 'Benetti', logo: benettiLogo },
+        { id: 6, name: 'Heesen', logo: heesenLogo },
+        { id: 7, name: 'Wally', logo: wallyLogo },
+        { id: 8, name: 'Riva', logo: rivaLogo },
+        { id: 9, name: 'Custom Line', logo: customLineLogo },
+        { id: 10, name: 'Pershing', logo: pershingLogo },
+    ];
         const datafetch = async (reset = false) => {
         const searchParams = new URLSearchParams(location.search);
         searchParams.set('limit', limit);
@@ -166,6 +176,7 @@ const Yacht_Section = () => {
                                     <img
                                         src={item.logo}
                                         alt={item.name}
+                                        onClick={() => handleBrandClick(item.name)}
                                         className='h-12 md:h-16 w-auto object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer mix-blend-multiply'
                                     />
                                 </div>

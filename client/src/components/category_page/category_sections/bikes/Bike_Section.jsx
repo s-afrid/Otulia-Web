@@ -30,18 +30,28 @@ const Bike_Section = () => {
     const navigate = useNavigate();
     const featuredListRef = useRef(null);
 
-        const brands = [
-            { id: 1, name: 'Ducati', logo: ducatiLogo },
-            { id: 2, name: 'Kawasaki', logo: kawasakiLogo },
-            { id: 3, name: 'BMW', logo: bmwBikeLogo },
-            { id: 4, name: 'Yamaha', logo: yamahaLogo },
-            { id: 5, name: 'Harley-Davidson', logo: harleyLogo },
-            { id: 6, name: 'Indian Motorcycles', logo: indianLogo },
-            { id: 7, name: 'KTM', logo: ktmLogo },
-            { id: 8, name: 'Triumph Motorcycles', logo: triumphLogo },
-            { id: 9, name: 'Honda Motors', logo: hondaLogo },
-            { id: 10, name: 'Royal Enfield', logo: royalEnfieldLogo },
-        ];
+    const handleBrandClick = (brandName) => {
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.set('brand', brandName);
+        navigate(`?${searchParams.toString()}`, { replace: true });
+
+        if (featuredListRef.current) {
+            featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    const brands = [
+        { id: 1, name: 'Ducati', logo: ducatiLogo },
+        { id: 2, name: 'Kawasaki', logo: kawasakiLogo },
+        { id: 3, name: 'BMW', logo: bmwBikeLogo },
+        { id: 4, name: 'Yamaha', logo: yamahaLogo },
+        { id: 5, name: 'Harley-Davidson', logo: harleyLogo },
+        { id: 6, name: 'Indian', logo: indianLogo },
+        { id: 7, name: 'KTM', logo: ktmLogo },
+        { id: 8, name: 'Triumph', logo: triumphLogo },
+        { id: 9, name: 'Honda', logo: hondaLogo },
+        { id: 10, name: 'Royal Enfield', logo: royalEnfieldLogo },
+    ];
         const datafetch = async (reset = false) => {
         const searchParams = new URLSearchParams(location.search);
         searchParams.set('limit', limit);
@@ -166,6 +176,7 @@ const Bike_Section = () => {
                                     <img
                                         src={item.logo}
                                         alt={item.name}
+                                        onClick={() => handleBrandClick(item.name)}
                                         className='h-12 md:h-16 w-auto object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer mix-blend-multiply'
                                     />
                                 </div>
