@@ -126,6 +126,31 @@ const Cars_Section = () => {
       name: 'Audi',
       logo: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Audi-Logo_2016.svg',
     },
+    {
+      id: 6,
+      name: 'Porsche',
+      logo: 'https://cdn.iconscout.com/icon/free/png-256/free-porsche-icon-svg-download-png-202881.png',
+    },
+    {
+      id: 7,
+      name: 'Lexus',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/4/42/Lexus-cars-logo-emblem.jpg',
+    },
+    {
+      id: 8,
+      name: 'Koenigsegg Automotive AB',
+      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWEJnKQKdKv1UMoZMX2ihIzKM5dap1uiPgUA&s',
+    },
+    {
+      id: 9,
+      name: 'Ferrai',
+      logo: 'https://i.pinimg.com/736x/fd/f7/37/fdf73726681950078cf87bef7dacd10d.jpg',
+    },
+    {
+      id: 10,
+      name: 'Shelby American',
+      logo: 'https://cdn.worldvectorlogo.com/logos/shelby-3.svg',
+    },
   ];
 
   const priceRanges = [
