@@ -213,6 +213,7 @@ const MyListings = () => {
                 isOpen={isVerificationModalOpen}
                 onClose={() => setIsVerificationModalOpen(false)}
                 onSubmit={handleVerificationSubmit}
+                user={user}
             />
 
             <div className="pt-28 max-w-7xl mx-auto px-6">

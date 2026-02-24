@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FiX, FiUpload, FiCheckCircle, FiAlertCircle, FiFileText } from 'react-icons/fi';
 
-const DealerVerificationModal = ({ isOpen, onClose, onSubmit }) => {
+const DealerVerificationModal = ({ isOpen, onClose, onSubmit, user }) => {
     const [documents, setDocuments] = useState({
         businessLicense: null,
         taxId: null,
@@ -33,6 +33,22 @@ const DealerVerificationModal = ({ isOpen, onClose, onSubmit }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Plan-specific validation
+        if (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP') {
+            const company = user?.company || {};
+            const isProfileComplete = 
+                company.companyName && 
+                company.companyLogo && 
+                company.address && 
+                company.website;
+
+            if (!isProfileComplete) {
+                alert('Please complete your Company Profile (Name, Logo, Address, and Website) in Inventory Settings before submitting verification documents.');
+                return;
+            }
+        }
+
         // Check if at least the required documents are uploaded
         const requiredDocs = ['businessLicense', 'taxId', 'proofOfAddress'];
         const allRequiredUploaded = requiredDocs.every(doc => documents[doc] !== null);

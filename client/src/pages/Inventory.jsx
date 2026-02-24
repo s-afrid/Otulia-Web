@@ -1747,6 +1747,7 @@ const Inventory = () => {
                 isOpen={isVerificationModalOpen}
                 onClose={() => setIsVerificationModalOpen(false)}
                 onSubmit={handleVerificationSubmit}
+                user={user}
             />
 
             {/* PAYPAL UPGRADE MODAL */}
