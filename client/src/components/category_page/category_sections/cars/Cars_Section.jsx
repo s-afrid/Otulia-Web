@@ -13,7 +13,7 @@ import audiLogo from '../../../../assets/car_brands/Audi.svg';
 import bmwLogo from '../../../../assets/car_brands/BMW.svg';
 import bugattiLogo from '../../../../assets/car_brands/Bugatti.svg';
 import ferrariLogo from '../../../../assets/car_brands/Ferrari.jpg';
-import koenigseggLogo from '../../../../assets/car_brands/Koenigsegg_Automotive_AB.jfif';
+import koenigseggLogo from '../../../../assets/car_brands/Koenigsegg_Automotive_AB.png';
 import lexusLogo from '../../../../assets/car_brands/Lexus.jpg';
 import mercedesLogo from '../../../../assets/car_brands/Mercedes-Benz.svg';
 import porscheLogo from '../../../../assets/car_brands/Porsche.jpg';
