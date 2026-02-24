@@ -42,11 +42,7 @@ const LoginPage = () => {
 
             {/* Full Screen Background */}
             <div className="absolute inset-0 z-0">
-                <img
-                    src="/images/login_bg.png"
-                    alt="Luxury Background"
-                    className="w-full h-full object-cover opacity-60"
-                />
+                
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/90"></div>
             </div>
 
