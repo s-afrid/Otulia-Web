@@ -15,6 +15,7 @@ import Navbar from '../components/Navbar';
 import AddAssetModal from '../components/inventory/AddAssetModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import DealerVerificationModal from '../components/inventory/DealerVerificationModal';
+import ImageCropModal from '../components/ImageCropModal';
 import numberWithCommas from '../modules/numberwithcomma';
 
 const paypalOptions = {
@@ -44,6 +45,8 @@ const Inventory = () => {
     const [isVerifiedDealer, setIsVerifiedDealer] = useState(user?.isVerified || false);
     const [upgradePlan, setUpgradePlan] = useState(null); // 'Premium Basic' or 'Business VIP'
     const [logoLoading, setLogoLoading] = useState(false);
+    const [showCropModal, setShowCropModal] = useState(false);
+    const [cropSrc, setCropSrc] = useState(null);
 
     // Delete Confirmation State
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -147,7 +150,7 @@ const Inventory = () => {
         }
     };
 
-    const handleLogoUpload = async (e) => {
+    const handleLogoUpload = (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
@@ -156,9 +159,18 @@ const Inventory = () => {
             return;
         }
 
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+            setCropSrc(reader.result);
+            setShowCropModal(true);
+        });
+        reader.readAsDataURL(file);
+    };
+
+    const handleCropComplete = async (blob) => {
         setLogoLoading(true);
         const formData = new FormData();
-        formData.append('companyLogo', file);
+        formData.append('companyLogo', blob, 'company_logo.png');
 
         try {
             const response = await fetch('/api/auth/upload-company-logo', {
@@ -172,6 +184,7 @@ const Inventory = () => {
                 setCompanyInfo(prev => ({ ...prev, logo: result.companyLogo }));
                 alert("Company logo updated successfully!");
                 if (refreshUser) refreshUser();
+                setShowCropModal(false);
             } else {
                 const err = await response.json();
                 alert(err.error || "Failed to upload logo");
@@ -1749,6 +1762,15 @@ const Inventory = () => {
                 onSubmit={handleVerificationSubmit}
                 user={user}
             />
+
+            {showCropModal && (
+                <ImageCropModal
+                    src={cropSrc}
+                    onCropComplete={handleCropComplete}
+                    onClose={() => setShowCropModal(false)}
+                    isUploading={logoLoading}
+                />
+            )}
 
             {/* PAYPAL UPGRADE MODAL */}
             {upgradePlan && (

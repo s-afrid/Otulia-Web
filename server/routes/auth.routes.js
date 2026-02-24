@@ -22,6 +22,29 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const router = express.Router();
 
 /**
+ * Helper to extract public_id from Cloudinary URL
+ */
+const getPublicIdFromUrl = (url) => {
+    if (!url || !url.includes('cloudinary')) return null;
+    try {
+        const parts = url.split('/');
+        const fileNameWithExtension = parts[parts.length - 1];
+        const fileName = fileNameWithExtension.split('.')[0];
+        
+        // Find the index of 'verification' or 'users' to get the full path
+        const folderIndex = parts.findIndex(p => p === 'verification' || p === 'users' || p === 'otulia_assets');
+        if (folderIndex !== -1) {
+            const folderPath = parts.slice(folderIndex, parts.length - 1).join('/');
+            return `${folderPath}/${fileName}`;
+        }
+        return fileName;
+    } catch (err) {
+        console.error("Error parsing Cloudinary URL:", err);
+        return null;
+    }
+};
+
+/**
  * GOOGLE LOGIN
  */
 router.post("/google-login", async (req, res) => {
@@ -396,9 +419,8 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
 
 const profilePicStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: async (req, file) => {
-    const user = await User.findById(req.user.id);
-    const folders = getFolderPaths(user ? user.email : null);
+  params: (req, file) => {
+    const folders = getFolderPaths(req.user.email);
     return {
       folder: folders.profile,
       public_id: `profile_pic_${Date.now()}`,
@@ -447,9 +469,8 @@ router.post("/upload-profile-picture", authMiddleware, uploadProfilePic.single('
  */
 const companyLogoStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: async (req, file) => {
-    const user = await User.findById(req.user.id);
-    const folders = getFolderPaths(user ? user.email : null);
+  params: (req, file) => {
+    const folders = getFolderPaths(req.user.email);
     return {
       folder: folders.company,
       public_id: `company_logo_${Date.now()}`,
@@ -476,22 +497,25 @@ router.post("/upload-company-logo", authMiddleware, uploadCompanyLogo.single('co
 
     // Delete old company logo if exists
     if (currentUser.company && currentUser.company.companyLogo) {
-      // We need to extract public_id if we don't store it explicitly for company logo
-      // For now, let's assume we might need a publicId field or parse it from URL
-      // If we don't have it, we'll just skip deletion for now to be safe or try to parse
-      // But standard practice is storing it. 
-      // Existing code for profile pic used 'profilePicturePublicId'.
-      // Let's assume we'll just update the URL for now, or if you want I can add a field.
-      // Given user instructions, I'll just focus on updating.
+        const oldPublicId = getPublicIdFromUrl(currentUser.company.companyLogo);
+        if (oldPublicId) {
+            console.log(`Deleting old company logo: ${oldPublicId}`);
+            await cloudinary.uploader.destroy(oldPublicId).catch(err => 
+                console.error("Failed to delete old company logo from Cloudinary:", err)
+            );
+        }
     }
 
     const logoUrl = req.file.path;
 
-    // Update User Model
-    currentUser.company = {
-      ...currentUser.company,
-      companyLogo: logoUrl
-    };
+    // Update User Model surgically to avoid spreading Mongoose internal state
+    if (!currentUser.company) {
+        currentUser.company = {};
+    }
+    currentUser.company.companyLogo = logoUrl;
+    
+    // Explicitly mark as modified if it's a nested object
+    currentUser.markModified('company');
     await currentUser.save();
 
     // Update ALL assets created by this user
@@ -535,29 +559,6 @@ const uploadVerification = multer({
   storage: verificationDiskStorage,
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
-
-/**
- * Helper to extract public_id from Cloudinary URL
- */
-const getPublicIdFromUrl = (url) => {
-    if (!url || !url.includes('cloudinary')) return null;
-    try {
-        const parts = url.split('/');
-        const fileNameWithExtension = parts[parts.length - 1];
-        const fileName = fileNameWithExtension.split('.')[0];
-        
-        // Find the index of 'verification' or 'users' to get the full path
-        const folderIndex = parts.findIndex(p => p === 'verification' || p === 'users' || p === 'otulia_assets');
-        if (folderIndex !== -1) {
-            const folderPath = parts.slice(folderIndex, parts.length - 1).join('/');
-            return `${folderPath}/${fileName}`;
-        }
-        return fileName;
-    } catch (err) {
-        console.error("Error parsing Cloudinary URL:", err);
-        return null;
-    }
-};
 
 router.post("/submit-verification", authMiddleware, uploadVerification.any(), async (req, res) => {
   try {
