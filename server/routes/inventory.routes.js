@@ -220,7 +220,8 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 planExpiresAt: user.planExpiresAt,
                 memberSince: user.createdAt,
                 verificationStatus: user.verificationStatus,
-                isVerified: user.isVerified
+                isVerified: user.isVerified,
+                leadEmailNotifications: user.leadEmailNotifications
             },
             stats,
             inventory: detailedItems,

@@ -396,6 +396,9 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     if (name) user.name = name;
     if (phone) user.phone = phone;
     if (profilePicture) user.profilePicture = profilePicture;
+    if (req.body.leadEmailNotifications !== undefined) {
+      user.leadEmailNotifications = !!req.body.leadEmailNotifications;
+    }
     
     if (company) {
       user.company = {
@@ -411,6 +414,27 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     console.error("Update Profile Error:", err);
     res.status(500).json({ error: "UPDATE_FAILED" });
   }
+});
+
+/**
+ * TOGGLE LEAD NOTIFICATIONS
+ */
+router.put("/toggle-lead-notifications", authMiddleware, async (req, res) => {
+    try {
+        const { enabled } = req.body;
+        const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { leadEmailNotifications: !!enabled },
+            { new: true }
+        ).select("-password");
+
+        if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
+
+        res.json({ message: "NOTIFICATION_SETTING_UPDATED", user });
+    } catch (err) {
+        console.error("Notification Toggle Error:", err);
+        res.status(500).json({ error: "UPDATE_FAILED" });
+    }
 });
 
 /**

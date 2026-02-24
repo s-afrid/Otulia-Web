@@ -47,6 +47,7 @@ const Inventory = () => {
     const [logoLoading, setLogoLoading] = useState(false);
     const [showCropModal, setShowCropModal] = useState(false);
     const [cropSrc, setCropSrc] = useState(null);
+    const [leadEmailNotifications, setLeadEmailNotifications] = useState(user?.leadEmailNotifications !== false);
 
     // Delete Confirmation State
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -141,6 +142,7 @@ const Inventory = () => {
                         website: comp.website || '',
                         logo: comp.companyLogo || null
                     });
+                    setLeadEmailNotifications(resData.userProfile.leadEmailNotifications !== false);
                 }
             }
         } catch (error) {
@@ -223,6 +225,10 @@ const Inventory = () => {
         }
     };
 
+    const handleToggleLeadNotifications = () => {
+        setLeadEmailNotifications(!leadEmailNotifications);
+    };
+
     const handleSaveSettings = async () => {
         if (isVerifiedDealer) {
             // Only website is editable if verified
@@ -238,6 +244,7 @@ const Inventory = () => {
                 },
                 body: JSON.stringify({
                     phone: companyInfo.phone,
+                    leadEmailNotifications: leadEmailNotifications,
                     company: {
                         companyName: companyInfo.name,
                         companyLogo: companyInfo.logo,
@@ -250,6 +257,7 @@ const Inventory = () => {
             if (response.ok) {
                 alert("Settings saved successfully!");
                 await fetchDashboard();
+                if (refreshUser) refreshUser();
             } else {
                 const err = await response.json();
                 alert(err.error || "Failed to save settings");
@@ -1496,19 +1504,11 @@ const Inventory = () => {
                                 <h3 className="text-xl font-bold text-gray-900 font-playfair mb-8">Account Settings</h3>
                                 <div className="space-y-4">
                                     <SettingsActionRow
-                                        label="Email Notifications"
-                                        desc="Receive updates about leads and listings"
-                                        btnText="Configure"
-                                    />
-                                    <SettingsActionRow
-                                        label="Security Settings"
-                                        desc="Manage password and two-factor authentication"
-                                        btnText="Manage"
-                                    />
-                                    <SettingsActionRow
-                                        label="API Access"
-                                        desc="Manage API keys for integrations"
-                                        btnText="View Keys"
+                                        label="Lead Email Notifications"
+                                        desc="Receive updates about new leads via email"
+                                        isToggle={true}
+                                        isOn={leadEmailNotifications}
+                                        onToggle={handleToggleLeadNotifications}
                                     />
                                 </div>
                             </div>
@@ -1898,15 +1898,26 @@ const SettingsInputField = ({ label, value, icon, readOnly, onChange }) => (
     </div>
 );
 
-const SettingsActionRow = ({ label, desc, btnText }) => (
+const SettingsActionRow = ({ label, desc, btnText, isToggle, isOn, onToggle }) => (
     <div className="flex items-center justify-between p-8 rounded-[1.5rem] bg-[#E5E7EB]/10 border border-gray-50 group hover:border-gray-200 transition-all">
         <div>
             <h5 className="text-sm font-bold text-gray-900 mb-1">{label}</h5>
             <p className="text-xs text-gray-400 font-medium">{desc}</p>
         </div>
-        <button className="px-6 py-3 bg-white border border-gray-100 rounded-xl text-xs font-bold text-gray-600 shadow-sm hover:border-[#D48D2A] hover:text-[#D48D2A] transition-all">
-            {btnText}
-        </button>
+        {isToggle ? (
+            <div
+                onClick={onToggle}
+                className={`w-14 h-7 rounded-full relative cursor-pointer transition-all duration-300 ${isOn ? 'bg-[#D48D2A]' : 'bg-gray-300'
+                    }`}
+            >
+                <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all duration-300 shadow-sm ${isOn ? 'left-8' : 'left-1'
+                    }`}></div>
+            </div>
+        ) : (
+            <button className="px-6 py-3 bg-white border border-gray-100 rounded-xl text-xs font-bold text-gray-600 shadow-sm hover:border-[#D48D2A] hover:text-[#D48D2A] transition-all">
+                {btnText}
+            </button>
+        )}
     </div>
 );
 

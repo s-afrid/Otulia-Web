@@ -137,6 +137,11 @@ const userSchema = new mongoose.Schema(
       }
     ],
 
+    leadEmailNotifications: {
+      type: Boolean,
+      default: true,
+    },
+
   },
   { timestamps: true }
 );
