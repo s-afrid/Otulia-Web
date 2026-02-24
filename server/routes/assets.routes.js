@@ -19,74 +19,60 @@ router.get("/cars", async (req, res) => {
   try {
     const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, category, country, sort, acquisition } = req.query;
 
-    console.log("--- /api/assets/cars Request ---");
-    console.log("req.query:", req.query);
-
     let query = { status: 'Active' };
-    const andClauses = [];
+    
+    // Acquisition remains a strict mode (Buy/Rent)
+    if (acquisition) {
+      if (acquisition === 'buy') {
+        query.acquisition = { $in: ['buy', 'rent/buy'] };
+      } else if (acquisition === 'rent') {
+        query.acquisition = { $in: ['rent', 'rent/buy'] };
+      }
+    }
+
+    const orClauses = [];
 
     if (search) {
       const searchRegex = { $regex: search, $options: "i" };
-      andClauses.push({
-        $or: [
-          { title: searchRegex },
-          { description: searchRegex },
-          { brand: searchRegex },
-          { builder: searchRegex },
-          { 'specification.model': searchRegex },
-          { keywords: searchRegex },
-          { location: searchRegex },
-          { 'specification.body': searchRegex },
-          { 'specification.fuel': searchRegex },
-          { 'specification.transmission': searchRegex },
-          { 'specification.exteriorColor': searchRegex },
-          { 'specification.engineType': searchRegex },
-        ]
-      });
+      orClauses.push(
+        { title: searchRegex },
+        { description: searchRegex },
+        { brand: searchRegex },
+        { builder: searchRegex },
+        { 'specification.model': searchRegex },
+        { keywords: searchRegex },
+        { location: searchRegex }
+      );
     }
 
-    if (type) andClauses.push({ type: type });
-    if (acquisition) {
-      if (acquisition === 'buy') {
-        andClauses.push({ acquisition: { $in: ['buy', 'rent/buy'] } });
-      } else if (acquisition === 'rent') {
-        andClauses.push({ acquisition: { $in: ['rent', 'rent/buy'] } });
-      }
-    }
+    if (type) orClauses.push({ type: type });
+    
     if (location || country) {
       const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
-      if (locations.length > 0) {
-        andClauses.push({
-          $or: locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }))
-        });
-      }
+      locations.forEach(loc => {
+        orClauses.push({ location: { $regex: loc.trim(), $options: "i" } });
+      });
     }
     
     if (brand || builder) {
       const brandVal = brand || builder;
-      andClauses.push({
-        $or: [
-          { brand: { $regex: brandVal, $options: "i" } },
-          { builder: { $regex: brandVal, $options: "i" } }
-        ]
-      });
+      orClauses.push({ brand: { $regex: brandVal, $options: "i" } });
+      orClauses.push({ builder: { $regex: brandVal, $options: "i" } });
     }
-    if (model) andClauses.push({ 'specification.model': { $regex: model, $options: "i" } });
-    if (category) andClauses.push({ category: { $regex: category, $options: "i" } });
+    
+    if (model) orClauses.push({ 'specification.model': { $regex: model, $options: "i" } });
+    if (category) orClauses.push({ category: { $regex: category, $options: "i" } });
 
     if (minPrice || maxPrice) {
       const priceQuery = {};
       if (minPrice) priceQuery.$gte = Number(minPrice);
       if (maxPrice) priceQuery.$lte = Number(maxPrice);
-      andClauses.push({ price: priceQuery });
+      orClauses.push({ price: priceQuery });
     }
 
-    if (andClauses.length > 0) {
-      query.$and = andClauses;
+    if (orClauses.length > 0) {
+      query.$or = orClauses;
     }
-
-    console.log("andClauses:", JSON.stringify(andClauses, null, 2));
-    console.log("Final Mongoose Query:", JSON.stringify(query, null, 2));
 
     let sortOptions = { createdAt: -1 };
     if (sort === 'Low to High') sortOptions = { price: 1 };
@@ -99,7 +85,6 @@ router.get("/cars", async (req, res) => {
       .limit(Number(limit))
       .sort(sortOptions);
 
-    console.log("Results count:", data.length);
     res.json(data);
   } catch (err) {
     console.error("Error in /api/assets/cars:", err);
@@ -115,13 +100,8 @@ router.get("/estates", async (req, res) => {
   try {
     const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, bedrooms, bathrooms, propertyType, sort, acquisition, country } = req.query;
 
-    const query = search
-      ? { title: { $regex: search, $options: "i" } }
-      : {};
-
-    // Filter only Active (Public) assets
-    query.status = 'Active';
-
+    let query = { status: 'Active' };
+    
     if (acquisition) {
       if (acquisition === 'buy') {
         query.acquisition = { $in: ['buy', 'rent/buy'] };
@@ -129,34 +109,42 @@ router.get("/estates", async (req, res) => {
         query.acquisition = { $in: ['rent', 'rent/buy'] };
       }
     }
-    if (location || country) {
-      const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
-      if (locations.length > 0) {
-        query.$or = locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }));
-      }
+
+    const orClauses = [];
+
+    if (search) {
+      orClauses.push({ title: { $regex: search, $options: "i" } });
+      orClauses.push({ description: { $regex: search, $options: "i" } });
     }
 
-    if (propertyType) query['keySpecifications.propertyType'] = propertyType;
-    if (bedrooms) {
-      // Handle "3+" logic or exact match. For simplcity assume exact or gte if string contains +
-      if (bedrooms.includes('+')) {
-        query['specification.bedrooms'] = { $gte: Number(bedrooms.replace('+', '')) };
-      } else if (bedrooms !== 'Any') {
-        query['specification.bedrooms'] = Number(bedrooms);
-      }
+    if (location || country) {
+      const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
+      locations.forEach(loc => {
+        orClauses.push({ location: { $regex: loc.trim(), $options: "i" } });
+      });
     }
-    if (bathrooms) {
-      if (bathrooms.includes('+')) {
-        query['specification.bathrooms'] = { $gte: Number(bathrooms.replace('+', '')) };
-      } else if (bathrooms !== 'Any') {
-        query['specification.bathrooms'] = Number(bathrooms);
-      }
+
+    if (propertyType) orClauses.push({ 'keySpecifications.propertyType': propertyType });
+    if (bedrooms && bedrooms !== 'Any') {
+      const val = Number(bedrooms.replace('+', ''));
+      if (bedrooms.includes('+')) orClauses.push({ 'specification.bedrooms': { $gte: val } });
+      else orClauses.push({ 'specification.bedrooms': val });
+    }
+    if (bathrooms && bathrooms !== 'Any') {
+      const val = Number(bathrooms.replace('+', ''));
+      if (bathrooms.includes('+')) orClauses.push({ 'specification.bathrooms': { $gte: val } });
+      else orClauses.push({ 'specification.bathrooms': val });
     }
 
     if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+      const priceQuery = {};
+      if (minPrice) priceQuery.$gte = Number(minPrice);
+      if (maxPrice) priceQuery.$lte = Number(maxPrice);
+      orClauses.push({ price: priceQuery });
+    }
+
+    if (orClauses.length > 0) {
+      query.$or = orClauses;
     }
 
     let sortOptions = { createdAt: -1 };
@@ -184,14 +172,8 @@ router.get("/bikes", async (req, res) => {
   try {
     const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, sort, acquisition, country } = req.query;
 
-    const query = search
-      ? { title: { $regex: search, $options: "i" } }
-      : {};
-
-    // Filter only Active (Public) assets
-    query.status = 'Active';
-
-    if (type) query.type = type;
+    let query = { status: 'Active' };
+    
     if (acquisition) {
       if (acquisition === 'buy') {
         query.acquisition = { $in: ['buy', 'rent/buy'] };
@@ -199,26 +181,41 @@ router.get("/bikes", async (req, res) => {
         query.acquisition = { $in: ['rent', 'rent/buy'] };
       }
     }
+
+    const orClauses = [];
+
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" };
+      orClauses.push({ title: searchRegex });
+      orClauses.push({ description: searchRegex });
+    }
+
+    if (type) orClauses.push({ type: type });
+    
     if (location || country) {
       const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
-      if (locations.length > 0) {
-        query.$or = locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }));
-      }
+      locations.forEach(loc => {
+        orClauses.push({ location: { $regex: loc.trim(), $options: "i" } });
+      });
     }
 
     if (brand || builder) {
       const brandVal = brand || builder;
-      query.$or = [
-        { brand: { $regex: brandVal, $options: "i" } },
-        { builder: { $regex: brandVal, $options: "i" } }
-      ];
+      orClauses.push({ brand: { $regex: brandVal, $options: "i" } });
+      orClauses.push({ builder: { $regex: brandVal, $options: "i" } });
     }
-    if (model) query['specification.model'] = { $regex: model, $options: "i" };
+    
+    if (model) orClauses.push({ 'specification.model': { $regex: model, $options: "i" } });
 
     if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+      const priceQuery = {};
+      if (minPrice) priceQuery.$gte = Number(minPrice);
+      if (maxPrice) priceQuery.$lte = Number(maxPrice);
+      orClauses.push({ price: priceQuery });
+    }
+
+    if (orClauses.length > 0) {
+      query.$or = orClauses;
     }
 
     let sortOptions = { createdAt: -1 };
@@ -246,14 +243,8 @@ router.get("/yachts", async (req, res) => {
   try {
     const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, sort, acquisition, country } = req.query;
 
-    const query = search
-      ? { title: { $regex: search, $options: "i" } }
-      : {};
-
-    // Filter only Active (Public) assets
-    query.status = 'Active';
-
-    if (type) query.type = type;
+    let query = { status: 'Active' };
+    
     if (acquisition) {
       if (acquisition === 'buy') {
         query.acquisition = { $in: ['buy', 'rent/buy'] };
@@ -261,26 +252,41 @@ router.get("/yachts", async (req, res) => {
         query.acquisition = { $in: ['rent', 'rent/buy'] };
       }
     }
+
+    const orClauses = [];
+
+    if (search) {
+      const searchRegex = { $regex: search, $options: "i" };
+      orClauses.push({ title: searchRegex });
+      orClauses.push({ description: searchRegex });
+    }
+
+    if (type) orClauses.push({ type: type });
+    
     if (location || country) {
       const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
-      if (locations.length > 0) {
-        query.$or = locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }));
-      }
+      locations.forEach(loc => {
+        orClauses.push({ location: { $regex: loc.trim(), $options: "i" } });
+      });
     }
 
     if (brand || builder) {
       const brandVal = brand || builder;
-      query.$or = [
-        { brand: { $regex: brandVal, $options: "i" } },
-        { builder: { $regex: brandVal, $options: "i" } }
-      ];
+      orClauses.push({ brand: { $regex: brandVal, $options: "i" } });
+      orClauses.push({ builder: { $regex: brandVal, $options: "i" } });
     }
-    if (model) query['specification.model'] = { $regex: model, $options: "i" };
+    
+    if (model) orClauses.push({ 'specification.model': { $regex: model, $options: "i" } });
 
     if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+      const priceQuery = {};
+      if (minPrice) priceQuery.$gte = Number(minPrice);
+      if (maxPrice) priceQuery.$lte = Number(maxPrice);
+      orClauses.push({ price: priceQuery });
+    }
+
+    if (orClauses.length > 0) {
+      query.$or = orClauses;
     }
 
     let sortOptions = { createdAt: -1 };
@@ -600,13 +606,13 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
  */
 router.get("/combined", async (req, res) => {
   try {
-    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition } = req.query;
+    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition, brand, model, category, propertyType, bedrooms, bathrooms, amenities, architecture, sort } = req.query;
 
-    let searchQuery = {};
+    const andClauses = [{ status: 'Active' }];
+
     if (q) {
       const words = q.split(' ').filter(word => word.length > 0);
-
-      const andQuery = words.map(word => {
+      const qOrQuery = words.map(word => {
         const searchRegex = { $regex: word, $options: "i" };
         return {
           $or: [
@@ -635,64 +641,111 @@ router.get("/combined", async (req, res) => {
           ]
         };
       });
-
-      searchQuery = { $or: andQuery };
+      andClauses.push({ $or: qOrQuery });
     }
 
-    const query = { ...searchQuery, status: 'Active' };
-
-    if (type) query.type = type;
+    if (type) andClauses.push({ type: type });
+    
     if (acquisition) {
       if (acquisition === 'buy') {
-        query.acquisition = { $in: ['buy', 'rent/buy'] };
+        andClauses.push({ acquisition: { $in: ['buy', 'rent/buy'] } });
       } else if (acquisition === 'rent') {
-        query.acquisition = { $in: ['rent', 'rent/buy'] };
+        andClauses.push({ acquisition: { $in: ['rent', 'rent/buy'] } });
       }
     }
-    if (location) query.location = { $regex: location, $options: "i" };
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+
+    if (location) {
+      andClauses.push({ location: { $regex: location, $options: "i" } });
     }
 
-    const [carAssets, estateAssets, bikeAssets, yachtAssets, otherAssets] =
-      await Promise.all([
-        CarAsset.find(query)
-          .skip((page - 1) * limit)
-          .limit(Number(limit))
-          .sort({ createdAt: -1 }),
-        EstateAsset.find(query)
-          .skip((page - 1) * limit)
-          .limit(Number(limit))
-          .sort({ createdAt: -1 }),
-        BikeAsset.find(query)
-          .skip((page - 1) * limit)
-          .limit(Number(limit))
-          .sort({ createdAt: -1 }),
-        YachtAsset.find(query)
-          .skip((page - 1) * limit)
-          .limit(Number(limit))
-          .sort({ createdAt: -1 }),
-        Listing.find(query)
-          .skip((page - 1) * limit)
-          .limit(Number(limit))
-          .sort({ createdAt: -1 }),
-      ]);
+    if (minPrice || maxPrice) {
+      const priceQuery = {};
+      if (minPrice) priceQuery.$gte = Number(minPrice);
+      if (maxPrice) priceQuery.$lte = Number(maxPrice);
+      andClauses.push({ price: priceQuery });
+    }
 
-    const combinedAssets = [
-      ...carAssets,
-      ...estateAssets,
-      ...bikeAssets,
-      ...yachtAssets,
-      ...otherAssets,
-    ];
+    // Category, Brand, Model
+    if (category && category !== 'Any') {
+        // Handle variations in category naming
+        const catRegex = { $regex: category.replace('Asset', '').replace('s', ''), $options: 'i' };
+        andClauses.push({ category: catRegex });
+    }
+    if (brand) andClauses.push({ brand: { $regex: brand, $options: "i" } });
+    if (model) andClauses.push({ 'specification.model': { $regex: model, $options: "i" } });
 
-    // Optionally, sort the combined assets by createdAt if needed
-    combinedAssets.sort((a, b) => b.createdAt - a.createdAt);
+    // Property Specifics
+    if (propertyType) andClauses.push({ 'keySpecifications.propertyType': propertyType });
+    if (bedrooms && bedrooms !== 'Any') {
+        const val = Number(bedrooms.replace('+', ''));
+        if (bedrooms.includes('+')) andClauses.push({ 'specification.bedrooms': { $gte: val } });
+        else andClauses.push({ 'specification.bedrooms': val });
+    }
+    if (bathrooms && bathrooms !== 'Any') {
+        const val = Number(bathrooms.replace('+', ''));
+        if (bathrooms.includes('+')) andClauses.push({ 'specification.bathrooms': { $gte: val } });
+        else andClauses.push({ 'specification.bathrooms': val });
+    }
+    if (amenities && amenities !== 'Any') andClauses.push({ 'amenities': { $regex: amenities, $options: "i" } });
+    if (architecture && architecture !== 'Any') andClauses.push({ 'specification.architectureStyle': architecture });
+
+    const query = { $and: andClauses };
+
+    let sortOptions = { createdAt: -1 };
+    if (sort === 'Low to High') sortOptions = { price: 1 };
+    if (sort === 'High to Low') sortOptions = { price: -1 };
+    if (sort === 'Newest') sortOptions = { createdAt: -1 };
+    if (sort === 'Oldest') sortOptions = { createdAt: 1 };
+
+    const fetchResults = async (q) => {
+        const [car, estate, bike, yacht, other] = await Promise.all([
+            CarAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
+            EstateAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
+            BikeAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
+            YachtAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
+            Listing.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
+        ]);
+        return [...car, ...estate, ...bike, ...yacht, ...other];
+    };
+
+    let combinedAssets = await fetchResults(query);
+
+    // --- COMPREHENSIVE FALLBACK LOGIC ---
+    // If no results for strict AND, try a broader search (OR logic for Category/Location/Brand)
+    if (combinedAssets.length === 0 && andClauses.length > 1) {
+        const fallbackOrClauses = [];
+        
+        if (category) {
+            const catRegex = { $regex: category.replace('Asset', '').replace('s', ''), $options: 'i' };
+            fallbackOrClauses.push({ category: catRegex });
+        }
+        if (location) fallbackOrClauses.push({ location: { $regex: location, $options: "i" } });
+        if (brand) fallbackOrClauses.push({ brand: { $regex: brand, $options: "i" } });
+        if (q) {
+            const words = q.split(' ').filter(word => word.length > 0);
+            words.forEach(w => fallbackOrClauses.push({ title: { $regex: w, $options: 'i' } }));
+        }
+
+        if (fallbackOrClauses.length > 0) {
+            const fallbackQuery = { 
+                $and: [
+                    { status: 'Active' },
+                    { $or: fallbackOrClauses }
+                ]
+            };
+            combinedAssets = await fetchResults(fallbackQuery);
+        }
+    }
+
+    // Final global sort
+    if (sort === 'Low to High') combinedAssets.sort((a, b) => a.price - b.price);
+    else if (sort === 'High to Low') combinedAssets.sort((a, b) => b.price - a.price);
+    else if (sort === 'Oldest') combinedAssets.sort((a, b) => a.createdAt - b.createdAt);
+    else combinedAssets.sort((a, b) => b.createdAt - a.createdAt);
 
     res.json(combinedAssets);
   } catch (err) {
+    console.error("Combined assets error:", err);
     res.status(500).json({ message: "Failed to fetch combined assets" });
   }
 });

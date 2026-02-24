@@ -16,10 +16,10 @@ const Rent = () => {
 
   const categories = [
     { name: 'All', endpoint: 'combined' },
-    { name: 'Cars', endpoint: 'car' },
-    { name: 'Real Estate', endpoint: 'estate' },
-    { name: 'Bikes', endpoint: 'bike' },
-    { name: 'Yachts', endpoint: 'yacht' },
+    { name: 'Cars', endpoint: 'cars' },
+    { name: 'Real Estate', endpoint: 'estates' },
+    { name: 'Bikes', endpoint: 'bikes' },
+    { name: 'Yachts', endpoint: 'yachts' },
   ];
 
   useEffect(() => {
@@ -35,37 +35,49 @@ const Rent = () => {
       const params = new URLSearchParams();
       params.append('acquisition', 'rent');
       
-      // Handle keyword search from filter bar
-      if (filters.q) {
-        if (endpoint === 'combined') params.append('q', filters.q);
-        else params.append('search', filters.q);
-      }
-
-      // Map filters correctly from different FilterBars
-      const location = filters.location;
-      let minPrice = filters.minPrice;
-      let maxPrice = filters.maxPrice;
-
-      if (filters.priceRange && filters.priceRange.includes('–')) {
-        const parts = filters.priceRange.split(' – ');
-        minPrice = parts[0].replace(/[^0-9]/g, '');
-        maxPrice = parts[1].replace(/[^0-9]/g, '');
-      } else if (filters.priceRange && filters.priceRange.includes('+')) {
-        minPrice = filters.priceRange.replace(/[^0-9]/g, '');
-      }
-
-      if (location) params.append('location', location);
-      if (minPrice) params.append('minPrice', minPrice);
-      if (maxPrice) params.append('maxPrice', maxPrice);
+      // Basic common filters
+      if (filters.location) params.append('location', filters.location);
+      if (filters.sort) params.append('sort', filters.sort);
       
-      // Additional filters
+      // Handle keyword search (q or search)
+      const searchQuery = filters.q || '';
+      if (searchQuery) {
+        if (endpoint === 'combined') params.append('q', searchQuery);
+        else params.append('search', searchQuery);
+      }
+
+      // Handle Price (minPrice/maxPrice or priceRange)
+      if (filters.minPrice) params.append('minPrice', filters.minPrice);
+      if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+
+      if (filters.priceRange && filters.priceRange !== 'Any Price') {
+        const range = filters.priceRange.replace(/\$/g, '').replace(/,/g, '');
+        if (range.includes('–') || range.includes('-')) {
+          const parts = range.split(/[–-]/);
+          let min = parts[0].trim().toLowerCase();
+          let max = parts[1].trim().toLowerCase();
+          const multiplier = (val) => val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
+          const parseVal = (val) => parseFloat(val) * multiplier(val);
+          params.append('minPrice', parseVal(min));
+          params.append('maxPrice', parseVal(max));
+        } else if (range.includes('+')) {
+          let val = range.replace('+', '').trim().toLowerCase();
+          const mult = val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
+          params.append('minPrice', parseFloat(val) * mult);
+        }
+      }
+
+      // Category specific filters
       if (filters.brand) params.append('brand', filters.brand);
       if (filters.model) params.append('model', filters.model);
       if (filters.category && filters.category !== 'Any') params.append('category', filters.category);
+      
+      // Estate specifics
       if (filters.type && filters.type !== 'Any') params.append('propertyType', filters.type);
-      if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms.replace('+', ''));
-      if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms.replace('+', ''));
-      if (filters.sort) params.append('sort', filters.sort);
+      if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms);
+      if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms);
+      if (filters.architecture && filters.architecture !== 'Any') params.append('architecture', filters.architecture);
+      if (filters.amenities && filters.amenities !== 'Any') params.append('amenities', filters.amenities);
 
       const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
       if (!response.ok) throw new Error('Network response was not ok');

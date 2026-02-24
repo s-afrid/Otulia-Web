@@ -61,37 +61,54 @@ const Shop = () => {
           const endpoint = category ? category.endpoint : 'combined';
           
           const params = new URLSearchParams();
-          if (filters.location) params.append('location', filters.location);
+          params.append('acquisition', 'buy'); // Ensure only sale/buy assets are fetched
           
-          // Handle keyword search from filter bar
-          if (filters.q) {
-            if (endpoint === 'combined') params.append('q', filters.q);
-            else params.append('search', filters.q);
+          // Basic common filters
+          if (filters.location) params.append('location', filters.location);
+          if (filters.sort) params.append('sort', filters.sort);
+          
+          // Handle keyword search (q or search)
+          const searchQuery = filters.q || '';
+          if (searchQuery) {
+            if (endpoint === 'combined') params.append('q', searchQuery);
+            else params.append('search', searchQuery);
           }
 
-          // Handle Price from priceRange or direct min/max
-          let finalMin = filters.minPrice;
-          let finalMax = filters.maxPrice;
+          // Handle Price (minPrice/maxPrice or priceRange)
+          if (filters.minPrice) params.append('minPrice', filters.minPrice);
+          if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
 
-          if (filters.priceRange && filters.priceRange.includes('–')) {
-            const parts = filters.priceRange.split(' – ');
-            finalMin = parts[0].replace(/[^0-9]/g, '');
-            finalMax = parts[1].replace(/[^0-9]/g, '');
-          } else if (filters.priceRange && filters.priceRange.includes('+')) {
-            finalMin = filters.priceRange.replace(/[^0-9]/g, '');
+          if (filters.priceRange && filters.priceRange !== 'Any Price') {
+            // Handle different range formats: "$50K – $100K", "$1M - $5M", "$3M+", etc.
+            const range = filters.priceRange.replace(/\$/g, '').replace(/,/g, '');
+            if (range.includes('–') || range.includes('-')) {
+              const parts = range.split(/[–-]/);
+              let min = parts[0].trim().toLowerCase();
+              let max = parts[1].trim().toLowerCase();
+              
+              const multiplier = (val) => val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
+              const parseVal = (val) => parseFloat(val) * multiplier(val);
+
+              params.append('minPrice', parseVal(min));
+              params.append('maxPrice', parseVal(max));
+            } else if (range.includes('+')) {
+              let val = range.replace('+', '').trim().toLowerCase();
+              const mult = val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
+              params.append('minPrice', parseFloat(val) * mult);
+            }
           }
-
-          if (finalMin) params.append('minPrice', finalMin);
-          if (finalMax) params.append('maxPrice', finalMax);
 
           // Category specific filters
           if (filters.brand) params.append('brand', filters.brand);
           if (filters.model) params.append('model', filters.model);
           if (filters.category && filters.category !== 'Any') params.append('category', filters.category);
+          
+          // Estate specifics
           if (filters.type && filters.type !== 'Any') params.append('propertyType', filters.type);
-          if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms.replace('+', ''));
-          if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms.replace('+', ''));
-          if (filters.sort) params.append('sort', filters.sort);
+          if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms);
+          if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms);
+          if (filters.architecture && filters.architecture !== 'Any') params.append('architecture', filters.architecture);
+          if (filters.amenities && filters.amenities !== 'Any') params.append('amenities', filters.amenities);
 
           const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
           if (!response.ok) throw new Error('Network response was not ok');
@@ -116,10 +133,39 @@ const Shop = () => {
         try {
           const params = new URLSearchParams();
           params.append('q', query);
+          params.append('acquisition', 'buy'); // Ensure only sale/buy assets are fetched
+          
           if (filters.location) params.append('location', filters.location);
+          if (filters.sort) params.append('sort', filters.sort);
+
+          // Handle Price
           if (filters.minPrice) params.append('minPrice', filters.minPrice);
           if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
-          if (filters.q) params.append('keyword_filter', filters.q); // Additional filter if needed
+
+          if (filters.priceRange && filters.priceRange !== 'Any Price') {
+            const range = filters.priceRange.replace(/\$/g, '').replace(/,/g, '');
+            if (range.includes('–') || range.includes('-')) {
+              const parts = range.split(/[–-]/);
+              let min = parts[0].trim().toLowerCase();
+              let max = parts[1].trim().toLowerCase();
+              const multiplier = (val) => val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
+              const parseVal = (val) => parseFloat(val) * multiplier(val);
+              params.append('minPrice', parseVal(min));
+              params.append('maxPrice', parseVal(max));
+            } else if (range.includes('+')) {
+              let val = range.replace('+', '').trim().toLowerCase();
+              const mult = val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
+              params.append('minPrice', parseFloat(val) * mult);
+            }
+          }
+
+          // Category & Other filters for combined search
+          if (filters.brand) params.append('brand', filters.brand);
+          if (filters.model) params.append('model', filters.model);
+          if (filters.category && filters.category !== 'Any') params.append('category', filters.category);
+          if (filters.type && filters.type !== 'Any') params.append('propertyType', filters.type);
+          if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms);
+          if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms);
 
           const response = await fetch(`/api/assets/combined?${params.toString()}`);
           if (!response.ok) throw new Error('Network response was not ok');
