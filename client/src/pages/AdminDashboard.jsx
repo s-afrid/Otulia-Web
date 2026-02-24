@@ -12,6 +12,7 @@ const AdminDashboard = () => {
     const { token, user } = useAuth();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('overview');
+    const [statusFilter, setStatusFilter] = useState('All');
     const [stats, setStats] = useState(null);
     const [partners, setPartners] = useState([]);
     const [usersList, setUsersList] = useState([]);
@@ -383,9 +384,22 @@ const AdminDashboard = () => {
                                     <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">Partners Management</h3>
                                     <p className="text-sm text-gray-400 font-medium">Manage and verify dealer accounts</p>
                                 </div>
-                                <div className="flex gap-2 mt-4 sm:mt-0">
+                                <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
+                                    <div className="relative">
+                                        <select 
+                                            value={statusFilter}
+                                            onChange={(e) => setStatusFilter(e.target.value)}
+                                            className="appearance-none bg-gray-50 border border-gray-100 rounded-lg py-2 pl-4 pr-10 text-xs font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:border-[#D48D2A] cursor-pointer w-full sm:min-w-[140px]"
+                                        >
+                                            <option value="All">All Status</option>
+                                            <option value="None">None</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Verified">Verified</option>
+                                            <option value="Rejected">Rejected</option>
+                                        </select>
+                                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                    </div>
                                     <button className="px-4 py-2 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100">Export</button>
-                                    <button className="px-4 py-2 bg-[#D48D2A] text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-[#B5751C] shadow-md shadow-[#D48D2A]/20">Add Partner</button>
                                 </div>
                             </div>
                             <div className="overflow-x-auto">
@@ -393,7 +407,7 @@ const AdminDashboard = () => {
                                     <thead className='hidden md:table-header-group'>
                                         <tr className="bg-gray-50/50 border-b border-gray-100">
                                             <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Partner Name</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Plan</th>
                                             <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
                                             <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Metrics</th>
                                             <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</th>
@@ -401,7 +415,9 @@ const AdminDashboard = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-50">
-                                        {partners.map(partner => (
+                                        {partners
+                                            .filter(p => statusFilter === 'All' || p.verificationStatus === statusFilter)
+                                            .map(partner => (
                                             <tr key={partner.id} className="block md:table-row hover:bg-gray-50/50 transition-colors group">
                                                 <td className="block md:table-cell px-8 py-5">
                                                     <div className="flex items-center gap-3">
@@ -414,18 +430,19 @@ const AdminDashboard = () => {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="block md:table-cell px-6 py-5" data-label="Category">
-                                                    <span className="px-3 py-1 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-tight">
-                                                        {partner.category}
+                                                <td className="block md:table-cell px-6 py-5" data-label="Plan">
+                                                    <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tight ${partner.plan === 'Business VIP' ? 'bg-[#F2E8DB] text-[#D48D2A]' : 'bg-gray-50 text-gray-600'}`}>
+                                                        {partner.plan || 'Freemium'}
                                                     </span>
                                                 </td>
                                                 <td className="block md:table-cell px-6 py-5" data-label="Status">
-                                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${partner.verificationStatus === 'Verified' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+                                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${partner.verificationStatus === 'Verified' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
                                                         partner.verificationStatus === 'Pending' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
-                                                            'bg-red-50 text-red-600 border border-red-100'
+                                                        partner.verificationStatus === 'Rejected' ? 'bg-red-50 text-red-600 border border-red-100' :
+                                                            'bg-gray-100 text-gray-500 border border-gray-200'
                                                         }`}>
-                                                        <span className={`w-1.5 h-1.5 rounded-full ${partner.verificationStatus === 'Verified' ? 'bg-emerald-500' : partner.verificationStatus === 'Pending' ? 'bg-blue-500' : 'bg-red-500'}`}></span>
-                                                        {partner.verificationStatus || 'Unknown'}
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${partner.verificationStatus === 'Verified' ? 'bg-emerald-500' : partner.verificationStatus === 'Pending' ? 'bg-blue-500' : partner.verificationStatus === 'Rejected' ? 'bg-red-500' : 'bg-gray-400'}`}></span>
+                                                        {partner.verificationStatus || 'None'}
                                                     </div>
                                                 </td>
                                                 <td className="block md:table-cell px-6 py-5" data-label="Metrics">
