@@ -11,6 +11,7 @@ const EstateAsset = require('../models/EstateAsset.model');
 const User = require('../models/User.model');
 const authMiddleware = require('../middleware/auth.middleware');
 const { cloudinary } = require('../config/cloudinary');
+const { getAssetFolderPath } = require('../config/cloudinaryFolders');
 
 // Setup storage
 const storage = multer.diskStorage({
@@ -257,7 +258,7 @@ router.post('/create', authMiddleware, upload.fields([
 
         const savedListing = await newListing.save();
         const assetId = savedListing._id.toString();
-        const folderPath = `${category}/${assetId}`;
+        const folderPath = getAssetFolderPath(category, assetId);
 
         const imageUrls = [];
         const docUrls = [];
@@ -294,7 +295,7 @@ router.post('/create', authMiddleware, upload.fields([
             if (logoPath && fs.existsSync(logoPath)) {
                 try {
                     const logoResult = await cloudinary.uploader.upload(logoPath, {
-                        folder: `Car/${assetId}/brand_logo`,
+                        folder: `${folderPath}/brand_logo`,
                         public_id: 'logo'
                     });
                     updateData.brand_logo = logoResult.secure_url;
@@ -347,7 +348,7 @@ router.post('/create', authMiddleware, upload.fields([
             if (logoPath && fs.existsSync(logoPath)) {
                 try {
                     const logoResult = await cloudinary.uploader.upload(logoPath, {
-                        folder: `Bike/${assetId}/brand_logo`,
+                        folder: `${folderPath}/brand_logo`,
                         public_id: 'logo'
                     });
                     updateData.brand_logo = logoResult.secure_url;
@@ -386,7 +387,7 @@ router.post('/create', authMiddleware, upload.fields([
             if (logoPath && fs.existsSync(logoPath)) {
                 try {
                     const logoResult = await cloudinary.uploader.upload(logoPath, {
-                        folder: `Yacht/${assetId}/brand_logo`,
+                        folder: `${folderPath}/brand_logo`,
                         public_id: 'logo'
                     });
                     updateData.brand_logo = logoResult.secure_url;
@@ -519,7 +520,7 @@ router.put('/:id', authMiddleware, upload.fields([
         const listing = await Model.findById(id);
         if (!listing) return res.status(404).json({ error: "Listing not found." });
 
-        const folderPath = `${categoryName}/${id}`;
+        const folderPath = getAssetFolderPath(categoryName, id);
 
         if (req.files['images']) {
             // Delete old images from Cloudinary
@@ -587,7 +588,7 @@ router.put('/:id', authMiddleware, upload.fields([
                     if (logoPath && fs.existsSync(logoPath)) {
                         try {
                             const logoResult = await cloudinary.uploader.upload(logoPath, {
-                                folder: `Car/${id}/brand_logo`,
+                                folder: `${folderPath}/brand_logo`,
                                 public_id: 'logo'
                             });
                             listing.brand_logo = logoResult.secure_url;
@@ -643,7 +644,7 @@ router.put('/:id', authMiddleware, upload.fields([
                     if (logoPath && fs.existsSync(logoPath)) {
                         try {
                             const logoResult = await cloudinary.uploader.upload(logoPath, {
-                                folder: `Bike/${id}/brand_logo`,
+                                folder: `${folderPath}/brand_logo`,
                                 public_id: 'logo'
                             });
                             listing.brand_logo = logoResult.secure_url;
@@ -694,7 +695,7 @@ router.put('/:id', authMiddleware, upload.fields([
                     if (logoPath && fs.existsSync(logoPath)) {
                         try {
                             const logoResult = await cloudinary.uploader.upload(logoPath, {
-                                folder: `Yacht/${id}/brand_logo`,
+                                folder: `${folderPath}/brand_logo`,
                                 public_id: 'logo'
                             });
                             listing.brand_logo = logoResult.secure_url;

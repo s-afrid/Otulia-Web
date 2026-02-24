@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User.model");
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -19,7 +20,14 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id, role }
+    
+    // Fetch full user from database to ensure email and other data are current
+    const user = await User.findById(decoded.id);
+    if (!user) {
+        return res.status(401).json({ error: "USER_NOT_FOUND" });
+    }
+    
+    req.user = user; 
     next();
   } catch (err) {
     return res.status(401).json({

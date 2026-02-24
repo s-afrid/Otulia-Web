@@ -12,6 +12,7 @@ const Listing = require("../models/Listing.model");
 const { OAuth2Client } = require("google-auth-library");
 const  { CloudinaryStorage } = require('multer-storage-cloudinary');
 const { cloudinary } = require('../config/cloudinary');
+const { getFolderPaths } = require('../config/cloudinaryFolders');
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
@@ -395,9 +396,11 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
 
 const profilePicStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: (req, file) => {
+  params: async (req, file) => {
+    const user = await User.findById(req.user.id);
+    const folders = getFolderPaths(user ? user.email : null);
     return {
-      folder: `users/${req.user.email}`,
+      folder: folders.profile,
       public_id: `profile_pic_${Date.now()}`,
       resource_type: 'auto',
       allowed_formats: ['jpg', 'png', 'jpeg'],
@@ -444,9 +447,11 @@ router.post("/upload-profile-picture", authMiddleware, uploadProfilePic.single('
  */
 const companyLogoStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: (req, file) => {
+  params: async (req, file) => {
+    const user = await User.findById(req.user.id);
+    const folders = getFolderPaths(user ? user.email : null);
     return {
-      folder: `users/${req.user.email}`,
+      folder: folders.company,
       public_id: `company_logo_${Date.now()}`,
       resource_type: 'auto',
       allowed_formats: ['jpg', 'png', 'jpeg'],
@@ -531,6 +536,29 @@ const uploadVerification = multer({
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
 
+/**
+ * Helper to extract public_id from Cloudinary URL
+ */
+const getPublicIdFromUrl = (url) => {
+    if (!url || !url.includes('cloudinary')) return null;
+    try {
+        const parts = url.split('/');
+        const fileNameWithExtension = parts[parts.length - 1];
+        const fileName = fileNameWithExtension.split('.')[0];
+        
+        // Find the index of 'verification' or 'users' to get the full path
+        const folderIndex = parts.findIndex(p => p === 'verification' || p === 'users' || p === 'otulia_assets');
+        if (folderIndex !== -1) {
+            const folderPath = parts.slice(folderIndex, parts.length - 1).join('/');
+            return `${folderPath}/${fileName}`;
+        }
+        return fileName;
+    } catch (err) {
+        console.error("Error parsing Cloudinary URL:", err);
+        return null;
+    }
+};
+
 router.post("/submit-verification", authMiddleware, uploadVerification.any(), async (req, res) => {
   try {
     const files = req.files;
@@ -539,31 +567,67 @@ router.post("/submit-verification", authMiddleware, uploadVerification.any(), as
       return res.status(400).json({ error: "NO_FILES_UPLOADED" });
     }
 
-    console.log(`Received ${files.length} files for verification from ${req.user.email}`);
+    // Fetch user from DB to ensure email is from the persistent session (DB)
+    const sessionUser = await User.findById(req.user.id);
+    if (!sessionUser || !sessionUser.email) {
+      return res.status(401).json({ error: "USER_SESSION_INVALID" });
+    }
+
+    const folders = getFolderPaths(sessionUser.email);
+    const folder = folders.verification;
+
+    // --- CLEANUP: Delete old verification documents if they exist ---
+    if (sessionUser.verificationDocuments) {
+        const docMap = sessionUser.verificationDocuments instanceof Map 
+            ? Object.fromEntries(sessionUser.verificationDocuments) 
+            : sessionUser.verificationDocuments;
+
+        for (const [key, url] of Object.entries(docMap)) {
+            const publicId = getPublicIdFromUrl(url);
+            if (publicId) {
+                console.log(`Deleting old verification doc: ${publicId}`);
+                await cloudinary.uploader.destroy(publicId).catch(err => 
+                    console.error(`Failed to delete ${publicId}:`, err)
+                );
+            }
+        }
+    }
+
+    console.log(`Received ${files.length} files for verification from ${sessionUser.email}`);
 
     const verificationDocuments = {};
-    const folder = `verification/${req.user.email}`;
 
     // Upload files to Cloudinary manually
     for (const file of files) {
       try {
-        console.log(`Uploading ${file.fieldname} to Cloudinary...`);
-        const result = await cloudinary.uploader.upload(file.path, {
+        const absolutePath = path.resolve(file.path);
+        console.log(`Uploading ${file.fieldname} from ${absolutePath} to folder: ${folder}...`);
+        
+        const result = await cloudinary.uploader.upload(absolutePath, {
           folder: folder,
+          public_id: `${file.fieldname}-${Date.now()}`,
           resource_type: 'auto',
-          public_id: `${file.fieldname}-${Date.now()}`
+          use_filename: true,
+          unique_filename: true,
+          type: 'upload',
+          access_mode: 'public',
+          invalidate: true,
+          overwrite: true
         });
         
+        console.log(`Upload successful for ${file.fieldname}. Cloudinary folder: ${result.folder}`);
+        
         verificationDocuments[file.fieldname] = result.secure_url;
-        console.log(`Successfully uploaded ${file.fieldname}: ${result.secure_url}`);
         
         // Remove local file
-        fs.unlinkSync(file.path);
+        if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
       } catch (uploadErr) {
         console.error(`Failed to upload ${file.fieldname} to Cloudinary:`, uploadErr);
         // Clean up remaining files if one fails
         files.forEach(f => { if(fs.existsSync(f.path)) fs.unlinkSync(f.path); });
-        throw new Error(`Cloudinary upload failed for ${file.fieldname}: ${uploadErr.message}`);
+        
+        const errorMsg = uploadErr.message || (typeof uploadErr === 'string' ? uploadErr : JSON.stringify(uploadErr));
+        throw new Error(`Cloudinary upload failed for ${file.fieldname}: ${errorMsg}`);
       }
     }
 
@@ -580,10 +644,13 @@ router.post("/submit-verification", authMiddleware, uploadVerification.any(), as
         throw new Error("User not found during status update");
     }
 
-    console.log(`Verification status updated to Pending for user ${user.email}`);
+    console.log(`Verification status updated to Pending for user ${user.email} with docs in ${folder}`);
     
-    // Send response immediately
-    res.json(user);
+    // Send response with debugging info
+    res.json({
+        ...user.toObject(),
+        uploadFolder: folder
+    });
 
     // Non-blocking notifications
     // ... rest of the code remains the same for notifications ...
