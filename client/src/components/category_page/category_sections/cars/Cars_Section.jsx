@@ -215,7 +215,7 @@ const Cars_Section = () => {
         <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
         <section className="w-full px-3 md:px-16 py-12 bg-white">
-          <FilterBar onFilter={handleFilter} key={filterBarKey} priceRanges={priceRanges} filterOptions={carFilterOptions} />
+          <FilterBar onFilter={handleFilter} key={filterBarKey} priceRanges={priceRanges} filterOptions={carFilterOptions} hideLocation={true} />
         </section>
 
         <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white">

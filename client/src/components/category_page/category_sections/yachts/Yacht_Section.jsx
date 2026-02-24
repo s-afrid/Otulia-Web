@@ -193,6 +193,7 @@ const Yacht_Section = () => {
                         filterOptions={yachtFilterOptions}
                         priceRanges={priceRanges}
                         key={filterBarKey}
+                        hideLocation={true}
                     />
                 </section>
 

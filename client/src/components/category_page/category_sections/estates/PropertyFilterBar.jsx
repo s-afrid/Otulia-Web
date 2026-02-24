@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const PropertyFilterBar = ({ onFilter, initialLocation = '' }) => {
+const PropertyFilterBar = ({ onFilter, initialLocation = '', hideLocation = false }) => {
   // State to track which filter is currently open (e.g., 'Price Range')
   const [activeFilter, setActiveFilter] = useState(null);
 
@@ -30,7 +30,7 @@ const PropertyFilterBar = ({ onFilter, initialLocation = '' }) => {
   // Fetch location suggestions
   useEffect(() => {
     const handler = setTimeout(async () => {
-      if (selectedFilters.location && selectedFilters.location.length > 0) {
+      if (!hideLocation && selectedFilters.location && selectedFilters.location.length > 0) {
         try {
           const response = await fetch(`/api/assets/location-suggestions?q=${selectedFilters.location}`);
           const data = await response.json();
@@ -44,7 +44,7 @@ const PropertyFilterBar = ({ onFilter, initialLocation = '' }) => {
     }, 300);
 
     return () => clearTimeout(handler);
-  }, [selectedFilters.location]);
+  }, [selectedFilters.location, hideLocation]);
 
   // Handle click outside for suggestions
   useEffect(() => {
@@ -94,35 +94,36 @@ const PropertyFilterBar = ({ onFilter, initialLocation = '' }) => {
   return (
     <div className="w-full py-6 px-4 bg-white flex flex-col items-center relative z-20">
       
-      <form onSubmit={handleSearch} className="flex flex-wrap items-center justify-center gap-4 w-full max-w-[1400px]">
+      <form onSubmit={handleSearch} className={`flex flex-wrap items-center justify-center ${hideLocation ? 'gap-2 max-w-[1100px]' : 'gap-4 max-w-[1400px]'} w-full`}>
         
         {/* Location Input with Suggestions */}
-        <div className="relative min-w-[240px]" ref={locationRef}>
-          <input
-            type="text"
-            name="location"
-            placeholder="Location"
-            value={selectedFilters.location}
-            onChange={handleInputChange}
-            onFocus={() => setShowSuggestions(true)}
-            className="w-full px-6 py-2.5 border border-gray-300 rounded-lg text-sm md:text-base font-medium focus:outline-none focus:border-black transition-all montserrat"
-          />
-          {showSuggestions && suggestions.length > 0 && (
-            <ul className="absolute z-[110] w-full bg-white border border-gray-100 rounded-xl mt-2 shadow-2xl left-0 p-2 overflow-hidden">
-              {suggestions.map((s, idx) => (
-                <li key={idx} className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-600 text-sm font-medium transition-colors" onClick={() => {
-                  setSelectedFilters(prev => ({ ...prev, location: s }));
-                  setShowSuggestions(false);
-                }}>
-                  {s}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        {filters.map((filter, index) => (
-          <div key={index} className="relative">
+        {!hideLocation && (
+          <div className="relative min-w-[240px]" ref={locationRef}>
+            <input
+              type="text"
+              name="location"
+              placeholder="Location"
+              value={selectedFilters.location}
+              onChange={handleInputChange}
+              onFocus={() => setShowSuggestions(true)}
+              className="w-full px-6 py-2.5 border border-gray-300 rounded-lg text-sm md:text-base font-medium focus:outline-none focus:border-black transition-all montserrat"
+            />
+                      {showSuggestions && suggestions.length > 0 && (
+                        <ul className="absolute z-[110] w-full bg-white border border-gray-100 rounded-xl mt-2 shadow-2xl left-0 p-2 overflow-hidden">
+                          {suggestions.map((s, idx) => (
+                            <li key={idx} className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-600 text-sm font-medium transition-colors" onClick={() => {
+                              setSelectedFilters(prev => ({ ...prev, location: s }));
+                              setShowSuggestions(false);
+                            }}>
+                              {s}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    )}
+            
+                    {filters.map((filter, index) => (          <div key={index} className="relative">
             <button
               type="button"
               onClick={() => toggleFilter(filter.label)}

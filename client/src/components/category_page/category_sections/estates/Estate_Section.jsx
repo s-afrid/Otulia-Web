@@ -245,7 +245,7 @@ const Estate_Section = () => {
           <h2 className="text-3xl md:text-4xl playfair-display text-black mb-7 text-center flex justify-between">
             <span>Filter Properties</span>
           </h2>
-          <PropertyFilterBar onFilter={handleFilter} key={filterBarKey} />
+          <PropertyFilterBar onFilter={handleFilter} key={filterBarKey} hideLocation={true} />
         </section>
 
         <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white">

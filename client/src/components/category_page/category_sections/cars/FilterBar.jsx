@@ -84,7 +84,8 @@ const FilterBar = ({
   onFilter,
   initialLocation = '',
   filterOptions = {},
-  priceRanges = null
+  priceRanges = null,
+  hideLocation = false
 }) => {
   const [filters, setFilters] = useState({
     location: initialLocation,
@@ -113,7 +114,7 @@ const FilterBar = ({
   // Fetch location suggestions
   useEffect(() => {
     const handler = setTimeout(async () => {
-      if (filters.location && filters.location.length > 0) {
+      if (!hideLocation && filters.location && filters.location.length > 0) {
         try {
           const response = await fetch(`/api/assets/location-suggestions?q=${filters.location}`);
           const data = await response.json();
@@ -127,7 +128,7 @@ const FilterBar = ({
     }, 300);
 
     return () => clearTimeout(handler);
-  }, [filters.location]);
+  }, [filters.location, hideLocation]);
 
   // Handle click outside
   useEffect(() => {
@@ -163,48 +164,53 @@ const FilterBar = ({
 
   return (
     <div className="w-full flex justify-center p-4">
-      <form onSubmit={handleSearch} className="
-        w-full max-w-[1400px]
+      <form onSubmit={handleSearch} className={`
+        w-full ${hideLocation ? 'max-w-[1000px]' : 'max-w-[1400px]'}
         bg-white border border-gray-200 
         rounded-2xl xl:rounded-full 
         p-4 xl:p-2 xl:pl-8
-        flex flex-col xl:flex-row items-center justify-between gap-4 xl:gap-2
+        flex flex-col xl:flex-row items-center justify-between ${hideLocation ? 'gap-2' : 'gap-4 xl:gap-2'}
         shadow-md transition-all duration-300
-      ">
+      `}>
         <div className="w-full xl:w-auto flex items-center gap-2 border-b xl:border-r xl:border-b-0 border-gray-100 pb-2 xl:pb-0 pr-6">
           <span className="font-playfair text-xl text-black whitespace-nowrap font-bold">
             Filter :
           </span>
         </div>
 
-        <div className="w-full flex flex-col md:flex-row xl:flex-1 items-center gap-4 xl:gap-4 justify-between">
+        <div className={`w-full flex flex-col md:flex-row xl:flex-1 items-center ${hideLocation ? 'gap-2' : 'gap-4 xl:gap-4'} justify-between`}>
 
           {/* Location */}
-          <div className="relative w-full xl:w-auto xl:flex-1 px-4" ref={locationRef}>
-            <input
-              type="text"
-              placeholder="Location"
-              value={filters.location}
-              onChange={(e) => {
-                handleFilterChange('location', e.target.value);
-                setShowSuggestions(true);
-              }}
-              onFocus={() => setShowSuggestions(true)}
-              className="w-full outline-none text-sm font-sans placeholder:text-gray-300 text-black font-medium"
-            />
-            {showSuggestions && suggestions.length > 0 && (
-              <ul className="absolute z-[110] w-full bg-white border border-gray-100 rounded-xl mt-4 shadow-2xl left-0 p-2 overflow-hidden">
-                {suggestions.map((s, idx) => (
-                  <li key={idx} className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-600 text-sm font-medium transition-colors" onClick={() => {
-                    handleFilterChange('location', s);
-                    setShowSuggestions(false);
-                  }}>
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          {!hideLocation && (
+            <>
+              <div className="relative w-full xl:w-auto xl:flex-1 px-4" ref={locationRef}>
+                <input
+                  type="text"
+                  placeholder="Location"
+                  value={filters.location}
+                  onChange={(e) => {
+                    handleFilterChange('location', e.target.value);
+                    setShowSuggestions(true);
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  className="w-full outline-none text-sm font-sans placeholder:text-gray-300 text-black font-medium"
+                />
+                {showSuggestions && suggestions.length > 0 && (
+                  <ul className="absolute z-[110] w-full bg-white border border-gray-100 rounded-xl mt-4 shadow-2xl left-0 p-2 overflow-hidden">
+                    {suggestions.map((s, idx) => (
+                      <li key={idx} className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-600 text-sm font-medium transition-colors" onClick={() => {
+                        handleFilterChange('location', s);
+                        setShowSuggestions(false);
+                      }}>
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div className="hidden xl:block h-8 w-px bg-gray-100"></div>
+            </>
+          )}
 
           <div className="hidden xl:block h-8 w-px bg-gray-100"></div>
 

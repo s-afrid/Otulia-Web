@@ -193,6 +193,7 @@ const Bike_Section = () => {
                         filterOptions={bikeFilterOptions}
                         priceRanges={priceRanges}
                         key={filterBarKey}
+                        hideLocation={true}
                     />
                 </section>
 
