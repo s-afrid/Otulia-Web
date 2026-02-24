@@ -182,46 +182,12 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
             </p>
           </div>
 
-          {/* MOVED: SALE BUY BOX (Interested Block) */}
-          {/* Placed here in the Left Column, below Description */}
-          {type !== 'Rent' && (
-            <div className="border border-gray-200 rounded-sm shadow-sm p-6 bg-gray-50 mt-8">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-bold playfair-display mb-2">Interested?</h3>
-                  <p className="text-gray-500 text-sm">Own this exclusive asset today.</p>
-                </div>
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full md:w-auto px-8 bg-black text-white py-4 rounded-sm font-medium hover:bg-gray-800 transition-all montserrat"
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* RIGHT COLUMN: Price & Agent Card */}
-        <div className="w-full lg:w-1/3 flex flex-col gap-6">
-
-          {/* Price Header (Right aligned on desktop) */}
-          <div className="w-full text-center">
-            {/* PRICE: Times New Roman + Larger Size (text-5xl) */}
-            <h2 
-              className="text-3xl md:text-6xl font-bold text-black"
-              style={{ fontFamily: '"Times New Roman", Times, serif' }}
-            >
-              $ {numberWithCommas(price)} {type === 'Rent' && <span className="text-lg font-normal text-gray-500 font-sans">/ day</span>}
-            </h2>
-          </div>
-
           {/* RENTAL BOOKING BOX */}
           {type === 'Rent' && (
-            <div className="border border-gray-200 rounded-sm shadow-sm p-6 bg-white">
+            <div className="border border-gray-200 rounded-sm shadow-sm p-6 bg-white mt-8">
               <h3 className="text-xl font-bold playfair-display mb-4">Book Dates</h3>
-              <div className="flex flex-col gap-4 mb-6">
-                <div>
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="flex-1">
                   <label className="block text-sm font-medium mb-1 text-gray-600">Start Date</label>
                   <input
                     type="date"
@@ -230,7 +196,7 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
                     onChange={e => setStartDate(e.target.value)}
                   />
                 </div>
-                <div>
+                <div className="flex-1">
                   <label className="block text-sm font-medium mb-1 text-gray-600">End Date</label>
                   <input
                     type="date"
@@ -266,6 +232,40 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
               </button>
             </div>
           )}
+
+          {/* MOVED: SALE BUY BOX (Interested Block) */}
+          {/* Placed here in the Left Column, below Description */}
+          {type !== 'Rent' && (
+            <div className="border border-gray-200 rounded-sm shadow-sm p-6 bg-gray-50 mt-8">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold playfair-display mb-2">Interested?</h3>
+                  <p className="text-gray-500 text-sm">Own this exclusive asset today.</p>
+                </div>
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full md:w-auto px-8 bg-black text-white py-4 rounded-sm font-medium hover:bg-gray-800 transition-all montserrat"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT COLUMN: Price & Agent Card */}
+        <div className="w-full lg:w-1/3 flex flex-col gap-6">
+
+          {/* Price Header (Right aligned on desktop) */}
+          <div className="w-full text-center">
+            {/* PRICE: Times New Roman + Larger Size (text-5xl) */}
+            <h2 
+              className="text-3xl md:text-6xl font-bold text-black"
+              style={{ fontFamily: '"Times New Roman", Times, serif' }}
+            >
+              $ {numberWithCommas(price)} {type === 'Rent' && <span className="text-lg font-normal text-gray-500 font-sans">/ day</span>}
+            </h2>
+          </div>
 
           {/* Note: The Sale "Interested" box was moved from here to the left column */}
 
