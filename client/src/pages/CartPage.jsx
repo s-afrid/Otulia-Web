@@ -165,13 +165,6 @@ const CartPage = () => {
                                     <span className="font-bold text-lg">Total</span>
                                     <span className="font-bold text-lg">$ {numberWithCommas(cartTotal)}</span>
                                 </div>
-
-                                <button
-                                    onClick={handleProceedToCheckout}
-                                    className="w-full bg-black text-white py-4 rounded-lg font-medium hover:bg-gray-800 transition disabled:opacity-50"
-                                >
-                                    Proceed to Checkout
-                                </button>
                             </div>
                         </div>
                     </div>
