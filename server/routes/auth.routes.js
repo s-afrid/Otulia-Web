@@ -13,6 +13,7 @@ const { OAuth2Client } = require("google-auth-library");
 const  { CloudinaryStorage } = require('multer-storage-cloudinary');
 const { cloudinary } = require('../config/cloudinary');
 const { getFolderPaths } = require('../config/cloudinaryFolders');
+const { updateUserAssetsAgent } = require('../utils/assetUpdater');
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
@@ -409,6 +410,16 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
 
     await user.save();
 
+    // Update all assets with new agent info
+    await updateUserAssetsAgent(user._id, {
+      name: user.name,
+      phone: user.phone,
+      photo: user.profilePicture,
+      company: user.company?.companyName,
+      companyLogo: user.company?.companyLogo,
+      plan: user.plan
+    });
+
     res.json({ message: "PROFILE_UPDATED_SUCCESSFULLY", user });
   } catch (err) {
     console.error("Update Profile Error:", err);
@@ -481,6 +492,11 @@ router.post("/upload-profile-picture", authMiddleware, uploadProfilePic.single('
       { new: true }
     ).select("-password");
 
+    // Update all assets with new profile picture
+    await updateUserAssetsAgent(user._id, {
+      photo: user.profilePicture
+    });
+
     res.json({ message: "PROFILE_PICTURE_UPDATED_SUCCESSFULLY", user });
   } catch (err) {
     console.error("Profile Picture Upload Error:", err);
@@ -543,17 +559,9 @@ router.post("/upload-company-logo", authMiddleware, uploadCompanyLogo.single('co
     await currentUser.save();
 
     // Update ALL assets created by this user
-    const agentId = currentUser._id.toString();
-    const updateQuery = { "agent.id": agentId };
-    const updateData = { $set: { "agent.companyLogo": logoUrl } };
-
-    await Promise.all([
-      CarAsset.updateMany(updateQuery, updateData),
-      BikeAsset.updateMany(updateQuery, updateData),
-      YachtAsset.updateMany(updateQuery, updateData),
-      EstateAsset.updateMany(updateQuery, updateData),
-      Listing.updateMany(updateQuery, updateData)
-    ]);
+    await updateUserAssetsAgent(currentUser._id, {
+      companyLogo: logoUrl
+    });
 
     res.json({ 
       message: "COMPANY_LOGO_UPDATED_SUCCESSFULLY", 

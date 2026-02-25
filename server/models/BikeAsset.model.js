@@ -73,6 +73,7 @@ const bikeAssetSchema = new mongoose.Schema(
       email: String,
       company: String,
       companyLogo: String,
+      plan: String,
       joined: { type: Number },
     },
 

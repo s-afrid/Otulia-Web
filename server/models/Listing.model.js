@@ -29,10 +29,17 @@ const listingSchema = new mongoose.Schema(
             required: true,
         },
 
-        dealer: {
+        agent: {
+            id: String,
             name: String,
+            photo: String,
             phone: String,
             email: String,
+            company: String,
+            companyLogo: String,
+            plan: String,
+            joined: { type: Number },
+            createdAt: Date
         },
 
         isFeatured: {

@@ -17,7 +17,7 @@ router.get("/featured", async (req, res) => {
   try {
     const listings = await Listing.find({ isFeatured: true })
       .limit(6)
-      .select("title images price category location dealer");
+      .select("title images price category location agent");
 
     res.json(listings);
 

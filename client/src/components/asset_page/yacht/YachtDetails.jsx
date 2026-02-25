@@ -327,11 +327,13 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
                   {type === 'Rent' ? 'View Rental Fleet' : 'Listings for Sale'}
                 </p>
               </div>
-              <img
-                src={agent.companyLogo}
-                alt="Company Logo"
-                className="h-10 lg:h-[50px] w-auto object-contain bg-black p-1"
-              />
+              {agent.plan && agent.plan !== 'Freemium' && (
+                <img
+                  src={agent.companyLogo}
+                  alt="Company Logo"
+                  className="h-10 lg:h-[50px] w-auto object-contain bg-black p-1"
+                />
+              )}
             </div>
 
           </div>

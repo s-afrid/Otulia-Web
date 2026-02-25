@@ -4,6 +4,7 @@ const axios = require('axios');
 const User = require('../models/User.model');
 const Coupon = require('../models/Coupon.model');
 const authMiddleware = require('../middleware/auth.middleware');
+const { updateUserAssetsAgent } = require('../utils/assetUpdater');
 
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
 // To switch to live, remove ".sandbox" from the URL
@@ -151,6 +152,10 @@ router.post('/capture-order', authMiddleware, async (req, res) => {
                 user.plan = plan;
                 user.planExpiresAt = expiryDate;
                 await user.save();
+
+                // Update all assets with new plan
+                await updateUserAssetsAgent(user._id, { plan: plan });
+
                 return res.json({ success: true, message: `Upgraded to ${plan}`, user });
             } else if (cartItems && Array.isArray(cartItems)) {
                 // Fulfill Cart Logic
@@ -204,6 +209,9 @@ router.post('/cancel-subscription', authMiddleware, async (req, res) => {
         user.plan = 'Freemium';
         user.planExpiresAt = null;
         await user.save();
+
+        // Update all assets with new plan
+        await updateUserAssetsAgent(user._id, { plan: 'Freemium' });
 
         res.json({ message: "Subscription cancelled successfully. You are now on the Free plan.", user });
     } catch (e) {

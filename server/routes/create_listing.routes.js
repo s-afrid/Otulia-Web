@@ -241,6 +241,7 @@ router.post('/create', authMiddleware, upload.fields([
                 photo: user.profilePicture,
                 company: 'Otulia Private Seller',
                 companyLogo: user.profilePicture,
+                plan: user.plan || 'Freemium',
                 joined: new Date(user.createdAt).getFullYear(),
                 createdAt: user.createdAt
             }
