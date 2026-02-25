@@ -8,16 +8,18 @@ import garage from '../../../assets/productpage/garage.png'
 
 
 const EstateKeyFeatures = ({ item }) => {
-  // Map data from your schema to match the image fields
-  // Fallbacks provided for preview
-  const specs = {
-    landArea: item?.keySpecifications?.landArea || "1.8 acres",
-    bathrooms: item?.keySpecifications?.bathrooms || "13",
-    garage: item?.keySpecifications?.garage_capacity || "6 cars",
-    area: item?.keySpecifications?.builtUpArea || "12,400 sqft",
-    bedrooms: item?.keySpecifications?.bedrooms || "9",
-    floors: item?.keySpecifications?.floors || "3"
-  };
+  const kSpecs = item?.keySpecifications || {};
+  
+  const specItems = [
+    { label: 'Land Area', value: kSpecs.landArea, icon: land },
+    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: bathRoom },
+    { label: 'Built Area', value: kSpecs.builtUpArea, icon: sqrtFt },
+    { label: 'Bedrooms', value: kSpecs.bedrooms, icon: bedRoom },
+    { label: 'Floors', value: kSpecs.floors, icon: floor },
+    { label: 'Type', value: kSpecs.propertyType, icon: land } // Using land icon as fallback
+  ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
+
+  if (specItems.length === 0) return null;
 
   // Helper Component for a Feature Card
  const FeatureCard = ({ icon, label, value }) => (
@@ -48,63 +50,14 @@ const EstateKeyFeatures = ({ item }) => {
 
       {/* 3-Column Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-        
-        {/* ROW 1 */}
-        {/* 1. Land Area */}
-        <FeatureCard 
-          label="Land Area"
-          value={specs.landArea}
-          icon={
-            <img className='w-19 h-15' src={land} alt='' />
-          }
-        />
-
-        {/* 2. Bathrooms */}
-        <FeatureCard 
-          label="Bathrooms"
-          value={specs.bathrooms}
-          icon={
-             <img className='w-17 h-15' src={bathRoom} alt='' />
-          }
-        />
-
-        {/* 3. Garage */}
-        <FeatureCard 
-          label="Garage"
-          value={specs.garage}
-          icon={
-             <img className='w-18 h-15' src={garage} alt='' />
-          }
-        />
-
-        {/* ROW 2 */}
-        {/* 4. Area (sqft) - No label in image, just value */}
-        <FeatureCard 
-          label="Built Area" 
-          value={specs.area}
-          icon={
-             <img className='w-15 h-15' src={sqrtFt} alt='' />
-          }
-        />
-
-        {/* 5. Bedrooms */}
-        <FeatureCard 
-          label="Bedrooms"
-          value={specs.bedrooms}
-          icon={
-            <img className='w-17 h-15' src={bedRoom} alt='' />
-          }
-        />
-
-        {/* 6. Floors */}
-        <FeatureCard 
-          label="Floors"
-          value={specs.floors}
-          icon={
-            <img className='w-16 h-15' src={floor} alt='' />
-          }
-        />
-
+        {specItems.map((spec, index) => (
+          <FeatureCard 
+            key={index}
+            label={spec.label}
+            value={spec.value}
+            icon={<img className='w-15 h-15 object-contain' src={spec.icon} alt={spec.label} />}
+          />
+        ))}
       </div>
     </div>
   );

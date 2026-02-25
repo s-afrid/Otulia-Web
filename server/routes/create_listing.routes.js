@@ -307,8 +307,6 @@ router.post('/create', authMiddleware, upload.fields([
             updateData.videoUrl = req.body.videoUrl;
             updateData.keySpecifications = {
                 power: req.body.horsepower,
-                mileage: req.body.mileage,
-                cylinderCapacity: req.body.cylinderCapacity,
                 topSpeed: req.body.topSpeed,
                 engineType: req.body.engineType
             };
@@ -361,9 +359,7 @@ router.post('/create', authMiddleware, upload.fields([
             updateData.keySpecifications = {
                 engineCapacity: req.body.engineCapacity,
                 mileage: req.body.mileage,
-                fuelType: req.body.fuelType,
-                transmission: req.body.transmission,
-                color: req.body.color
+                fuelType: req.body.fuelType
             };
             updateData.specification = {
                 yearOfConstruction: req.body.year,
@@ -371,10 +367,14 @@ router.post('/create', authMiddleware, upload.fields([
                 model: req.body.model,
                 variant: req.body.variant,
                 engineCapacityCC: req.body.engineCapacity,
+                maxPower: req.body.maxPower,
+                maxTorque: req.body.maxTorque,
                 mileageKM: req.body.mileage,
                 fuelType: req.body.fuelType,
                 transmission: req.body.transmission,
                 color: req.body.color,
+                abs: req.body.abs,
+                tractionControl: req.body.tractionControl,
                 condition: req.body.condition,
                 ownershipCount: req.body.ownershipCount,
                 accidentHistory: req.body.accidentHistory
@@ -398,12 +398,11 @@ router.post('/create', authMiddleware, upload.fields([
             updateData.videoUrl = req.body.videoUrl;
             updateData.keySpecifications = {
                 length: req.body.length,
-                beam: req.body.beam,
-                draft: req.body.draft,
-                cruisingSpeed: req.body.cruisingSpeed,
-                guestCapacity: req.body.guestCapacity,
-                crewCapacity: req.body.crewCapacity,
-                engineType: req.body.engineType
+                bathrooms: req.body.bathrooms,
+                fuelCapacity: req.body.fuelCapacity,
+                engineType: req.body.engineType,
+                bedrooms: req.body.bedrooms,
+                topSpeed: req.body.topSpeed
             };
             updateData.specification = {
                 yearOfConstruction: req.body.year,
@@ -414,12 +413,19 @@ router.post('/create', authMiddleware, upload.fields([
                 draft: req.body.draft,
                 engineType: req.body.engineType,
                 cruisingSpeed: req.body.cruisingSpeed,
+                topSpeed: req.body.topSpeed,
+                usageHours: req.body.usageHours,
+                fuelConsumption: req.body.fuelConsumption,
                 guestCapacity: req.body.guestCapacity,
                 crewCapacity: req.body.crewCapacity,
                 yachtLocation: req.body.location,
                 fuelType: req.body.fuelType,
                 hullMaterial: req.body.hullMaterial,
-                condition: req.body.condition
+                condition: req.body.condition,
+                interiorMaterial: req.body.interiorMaterial,
+                exteriorColor: req.body.exteriorColor,
+                countryOfFirstDelivery: req.body.countryOfFirstDelivery,
+                numberOfOwners: req.body.numberOfOwners
             };
         } else if (category === 'Estate') {
             updateData.propertyName = req.body.propertyName;
@@ -610,9 +616,9 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.variant) spec.variant = req.body.variant;
             if (req.body.bodyType) spec.body = req.body.bodyType;
             if (req.body.series) spec.series = req.body.series;
-            if (req.body.mileage) { spec.mileage = req.body.mileage; keySpec.mileage = req.body.mileage; }
+            if (req.body.mileage) { spec.mileage = req.body.mileage; }
             if (req.body.horsepower) { spec.power = req.body.horsepower; keySpec.power = req.body.horsepower; }
-            if (req.body.cylinderCapacity) { spec.cylinderCapacity = req.body.cylinderCapacity; keySpec.cylinderCapacity = req.body.cylinderCapacity; }
+            if (req.body.cylinderCapacity) { spec.cylinderCapacity = req.body.cylinderCapacity; }
             if (req.body.configuration) spec.configuration = req.body.configuration;
             if (req.body.topSpeed) { spec.topSpeed = req.body.topSpeed; keySpec.topSpeed = req.body.topSpeed; }
             if (req.body.engineType) { spec.engineType = req.body.engineType; keySpec.engineType = req.body.engineType; }
@@ -664,10 +670,14 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.model) spec.model = req.body.model;
             if (req.body.variant) spec.variant = req.body.variant;
             if (req.body.engineCapacity) { spec.engineCapacityCC = Number(req.body.engineCapacity); keySpec.engineCapacity = req.body.engineCapacity; }
+            if (req.body.maxPower) spec.maxPower = req.body.maxPower;
+            if (req.body.maxTorque) spec.maxTorque = req.body.maxTorque;
             if (req.body.mileage) { spec.mileageKM = Number(req.body.mileage); keySpec.mileage = req.body.mileage; }
             if (req.body.fuelType) { spec.fuelType = req.body.fuelType; keySpec.fuelType = req.body.fuelType; }
-            if (req.body.transmission) { spec.transmission = req.body.transmission; keySpec.transmission = req.body.transmission; }
-            if (req.body.color) { spec.color = req.body.color; keySpec.color = req.body.color; }
+            if (req.body.transmission) { spec.transmission = req.body.transmission; }
+            if (req.body.color) { spec.color = req.body.color; }
+            if (req.body.abs) spec.abs = req.body.abs;
+            if (req.body.tractionControl) spec.tractionControl = req.body.tractionControl;
             if (req.body.condition) spec.condition = req.body.condition;
             if (req.body.ownershipCount) spec.ownershipCount = Number(req.body.ownershipCount);
             if (req.body.accidentHistory) spec.accidentHistory = req.body.accidentHistory;
@@ -714,12 +724,25 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.builder) spec.brandBuilder = req.body.builder;
             if (req.body.model) spec.model = req.body.model;
             if (req.body.length) { spec.length = req.body.length; keySpec.length = req.body.length; }
-            if (req.body.beam) { spec.beam = req.body.beam; keySpec.beam = req.body.beam; }
-            if (req.body.draft) { spec.draft = req.body.draft; keySpec.draft = req.body.draft; }
+            if (req.body.beam) { spec.beam = req.body.beam; }
+            if (req.body.draft) { spec.draft = req.body.draft; }
             if (req.body.engineType) { spec.engineType = req.body.engineType; keySpec.engineType = req.body.engineType; }
-            if (req.body.cruisingSpeed) { spec.cruisingSpeed = req.body.cruisingSpeed; keySpec.cruisingSpeed = req.body.cruisingSpeed; }
-            if (req.body.guestCapacity) { spec.guestCapacity = req.body.guestCapacity; keySpec.guestCapacity = req.body.guestCapacity; }
-            if (req.body.crewCapacity) { spec.crewCapacity = req.body.crewCapacity; keySpec.crewCapacity = req.body.crewCapacity; }
+            if (req.body.cruisingSpeed) { spec.cruisingSpeed = req.body.cruisingSpeed; }
+            if (req.body.topSpeed) { spec.topSpeed = req.body.topSpeed; keySpec.topSpeed = req.body.topSpeed; }
+            if (req.body.usageHours) spec.usageHours = req.body.usageHours;
+            if (req.body.fuelConsumption) spec.fuelConsumption = req.body.fuelConsumption;
+            if (req.body.guestCapacity) { spec.guestCapacity = req.body.guestCapacity; }
+            if (req.body.crewCapacity) { spec.crewCapacity = req.body.crewCapacity; }
+            if (req.body.fuelCapacity) keySpec.fuelCapacity = req.body.fuelCapacity;
+            if (req.body.bathrooms) keySpec.bathrooms = req.body.bathrooms;
+            if (req.body.bedrooms) keySpec.bedrooms = req.body.bedrooms;
+            if (req.body.fuelType) spec.fuelType = req.body.fuelType;
+            if (req.body.hullMaterial) spec.hullMaterial = req.body.hullMaterial;
+            if (req.body.condition) spec.condition = req.body.condition;
+            if (req.body.interiorMaterial) spec.interiorMaterial = req.body.interiorMaterial;
+            if (req.body.exteriorColor) spec.exteriorColor = req.body.exteriorColor;
+            if (req.body.countryOfFirstDelivery) spec.countryOfFirstDelivery = req.body.countryOfFirstDelivery;
+            if (req.body.numberOfOwners) spec.numberOfOwners = req.body.numberOfOwners;
             if (location) spec.yachtLocation = location;
 
             listing.specification = spec;

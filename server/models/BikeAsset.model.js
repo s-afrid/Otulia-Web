@@ -19,9 +19,7 @@ const bikeAssetSchema = new mongoose.Schema(
     keySpecifications: {
       engineCapacity: String,
       mileage: String,
-      fuelType: String,
-      transmission: String,
-      color: String
+      fuelType: String
     },
 
     // Modified based on the image sections: General, Engine, Chassis, Safety, Wheels

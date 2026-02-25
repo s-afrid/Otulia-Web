@@ -4,12 +4,15 @@ import speed from '../../../assets/productpage/speed.png'
 import bikecc from '../../../assets/productpage/bikecc.png'
 
 const BikeKeyFeatures = ({ item }) => {
-  // Fallback data matching your screenshot
-  const specs = {
-    engine: item?.keySpecifications?.engineCapacity || "803 cc",
-    mileage: item?.keySpecifications?.mileage || "18–20 km/l",
-    fuel: item?.keySpecifications?.fuelTankCapacity || "13.5 liters"
-  };
+  const kSpecs = item?.keySpecifications || {};
+  
+  const specItems = [
+    { label: 'Engine', value: kSpecs.engineCapacity, icon: bikecc },
+    { label: 'Mileage', value: kSpecs.mileage, icon: speed },
+    { label: 'Fuel', value: kSpecs.fuelType, icon: fuelCapacity }
+  ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
+
+  if (specItems.length === 0) return null;
 
   return (
     <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-6 bg-white">
@@ -24,34 +27,14 @@ const BikeKeyFeatures = ({ item }) => {
 
         {/* Specifications Grid - Justified Center */}
         <div className="flex flex-wrap justify-center gap-6 w-full montserrat">
-          
-          {/* 1. ENGINE CARD */}
-          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-4 bg-white shadow-sm min-w-[200px] hover:border-teal-600 transition-colors cursor-default">
-            {/* Motorcycle Icon */}
-             <img className='w-16 h-auto object-contain' src={bikecc} alt='' />
-            <span className="text-lg md:text-xl font-bold text-black">
-              {specs.engine}
-            </span>
-          </div>
-
-          {/* 2. MILEAGE CARD */}
-          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-4 bg-white shadow-sm min-w-[200px] hover:border-teal-600 transition-colors cursor-default">
-            {/* Speedometer Icon */}
-            <img className='w-16 h-auto object-contain' src={speed} alt='' />
-            <span className="text-lg md:text-xl font-bold text-black">
-              {specs.mileage}
-            </span>
-          </div>
-
-          {/* 3. FUEL CARD */}
-          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-4 bg-white shadow-sm min-w-[200px] hover:border-teal-600 transition-colors cursor-default">
-            {/* Fuel Pump Icon */}
-            <img className='w-12 h-auto object-contain' src={fuelCapacity} alt='' />
-            <span className="text-lg md:text-xl font-bold text-black">
-              {specs.fuel}
-            </span>
-          </div>
-
+          {specItems.map((spec, index) => (
+            <div key={index} className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-4 bg-white shadow-sm min-w-[200px] hover:border-teal-600 transition-colors cursor-default">
+              <img className='w-16 h-auto object-contain' src={spec.icon} alt={spec.label} />
+              <span className="text-lg md:text-xl font-bold text-black">
+                {spec.value}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

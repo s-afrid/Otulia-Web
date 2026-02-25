@@ -45,8 +45,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
         // Yacht Specific
         yachtName: '', builder: '', length: '', beam: '', draft: '',
-        cruisingSpeed: '', guestCapacity: '', crewCapacity: '',
-        hullMaterial: '',
+        cruisingSpeed: '', topSpeed: '', usageHours: '', fuelConsumption: '',
+        guestCapacity: '', crewCapacity: '', engineType: '',
+        hullMaterial: '', interiorMaterial: '', exteriorColor: '',
+        countryOfFirstDelivery: '', numberOfOwners: '',
 
         // Real Estate Specific
         propertyName: '', propertyType: '', country: '', city: '', address: '',
@@ -59,6 +61,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
         // Bike Specific
         brand: '', engineCapacity: '', color: '',
+        maxPower: '', maxTorque: '', abs: '', tractionControl: '',
     };
 
     const [formData, setFormData] = useState(initialFormState);
@@ -138,33 +141,75 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 videoUrl: editData.videoUrl || '',
                 isPublic: editData.status === 'Active',
 
-                // Specifics mapping (same as before)
-                make: editData.brand || '',
+                // Specifics mapping
+                make: editData.brand || spec.brand || '',
+                brand: editData.brand || spec.brand || '',
                 model: spec.model || '',
                 variant: spec.variant || '',
-                year: spec.year || '',
-                mileage: spec.mileage || '',
-                fuelType: spec.fuelType || '',
+                year: spec.year || spec.yearOfConstruction || '',
+                mileage: spec.mileage || spec.mileageKM || '',
+                fuelType: spec.fuelType || spec.fuel || '',
                 transmission: spec.transmission || '',
                 exteriorColor: spec.exteriorColor || '',
                 interiorColor: spec.interiorColor || '',
                 condition: spec.condition || '',
-                yachtName: spec.yachtName || '',
-                builder: spec.builder || '',
+                accidentHistory: spec.accidentHistory || '',
+                
+                // Car Specific
+                horsepower: spec.power || '',
+                cylinderCapacity: spec.cylinderCapacity || '',
+                topSpeed: spec.topSpeed || '',
+                steering: spec.steering || '',
+                driveType: spec.drive || spec.driveType || '',
+                bodyType: spec.body || '',
+                series: spec.series || '',
+                interiorMaterial: spec.interiorMaterial || '',
+                manufacturerColorCode: spec.manufacturerColorCode || '',
+                matchingNumbers: spec.matchingNumbers || '',
+                accidentFree: spec.accidentFree || '',
+                countryOfFirstDelivery: spec.countryOfFirstDelivery || '',
+                ownershipCount: spec.numberOfOwners || spec.ownershipCount || '1',
+
+                // Yacht Specific
+                yachtName: spec.yachtName || editData.title || '',
+                builder: spec.builder || spec.brandBuilder || editData.builder || '',
                 length: spec.length || '',
                 beam: spec.beam || '',
-                propertyName: editData.title || '',
-                propertyType: keySpec.propertyType || '',
+                draft: spec.draft || '',
+                cruisingSpeed: spec.cruisingSpeed || '',
+                guestCapacity: spec.guestCapacity || '',
+                crewCapacity: spec.crewCapacity || '',
+                engineType: spec.engineType || '',
+                hullMaterial: spec.hullMaterial || '',
+
+                // Estate Specific
+                propertyName: editData.propertyName || editData.title || '',
+                propertyType: spec.propertyType || keySpec.propertyType || '',
                 builtUpArea: spec.builtUpArea || '',
                 landArea: spec.landArea || '',
                 bedrooms: spec.bedrooms || '',
                 bathrooms: spec.bathrooms || '',
-                brand: editData.brand || '',
-                engineCapacity: spec.engineCapacity || '',
+                floors: spec.floors || '',
+                furnishingStatus: spec.furnishingStatus || '',
+                architectureStyle: spec.architectureStyle || '',
                 configuration: spec.configuration || '',
-                cylinderCapacity: spec.cylinderCapacity || '',
-                interiorMaterial: spec.interiorMaterial || '',
-                countryOfFirstDelivery: spec.countryOfFirstDelivery || '',
+                interiorColorTheme: spec.interiorColorTheme || '',
+                exteriorFinish: spec.exteriorFinish || '',
+                climateControl: spec.climateControl || '',
+                usageStatus: spec.usageStatus || '',
+                country: spec.country || '',
+                city: spec.city || '',
+                address: spec.address || '',
+                areaNeighborhood: spec.areaNeighborhood || '',
+                latitude: spec.latitude || '',
+                longitude: spec.longitude || '',
+                amenities: editData.amenities || [],
+                smartHomeSystems: editData.smartHomeSystems || [],
+                viewTypes: editData.viewTypes || [],
+
+                // Bike Specific
+                engineCapacity: spec.engineCapacity || spec.engineCapacityCC || '',
+                color: spec.color || '',
             });
         }
     }, [isOpen, editData]);
@@ -199,6 +244,22 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             if (!formData.horsepower) formData.horsepower = formData.highlight_hp;
             if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
             if (!formData.engineType) formData.engineType = formData.highlight_engine_type;
+        } else if (assetType === 'Yacht') {
+            if (!formData.length) formData.length = formData.highlight_length;
+            if (!formData.bathrooms) formData.bathrooms = formData.highlight_baths;
+            if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
+            if (!formData.bedrooms) formData.bedrooms = formData.highlight_beds;
+            if (!formData.fuelCapacity) formData.fuelCapacity = formData.highlight_fuel;
+            if (!formData.engineType) formData.engineType = formData.highlight_engine_hp;
+        } else if (assetType === 'Estate') {
+            if (!formData.landArea) formData.landArea = formData.highlight_area;
+            if (!formData.bathrooms) formData.bathrooms = formData.highlight_baths;
+            if (!formData.builtUpArea) formData.builtUpArea = formData.highlight_built_area;
+            if (!formData.bedrooms) formData.bedrooms = formData.highlight_beds;
+            if (!formData.floors) formData.floors = formData.highlight_floors;
+        } else if (assetType === 'Bike') {
+            if (!formData.engineCapacity) formData.engineCapacity = formData.highlight_cc;
+            if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
         }
 
         // Construct Fixed Highlights based on Asset Type (Validation Removed)
@@ -379,6 +440,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Cylinder Capacity" name="cylinderCapacity" type="number" value={formData.cylinderCapacity} placeholder="e.g., 3990" onChange={handleInputChange} />
                                         <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} placeholder="e.g., Alcantara" onChange={handleInputChange} />
                                         <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} placeholder="e.g., Germany" onChange={handleInputChange} />
+                                        <InputField label="Body Type" name="bodyType" value={formData.bodyType} placeholder="e.g., Coupe" onChange={handleInputChange} />
+                                        <InputField label="Series" name="series" value={formData.series} placeholder="e.g., SF90" onChange={handleInputChange} />
+                                        <SelectField label="Steering" name="steering" value={formData.steering} options={['Left Hand Drive', 'Right Hand Drive']} onChange={handleInputChange} />
+                                        <SelectField label="Drive Type" name="driveType" value={formData.driveType} options={['AWD', 'RWD', 'FWD', '4WD']} onChange={handleInputChange} />
+                                        <InputField label="Manufacturer Color Code" name="manufacturerColorCode" value={formData.manufacturerColorCode} placeholder="e.g., FER 322" onChange={handleInputChange} />
+                                        <SelectField label="Matching Numbers" name="matchingNumbers" value={formData.matchingNumbers} options={['Yes', 'No']} onChange={handleInputChange} />
+                                        <SelectField label="Accident Free" name="accidentFree" value={formData.accidentFree} options={['Yes', 'No']} onChange={handleInputChange} />
                                     </>
                                 )}
                                 {assetType === 'Yacht' && (
@@ -395,8 +463,18 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Draft (m)" name="draft" type="number" value={formData.draft} placeholder="2.2" onChange={handleInputChange} />
                                         <InputField label="Engine Type" name="engineType" value={formData.engineType} placeholder="e.g., Twin MTU 16V 2000" onChange={handleInputChange} />
                                         <InputField label="Cruising Speed (knots)" name="cruisingSpeed" type="number" value={formData.cruisingSpeed} placeholder="22" onChange={handleInputChange} />
+                                        <InputField label="Top Speed (knots)" name="topSpeed" type="number" value={formData.topSpeed} placeholder="28" onChange={handleInputChange} />
+                                        <InputField label="Usage Hours" name="usageHours" value={formData.usageHours} placeholder="e.g., 500" onChange={handleInputChange} />
+                                        <InputField label="Fuel Consumption" name="fuelConsumption" value={formData.fuelConsumption} placeholder="e.g., 150 L/h" onChange={handleInputChange} />
                                         <InputField label="Guest Capacity" name="guestCapacity" type="number" value={formData.guestCapacity} placeholder="12" onChange={handleInputChange} />
                                         <InputField label="Crew Capacity" name="crewCapacity" type="number" value={formData.crewCapacity} placeholder="6" onChange={handleInputChange} />
+                                        <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Diesel', 'Gasoline', 'Hybrid', 'Electric']} onChange={handleInputChange} />
+                                        <SelectField label="Hull Material" name="hullMaterial" value={formData.hullMaterial} options={['Fiberglass', 'Steel', 'Aluminum', 'Carbon Fiber', 'Wood']} onChange={handleInputChange} />
+                                        <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic', 'Restored']} onChange={handleInputChange} />
+                                        <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} placeholder="e.g., Teak & Marble" onChange={handleInputChange} />
+                                        <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} placeholder="e.g., White" onChange={handleInputChange} />
+                                        <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} placeholder="e.g., Italy" onChange={handleInputChange} />
+                                        <InputField label="Number of Owners" name="numberOfOwners" type="number" value={formData.numberOfOwners} onChange={handleInputChange} />
                                     </>
                                 )}
                                 {assetType === 'Estate' && (
@@ -409,12 +487,15 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Country" name="country" value={formData.country} placeholder="e.g., Monaco" onChange={handleInputChange} />
                                         <InputField label="City" name="city" value={formData.city} placeholder="e.g., Monte Carlo" onChange={handleInputChange} />
                                         <InputField label="Address (Optional)" name="address" value={formData.address} placeholder="e.g., Avenue Princess Grace" onChange={handleInputChange} />
+                                        <InputField label="Area / Neighborhood" name="areaNeighborhood" value={formData.areaNeighborhood} placeholder="e.g., South Beach" onChange={handleInputChange} />
                                         <InputField label="Built-up Area (sq ft)" name="builtUpArea" type="number" value={formData.builtUpArea} placeholder="5500" onChange={handleInputChange} />
                                         <InputField label="Land Area (sq ft)" name="landArea" type="number" value={formData.landArea} placeholder="8000" onChange={handleInputChange} />
                                         <InputField label="Bedrooms" name="bedrooms" type="number" value={formData.bedrooms} placeholder="5" onChange={handleInputChange} />
                                         <InputField label="Bathrooms" name="bathrooms" type="number" value={formData.bathrooms} placeholder="6" onChange={handleInputChange} />
                                         <InputField label="Floors" name="floors" type="number" value={formData.floors} placeholder="2" onChange={handleInputChange} />
                                         <SelectField label="Furnishing Status" name="furnishingStatus" value={formData.furnishingStatus} options={['Unfurnished', 'Partially Furnished', 'Fully Furnished', 'Designer Furnished']} onChange={handleInputChange} />
+                                        <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 25.7617" onChange={handleInputChange} />
+                                        <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -80.1918" onChange={handleInputChange} />
                                     </>
                                 )}
                                 {assetType === 'Bike' && (
@@ -426,6 +507,18 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="28000" onChange={handleInputChange} />
                                         <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
                                         <LocationInputField label="Location" name="location" value={formData.location} placeholder="e.g., Miami, FL" onChange={handleInputChange} />
+                                        <InputField label="Engine Capacity (cc)" name="engineCapacity" type="number" value={formData.engineCapacity} placeholder="e.g., 1000" onChange={handleInputChange} />
+                                        <InputField label="Max Power" name="maxPower" value={formData.maxPower} placeholder="e.g., 214 hp" onChange={handleInputChange} />
+                                        <InputField label="Max Torque" name="maxTorque" value={formData.maxTorque} placeholder="e.g., 124 Nm" onChange={handleInputChange} />
+                                        <InputField label="Mileage (km)" name="mileage" type="number" value={formData.mileage} placeholder="e.g., 5000" onChange={handleInputChange} />
+                                        <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Petrol', 'Electric', 'Hybrid']} onChange={handleInputChange} />
+                                        <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Manual', 'Automatic', 'Semi-Automatic']} onChange={handleInputChange} />
+                                        <InputField label="Color" name="color" value={formData.color} placeholder="e.g., Midnight Black" onChange={handleInputChange} />
+                                        <SelectField label="ABS" name="abs" value={formData.abs} options={['Yes', 'No']} onChange={handleInputChange} />
+                                        <SelectField label="Traction Control" name="tractionControl" value={formData.tractionControl} options={['Yes', 'No']} onChange={handleInputChange} />
+                                        <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Pre-Owned', 'Classic']} onChange={handleInputChange} />
+                                        <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} />
+                                        <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
                                     </>
                                 )}
                             </div>

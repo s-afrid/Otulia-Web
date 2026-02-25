@@ -4,12 +4,16 @@ import speed from '../../../assets/productpage/speed.png'
 import engine from '../../../assets/productpage/engine.png'
 
 const CarKeyFeatures = ({ item }) => {
-  // Fallback data matching your screenshot
-  const specs = {
-    power: item?.keySpecifications?.power || "518 HP",
-    speed: item?.keySpecifications?.topSpeed || "300 km/h",
-    engine: item?.keySpecifications?.engineType || "Inline V6"
-  };
+  const kSpecs = item?.keySpecifications || {};
+  const specs = item?.specification || {};
+  
+  const specItems = [
+    { label: 'Power', value: kSpecs.power || specs.power, icon: power },
+    { label: 'Top Speed', value: kSpecs.topSpeed || specs.topSpeed, icon: speed },
+    { label: 'Engine', value: kSpecs.engineType || specs.engineType || specs.engine, icon: engine }
+  ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
+
+  if (specItems.length === 0) return null;
 
   return (
     <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-6 bg-white self-center">
@@ -24,38 +28,14 @@ const CarKeyFeatures = ({ item }) => {
 
         {/* Specifications Grid - Justified Center */}
         <div className="flex flex-wrap justify-center gap-6 w-full montserrat">
-
-          {/* 1. POWER CARD */}
-          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-4 bg-white shadow-sm min-w-[200px] hover:border-teal-600 transition-colors cursor-default">
-            <img className='w-12 h-auto object-contain' src={power} alt='Power' />
-
-            <span className="text-lg md:text-xl font-bold text-black">
-              {specs.power}
-            </span>
-          </div>
-
-          {/* 2. SPEED CARD */}
-
-          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-3 bg-white shadow-sm min-w-[180px] hover:border-teal-600 transition-colors cursor-default">
-            {/* Speedometer Icon */}
-            <img className='w-17 h-15' src={speed} alt='' />
-
-            <span className="text-lg md:text-xl font-bold text-black">
-              {specs.speed}
-            </span>
-          </div>
-
-          {/* 3. ENGINE TYPE CARD */}
-
-          <div className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-3 bg-white shadow-sm min-w-[180px] hover:border-teal-600 transition-colors cursor-default">
-            {/* Piston/Engine Block Icon */}
-            <img className='w-17 h-15' src={engine} alt='' />
-
-            <span className="text-lg md:text-xl font-bold text-black">
-              {specs.engine}
-            </span>
-          </div>
-
+          {specItems.map((spec, index) => (
+            <div key={index} className="flex items-center gap-3 border border-gray-200 rounded-lg px-6 py-4 bg-white shadow-sm min-w-[200px] hover:border-teal-600 transition-colors cursor-default">
+              <img className='w-12 h-auto object-contain' src={spec.icon} alt={spec.label} />
+              <span className="text-lg md:text-xl font-bold text-black">
+                {spec.value}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

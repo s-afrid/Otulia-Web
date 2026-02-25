@@ -12,22 +12,26 @@ const CarFeatures = ({ item }) => {
   };
 
   // 3. Helper function to render a single row
-  const SpecRow = ({ label, value, isLink = false, icon = null }) => (
-    <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
-      <span className="text-gray-500 font-normal text-sm md:text-base">
-        {label}
-      </span>
-      <div className="flex items-center gap-2 text-right">
-        {icon && <span>{icon}</span>}
-        <span
-          className={`text-sm md:text-base font-medium text-black ${isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
-            }`}
-        >
-          {value || "-"}
+  const SpecRow = ({ label, value, isLink = false, icon = null }) => {
+    if (!value || value === "-" || value === 0 || value === "0") return null;
+
+    return (
+      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
+        <span className="text-gray-500 font-normal text-sm md:text-base">
+          {label}
         </span>
+        <div className="flex items-center gap-2 text-right">
+          {icon && <span>{icon}</span>}
+          <span
+            className={`text-sm md:text-base font-medium text-black ${isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
+              }`}
+          >
+            {value}
+          </span>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
 
@@ -45,7 +49,9 @@ const CarFeatures = ({ item }) => {
           {/* Root Level Fields */}
           <SpecRow label="Make:" value={item?.brand} isLink />
           <SpecRow label="Model:" value={specs.model} isLink />
-          <SpecRow label="Variant:" value={item?.variant} />
+          <SpecRow label="Variant:" value={item?.variant || specs.variant} />
+          <SpecRow label="Series:" value={specs.series} />
+          <SpecRow label="Body:" value={specs.body} />
           <SpecRow label="Year:" value={specs.yearOfConstruction} />
           <SpecRow label="Listing Type:" value={item?.type} />
           
@@ -61,7 +67,7 @@ const CarFeatures = ({ item }) => {
 
           <SpecRow label="Top Speed:" value={specs.topSpeed} />
           <SpecRow label="Power:" value={specs.power} />
-          <SpecRow label="Engine Type:" value={specs.engineType} />
+          <SpecRow label="Engine Type:" value={specs.engineType || specs.engine} />
           <SpecRow label="Cylinder capacity:" value={specs.cylinderCapacity} />
           <SpecRow label="CO2 emissions:" value={specs.co2Emission} />
           <SpecRow label="Consumption:" value={specs.consumption} />
@@ -82,6 +88,8 @@ const CarFeatures = ({ item }) => {
   <SpecRow label="Matching numbers:" value={specs.matchingNumbers} />
   <SpecRow label="Condition:" value={specs.condition} />
   <SpecRow label="New / used:" value={specs.usageStatus} />
+  <SpecRow label="Accident Free:" value={specs.accidentFree} />
+  <SpecRow label="Accident History:" value={specs.accidentHistory} />
   <SpecRow label="Country of first delivery:" value={specs.countryOfFirstDelivery} />
   <SpecRow label="Number of vehicle owners:" value={specs.numberOfOwners} />
 
@@ -91,9 +99,9 @@ const CarFeatures = ({ item }) => {
     value={specs.carLocation}
     isLink
     icon={
-      // Simple German Flag placeholder using standard emoji or div
-      // Adjust based on country data if dynamic
-      <span className="text-xl">🇩🇪</span>
+      specs.carLocation && (
+      <span className="text-xl">📍</span>
+      )
     }
   />
 </div>

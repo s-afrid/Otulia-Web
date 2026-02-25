@@ -12,22 +12,29 @@ const EstateFeatures = ({ item }) => {
   };
 
   // 3. Helper function to render a single row
-  const SpecRow = ({ label, value, isLink = false, icon = null }) => (
-    <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
-      <span className="text-gray-500 font-normal text-sm md:text-base">
-        {label}
-      </span>
-      <div className="flex items-center gap-2 text-right">
-        {icon && <span>{icon}</span>}
-        <span
-          className={`text-sm md:text-base font-medium text-black ${isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
-            }`}
-        >
-          {value || "-"}
+  const SpecRow = ({ label, value, isLink = false, icon = null }) => {
+    if (!value || value === "-" || value === 0 || value === "0") return null;
+
+    return (
+      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
+        <span className="text-gray-500 font-normal text-sm md:text-base">
+          {label}
         </span>
+        <div className="flex items-center gap-2 text-right">
+          {icon && <span>{icon}</span>}
+          <span
+            className={`text-sm md:text-base font-medium text-black ${isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
+              }`}
+          >
+            {value}
+          </span>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  const amenitiesList = ['Pool', 'Garden', 'Parking', 'Security', 'Smart Home', 'Gym', 'Wine Cellar', 'Home Theater', 'Elevator'].filter(a => item?.amenities?.includes(a));
+  const smartHomeList = ['Lighting', 'Climate', 'Entertainment', 'Voice Assistant', 'Blinds'].filter(s => item?.smartHomeSystems?.includes(s));
 
   return (
     <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white montserrat">
@@ -49,23 +56,27 @@ const EstateFeatures = ({ item }) => {
           {/* Location Details */}
           <SpecRow
             label="Location:"
-            value={item?.location || `${specs.city}, ${specs.country}`}
+            value={item?.location || (specs.city && specs.country ? `${specs.city}, ${specs.country}` : null)}
             isLink
             icon={<span className="text-lg">📍</span>}
           />
           <SpecRow label="Address:" value={specs.address} />
           <SpecRow label="Neighborhood:" value={specs.areaNeighborhood} />
+          <SpecRow label="Latitude:" value={specs.latitude} />
+          <SpecRow label="Longitude:" value={specs.longitude} />
           <SpecRow label="Configuration:" value={specs.configuration} />
           <SpecRow label="Condition:" value={specs.condition} />
           <SpecRow label="Usage Status:" value={specs.usageStatus} />
 
           {/* Amenities */}
-          <div className="pt-6 mt-2">
-            <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2">Amenities</h4>
-            {['Pool', 'Garden', 'Parking', 'Security', 'Smart Home', 'Gym', 'Wine Cellar', 'Home Theater', 'Elevator'].map(amenity => (
-              <SpecRow key={amenity} label={amenity} value={item?.amenities?.includes(amenity) ? 'Yes' : '-'} />
-            ))}
-          </div>
+          {amenitiesList.length > 0 && (
+            <div className="pt-6 mt-2">
+              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2">Amenities</h4>
+              {amenitiesList.map(amenity => (
+                <SpecRow key={amenity} label={amenity} value="Yes" />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* RIGHT COLUMN - Dimensions, Specs & Materials */}
@@ -88,16 +99,18 @@ const EstateFeatures = ({ item }) => {
           <SpecRow label="Climate Control:" value={specs.climateControl} />
 
           {/* Smart Tech & Views */}
-          <div className="pt-6 mt-2">
-            <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2">Smart Home & Views</h4>
-            {['Lighting', 'Climate', 'Entertainment', 'Voice Assistant', 'Blinds'].map(tech => (
-              <SpecRow key={tech} label={`${tech} Control:`} value={item?.smartHomeSystems?.includes(tech) ? 'Yes' : '-'} />
-            ))}
-            <SpecRow
-              label="View Type:"
-              value={item?.viewTypes?.length > 0 ? item.viewTypes.map(v => `${v} View`).join(', ') : '-'}
-            />
-          </div>
+          {(smartHomeList.length > 0 || (item?.viewTypes && item.viewTypes.length > 0)) && (
+            <div className="pt-6 mt-2">
+              <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2">Smart Home & Views</h4>
+              {smartHomeList.map(tech => (
+                <SpecRow key={tech} label={`${tech} Control:`} value="Yes" />
+              ))}
+              <SpecRow
+                label="View Type:"
+                value={item?.viewTypes?.length > 0 ? item.viewTypes.map(v => `${v} View`).join(', ') : null}
+              />
+            </div>
+          )}
         </div>
 
       </div>

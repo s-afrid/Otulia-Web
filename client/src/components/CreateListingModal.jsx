@@ -44,6 +44,8 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         topSpeed: editData?.specification?.topSpeed || '',
         steering: editData?.specification?.steering || '',
         driveType: editData?.specification?.drive || '',
+        bodyType: editData?.specification?.body || '',
+        series: editData?.specification?.series || '',
         interiorMaterial: editData?.specification?.interiorMaterial || '',
         manufacturerColorCode: editData?.specification?.manufacturerColorCode || '',
         matchingNumbers: editData?.specification?.matchingNumbers || '',
@@ -55,6 +57,10 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         // Bike Specific
         brand: editData?.brand || editData?.specification?.brand || '',
         engineCapacity: editData?.specification?.engineCapacityCC || editData?.specification?.engineCapacity || '',
+        maxPower: editData?.specification?.maxPower || '',
+        maxTorque: editData?.specification?.maxTorque || '',
+        abs: editData?.specification?.abs || '',
+        tractionControl: editData?.specification?.tractionControl || '',
         color: editData?.specification?.color || '',
         ownershipCount: editData?.specification?.ownershipCount || '1',
 
@@ -65,10 +71,15 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         beam: editData?.specification?.beam || '',
         draft: editData?.specification?.draft || '',
         cruisingSpeed: editData?.specification?.cruisingSpeed || '',
+        topSpeed: editData?.specification?.topSpeed || '',
+        usageHours: editData?.specification?.usageHours || '',
+        fuelConsumption: editData?.specification?.fuelConsumption || '',
         guestCapacity: editData?.specification?.guestCapacity || '',
         crewCapacity: editData?.specification?.crewCapacity || '',
         engineType: editData?.specification?.engineType || '',
         hullMaterial: editData?.specification?.hullMaterial || '',
+        exteriorColor: editData?.specification?.exteriorColor || '',
+        numberOfOwners: editData?.specification?.numberOfOwners || '',
 
         // Estate Specific
         propertyName: editData?.title || editData?.propertyName || '',
@@ -95,6 +106,13 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         amenities: editData?.amenities || [],
         smartHomeSystems: editData?.smartHomeSystems || [],
         viewTypes: editData?.viewTypes || [],
+
+        // Key Highlights
+        highlight_hp: '', highlight_km: '', highlight_cc: '',
+        highlight_length: '', highlight_baths: '', highlight_beds: '',
+        highlight_area: '', highlight_kml: '', highlight_fuel: '',
+        highlight_garage: '', highlight_built_area: '', highlight_floors: '',
+        highlight_engine_hp: '', highlight_speed: '', highlight_engine_type: '',
     });
 
     const [images, setImages] = useState([]);
@@ -141,6 +159,8 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 topSpeed: spec.topSpeed || '',
                 steering: spec.steering || '',
                 driveType: spec.drive || '',
+                bodyType: spec.body || '',
+                series: spec.series || '',
                 interiorMaterial: spec.interiorMaterial || '',
                 manufacturerColorCode: spec.manufacturerColorCode || '',
                 matchingNumbers: spec.matchingNumbers || '',
@@ -151,19 +171,28 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
                 brand: editData.brand || spec.brand || '',
                 engineCapacity: spec.engineCapacityCC || spec.engineCapacity || '',
+                maxPower: spec.maxPower || '',
+                maxTorque: spec.maxTorque || '',
+                abs: spec.abs || '',
+                tractionControl: spec.tractionControl || '',
                 color: spec.color || '',
                 ownershipCount: spec.ownershipCount || '1',
 
                 yachtName: editData.title || '',
-                builder: editData.builder || spec.builder || '',
+                builder: editData.builder || spec.builder || spec.brandBuilder || '',
                 length: spec.length || '',
                 beam: spec.beam || '',
                 draft: spec.draft || '',
                 cruisingSpeed: spec.cruisingSpeed || '',
+                topSpeed: spec.topSpeed || '',
+                usageHours: spec.usageHours || '',
+                fuelConsumption: spec.fuelConsumption || '',
                 guestCapacity: spec.guestCapacity || '',
                 crewCapacity: spec.crewCapacity || '',
                 engineType: spec.engineType || '',
                 hullMaterial: spec.hullMaterial || '',
+                exteriorColor: spec.exteriorColor || '',
+                numberOfOwners: spec.numberOfOwners || '',
 
                 propertyName: editData.title || editData.propertyName || '',
                 propertyType: keySpec.propertyType || spec.propertyType || '',
@@ -189,6 +218,12 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 amenities: editData.amenities || [],
                 smartHomeSystems: editData.smartHomeSystems || [],
                 viewTypes: editData.viewTypes || [],
+
+                highlight_hp: '', highlight_km: '', highlight_cc: '',
+                highlight_length: '', highlight_baths: '', highlight_beds: '',
+                highlight_area: '', highlight_kml: '', highlight_fuel: '',
+                highlight_garage: '', highlight_built_area: '', highlight_floors: '',
+                highlight_engine_hp: '', highlight_speed: '', highlight_engine_type: '',
             });
         } else {
             setFormData({
@@ -196,18 +231,23 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 make: '', model: '', variant: '', year: new Date().getFullYear(),
                 mileage: '', fuelType: '', transmission: '', exteriorColor: '', interiorColor: '',
                 condition: '', accidentHistory: '', horsepower: '', cylinderCapacity: '', topSpeed: '',
-                steering: '', driveType: '', interiorMaterial: '', manufacturerColorCode: '',
+                steering: '', driveType: '', bodyType: '', series: '', interiorMaterial: '', manufacturerColorCode: '',
                 matchingNumbers: '', accidentFree: '', countryOfFirstDelivery: '',
                 numberOfOwners: '1', currentCarLocation: '',
-                brand: '', engineCapacity: '', color: '', ownershipCount: '1',
-                yachtName: '', builder: '', length: '', beam: '', draft: '', cruisingSpeed: '',
-                guestCapacity: '', crewCapacity: '', engineType: '', hullMaterial: '',
+                brand: '', engineCapacity: '', maxPower: '', maxTorque: '', abs: '', tractionControl: '', color: '', ownershipCount: '1',
+                yachtName: '', builder: '', length: '', beam: '', draft: '', cruisingSpeed: '', topSpeed: '', usageHours: '', fuelConsumption: '',
+                guestCapacity: '', crewCapacity: '', engineType: '', hullMaterial: '', exteriorColor: '', numberOfOwners: '',
                 propertyName: '', propertyType: '', architectureStyle: '', builtUpArea: '',
                 landArea: '', bedrooms: '', bathrooms: '', floors: '', furnishingStatus: '',
                 configuration: '', interiorColorTheme: '', exteriorFinish: '',
                 climateControl: '', usageStatus: '', country: '', city: '', address: '',
                 areaNeighborhood: '', latitude: '', longitude: '',
-                amenities: [], smartHomeSystems: [], viewTypes: []
+                amenities: [], smartHomeSystems: [], viewTypes: [],
+                highlight_hp: '', highlight_km: '', highlight_cc: '',
+                highlight_length: '', highlight_baths: '', highlight_beds: '',
+                highlight_area: '', highlight_kml: '', highlight_fuel: '',
+                highlight_garage: '', highlight_built_area: '', highlight_floors: '',
+                highlight_engine_hp: '', highlight_speed: '', highlight_engine_type: '',
             });
         }
     }, [editData, isOpen]);
@@ -221,7 +261,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     const handleFileChange = (e, type) => {
         const files = Array.from(e.target.files);
         if (type === 'images') {
-            setImages(prev => [...prev, ...files].slice(0, 5));
+            setImages(prev => [...prev, ...files].slice(0, 10));
         }
     };
 
@@ -229,32 +269,60 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         e.preventDefault();
         setLoading(true);
 
+        // Sync highlights to main fields to ensure backend keySpecs are populated
+        if (formData.category === 'Car') {
+            if (!formData.horsepower) formData.horsepower = formData.highlight_hp;
+            if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
+            if (!formData.engineType) formData.engineType = formData.highlight_engine_type;
+        } else if (formData.category === 'Yacht') {
+            if (!formData.length) formData.length = formData.highlight_length;
+            if (!formData.bathrooms) formData.bathrooms = formData.highlight_baths;
+            if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
+            if (!formData.bedrooms) formData.bedrooms = formData.highlight_beds;
+            if (!formData.fuelCapacity) formData.fuelCapacity = formData.highlight_fuel;
+            if (!formData.engineType) formData.engineType = formData.highlight_engine_hp;
+        } else if (formData.category === 'Estate') {
+            if (!formData.landArea) formData.landArea = formData.highlight_area;
+            if (!formData.bathrooms) formData.bathrooms = formData.highlight_baths;
+            if (!formData.builtUpArea) formData.builtUpArea = formData.highlight_built_area;
+            if (!formData.bedrooms) formData.bedrooms = formData.highlight_beds;
+            if (!formData.floors) formData.floors = formData.highlight_floors;
+        } else if (formData.category === 'Bike') {
+            if (!formData.engineCapacity) formData.engineCapacity = formData.highlight_cc;
+            if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
+        }
+
         // Construct Highlights
         let constructedHighlights = [];
         if (formData.category === 'Car') {
             constructedHighlights = [
-                formData.horsepower ? `${formData.horsepower} hp` : '',
-                formData.mileage ? `${formData.mileage} mi` : '',
-                formData.cylinderCapacity ? `${formData.cylinderCapacity} L` : ''
+                formData.highlight_speed ? `${formData.highlight_speed} mph` : '',
+                formData.highlight_engine_type ? `${formData.highlight_engine_type}` : '',
+                formData.highlight_hp ? `${formData.highlight_hp} hp` : ''
             ].filter(Boolean);
         } else if (formData.category === 'Yacht') {
             constructedHighlights = [
-                formData.length ? `${formData.length} M length` : '',
-                formData.bathrooms ? `Bathrooms: ${formData.bathrooms}` : '',
-                formData.engineType ? `Engine: ${formData.engineType}` : '',
-                formData.cruisingSpeed ? `Cruising Speed: ${formData.cruisingSpeed} knots` : ''
+                formData.highlight_length ? `${formData.highlight_length} M length` : '',
+                formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
+                formData.highlight_fuel ? `${formData.highlight_fuel} L fuel capacity` : '',
+                formData.highlight_engine_hp ? `${formData.highlight_engine_hp} HP total` : '',
+                formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
+                formData.highlight_speed ? `TopSpeed: ${formData.highlight_speed} knots` : ''
             ].filter(Boolean);
         } else if (formData.category === 'Estate') {
             constructedHighlights = [
-                formData.landArea ? `Land Area: ${formData.landArea} Sq Ft` : '',
-                formData.bathrooms ? `Bathrooms: ${formData.bathrooms}` : '',
-                formData.bedrooms ? `Bedrooms: ${formData.bedrooms}` : '',
-                formData.builtUpArea ? `Built Area: ${formData.builtUpArea} Sq Ft` : ''
+                formData.highlight_area ? `Land Area: ${formData.highlight_area} Acres` : '',
+                formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
+                formData.highlight_garage ? `Garage: ${formData.highlight_garage} Cars` : '',
+                formData.highlight_built_area ? `Built Area: ${formData.highlight_built_area} Sq Ft` : '',
+                formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
+                formData.highlight_floors ? `Floors: ${formData.highlight_floors}` : ''
             ].filter(Boolean);
         } else if (formData.category === 'Bike') {
             constructedHighlights = [
-                formData.engineCapacity ? `${formData.engineCapacity} cc` : '',
-                formData.mileage ? `${formData.mileage} km` : ''
+                formData.highlight_cc ? `${formData.highlight_cc} cc` : '',
+                formData.highlight_speed ? `${formData.highlight_speed} km/h` : '',
+                formData.highlight_fuel ? `${formData.highlight_fuel} liters` : ''
             ].filter(Boolean);
         }
 
@@ -262,6 +330,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         Object.keys(formData).forEach(key => {
             if (['amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
                 data.append(key, JSON.stringify(formData[key]));
+            } else if (key.startsWith('highlight_')) {
+                // Skip highlight input fields as they are processed above
+                return;
             } else {
                 data.append(key, formData[key]);
             }
@@ -381,12 +452,19 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} />
                                     <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} />
                                     <SelectField label="Drive Type" name="driveType" value={formData.driveType} options={['AWD', 'RWD', 'FWD', '4WD']} onChange={handleInputChange} />
+                                    <InputField label="Body Type" name="bodyType" value={formData.bodyType} onChange={handleInputChange} />
+                                    <InputField label="Series" name="series" value={formData.series} onChange={handleInputChange} />
+                                    <SelectField label="Steering" name="steering" value={formData.steering} options={['Left Hand Drive', 'Right Hand Drive']} onChange={handleInputChange} />
                                     <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} />
                                     <InputField label="Interior Color" name="interiorColor" value={formData.interiorColor} onChange={handleInputChange} />
                                     <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} />
+                                    <InputField label="Manufacturer Color Code" name="manufacturerColorCode" value={formData.manufacturerColorCode} onChange={handleInputChange} />
+                                    <SelectField label="Matching Numbers" name="matchingNumbers" value={formData.matchingNumbers} options={['Yes', 'No']} onChange={handleInputChange} />
                                     <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic', 'Restored']} onChange={handleInputChange} />
                                     <InputField label="Ownership Count" name="numberOfOwners" type="number" value={formData.numberOfOwners} onChange={handleInputChange} />
+                                    <SelectField label="Accident Free" name="accidentFree" value={formData.accidentFree} options={['Yes', 'No']} onChange={handleInputChange} />
                                     <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
+                                    <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} onChange={handleInputChange} />
                                 </>
                             )}
 
@@ -397,10 +475,14 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <InputField label="Variant" name="variant" value={formData.variant} onChange={handleInputChange} />
                                     <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
                                     <InputField label="Engine Capacity (cc)" name="engineCapacity" type="number" value={formData.engineCapacity} onChange={handleInputChange} />
+                                    <InputField label="Max Power" name="maxPower" value={formData.maxPower} onChange={handleInputChange} />
+                                    <InputField label="Max Torque" name="maxTorque" value={formData.maxTorque} onChange={handleInputChange} />
                                     <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} onChange={handleInputChange} />
                                     <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Petrol', 'Electric', 'Hybrid']} onChange={handleInputChange} />
                                     <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Manual', 'Automatic', 'Semi-Automatic']} onChange={handleInputChange} />
                                     <InputField label="Color" name="color" value={formData.color} onChange={handleInputChange} />
+                                    <SelectField label="ABS" name="abs" value={formData.abs} options={['Yes', 'No']} onChange={handleInputChange} />
+                                    <SelectField label="Traction Control" name="tractionControl" value={formData.tractionControl} options={['Yes', 'No']} onChange={handleInputChange} />
                                     <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic']} onChange={handleInputChange} />
                                     <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} />
                                     <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
@@ -418,10 +500,18 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <InputField label="Draft (m)" name="draft" type="number" value={formData.draft} onChange={handleInputChange} />
                                     <InputField label="Engine Type" name="engineType" value={formData.engineType} onChange={handleInputChange} />
                                     <InputField label="Cruising Speed (knots)" name="cruisingSpeed" type="number" value={formData.cruisingSpeed} onChange={handleInputChange} />
+                                    <InputField label="Top Speed (knots)" name="topSpeed" type="number" value={formData.topSpeed} onChange={handleInputChange} />
+                                    <InputField label="Usage Hours" name="usageHours" value={formData.usageHours} onChange={handleInputChange} />
+                                    <InputField label="Fuel Consumption" name="fuelConsumption" value={formData.fuelConsumption} onChange={handleInputChange} />
                                     <InputField label="Guest Capacity" name="guestCapacity" type="number" value={formData.guestCapacity} onChange={handleInputChange} />
                                     <InputField label="Crew Capacity" name="crewCapacity" type="number" value={formData.crewCapacity} onChange={handleInputChange} />
                                     <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Diesel', 'Gasoline', 'Hybrid', 'Electric']} onChange={handleInputChange} />
                                     <SelectField label="Hull Material" name="hullMaterial" value={formData.hullMaterial} options={['Fiberglass', 'Steel', 'Aluminum', 'Carbon Fiber', 'Wood']} onChange={handleInputChange} />
+                                    <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic', 'Restored']} onChange={handleInputChange} />
+                                    <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} />
+                                    <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} />
+                                    <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} onChange={handleInputChange} />
+                                    <InputField label="Number of Owners" name="numberOfOwners" type="number" value={formData.numberOfOwners} onChange={handleInputChange} />
                                 </>
                             )}
 
@@ -446,7 +536,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <InputField label="Country" name="country" value={formData.country} onChange={handleInputChange} />
                                     <InputField label="City" name="city" value={formData.city} onChange={handleInputChange} />
                                     <InputField label="Address" name="address" value={formData.address} onChange={handleInputChange} />
-
+                                    <InputField label="Area / Neighborhood" name="areaNeighborhood" value={formData.areaNeighborhood} onChange={handleInputChange} />
+                                    <InputField label="Latitude" name="latitude" value={formData.latitude} onChange={handleInputChange} />
+                                    <InputField label="Longitude" name="longitude" value={formData.longitude} onChange={handleInputChange} />
                                 </>
                             )}
                         </div>
@@ -502,6 +594,50 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         )}
                     </div>
 
+                    {/* Key Highlights (Key Specification) Section */}
+                    <div className="pt-4 border-t border-gray-100">
+                        <div className="flex flex-col mb-4">
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900">Key Highlights</h3>
+                            <p className="text-xs text-gray-400 italic">These specific details will be highlighted on your listing</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {formData.category === 'Car' && (
+                                <>
+                                    <InputField label="Top Speed (mph)" name="highlight_speed" value={formData.highlight_speed} placeholder="e.g. 211" onChange={handleInputChange} />
+                                    <InputField label="Engine Type" name="highlight_engine_type" value={formData.highlight_engine_type} placeholder="e.g. V12" onChange={handleInputChange} />
+                                    <InputField label="Horsepower (hp)" name="highlight_hp" value={formData.highlight_hp} placeholder="e.g. 789" onChange={handleInputChange} />
+                                </>
+                            )}
+                            {formData.category === 'Yacht' && (
+                                <>
+                                    <InputField label="Length (M)" name="highlight_length" value={formData.highlight_length} placeholder="e.g. 27" onChange={handleInputChange} />
+                                    <InputField label="Bathrooms" name="highlight_baths" value={formData.highlight_baths} placeholder="e.g. 6" onChange={handleInputChange} />
+                                    <InputField label="Fuel Capacity (L)" name="highlight_fuel" value={formData.highlight_fuel} placeholder="e.g. 9500" onChange={handleInputChange} />
+                                    <InputField label="Engine (HP total)" name="highlight_engine_hp" value={formData.highlight_engine_hp} placeholder="e.g. 3800" onChange={handleInputChange} />
+                                    <InputField label="Bedrooms" name="highlight_beds" value={formData.highlight_beds} placeholder="e.g. 7" onChange={handleInputChange} />
+                                    <InputField label="Top Speed (knots)" name="highlight_speed" value={formData.highlight_speed} placeholder="e.g. 28" onChange={handleInputChange} />
+                                </>
+                            )}
+                            {formData.category === 'Estate' && (
+                                <>
+                                    <InputField label="Land Area (Acres)" name="highlight_area" value={formData.highlight_area} placeholder="e.g. 0.5" onChange={handleInputChange} />
+                                    <InputField label="Bathrooms" name="highlight_baths" value={formData.highlight_baths} placeholder="e.g. 6" onChange={handleInputChange} />
+                                    <InputField label="Garage (Cars)" name="highlight_garage" value={formData.highlight_garage} placeholder="e.g. 3" onChange={handleInputChange} />
+                                    <InputField label="Built Area (Sq Ft)" name="highlight_built_area" value={formData.highlight_built_area} placeholder="e.g. 6500" onChange={handleInputChange} />
+                                    <InputField label="Bedrooms" name="highlight_beds" value={formData.highlight_beds} placeholder="e.g. 5" onChange={handleInputChange} />
+                                    <InputField label="Floors" name="highlight_floors" value={formData.highlight_floors} placeholder="e.g. 3" onChange={handleInputChange} />
+                                </>
+                            )}
+                            {formData.category === 'Bike' && (
+                                <>
+                                    <InputField label="Engine (cc)" name="highlight_cc" value={formData.highlight_cc} placeholder="e.g. 803" onChange={handleInputChange} />
+                                    <InputField label="Top Speed (km/h)" name="highlight_speed" value={formData.highlight_speed} placeholder="e.g. 175" onChange={handleInputChange} />
+                                    <InputField label="Fuel Capacity (L)" name="highlight_fuel" value={formData.highlight_fuel} placeholder="e.g. 13.5" onChange={handleInputChange} />
+                                </>
+                            )}
+                        </div>
+                    </div>
+
                     {/* Media Upload Section */}
                     <div className="space-y-6 pt-4 border-t border-gray-100">
                         <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4">Media & Documents</h3>
@@ -514,7 +650,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                 </div>
                                 <div>
                                     <h4 className="text-sm font-bold text-gray-900">Asset Images</h4>
-                                    <p className="text-xs text-gray-400">Upload high-quality images (Max 5)</p>
+                                    <p className="text-xs text-gray-400">Upload high-quality images (Max 10)</p>
                                 </div>
                             </div>
 

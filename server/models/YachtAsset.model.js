@@ -19,9 +19,9 @@ const yachtAssetSchema = new mongoose.Schema(
     // Modified based on the 6 icons in the image header
     keySpecifications: {
       length: String,           // e.g. "27 M length"
-      bathrooms: String,        // e.g. "6"
+      bathrooms: String,
       fuelCapacity: String,     // e.g. "9,500 L fuel capacity"
-      totalPower: String,       // e.g. "3,800 HP total"
+      engineType: String,
       bedrooms: String,         // e.g. "7"
       topSpeed: String          // e.g. "28 knots"
     },
@@ -36,10 +36,17 @@ const yachtAssetSchema = new mongoose.Schema(
       usageHours: String,         //
       topSpeed: String,           //
       enginePower: String,        //
+      engineType: String,
       cruisingSpeed: String,      //
       fuelConsumption: String,    //
       transmission: String,       //
       hullMaterial: String,       //
+      length: String,
+      beam: String,
+      draft: String,
+      guestCapacity: String,
+      crewCapacity: String,
+      yachtLocation: String,
 
       // Fuel / Right Column
       fuelType: String,           //

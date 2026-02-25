@@ -7,15 +7,18 @@ import bedRoom from '../../../assets/productpage/bedroom.png'
 import speed from '../../../assets/productpage/speed.png'
 
 const YachtKeyFeatures = ({ item }) => {
-  // Fallback data matching your screenshot
-  const specs = {
-    length: item?.keySpecifications?.length || "27 M length",
-    bathrooms: item?.keySpecifications?.bathrooms || "6",
-    fuel: item?.keySpecifications?.fuelCapacity || "9,500 L fuel capacity",
-    power: item?.keySpecifications?.totalPower || "3,800 HP total",
-    bedrooms: item?.keySpecifications?.bedrooms || "7",
-    speed: item?.keySpecifications?.topSpeed || "28 knots"
-  };
+  const kSpecs = item?.keySpecifications || {};
+  
+  const specItems = [
+    { label: null, value: kSpecs.length, icon: sqrtFt },
+    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: bathRoom },
+    { label: null, value: kSpecs.fuelCapacity, icon: fuelCapacity },
+    { label: 'Engine', value: kSpecs.engineType, icon: power },
+    { label: 'Bedrooms', value: kSpecs.bedrooms, icon: bedRoom },
+    { label: 'TopSpeed', value: kSpecs.topSpeed, icon: speed }
+  ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
+
+  if (specItems.length === 0) return null;
 
   // Helper component for a single feature card
   const FeatureCard = ({ icon, label, value }) => (
@@ -44,58 +47,14 @@ const YachtKeyFeatures = ({ item }) => {
 
       {/* Grid Layout: 1 col mobile, 2 cols tablet, 3 cols desktop */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        {/* 1. LENGTH CARD */}
-        <FeatureCard 
-          value={specs.length}
-          icon={
-            <img className='w-15 h-15' src={sqrtFt} alt='' />
-          }
-        />
-
-        {/* 2. BATHROOMS CARD */}
-        <FeatureCard 
-          label="Bathrooms"
-          value={specs.bathrooms}
-          icon={
-            <img className='w-17 h-15' src={bathRoom} alt='' />
-          }
-        />
-
-        {/* 3. FUEL CAPACITY CARD */}
-        <FeatureCard 
-          value={specs.fuel}
-          icon={
-            <img className='w-15 h-15' src={fuelCapacity} alt='' />
-          }
-        />
-
-        {/* 4. TOTAL POWER CARD */}
-        <FeatureCard 
-          value={specs.power}
-          icon={
-              <img className='w-19 h-15' src={power} alt='' />
-          }
-        />
-
-        {/* 5. BEDROOMS CARD */}
-        <FeatureCard 
-          label="Bedrooms"
-          value={specs.bedrooms}
-          icon={
-             <img className='w-16 h-15' src={bedRoom} alt='' />
-          }
-        />
-
-        {/* 6. TOP SPEED CARD */}
-        <FeatureCard 
-          label="TopSpeed"
-          value={specs.speed}
-          icon={
-             <img className='w-17 h-15' src={speed} alt='' />
-          }
-        />
-
+        {specItems.map((spec, index) => (
+          <FeatureCard 
+            key={index}
+            label={spec.label}
+            value={spec.value}
+            icon={<img className='w-15 h-15 object-contain' src={spec.icon} alt={spec.label || 'Feature'} />}
+          />
+        ))}
       </div>
     </div>
   );
