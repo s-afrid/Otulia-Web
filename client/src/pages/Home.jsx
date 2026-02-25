@@ -10,7 +10,7 @@ import BrandCarousel from '../components/home_page/BrandCarousel'
 
 const Home = () => {
   return (
-    <div className='relative w-full overflow-x-hidden pt-24'>
+    <div className='relative w-full overflow-x-hidden'>
       <Navbar />
       <Hero />
 
