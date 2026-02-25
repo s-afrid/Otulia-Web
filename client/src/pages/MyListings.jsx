@@ -90,6 +90,8 @@ const MyListings = () => {
     };
 
     const handleCreateClick = () => {
+        // Verification check commented out for Freemium users - No longer required to submit docs before adding assets
+        /*
         if (user?.verificationStatus === 'Pending') {
             alert("Your dealer verification is currently pending approval. You will be notified once approved.");
             return;
@@ -103,6 +105,7 @@ const MyListings = () => {
             setIsVerificationModalOpen(true);
             return;
         }
+        */
 
         const currentCount = listings.length;
         const currentPlan = user?.plan || 'Freemium';
