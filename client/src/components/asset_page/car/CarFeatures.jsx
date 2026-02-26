@@ -71,14 +71,13 @@ const CarFeatures = ({ item }) => {
           <SpecRow label="Cylinder capacity:" value={specs.cylinderCapacity} />
           <SpecRow label="CO2 emissions:" value={specs.co2Emission} />
           <SpecRow label="Consumption:" value={specs.consumption} />
-          <SpecRow label="Steering:" value={specs.steering} />
-          <SpecRow label="Transmission:" value={specs.transmission} />
-          <SpecRow label="Drive:" value={specs.drive} />
-
         </div>
 
 {/* RIGHT COLUMN - Technical & Condition */}
 <div className="flex flex-col">
+  <SpecRow label="Steering:" value={specs.steering} />
+  <SpecRow label="Transmission:" value={specs.transmission} />
+  <SpecRow label="Drive:" value={specs.drive} />
   <SpecRow label="Fuel:" value={specs.fuel} />
   <SpecRow label="Configuration:" value={specs.configuration} />
   <SpecRow label="Interior material:" value={specs.interiorMaterial} />
@@ -92,18 +91,6 @@ const CarFeatures = ({ item }) => {
   <SpecRow label="Accident History:" value={specs.accidentHistory} />
   <SpecRow label="Country of first delivery:" value={specs.countryOfFirstDelivery} />
   <SpecRow label="Number of vehicle owners:" value={specs.numberOfOwners} />
-
-  {/* Location Row with Flag */}
-  <SpecRow
-    label="Car location:"
-    value={specs.carLocation}
-    isLink
-    icon={
-      specs.carLocation && (
-      <span className="text-xl">📍</span>
-      )
-    }
-  />
 </div>
 
       </div>

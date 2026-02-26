@@ -56,16 +56,6 @@ const YachtFeatures = ({ item }) => {
             isLink 
             icon={<span className="text-lg">📍</span>}
           />
-          <SpecRow label="Usage Hours:" value={specs.usageHours} />
-          <SpecRow label="Condition:" value={specs.condition} />
-          <SpecRow label="Usage Status:" value={specs.usageStatus} />
-          <SpecRow label="Matching Numbers:" value={specs.matchingNumbers} />
-          <SpecRow label="Country of First Delivery:" value={specs.countryOfFirstDelivery} />
-          <SpecRow label="Number of Owners:" value={specs.numberOfOwners} />
-        </div>
-
-        {/* RIGHT COLUMN - Technical Specs & Dimensions */}
-        <div className="flex flex-col">
           <SpecRow label="Length:" value={keySpecs.length || specs.length} />
           <SpecRow label="Beam:" value={keySpecs.beam || specs.beam} />
           <SpecRow label="Draft:" value={keySpecs.draft || specs.draft} />
@@ -73,9 +63,18 @@ const YachtFeatures = ({ item }) => {
           <SpecRow label="Engine Type:" value={keySpecs.engineType || specs.engineType} />
           <SpecRow label="Cruising Speed:" value={keySpecs.cruisingSpeed || specs.cruisingSpeed} />
           <SpecRow label="Top Speed:" value={keySpecs.topSpeed || specs.topSpeed} />
-          <SpecRow label="Yacht Location:" value={specs.yachtLocation} />
           <SpecRow label="Fuel Capacity:" value={keySpecs.fuelCapacity} />
           <SpecRow label="Fuel Consumption:" value={specs.fuelConsumption} />
+        </div>
+
+        {/* RIGHT COLUMN - Technical Specs & Dimensions */}
+        <div className="flex flex-col">
+          <SpecRow label="Usage Hours:" value={specs.usageHours} />
+          <SpecRow label="Condition:" value={specs.condition} />
+          <SpecRow label="Usage Status:" value={specs.usageStatus} />
+          <SpecRow label="Matching Numbers:" value={specs.matchingNumbers} />
+          <SpecRow label="Country of First Delivery:" value={specs.countryOfFirstDelivery} />
+          <SpecRow label="Number of Owners:" value={specs.numberOfOwners} />
           <SpecRow label="Fuel Type:" value={specs.fuelType} />
           <SpecRow label="Transmission:" value={specs.transmission} />
           <SpecRow label="Hull Material:" value={specs.hullMaterial} />

@@ -67,16 +67,16 @@ const BikeFeatures = ({ item }) => {
           <SpecRow label="Mileage:" value={keySpecs.mileage || specs.mileageKM} />
           <SpecRow label="Fuel Type:" value={keySpecs.fuelType || specs.fuelType} />
           <SpecRow label="Transmission:" value={keySpecs.transmission || specs.transmission} />
+        </div>
 
+        {/* RIGHT COLUMN - Safety, Wheels & Condition */}
+        <div className="flex flex-col">
           <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2 mt-4">Chassis & Suspension</h4>
           <SpecRow label="Frame:" value={specs.frame} />
           <SpecRow label="Front Suspension:" value={specs.frontSuspension} />
           <SpecRow label="Front Brake:" value={specs.frontBrake} />
           <SpecRow label="Rear Brake:" value={specs.rearBrake} />
-        </div>
 
-        {/* RIGHT COLUMN - Safety, Wheels & Condition */}
-        <div className="flex flex-col">
           <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2 mt-4">Safety & Electronics</h4>
           <SpecRow label="ABS:" value={specs.abs} />
           <SpecRow label="Traction Control:" value={specs.tractionControl} />

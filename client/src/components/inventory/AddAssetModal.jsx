@@ -416,17 +416,30 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 </button>
                             </div>
 
+                            {/* Common Details for all types */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8 pb-8 border-b border-gray-50">
+                                <InputField 
+                                    label={assetType === 'Estate' ? "Property Name" : (assetType === 'Yacht' ? "Yacht Name" : "Make / Brand")} 
+                                    name={assetType === 'Estate' ? "propertyName" : (assetType === 'Yacht' ? "yachtName" : "make")} 
+                                    value={assetType === 'Estate' ? formData.propertyName : (assetType === 'Yacht' ? formData.yachtName : formData.make)} 
+                                    placeholder={assetType === 'Estate' ? "e.g., Monaco Penthouse" : "e.g., Ferrari / Azimut"} 
+                                    onChange={handleInputChange} 
+                                />
+                                <InputField label="Model" name="model" value={formData.model} placeholder="e.g., SF90 / Grande 32" onChange={handleInputChange} />
+                                <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} />
+                                <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
+                                <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="625000" onChange={handleInputChange} />
+                                <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
+                                <LocationInputField label="Location" name="location" value={formData.location} placeholder="Beverly Hills, CA" onChange={handleInputChange} />
+                            </div>
+
                             {/* Specifications Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8 pt-8">
                                 {assetType === 'Car' && (
                                     <>
-                                        <InputField label="Make" name="make" value={formData.make} placeholder="e.g., Ferrari" onChange={handleInputChange} />
-                                        <InputField label="Model" name="model" value={formData.model} placeholder="e.g., SF90 Stradale" onChange={handleInputChange} />
-                                        <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano" onChange={handleInputChange} />
-                                        <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
-                                        <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="625000" onChange={handleInputChange} />
-                                        <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
-                                        <LocationInputField label="Location" name="location" value={formData.location} placeholder="Beverly Hills, CA" onChange={handleInputChange} />
+                                        <InputField label="Horsepower" name="horsepower" value={formData.horsepower} placeholder="e.g., 789" onChange={handleInputChange} />
+                                        <InputField label="Top Speed" name="topSpeed" value={formData.topSpeed} placeholder="e.g., 211" onChange={handleInputChange} />
+                                        <InputField label="Engine Type" name="engineType" value={formData.engineType} placeholder="e.g., V12" onChange={handleInputChange} />
                                         <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} placeholder="1500" onChange={handleInputChange} />
                                         <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} />
                                         <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} />
@@ -451,13 +464,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 )}
                                 {assetType === 'Yacht' && (
                                     <>
-                                        <InputField label="Yacht Name" name="yachtName" value={formData.yachtName} placeholder="e.g., Sea Legend" onChange={handleInputChange} />
-                                        <InputField label="Builder" name="builder" value={formData.builder} placeholder="e.g., Azimut" onChange={handleInputChange} />
-                                        <InputField label="Model" name="model" value={formData.model} placeholder="e.g., Grande 32 Metri" onChange={handleInputChange} />
-                                        <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
-                                        <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="8500000" onChange={handleInputChange} />
-                                        <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
-                                        <LocationInputField label="Location / Marina" name="location" value={formData.location} placeholder="e.g., Monaco, Port Hercules" onChange={handleInputChange} />
                                         <InputField label="Length (m)" name="length" type="number" value={formData.length} placeholder="32" onChange={handleInputChange} />
                                         <InputField label="Beam (m)" name="beam" type="number" value={formData.beam} placeholder="7.5" onChange={handleInputChange} />
                                         <InputField label="Draft (m)" name="draft" type="number" value={formData.draft} placeholder="2.2" onChange={handleInputChange} />
@@ -479,11 +485,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 )}
                                 {assetType === 'Estate' && (
                                     <>
-                                        <InputField label="Property Name" name="propertyName" value={formData.propertyName} placeholder="e.g., Monaco Penthouse Suite" onChange={handleInputChange} />
                                         <SelectField label="Property Type" name="propertyType" value={formData.propertyType} options={['Villa', 'Penthouse', 'Apartment', 'Mansion', 'Estate']} onChange={handleInputChange} />
-                                        <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="28000000" onChange={handleInputChange} />
-                                        <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
-                                        <LocationInputField label="Location" name="location" value={formData.location} placeholder="e.g., Miami, FL" onChange={handleInputChange} />
                                         <InputField label="Country" name="country" value={formData.country} placeholder="e.g., Monaco" onChange={handleInputChange} />
                                         <InputField label="City" name="city" value={formData.city} placeholder="e.g., Monte Carlo" onChange={handleInputChange} />
                                         <InputField label="Address (Optional)" name="address" value={formData.address} placeholder="e.g., Avenue Princess Grace" onChange={handleInputChange} />
@@ -500,13 +502,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 )}
                                 {assetType === 'Bike' && (
                                     <>
-                                        <InputField label="Brand" name="brand" value={formData.brand} placeholder="e.g., Ducati" onChange={handleInputChange} />
-                                        <InputField label="Model" name="model" value={formData.model} placeholder="e.g., Panigale V4" onChange={handleInputChange} />
-                                        <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., S" onChange={handleInputChange} />
-                                        <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
-                                        <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="28000" onChange={handleInputChange} />
-                                        <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
-                                        <LocationInputField label="Location" name="location" value={formData.location} placeholder="e.g., Miami, FL" onChange={handleInputChange} />
                                         <InputField label="Engine Capacity (cc)" name="engineCapacity" type="number" value={formData.engineCapacity} placeholder="e.g., 1000" onChange={handleInputChange} />
                                         <InputField label="Max Power" name="maxPower" value={formData.maxPower} placeholder="e.g., 214 hp" onChange={handleInputChange} />
                                         <InputField label="Max Torque" name="maxTorque" value={formData.maxTorque} placeholder="e.g., 124 Nm" onChange={handleInputChange} />

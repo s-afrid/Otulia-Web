@@ -441,11 +441,6 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {formData.category === 'Car' && (
                                 <>
-                                    <InputField label="Make" name="make" value={formData.make} onChange={handleInputChange} />
-                                    <InputField label="Model" name="model" value={formData.model} onChange={handleInputChange} />
-                                    <InputField label="Variant" name="variant" value={formData.variant} onChange={handleInputChange} />
-                                    <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
-                                    <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} onChange={handleInputChange} />
                                     <InputField label="Horsepower" name="horsepower" value={formData.horsepower} onChange={handleInputChange} />
                                     <InputField label="Engine Capacity (L)" name="cylinderCapacity" value={formData.cylinderCapacity} onChange={handleInputChange} />
                                     <InputField label="Top Speed" name="topSpeed" value={formData.topSpeed} onChange={handleInputChange} />
@@ -460,30 +455,21 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} />
                                     <InputField label="Manufacturer Color Code" name="manufacturerColorCode" value={formData.manufacturerColorCode} onChange={handleInputChange} />
                                     <SelectField label="Matching Numbers" name="matchingNumbers" value={formData.matchingNumbers} options={['Yes', 'No']} onChange={handleInputChange} />
-                                    <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic', 'Restored']} onChange={handleInputChange} />
-                                    <InputField label="Ownership Count" name="numberOfOwners" type="number" value={formData.numberOfOwners} onChange={handleInputChange} />
                                     <SelectField label="Accident Free" name="accidentFree" value={formData.accidentFree} options={['Yes', 'No']} onChange={handleInputChange} />
                                     <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
-                                    <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} onChange={handleInputChange} />
                                 </>
                             )}
 
                             {formData.category === 'Bike' && (
                                 <>
-                                    <InputField label="Brand" name="brand" value={formData.brand} onChange={handleInputChange} />
-                                    <InputField label="Model" name="model" value={formData.model} onChange={handleInputChange} />
-                                    <InputField label="Variant" name="variant" value={formData.variant} onChange={handleInputChange} />
-                                    <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
                                     <InputField label="Engine Capacity (cc)" name="engineCapacity" type="number" value={formData.engineCapacity} onChange={handleInputChange} />
                                     <InputField label="Max Power" name="maxPower" value={formData.maxPower} onChange={handleInputChange} />
                                     <InputField label="Max Torque" name="maxTorque" value={formData.maxTorque} onChange={handleInputChange} />
-                                    <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} onChange={handleInputChange} />
                                     <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Petrol', 'Electric', 'Hybrid']} onChange={handleInputChange} />
                                     <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Manual', 'Automatic', 'Semi-Automatic']} onChange={handleInputChange} />
                                     <InputField label="Color" name="color" value={formData.color} onChange={handleInputChange} />
                                     <SelectField label="ABS" name="abs" value={formData.abs} options={['Yes', 'No']} onChange={handleInputChange} />
                                     <SelectField label="Traction Control" name="tractionControl" value={formData.tractionControl} options={['Yes', 'No']} onChange={handleInputChange} />
-                                    <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic']} onChange={handleInputChange} />
                                     <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} />
                                     <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
                                 </>
@@ -491,10 +477,6 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
                             {formData.category === 'Yacht' && (
                                 <>
-                                    <InputField label="Yacht Name" name="yachtName" value={formData.yachtName} onChange={handleInputChange} />
-                                    <InputField label="Builder" name="builder" value={formData.builder} onChange={handleInputChange} />
-                                    <InputField label="Model" name="model" value={formData.model} onChange={handleInputChange} />
-                                    <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
                                     <InputField label="Length (m)" name="length" type="number" value={formData.length} onChange={handleInputChange} />
                                     <InputField label="Beam (m)" name="beam" type="number" value={formData.beam} onChange={handleInputChange} />
                                     <InputField label="Draft (m)" name="draft" type="number" value={formData.draft} onChange={handleInputChange} />
@@ -507,17 +489,14 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <InputField label="Crew Capacity" name="crewCapacity" type="number" value={formData.crewCapacity} onChange={handleInputChange} />
                                     <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Diesel', 'Gasoline', 'Hybrid', 'Electric']} onChange={handleInputChange} />
                                     <SelectField label="Hull Material" name="hullMaterial" value={formData.hullMaterial} options={['Fiberglass', 'Steel', 'Aluminum', 'Carbon Fiber', 'Wood']} onChange={handleInputChange} />
-                                    <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic', 'Restored']} onChange={handleInputChange} />
                                     <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} />
                                     <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} />
-                                    <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} onChange={handleInputChange} />
                                     <InputField label="Number of Owners" name="numberOfOwners" type="number" value={formData.numberOfOwners} onChange={handleInputChange} />
                                 </>
                             )}
 
                             {formData.category === 'Estate' && (
                                 <>
-                                    <InputField label="Property Name" name="propertyName" value={formData.propertyName} onChange={handleInputChange} />
                                     <SelectField label="Property Type" name="propertyType" value={formData.propertyType} options={['Villa', 'Penthouse', 'Apartment', 'Mansion', 'Estate']} onChange={handleInputChange} />
                                     <InputField label="Built-up Area (sq ft)" name="builtUpArea" type="number" value={formData.builtUpArea} onChange={handleInputChange} />
                                     <InputField label="Land Area (sq ft)" name="landArea" type="number" value={formData.landArea} onChange={handleInputChange} />
@@ -532,7 +511,6 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <InputField label="Exterior Finish" name="exteriorFinish" value={formData.exteriorFinish} onChange={handleInputChange} />
                                     <InputField label="Climate Control" name="climateControl" value={formData.climateControl} onChange={handleInputChange} />
                                     <SelectField label="Usage Status" name="usageStatus" value={formData.usageStatus} options={['Vacant', 'Owner Occupied', 'Tenanted']} onChange={handleInputChange} />
-                                    <InputField label="Construction Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
                                     <InputField label="Country" name="country" value={formData.country} onChange={handleInputChange} />
                                     <InputField label="City" name="city" value={formData.city} onChange={handleInputChange} />
                                     <InputField label="Address" name="address" value={formData.address} onChange={handleInputChange} />
