@@ -21,6 +21,7 @@ const estateAssetSchema = new mongoose.Schema(
       bedrooms: String,
       bathrooms: String,
       floors: String,
+      garageCapacity: String,
       builtUpArea: String,
       landArea: String,
       propertyType: String
@@ -35,6 +36,7 @@ const estateAssetSchema = new mongoose.Schema(
       floors: Number,
       bedrooms: Number,
       bathrooms: Number,
+      garageCapacity: Number,
       furnishingStatus: String,
       configuration: String,
       interiorMaterial: String,

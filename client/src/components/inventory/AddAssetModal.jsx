@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
     FiX, FiArrowLeft, FiImage, FiPlus,
     FiTrash2, FiVideo, FiCheck, FiChevronRight,
-    FiCheckCircle, FiInfo, FiMapPin, FiUploadCloud
+    FiCheckCircle, FiInfo, FiMapPin, FiUploadCloud,
+    FiChevronDown
 } from 'react-icons/fi';
 import { useAuth } from '../../contexts/AuthContext';
 import carIcon from '../../assets/icons/car_icon.png'
@@ -23,7 +24,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const initialFormState = {
         // Common
         make: '', model: '', variant: '', year: new Date().getFullYear(),
-        price: '', type: 'Sale', location: '', description: '',
+        price: '', isPriceOnRequest: false, type: 'Sale', location: '', description: '',
         videoUrl: '', isPublic: true,
 
         // Fixed Highlights Keys
@@ -53,6 +54,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         // Real Estate Specific
         propertyName: '', propertyType: '', country: '', city: '', address: '',
         builtUpArea: '', landArea: '', bedrooms: '', bathrooms: '', floors: '',
+        garageCapacity: '',
         furnishingStatus: '', architectureStyle: '', configuration: '',
         interiorColorTheme: '', exteriorFinish: '',
         climateControl: '', usageStatus: '',
@@ -135,6 +137,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 ...initialFormState,
                 // Common
                 price: editData.price || '',
+                isPriceOnRequest: editData.isPriceOnRequest || false,
                 type: editData.type || 'Sale',
                 location: editData.location || '',
                 description: editData.description || '',
@@ -190,6 +193,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 bedrooms: spec.bedrooms || '',
                 bathrooms: spec.bathrooms || '',
                 floors: spec.floors || '',
+                garageCapacity: spec.garageCapacity || '',
                 furnishingStatus: spec.furnishingStatus || '',
                 architectureStyle: spec.architectureStyle || '',
                 configuration: spec.configuration || '',
@@ -257,6 +261,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             if (!formData.builtUpArea) formData.builtUpArea = formData.highlight_built_area;
             if (!formData.bedrooms) formData.bedrooms = formData.highlight_beds;
             if (!formData.floors) formData.floors = formData.highlight_floors;
+            if (!formData.garageCapacity) formData.garageCapacity = formData.highlight_garage;
         } else if (assetType === 'Bike') {
             if (!formData.engineCapacity) formData.engineCapacity = formData.highlight_cc;
             if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
@@ -428,27 +433,31 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 <InputField label="Model" name="model" value={formData.model} placeholder="e.g., SF90 / Grande 32" onChange={handleInputChange} />
                                 <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} />
                                 <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
-                                <div className="flex flex-col gap-2">
+                                <div className="flex flex-col gap-3">
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Price ($)</label>
-                                    <div className="flex gap-2">
-                                        <input 
-                                            type="number" 
-                                            name="price" 
-                                            value={formData.price} 
-                                            disabled={formData.isPriceOnRequest}
-                                            required={!formData.isPriceOnRequest}
-                                            className="flex-1 p-3 bg-gray-50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] transition-all disabled:opacity-50" 
-                                            onChange={handleInputChange} 
-                                        />
+                                    <input 
+                                        type="number" 
+                                        name="price" 
+                                        value={formData.price} 
+                                        disabled={formData.isPriceOnRequest}
+                                        required={!formData.isPriceOnRequest}
+                                        placeholder={formData.isPriceOnRequest ? "Price on Request" : "0.00"}
+                                        className="w-full p-3.5 bg-gray-50/50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all disabled:opacity-50 font-medium" 
+                                        onChange={handleInputChange} 
+                                    />
+                                    <div className="relative">
                                         <select 
                                             name="isPriceOnRequest" 
                                             value={formData.isPriceOnRequest} 
-                                            className="w-32 p-3 bg-gray-50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A]"
+                                            className="w-full p-3 bg-gray-50/50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all appearance-none cursor-pointer pr-10 text-[10px] font-bold uppercase tracking-widest text-gray-500"
                                             onChange={(e) => setFormData({ ...formData, isPriceOnRequest: e.target.value === 'true' })}
                                         >
-                                            <option value="false">Show</option>
-                                            <option value="true">On Request</option>
+                                            <option value="false">Show Fixed Price</option>
+                                            <option value="true">Price On Request</option>
                                         </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                            <FiChevronDown />
+                                        </div>
                                     </div>
                                 </div>
                                 <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
@@ -521,6 +530,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Bedrooms" name="bedrooms" type="number" value={formData.bedrooms} placeholder="5" onChange={handleInputChange} />
                                         <InputField label="Bathrooms" name="bathrooms" type="number" value={formData.bathrooms} placeholder="6" onChange={handleInputChange} />
                                         <InputField label="Floors" name="floors" type="number" value={formData.floors} placeholder="2" onChange={handleInputChange} />
+                                        <InputField label="Garage Capacity (Cars)" name="garageCapacity" type="number" value={formData.garageCapacity} placeholder="3" onChange={handleInputChange} />
                                         <SelectField label="Furnishing Status" name="furnishingStatus" value={formData.furnishingStatus} options={['Unfurnished', 'Partially Furnished', 'Fully Furnished', 'Designer Furnished']} onChange={handleInputChange} />
                                         <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 25.7617" onChange={handleInputChange} />
                                         <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -80.1918" onChange={handleInputChange} />
@@ -910,15 +920,20 @@ const InputField = ({ label, name, value, type = "text", placeholder, onChange }
 const SelectField = ({ label, name, value, options, onChange }) => (
     <div>
         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">{label}</label>
-        <select
-            name={name}
-            value={value}
-            onChange={onChange}
-            className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-5 py-3.5 text-sm font-medium focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all appearance-none cursor-pointer"
-        >
-            <option value="">Select {label.toLowerCase()}</option>
-            {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-        </select>
+        <div className="relative">
+            <select
+                name={name}
+                value={value}
+                onChange={onChange}
+                className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-5 py-3.5 text-sm font-medium focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all appearance-none cursor-pointer pr-10"
+            >
+                <option value="">Select {label.toLowerCase()}</option>
+                {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+            </select>
+            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <FiChevronDown />
+            </div>
+        </div>
     </div>
 );
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiX, FiUploadCloud, FiCheckCircle } from 'react-icons/fi';
+import { FiX, FiUploadCloud, FiCheckCircle, FiChevronDown } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 
 const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
@@ -19,6 +19,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     const [formData, setFormData] = useState({
         title: editData?.title || '',
         price: editData?.price || '',
+        isPriceOnRequest: editData?.isPriceOnRequest || false,
         category: normalizeCategory(editData),
         type: editData?.type || 'Sale',
         location: editData?.location || '',
@@ -90,6 +91,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         bedrooms: editData?.specification?.bedrooms || '',
         bathrooms: editData?.specification?.bathrooms || '',
         floors: editData?.specification?.floors || '',
+        garageCapacity: editData?.specification?.garageCapacity || '',
         furnishingStatus: editData?.specification?.furnishingStatus || '',
         configuration: editData?.specification?.configuration || '',
         interiorColorTheme: editData?.specification?.interiorColorTheme || '',
@@ -136,6 +138,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             setFormData({
                 title: editData.title || '',
                 price: editData.price || '',
+                isPriceOnRequest: editData.isPriceOnRequest || false,
                 category: normalizeCategory(editData),
                 type: editData.type || 'Sale',
                 location: editData.location || '',
@@ -202,6 +205,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 bedrooms: spec.bedrooms || '',
                 bathrooms: spec.bathrooms || '',
                 floors: spec.floors || '',
+                garageCapacity: spec.garageCapacity || '',
                 furnishingStatus: spec.furnishingStatus || '',
                 configuration: spec.configuration || '',
                 interiorColorTheme: spec.interiorColorTheme || '',
@@ -227,7 +231,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             });
         } else {
             setFormData({
-                title: '', price: '', category: 'Car', type: 'Sale', location: '', description: '', isPublic: true,
+                title: '', price: '', isPriceOnRequest: false, category: 'Car', type: 'Sale', location: '', description: '', isPublic: true,
                 make: '', model: '', variant: '', year: new Date().getFullYear(),
                 mileage: '', fuelType: '', transmission: '', exteriorColor: '', interiorColor: '',
                 condition: '', accidentHistory: '', horsepower: '', cylinderCapacity: '', topSpeed: '',
@@ -238,7 +242,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 yachtName: '', builder: '', length: '', beam: '', draft: '', cruisingSpeed: '', topSpeed: '', usageHours: '', fuelConsumption: '',
                 guestCapacity: '', crewCapacity: '', engineType: '', hullMaterial: '', exteriorColor: '', numberOfOwners: '',
                 propertyName: '', propertyType: '', architectureStyle: '', builtUpArea: '',
-                landArea: '', bedrooms: '', bathrooms: '', floors: '', furnishingStatus: '',
+                landArea: '', bedrooms: '', bathrooms: '', floors: '', garageCapacity: '', furnishingStatus: '',
                 configuration: '', interiorColorTheme: '', exteriorFinish: '',
                 climateControl: '', usageStatus: '', country: '', city: '', address: '',
                 areaNeighborhood: '', latitude: '', longitude: '',
@@ -287,6 +291,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             if (!formData.builtUpArea) formData.builtUpArea = formData.highlight_built_area;
             if (!formData.bedrooms) formData.bedrooms = formData.highlight_beds;
             if (!formData.floors) formData.floors = formData.highlight_floors;
+            if (!formData.garageCapacity) formData.garageCapacity = formData.highlight_garage;
         } else if (formData.category === 'Bike') {
             if (!formData.engineCapacity) formData.engineCapacity = formData.highlight_cc;
             if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
@@ -396,27 +401,31 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price ($)</label>
-                            <div className="flex gap-2">
-                                <input 
-                                    type="number" 
-                                    name="price" 
-                                    value={formData.price} 
-                                    required={!formData.isPriceOnRequest}
-                                    disabled={formData.isPriceOnRequest}
-                                    className="flex-1 p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors disabled:opacity-50" 
-                                    onChange={handleInputChange} 
-                                />
+                        <div className="flex flex-col space-y-2">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500">Price ($)</label>
+                            <input 
+                                type="number" 
+                                name="price" 
+                                placeholder={formData.isPriceOnRequest ? "Price on Request" : "Enter Price"}
+                                value={formData.price} 
+                                required={!formData.isPriceOnRequest}
+                                disabled={formData.isPriceOnRequest}
+                                className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors disabled:opacity-50 disabled:bg-gray-100" 
+                                onChange={handleInputChange} 
+                            />
+                            <div className="relative">
                                 <select 
                                     name="isPriceOnRequest" 
                                     value={formData.isPriceOnRequest} 
-                                    className="w-40 p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black"
+                                    className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black appearance-none cursor-pointer pr-10 text-xs font-bold uppercase tracking-wider text-gray-600"
                                     onChange={(e) => setFormData({ ...formData, isPriceOnRequest: e.target.value === 'true' })}
                                 >
-                                    <option value="false">Show Price</option>
-                                    <option value="true">Price On Request</option>
+                                    <option value="false">Display Public Price</option>
+                                    <option value="true">Price on Request</option>
                                 </select>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                    <FiChevronDown />
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -428,19 +437,29 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Category</label>
-                            <select name="category" value={formData.category} disabled={!!editData} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black disabled:opacity-50" onChange={handleInputChange}>
-                                <option value="Car">Car</option>
-                                <option value="Bike">Bike</option>
-                                <option value="Yacht">Yacht</option>
-                                <option value="Estate">Real Estate</option>
-                            </select>
+                            <div className="relative">
+                                <select name="category" value={formData.category} disabled={!!editData} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black disabled:opacity-50 appearance-none" onChange={handleInputChange}>
+                                    <option value="Car">Car</option>
+                                    <option value="Bike">Bike</option>
+                                    <option value="Yacht">Yacht</option>
+                                    <option value="Estate">Real Estate</option>
+                                </select>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                    <FiChevronDown />
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Listing Type</label>
-                            <select name="type" value={formData.type} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black" onChange={handleInputChange}>
-                                <option value="Sale">For Sale</option>
-                                <option value="Rent">For Rent</option>
-                            </select>
+                            <div className="relative">
+                                <select name="type" value={formData.type} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black appearance-none" onChange={handleInputChange}>
+                                    <option value="Sale">For Sale</option>
+                                    <option value="Rent">For Rent</option>
+                                </select>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                    <FiChevronDown />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -528,6 +547,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <InputField label="Bedrooms" name="bedrooms" type="number" value={formData.bedrooms} onChange={handleInputChange} />
                                     <InputField label="Bathrooms" name="bathrooms" type="number" value={formData.bathrooms} onChange={handleInputChange} />
                                     <InputField label="Floors" name="floors" type="number" value={formData.floors} onChange={handleInputChange} />
+                                    <InputField label="Garage Capacity (Cars)" name="garageCapacity" type="number" value={formData.garageCapacity} onChange={handleInputChange} />
                                     <SelectField label="Furnishing Status" name="furnishingStatus" value={formData.furnishingStatus} options={['Unfurnished', 'Partially Furnished', 'Fully Furnished', 'Designer Furnished']} onChange={handleInputChange} />
                                     <InputField label="Configuration" name="configuration" value={formData.configuration} placeholder="e.g. 5BR + Study" onChange={handleInputChange} />
                                     <InputField label="Architecture Style" name="architectureStyle" value={formData.architectureStyle} onChange={handleInputChange} />
@@ -705,9 +725,10 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         </div>
                     </div>
 
-                    <div className="pt-4">                        <button disabled={loading} type="submit" className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50">
-                        {loading ? 'Processing...' : (editData ? 'Update Listing' : 'Submit Listing')}
-                    </button>
+                    <div className="pt-4">
+                        <button disabled={loading} type="submit" className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50">
+                            {loading ? 'Processing...' : (editData ? 'Update Listing' : 'Submit Listing')}
+                        </button>
                     </div>
                 </form>
             </div>
@@ -732,15 +753,20 @@ const InputField = ({ label, name, value, type = "text", placeholder, onChange }
 const SelectField = ({ label, name, value, options, onChange }) => (
     <div>
         <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{label}</label>
-        <select
-            name={name}
-            value={value}
-            onChange={onChange}
-            className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black cursor-pointer"
-        >
-            <option value="">Select {label}</option>
-            {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-        </select>
+        <div className="relative">
+            <select
+                name={name}
+                value={value}
+                onChange={onChange}
+                className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black cursor-pointer appearance-none"
+            >
+                <option value="">Select {label}</option>
+                {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+            </select>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <FiChevronDown />
+            </div>
+        </div>
     </div>
 );
 

@@ -457,6 +457,7 @@ router.post('/create', authMiddleware, upload.fields([
                 bedrooms: req.body.bedrooms,
                 bathrooms: req.body.bathrooms,
                 floors: req.body.floors,
+                garageCapacity: req.body.garageCapacity,
                 builtUpArea: addUnit(req.body.builtUpArea, 'sq ft'),
                 landArea: addUnit(req.body.landArea, 'sq ft'),
                 propertyType: req.body.propertyType
@@ -470,6 +471,7 @@ router.post('/create', authMiddleware, upload.fields([
                 floors: req.body.floors,
                 bedrooms: req.body.bedrooms,
                 bathrooms: req.body.bathrooms,
+                garageCapacity: req.body.garageCapacity,
                 furnishingStatus: req.body.furnishingStatus,
                 configuration: req.body.configuration,
                 interiorMaterial: req.body.interiorMaterial,
@@ -833,6 +835,7 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.floors) { spec.floors = Number(req.body.floors); keySpec.floors = req.body.floors; }
             if (req.body.bedrooms) { spec.bedrooms = Number(req.body.bedrooms); keySpec.bedrooms = req.body.bedrooms; }
             if (req.body.bathrooms) { spec.bathrooms = Number(req.body.bathrooms); keySpec.bathrooms = req.body.bathrooms; }
+            if (req.body.garageCapacity) { spec.garageCapacity = Number(req.body.garageCapacity); keySpec.garageCapacity = req.body.garageCapacity; }
             if (req.body.architectureStyle) spec.architectureStyle = req.body.architectureStyle;
             if (req.body.furnishingStatus) spec.furnishingStatus = req.body.furnishingStatus;
             if (req.body.configuration) spec.configuration = req.body.configuration;

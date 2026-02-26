@@ -16,7 +16,7 @@ const EstateKeyFeatures = ({ item }) => {
     { label: 'Built Area', value: kSpecs.builtUpArea, icon: sqrtFt },
     { label: 'Bedrooms', value: kSpecs.bedrooms, icon: bedRoom },
     { label: 'Floors', value: kSpecs.floors, icon: floor },
-    { label: 'Type', value: kSpecs.propertyType, icon: land } // Using land icon as fallback
+    { label: 'Garage', value: kSpecs.garageCapacity, icon: garage }
   ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
 
   if (specItems.length === 0) return null;
