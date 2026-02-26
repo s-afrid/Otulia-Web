@@ -358,7 +358,7 @@ const MyListings = () => {
                                     </div>
                                     <h4 className="text-lg font-bold">Increased Limits</h4>
                                     <p className="text-gray-400 text-sm leading-relaxed">
-                                        List up to 100 assets with our Business VIP plan. Never worry about reaching your capacity again.
+                                        List up to 50 assets with our Business VIP plan. Never worry about reaching your capacity again.
                                     </p>
                                 </div>
 

@@ -3,6 +3,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import numberWithCommas from '../../../modules/numberwithcomma';
 import { useCart } from '../../../contexts/CartContext';
+import DescriptionSidebar from '../DescriptionSidebar';
 
 const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
   const { user, token, isAuthenticated } = useAuth();
@@ -11,6 +12,7 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
   const [activityLoading, setActivityLoading] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
   const [message, setMessage] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Rental State
   const [startDate, setStartDate] = useState('');
@@ -138,7 +140,15 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
     return `${years} ${years === 1 ? 'year' : 'years'} ago`;
   }
 
+  const isLongDescription = description && description.length > 400;
+
   return (
+    <>
+    <DescriptionSidebar 
+      isOpen={isSidebarOpen} 
+      onClose={() => setIsSidebarOpen(false)} 
+      description={description} 
+    />
     <div className="w-full max-w-[93%] mx-auto p-4 md:p-8 bg-white font-sans">
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
@@ -177,9 +187,17 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
             <h2 className="text-xl md:text-2xl font-bold playfair-display text-black mb-4">
               Description :
             </h2>
-            <p className="text-gray-700 leading-relaxed text-base md:text-lg montserrat">
-              {description}
-            </p>
+            <div className="text-gray-700 leading-relaxed text-base md:text-lg montserrat whitespace-pre-wrap">
+              {isLongDescription ? `${description.substring(0, 400)}...` : description}
+            </div>
+            {isLongDescription && (
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="mt-4 underline text-black font-medium montserrat hover:text-gray-600 transition-colors"
+              >
+                Read Description
+              </button>
+            )}
           </div>
 
           {/* RENTAL BOOKING BOX */}
@@ -342,6 +360,7 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
 
       </div>
     </div>
+    </>
   );
 };
 
