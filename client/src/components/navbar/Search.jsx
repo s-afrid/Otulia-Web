@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Search = () => {
+const Search = ({text, border, placeholder, cross}) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
@@ -66,7 +66,7 @@ const Search = () => {
           {/* Search Icon - Forced Black */}
           <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
             <svg 
-              className="w-4 h-4 text-black" 
+              className={`w-4 h-4 ${text}`} 
               aria-hidden="true" 
               xmlns="http://www.w3.org/2000/svg" 
               width="24" 
@@ -82,23 +82,22 @@ const Search = () => {
           <input 
             type="search" 
             id="search" 
-            className="
+            className={`
               block w-full p-2 ps-9 text-sm rounded-md
               bg-transparent 
-              text-black 
-              border border-black
-              placeholder-[#2C2C2C]
+              ${text} 
+              border ${border}
+              ${placeholder}
               
               /* Focus State */
               focus:outline-none 
-              focus:border-black 
+              focus:${border} 
               focus:ring-1 
-              focus:ring-black
               
               [&::-webkit-search-cancel-button]:cursor-pointer
               [&::-webkit-search-cancel-button]:brightness-0
-              [&::-webkit-search-cancel-button]:grayscale
-            " 
+              ${cross}
+            `} 
             placeholder="Search" 
             value={query}
             onChange={(e) => setQuery(e.target.value)}

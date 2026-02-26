@@ -41,34 +41,35 @@ const Hero = () => {
           </div>
         ))}
         
-        
+        {/* Dark Overlay */}
+        <div className='absolute inset-0 bg-black/40 -z-5' />
 
         <div className='absolute top-[200px] md:top-[300px] left-[3%] md:left-[5%] flex flex-col gap-4'>
-          <h1 className='text-black text-3xl md:text-6xl playfair-display'>Discovery Luxury at Otulia</h1>
-          <p className='text-black montserrat text-lg'>Find Your Dream Car, Bike, Yacht, House and More.</p>
+          <h1 className='text-white text-3xl md:text-6xl playfair-display'>Discovery Luxury at Otulia</h1>
+          <p className='text-white/90 montserrat text-lg'>Find Your Dream Car, Bike, Yacht, House and More.</p>
         </div>
-        <ul className='flex flex-wrap gap-6 md:gap-7 px-3 py-[10px] md:py-[15px] md:px-[27px] items-center justify-center md:justify-end montserrat text-black text-[14px] md:text-lg z-10'>
-          <li className='cursor-pointer'>
+        <ul className='flex flex-wrap gap-6 md:gap-7 px-3 py-[10px] md:py-[15px] md:px-[27px] items-center justify-center md:justify-end montserrat text-white text-[14px] md:text-lg z-10'>
+          <li className='cursor-pointer hover:text-white/70 transition-colors'>
             <NavLink to={'/shop'}>
             Shop All
             </NavLink>
             </li>
-          <li className='cursor-pointer'>
+          <li className='cursor-pointer hover:text-white/70 transition-colors'>
             <NavLink to={'/rent'}>
             Rent
             </NavLink>
             </li>
-          <li className='cursor-pointer'>
+          <li className='cursor-pointer hover:text-white/70 transition-colors'>
             <NavLink to={'/community'}>
             Community
             </NavLink>
             </li>
-          <li className='cursor-pointer'>
+          <li className='cursor-pointer hover:text-white/70 transition-colors'>
             <NavLink to={'/seller'}>
             Sell With Us
             </NavLink>
             </li>
-          <li className='cursor-pointer'>
+          <li className='cursor-pointer hover:text-white/70 transition-colors'>
             <NavLink to={'/pricing'}>
             Plan & Price
             </NavLink>

@@ -43,7 +43,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
 
   // Default logo logic (can be refined based on 'isDarkText' if you have a black logo asset)
   // For now, adhere to existing unless custom provided
-  const logoSrc = customLogo || "/logos/logo_inverted.png";
+  const logoSrc = (isScrolled || !isHeroPage)?"/logos/logo_inverted.png":"/logos/logo.png";
 
   return (
     <nav className={navClasses}>
@@ -60,7 +60,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
       {/* 2. HAMBURGER (Dynamic Color) */}
       <button
         // Use 'isDarkText' to swap color so it is visible on white backgrounds
-        className={`block md:hidden focus:outline-none z-50 text-black`}
+        className={`block md:hidden focus:outline-none z-50 ${isDarkText?"text-black":"text-white"}`}
         onClick={() => setpanelFlag(true)}
       >
         <svg
@@ -99,7 +99,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
       <ul className="hidden md:flex items-center justify-center gap-8">
         {!hideSearch && (
           <li>
-            <Search />
+            <Search text={isDarkText?"text-black":"text-white"} border={isDarkText?"border-black":"border-white"} placeholder={isDarkText?"placeholder-[#2C2C2C]":"placeholder-[#dadce0]"} cross={isDarkText ? "[&::-webkit-search-cancel-button]:grayscale" : "[&::-webkit-search-cancel-button]:invert"}/>
           </li>
         )}
 
@@ -118,8 +118,8 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
             {isAuthenticated && (
               // Added text-inherit to ensure it follows the navbar color logic
               <li className="flex gap-3 items-center justify-center text-inherit">
-                <ProfileDropdown text={'text-black'} />
-                <Cart text={'text-black'} />
+                <ProfileDropdown text={isDarkText?"text-black":"text-white"} />
+                <Cart text={isDarkText?"text-black":"text-white"} />
               </li>
             )}
           </>
@@ -128,7 +128,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
       </ul >
 
       {((isHeroPage || isProductPage) && !isScrolled) && (
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[96%] h-[1px] bg-black"></div>
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[96%] h-[1px] bg-white"></div>
       )}
     </nav >
   );
