@@ -76,7 +76,7 @@ const Car_Section = () => {
       {/* Pass images array safely */}
       <CarGallery images={info.images} />
 
-      <AssetStats views={info.views} likes={info.likes} />
+      <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="CarAsset" />
 
       <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
