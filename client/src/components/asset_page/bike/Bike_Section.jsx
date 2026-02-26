@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import BikeGallery from "./BikeGallery";
+import AssetStats from "../AssetStats";
 import BikeDetails from "./BikeDetails";
 import BikeKeyFeatures from "./BikeKeyFeat";
 import BikeFeatures from "./BikeFeatures";
@@ -64,6 +65,8 @@ const Bike_Section = () => {
         <div className="flex flex-col">
            
             <BikeGallery images={info.images} />
+
+            <AssetStats views={info.views} likes={info.likes} />
 
             <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
 

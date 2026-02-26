@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom"; // 1. Import useParams
 import CarGallery from "../car/CarGallery";
+import AssetStats from "../AssetStats";
 import CarDetails from "../car/CarDetails";
 import CarKeyFeatures from "../car/CarKeyFeat";
 import CarFeatures from "../car/CarFeatures";
@@ -74,6 +75,8 @@ const Car_Section = () => {
 
       {/* Pass images array safely */}
       <CarGallery images={info.images} />
+
+      <AssetStats views={info.views} likes={info.likes} />
 
       <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
 

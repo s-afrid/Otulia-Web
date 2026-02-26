@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import EstateGallery from "../estate/EstateGallery";
+import AssetStats from "../AssetStats";
 import EstateDetails from "../estate/EstateDetails";
 import EstateKeyFeatures from "../estate/EstateKeyFeat";
 import EstateFeatures from "../estate/EstateFeatures";
@@ -73,6 +74,8 @@ const Estate_Section = () => {
 
 
       <EstateGallery images={info.images} />
+
+      <AssetStats views={info.views} likes={info.likes} />
 
       <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
 

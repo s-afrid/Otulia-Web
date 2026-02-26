@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import YachtGallery from "./YachtGallery";
+import AssetStats from "../AssetStats";
 import YachtDetails from "./YachtDetails";
 import YachtKeyFeatures from "./YachtKeyFeat";
 import YachtFeatures from "./YachtFeatures";
@@ -64,6 +65,8 @@ const Yacht_Section = () => {
         <div className="flex flex-col">
             
             <YachtGallery images={info.images} />
+
+            <AssetStats views={info.views} likes={info.likes} />
 
             <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
