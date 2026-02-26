@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import numberWithCommas from '../modules/numberwithcomma'
 import { useAuth } from '../contexts/AuthContext'
+import { HiOutlineEye } from 'react-icons/hi2'
+import formatNumber from '../modules/formatNumber'
 
 const AssetCard = ({ item }) => {
   const navigate = useNavigate()
   const { user, token, isAuthenticated, refreshUser } = useAuth();
 
   const pathname = useLocation()
-  // Correctly checking if it is the homepage
+  // Correctly checking if it is the homepage or mylistings
   const homepage = pathname.pathname === '/'
+  const isMyListings = pathname.pathname === '/listings'
 
   // STATE
   const [isLiked, setIsLiked] = useState(false);
@@ -267,6 +270,15 @@ const AssetCard = ({ item }) => {
         <p className="text-[10px] text-gray-400 mb-2 font-normal uppercase tracking-widest truncate">
           {item.location}
         </p>
+
+        {isMyListings && (
+          <div className="flex items-center gap-1.5 mb-3 -mt-1 bg-gray-50 w-fit px-2 py-0.5 rounded-full border border-gray-100">
+            <HiOutlineEye className="text-sm text-gray-500" />
+            <span className="text-[10px] font-bold text-gray-600 montserrat">
+              {formatNumber(item.views || 0)} views
+            </span>
+          </div>
+        )}
 
         <div className="w-full h-px bg-gray-100 mb-2"></div>
 

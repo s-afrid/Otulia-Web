@@ -24,32 +24,52 @@ const MyListings = () => {
     const [listingToDelete, setListingToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    useEffect(() => {
-        const fetchListings = async () => {
-            if (!isAuthenticated) return;
+    const fetchListings = async (showLoading = true) => {
+        if (!isAuthenticated) return;
+        if (showLoading) setLoading(true);
 
-            try {
-                const response = await fetch('/api/auth/my-listings', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setListings(data);
-                } else {
-                    setError('Failed to fetch listings');
+        try {
+            const response = await fetch('/api/auth/my-listings', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
-            } catch (err) {
-                console.error(err);
-                setError('Connection error');
-            } finally {
-                setLoading(false);
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setListings(data);
+            } else {
+                setError('Failed to fetch listings');
+            }
+        } catch (err) {
+            console.error(err);
+            setError('Connection error');
+        } finally {
+            if (showLoading) setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchListings();
+
+        // Real-time updates: Refetch on window focus or visibility change
+        const handleActivity = () => {
+            if (document.visibilityState === 'visible') {
+                fetchListings(false); // Silent update
             }
         };
 
-        fetchListings();
+        window.addEventListener('focus', handleActivity);
+        document.addEventListener('visibilitychange', handleActivity);
+
+        // Optional: Poll every 30 seconds
+        const interval = setInterval(() => fetchListings(false), 30000);
+
+        return () => {
+            window.removeEventListener('focus', handleActivity);
+            document.removeEventListener('visibilitychange', handleActivity);
+            clearInterval(interval);
+        };
     }, [isAuthenticated, token]);
 
     const handleListingCreated = (item, isUpdate) => {

@@ -66,7 +66,7 @@ const Yacht_Section = () => {
             
             <YachtGallery images={info.images} />
 
-            <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="YachtAsset" />
+            {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="YachtAsset" /> */}
 
             <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
