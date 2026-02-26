@@ -19,6 +19,11 @@ const listingSchema = new mongoose.Schema(
             required: true,
         },
 
+        isPriceOnRequest: {
+            type: Boolean,
+            default: false,
+        },
+
         category: {
             type: String,
             required: true, // car , bike , yacht, estate

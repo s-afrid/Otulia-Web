@@ -397,12 +397,31 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Title</label>
-                            <input type="text" name="title" value={formData.title} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price ($)</label>
+                            <div className="flex gap-2">
+                                <input 
+                                    type="number" 
+                                    name="price" 
+                                    value={formData.price} 
+                                    required={!formData.isPriceOnRequest}
+                                    disabled={formData.isPriceOnRequest}
+                                    className="flex-1 p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors disabled:opacity-50" 
+                                    onChange={handleInputChange} 
+                                />
+                                <select 
+                                    name="isPriceOnRequest" 
+                                    value={formData.isPriceOnRequest} 
+                                    className="w-40 p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black"
+                                    onChange={(e) => setFormData({ ...formData, isPriceOnRequest: e.target.value === 'true' })}
+                                >
+                                    <option value="false">Show Price</option>
+                                    <option value="true">Price On Request</option>
+                                </select>
+                            </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price ($)</label>
-                            <input type="number" name="price" value={formData.price} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Title</label>
+                            <input type="text" name="title" value={formData.title} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
                         </div>
                     </div>
 
@@ -457,6 +476,8 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <SelectField label="Matching Numbers" name="matchingNumbers" value={formData.matchingNumbers} options={['Yes', 'No']} onChange={handleInputChange} />
                                     <SelectField label="Accident Free" name="accidentFree" value={formData.accidentFree} options={['Yes', 'No']} onChange={handleInputChange} />
                                     <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
+                                    <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} />
+                                    <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} />
                                 </>
                             )}
 
@@ -472,6 +493,8 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <SelectField label="Traction Control" name="tractionControl" value={formData.tractionControl} options={['Yes', 'No']} onChange={handleInputChange} />
                                     <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} />
                                     <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
+                                    <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} />
+                                    <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} />
                                 </>
                             )}
 
@@ -492,6 +515,8 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} />
                                     <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} />
                                     <InputField label="Number of Owners" name="numberOfOwners" type="number" value={formData.numberOfOwners} onChange={handleInputChange} />
+                                    <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} />
+                                    <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} />
                                 </>
                             )}
 

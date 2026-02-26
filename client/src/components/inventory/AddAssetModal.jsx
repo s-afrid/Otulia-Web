@@ -428,7 +428,29 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 <InputField label="Model" name="model" value={formData.model} placeholder="e.g., SF90 / Grande 32" onChange={handleInputChange} />
                                 <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} />
                                 <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
-                                <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="625000" onChange={handleInputChange} />
+                                <div className="flex flex-col gap-2">
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Price ($)</label>
+                                    <div className="flex gap-2">
+                                        <input 
+                                            type="number" 
+                                            name="price" 
+                                            value={formData.price} 
+                                            disabled={formData.isPriceOnRequest}
+                                            required={!formData.isPriceOnRequest}
+                                            className="flex-1 p-3 bg-gray-50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] transition-all disabled:opacity-50" 
+                                            onChange={handleInputChange} 
+                                        />
+                                        <select 
+                                            name="isPriceOnRequest" 
+                                            value={formData.isPriceOnRequest} 
+                                            className="w-32 p-3 bg-gray-50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A]"
+                                            onChange={(e) => setFormData({ ...formData, isPriceOnRequest: e.target.value === 'true' })}
+                                        >
+                                            <option value="false">Show</option>
+                                            <option value="true">On Request</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
                                 <LocationInputField label="Location" name="location" value={formData.location} placeholder="Beverly Hills, CA" onChange={handleInputChange} />
                             </div>
@@ -460,6 +482,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Manufacturer Color Code" name="manufacturerColorCode" value={formData.manufacturerColorCode} placeholder="e.g., FER 322" onChange={handleInputChange} />
                                         <SelectField label="Matching Numbers" name="matchingNumbers" value={formData.matchingNumbers} options={['Yes', 'No']} onChange={handleInputChange} />
                                         <SelectField label="Accident Free" name="accidentFree" value={formData.accidentFree} options={['Yes', 'No']} onChange={handleInputChange} />
+                                        <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} />
+                                        <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} />
                                     </>
                                 )}
                                 {assetType === 'Yacht' && (
@@ -481,6 +505,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} placeholder="e.g., White" onChange={handleInputChange} />
                                         <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} placeholder="e.g., Italy" onChange={handleInputChange} />
                                         <InputField label="Number of Owners" name="numberOfOwners" type="number" value={formData.numberOfOwners} onChange={handleInputChange} />
+                                        <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} />
+                                        <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} />
                                     </>
                                 )}
                                 {assetType === 'Estate' && (
@@ -514,6 +540,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Pre-Owned', 'Classic']} onChange={handleInputChange} />
                                         <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} />
                                         <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
+                                        <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} />
+                                        <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} />
                                     </>
                                 )}
                             </div>

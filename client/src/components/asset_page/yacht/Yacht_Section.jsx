@@ -94,10 +94,13 @@ const Yacht_Section = () => {
 
             <YachtFeatures item={info} />
 
-            <div className="flex items-center justify-center mb-4">
-            <LocationMap locationName={info.location} />
-            </div>
-
+                        <div className="flex items-center justify-center mb-4">
+                            <LocationMap 
+                                locationName={info.location} 
+                                lat={info.specification?.latitude} 
+                                lng={info.specification?.longitude} 
+                            />
+                        </div>
             <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
             <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white">

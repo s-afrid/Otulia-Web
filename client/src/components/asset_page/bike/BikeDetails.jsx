@@ -263,7 +263,8 @@ const BikeDetails = ({ item, modelName = 'CarAsset' }) => {
               className="text-2xl md:text-5xl font-bold text-black"
               style={{ fontFamily: '"Times New Roman", Times, serif' }}
             >
-              $ {numberWithCommas(price)} {type === 'Rent' && <span className="text-lg font-normal text-gray-500 font-sans">/ day</span>}
+              {item.isPriceOnRequest ? 'Price On Request' : `$ ${numberWithCommas(price)}`}
+              {!item.isPriceOnRequest && type === 'Rent' && <span className="text-lg font-normal text-gray-500 font-sans">/ day</span>}
             </h2>
           </div>
 

@@ -79,15 +79,27 @@ const STATIC_CACHE = {
   "ingolstadt, germany": { lat: 48.7665, lon: 11.4258 },
 };
 
-const LocationMap = ({ locationName }) => {
+const LocationMap = ({ locationName, lat, lng }) => {
   const [coordinates, setCoordinates] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // 0. Use provided lat/lng if available
+    if (lat && lng) {
+      const pLat = parseFloat(lat);
+      const pLng = parseFloat(lng);
+      if (!isNaN(pLat) && !isNaN(pLng)) {
+        setCoordinates({ lat: pLat, lng: pLng });
+        setError(null);
+        setLoading(false);
+        return;
+      }
+    }
+
     if (!locationName || typeof locationName !== 'string') return;
 
-    // 0. Check Static Cache First (Instant, No API)
+    // 1. Check Static Cache First (Instant, No API)
     const lowerName = locationName.toLowerCase().trim();
     if (STATIC_CACHE[lowerName]) {
         console.log("Using static cache for:", locationName);

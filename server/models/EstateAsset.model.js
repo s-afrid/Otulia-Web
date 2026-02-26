@@ -6,6 +6,7 @@ const estateAssetSchema = new mongoose.Schema(
     description: { type: String, required: true },
 
     price: { type: Number, required: true },
+    isPriceOnRequest: { type: Boolean, default: false },
     location: { type: String, required: true },
 
     images: [{ type: String }],

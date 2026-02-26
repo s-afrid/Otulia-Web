@@ -6,6 +6,7 @@ const bikeAssetSchema = new mongoose.Schema(
     description: { type: String, required: true },
 
     price: { type: Number, required: true },
+    isPriceOnRequest: { type: Boolean, default: false },
     location: { type: String, required: true },
 
     images: [{ type: String }],
@@ -65,6 +66,8 @@ const bikeAssetSchema = new mongoose.Schema(
       color: String,
       ownershipCount: Number,
       accidentHistory: String,
+      latitude: String,
+      longitude: String,
     },
 
     agent: {

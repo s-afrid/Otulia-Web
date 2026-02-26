@@ -226,6 +226,7 @@ router.post('/create', authMiddleware, upload.fields([
         const baseData = {
             title,
             price: Number(price),
+            isPriceOnRequest: req.body.isPriceOnRequest === 'true' || req.body.isPriceOnRequest === true,
             location,
             description: description || 'No description provided',
             images: [],
@@ -347,6 +348,8 @@ router.post('/create', authMiddleware, upload.fields([
                 countryOfFirstDelivery: req.body.countryOfFirstDelivery,
                 numberOfOwners: req.body.numberOfOwners,
                 carLocation: req.body.currentCarLocation || location,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
             };
         } else if (category === 'Bike') {
             updateData.brand = req.body.brand;
@@ -389,7 +392,9 @@ router.post('/create', authMiddleware, upload.fields([
                 tractionControl: req.body.tractionControl,
                 condition: req.body.condition,
                 ownershipCount: req.body.ownershipCount,
-                accidentHistory: req.body.accidentHistory
+                accidentHistory: req.body.accidentHistory,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
             };
         } else if (category === 'Yacht') {
             updateData.builder = req.body.builder;
@@ -437,7 +442,9 @@ router.post('/create', authMiddleware, upload.fields([
                 interiorMaterial: req.body.interiorMaterial,
                 exteriorColor: req.body.exteriorColor,
                 countryOfFirstDelivery: req.body.countryOfFirstDelivery,
-                numberOfOwners: req.body.numberOfOwners
+                numberOfOwners: req.body.numberOfOwners,
+                latitude: req.body.latitude,
+                longitude: req.body.longitude,
             };
         } else if (category === 'Estate') {
             updateData.propertyName = req.body.propertyName;
@@ -579,6 +586,9 @@ router.put('/:id', authMiddleware, upload.fields([
 
         if (title) listing.title = title;
         if (price !== undefined) listing.price = Number(price);
+        if (req.body.isPriceOnRequest !== undefined) {
+            listing.isPriceOnRequest = req.body.isPriceOnRequest === 'true' || req.body.isPriceOnRequest === true;
+        }
         if (location) listing.location = location;
         if (description) listing.description = description;
         if (type) {
@@ -665,6 +675,8 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.countryOfFirstDelivery) spec.countryOfFirstDelivery = req.body.countryOfFirstDelivery;
             if (req.body.numberOfOwners) spec.numberOfOwners = Number(req.body.numberOfOwners);
             if (req.body.currentCarLocation || location) spec.carLocation = req.body.currentCarLocation || location;
+            if (req.body.latitude) spec.latitude = req.body.latitude;
+            if (req.body.longitude) spec.longitude = req.body.longitude;
 
             listing.specification = spec;
             listing.keySpecifications = keySpec;
@@ -722,6 +734,8 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.condition) spec.condition = req.body.condition;
             if (req.body.ownershipCount) spec.ownershipCount = Number(req.body.ownershipCount);
             if (req.body.accidentHistory) spec.accidentHistory = req.body.accidentHistory;
+            if (req.body.latitude) spec.latitude = req.body.latitude;
+            if (req.body.longitude) spec.longitude = req.body.longitude;
 
             listing.specification = spec;
             listing.keySpecifications = keySpec;
@@ -786,6 +800,8 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.exteriorColor) spec.exteriorColor = req.body.exteriorColor;
             if (req.body.countryOfFirstDelivery) spec.countryOfFirstDelivery = req.body.countryOfFirstDelivery;
             if (req.body.numberOfOwners) spec.numberOfOwners = req.body.numberOfOwners;
+            if (req.body.latitude) spec.latitude = req.body.latitude;
+            if (req.body.longitude) spec.longitude = req.body.longitude;
             if (location) spec.yachtLocation = location;
 
             listing.specification = spec;
