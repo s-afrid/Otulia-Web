@@ -37,7 +37,8 @@ const AssetCard = ({ item }) => {
     return imgs.slice(0, 3);
   })();
 
-  // 2. AUTO-SLIDE EFFECT
+  // 2. AUTO-SLIDE EFFECT (DISABLED)
+  /*
   useEffect(() => {
     if (validImages.length <= 1) return;
 
@@ -50,6 +51,7 @@ const AssetCard = ({ item }) => {
 
     return () => clearInterval(interval);
   }, [validImages.length, isHovered]); // dependency on isHovered allows pausing
+  */
 
   // 3. DETAILS LOGIC
   let displayDetails = item.details;
@@ -154,7 +156,8 @@ const AssetCard = ({ item }) => {
       {/* Image Container (Mask) */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
 
-        {/* SLIDER TRACK: This moves left/right smoothly */}
+        {/* SLIDER TRACK: DISABLED */}
+        {/* 
         <div
           className="flex h-full w-full transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${activeImageIndex * 100}%)` }}
@@ -171,8 +174,17 @@ const AssetCard = ({ item }) => {
             />
           ))}
         </div>
+        */}
 
-        {/* Pagination Dots */}
+        {/* SINGLE IMAGE DISPLAY */}
+        <img
+          src={validImages[0]}
+          alt={item.title}
+          className={`w-full h-full object-cover transition-transform duration-1000 ease-in-out ${isHovered ? "scale-110" : "scale-100"}`}
+        />
+
+        {/* Pagination Dots: DISABLED */}
+        {/*
         {validImages.length > 1 && (
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
             {validImages.map((_, index) => (
@@ -188,6 +200,7 @@ const AssetCard = ({ item }) => {
             ))}
           </div>
         )}
+        */}
 
         {/* Heart Button */}
         <button
