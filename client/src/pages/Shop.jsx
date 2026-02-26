@@ -8,12 +8,14 @@ import PropertyFilterBar from '../components/category_page/category_sections/est
 import carFilterOptions from '../json/car_filter_options.json';
 import bikeFilterOptions from '../json/bike_filter_options.json';
 import yachtFilterOptions from '../json/yacht_filter_options.json';
+import Pagination from '../components/Pagination';
 
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [listings, setListings] = useState([]);
-  const [allSearchResults, setAllSearchResults] = useState([]); // Holds all results for a given search query
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({ location: '', minPrice: '', maxPrice: '' });
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q');
@@ -26,7 +28,7 @@ const Shop = () => {
     { name: 'Yachts', endpoint: 'yachts', clientName: 'Yacht' },
   ];
 
-  // Helper function to determine category based on item properties
+  // Helper function to determine category
   const getCategoryFromItem = (item) => {
     if (item.category) {
       const cat = item.category.toLowerCase();
@@ -35,168 +37,86 @@ const Shop = () => {
       if (['yachts', 'yacht', 'yachtasset'].includes(cat)) return 'Yacht';
       if (['estates', 'estate', 'real estate', 'estateasset'].includes(cat)) return 'Estate';
     }
-    if (item.itemModel) {
-      const model = item.itemModel.toLowerCase();
-      if (model.includes('car')) return 'Car';
-      if (model.includes('estate')) return 'Estate';
-      if (model.includes('bike')) return 'Bike';
-      if (model.includes('yacht')) return 'Yacht';
-    }
-    // Fallback logic from AssetCard if needed, though category/itemModel should be primary
-    if (item.keySpecifications) {
-        const specs = item.keySpecifications;
-        if (specs.power || specs.mileage || specs.topSpeed) return 'Car';
-        if (specs.bedrooms || specs.bathrooms) return 'Estate';
-    }
     return 'Unknown';
   };
 
-  // EFFECT 1: Fetch data when in BROWSE mode (no query)
   useEffect(() => {
-    if (!query) {
-      const fetchBrowseListings = async () => {
-        setLoading(true);
-        try {
-          const category = categories.find(c => c.name === activeCategory);
-          const endpoint = category ? category.endpoint : 'combined';
-          
-          const params = new URLSearchParams();
-          params.append('acquisition', 'buy'); // Ensure only sale/buy assets are fetched
-          
-          // Basic common filters
-          if (filters.location) params.append('location', filters.location);
-          if (filters.sort) params.append('sort', filters.sort);
-          
-          // Handle keyword search (q or search)
-          const searchQuery = filters.q || '';
-          if (searchQuery) {
-            if (endpoint === 'combined') params.append('q', searchQuery);
-            else params.append('search', searchQuery);
-          }
+    fetchData(page);
+  }, [activeCategory, filters, query, page]);
 
-          // Handle Price (minPrice/maxPrice or priceRange)
-          if (filters.minPrice) params.append('minPrice', filters.minPrice);
-          if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+  useEffect(() => {
+    setPage(1);
+  }, [activeCategory, filters, query]);
 
-          if (filters.priceRange && filters.priceRange !== 'Any Price') {
-            // Handle different range formats: "$50K – $100K", "$1M - $5M", "$3M+", etc.
-            const range = filters.priceRange.replace(/\$/g, '').replace(/,/g, '');
-            if (range.includes('–') || range.includes('-')) {
-              const parts = range.split(/[–-]/);
-              let min = parts[0].trim().toLowerCase();
-              let max = parts[1].trim().toLowerCase();
-              
-              const multiplier = (val) => val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
-              const parseVal = (val) => parseFloat(val) * multiplier(val);
+  const fetchData = async (pageNum) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.append('acquisition', 'buy');
+      params.append('page', pageNum);
+      params.append('limit', 9);
 
-              params.append('minPrice', parseVal(min));
-              params.append('maxPrice', parseVal(max));
-            } else if (range.includes('+')) {
-              let val = range.replace('+', '').trim().toLowerCase();
-              const mult = val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
-              params.append('minPrice', parseFloat(val) * mult);
-            }
-          }
+      if (filters.location) params.append('location', filters.location);
+      if (filters.sort) params.append('sort', filters.sort);
+      if (filters.minPrice) params.append('minPrice', filters.minPrice);
+      if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
 
-          // Category specific filters
-          if (filters.brand) params.append('brand', filters.brand);
-          if (filters.model) params.append('model', filters.model);
-          if (filters.category && filters.category !== 'Any') params.append('category', filters.category);
-          
-          // Estate specifics
-          if (filters.type && filters.type !== 'Any') params.append('propertyType', filters.type);
-          if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms);
-          if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms);
-          if (filters.architecture && filters.architecture !== 'Any') params.append('architecture', filters.architecture);
-          if (filters.amenities && filters.amenities !== 'Any') params.append('amenities', filters.amenities);
-
-          const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
-          if (!response.ok) throw new Error('Network response was not ok');
-          const data = await response.json();
-          setListings(data);
-        } catch (error) {
-          console.error("Failed to fetch browse listings", error);
-          setListings([]); // Clear on error
-        } finally {
-          setLoading(false);
+      // Handle Price Range
+      if (filters.priceRange && filters.priceRange !== 'Any Price') {
+        const range = filters.priceRange.replace(/\$/g, '').replace(/,/g, '');
+        if (range.includes('–') || range.includes('-')) {
+          const parts = range.split(/[–-]/);
+          const multiplier = (val) => val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
+          params.append('minPrice', parseFloat(parts[0]) * multiplier(parts[0].toLowerCase()));
+          params.append('maxPrice', parseFloat(parts[1]) * multiplier(parts[1].toLowerCase()));
+        } else if (range.includes('+')) {
+          const val = range.replace('+', '').toLowerCase();
+          params.append('minPrice', parseFloat(val) * (val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1)));
         }
-      };
-      fetchBrowseListings();
-    }
-  }, [activeCategory, filters, query]); // Reruns when these change ONLY if query is absent.
-
-  // EFFECT 2: Fetch all results when in SEARCH mode (query exists)
-  useEffect(() => {
-    if (query) {
-      const fetchSearchResults = async () => {
-        setLoading(true);
-        try {
-          const params = new URLSearchParams();
-          params.append('q', query);
-          params.append('acquisition', 'buy'); // Ensure only sale/buy assets are fetched
-          
-          if (filters.location) params.append('location', filters.location);
-          if (filters.sort) params.append('sort', filters.sort);
-
-          // Handle Price
-          if (filters.minPrice) params.append('minPrice', filters.minPrice);
-          if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
-
-          if (filters.priceRange && filters.priceRange !== 'Any Price') {
-            const range = filters.priceRange.replace(/\$/g, '').replace(/,/g, '');
-            if (range.includes('–') || range.includes('-')) {
-              const parts = range.split(/[–-]/);
-              let min = parts[0].trim().toLowerCase();
-              let max = parts[1].trim().toLowerCase();
-              const multiplier = (val) => val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
-              const parseVal = (val) => parseFloat(val) * multiplier(val);
-              params.append('minPrice', parseVal(min));
-              params.append('maxPrice', parseVal(max));
-            } else if (range.includes('+')) {
-              let val = range.replace('+', '').trim().toLowerCase();
-              const mult = val.includes('m') ? 1000000 : (val.includes('k') ? 1000 : 1);
-              params.append('minPrice', parseFloat(val) * mult);
-            }
-          }
-
-          // Category & Other filters for combined search
-          if (filters.brand) params.append('brand', filters.brand);
-          if (filters.model) params.append('model', filters.model);
-          if (filters.category && filters.category !== 'Any') params.append('category', filters.category);
-          if (filters.type && filters.type !== 'Any') params.append('propertyType', filters.type);
-          if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms);
-          if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms);
-
-          const response = await fetch(`/api/assets/combined?${params.toString()}`);
-          if (!response.ok) throw new Error('Network response was not ok');
-          const data = await response.json();
-          setAllSearchResults(data); // Store master list
-        } catch (error) {
-          console.error("Failed to fetch search results", error);
-          setAllSearchResults([]); // Clear on error
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchSearchResults();
-    } else {
-      setAllSearchResults([]); // Clear master list if query is removed
-    }
-  }, [query, filters]); // Reruns ONLY when query or filters change.
-
-  // EFFECT 3: Filter search results on the client-side when category or master list changes
-  useEffect(() => {
-    if (query) {
-      if (activeCategory === 'All') {
-        setListings(allSearchResults);
-      } else {
-        const targetCategory = categories.find(c => c.name === activeCategory)?.clientName;
-        const filtered = allSearchResults.filter(item => getCategoryFromItem(item) === targetCategory);
-        setListings(filtered);
       }
+
+      // Other filters
+      if (filters.brand) params.append('brand', filters.brand);
+      if (filters.model) params.append('model', filters.model);
+      if (filters.category && filters.category !== 'Any') params.append('category', filters.category);
+      if (filters.type && filters.type !== 'Any') params.append('propertyType', filters.type);
+      if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms);
+      if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms);
+
+      let endpoint = 'combined';
+      if (!query) {
+        const category = categories.find(c => c.name === activeCategory);
+        endpoint = category ? category.endpoint : 'combined';
+      } else {
+        params.append('q', query);
+      }
+
+      const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch');
+      const result = await response.json();
+
+      let data = result.data || result;
+      const pagination = result.pagination || { totalPages: 1 };
+
+      // If in search mode and a category is selected (other than All), filter client-side
+      if (query && activeCategory !== 'All') {
+        const targetCategory = categories.find(c => c.name === activeCategory)?.clientName;
+        data = data.filter(item => getCategoryFromItem(item) === targetCategory);
+      }
+
+      setListings(data);
+      setTotalPages(pagination.totalPages);
+    } catch (error) {
+      console.error("Error fetching listings:", error);
+    } finally {
+      setLoading(false);
     }
-    // No 'else' needed because BROWSE mode is handled by Effect 1
-  }, [activeCategory, allSearchResults, query]);
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleSearch = (filterData) => {
     setFilters(filterData);
@@ -259,15 +179,23 @@ const Shop = () => {
         ) : listings.length === 0 ? (
           <div className="text-center py-20 text-gray-500">No assets found matching your criteria.</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {listings.map((item, idx) => (
-              <AssetCard key={item._id} item={item} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {listings.map((item, idx) => (
+                <AssetCard key={item._id} item={item} />
+              ))}
+            </div>
+
+            <Pagination 
+              currentPage={page} 
+              totalPages={totalPages} 
+              onPageChange={handlePageChange} 
+            />
+          </>
         )}
       </div>
     </div>
   )
 }
 
-export default Shop
+export default Shop;

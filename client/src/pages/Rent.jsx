@@ -7,11 +7,14 @@ import PropertyFilterBar from '../components/category_page/category_sections/est
 import carFilterOptions from '../json/car_filter_options.json';
 import bikeFilterOptions from '../json/bike_filter_options.json';
 import yachtFilterOptions from '../json/yacht_filter_options.json';
+import Pagination from '../components/Pagination';
 
 const Rent = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({ location: '', minPrice: '', maxPrice: '' });
 
   const categories = [
@@ -23,10 +26,14 @@ const Rent = () => {
   ];
 
   useEffect(() => {
-    fetchListings();
+    fetchListings(page);
+  }, [activeCategory, filters, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [activeCategory, filters]);
 
-  const fetchListings = async () => {
+  const fetchListings = async (pageNum) => {
     setLoading(true);
     try {
       const category = categories.find(c => c.name === activeCategory);
@@ -34,6 +41,8 @@ const Rent = () => {
 
       const params = new URLSearchParams();
       params.append('acquisition', 'rent');
+      params.append('page', pageNum);
+      params.append('limit', 9);
       
       // Basic common filters
       if (filters.location) params.append('location', filters.location);
@@ -81,13 +90,23 @@ const Rent = () => {
 
       const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
       if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
+      const result = await response.json();
+      
+      const data = result.data || result;
+      const pagination = result.pagination || { totalPages: 1 };
+      
       setListings(data);
+      setTotalPages(pagination.totalPages);
     } catch (error) {
       console.error("Failed to fetch rental listings", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSearch = (filterData) => {
@@ -141,11 +160,19 @@ const Rent = () => {
         ) : listings.length === 0 ? (
           <div className="text-center py-20 text-gray-500">No rental listings found in this category.</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {listings.map((item, idx) => (
-              <AssetCard key={item._id} item={item} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {listings.map((item, idx) => (
+                <AssetCard key={item._id} item={item} />
+              ))}
+            </div>
+            
+            <Pagination 
+              currentPage={page} 
+              totalPages={totalPages} 
+              onPageChange={handlePageChange} 
+            />
+          </>
         )}
       </div>
     </div>

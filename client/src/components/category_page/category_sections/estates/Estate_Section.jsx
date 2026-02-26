@@ -5,10 +5,13 @@ import AssetCard from '../../../AssetCard';
 import SortDropdown from '../SortDropdown';
 import Estate_Hero from './Estate_Hero';
 import numberWithCommas from '../../../../modules/numberwithcomma';
+import Pagination from '../../../Pagination';
 
 const Estate_Section = () => {
   const [list, setlist] = useState([]);
-  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({});
   const [currentSort, setCurrentSort] = useState('Newest');
   const [filterBarKey, setFilterBarKey] = useState(0);
@@ -17,9 +20,12 @@ const Estate_Section = () => {
   const featuredListRef = useRef(null);
 
   // Fetch data
-  const datafetch = async () => {
+  const datafetch = async (pageNum) => {
+    setLoading(true);
+    
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set('limit', limit);
+    searchParams.set('limit', 9);
+    searchParams.set('page', pageNum);
 
     // Ensure sort is set from state if not in URL, or sync from URL
     if (!searchParams.has('sort')) {
@@ -81,14 +87,25 @@ const Estate_Section = () => {
         throw new Error(`Response status: ${response.status}`);
       }
       const result = await response.json();
-      setlist(result);
+      
+      const data = result.data || result;
+      const pagination = result.pagination || { totalPages: 1 };
+      
+      setlist(data);
+      setTotalPages(pagination.totalPages);
     } catch (error) {
       console.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    datafetch();
+    datafetch(page);
+  }, [location.search, page]);
+
+  useEffect(() => {
+    setPage(1);
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.has('location') || searchParams.has('acquisition')) {
       if (featuredListRef.current) {
@@ -97,7 +114,14 @@ const Estate_Section = () => {
       setFilters({});
       setFilterBarKey(prevKey => prevKey + 1);
     }
-  }, [location.search, limit]);
+  }, [location.search]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    if (featuredListRef.current) {
+      featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const handleFilter = (newFilters) => {
     const searchParams = new URLSearchParams(location.search);
@@ -118,8 +142,13 @@ const Estate_Section = () => {
     navigate(`?${searchParams.toString()}`, { replace: true });
   };
 
-  const handleLocationClick = (location) => {
-    navigate(`?location=${location}`);
+  const handleLocationClick = (locationName) => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('location', locationName);
+    navigate(`?${searchParams.toString()}`);
+    if (featuredListRef.current) {
+      featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const locations = [
@@ -176,24 +205,13 @@ const Estate_Section = () => {
           </div>
 
           <section className="w-full px-4 md:px-16 py-3 bg-white">
-            {/* GRID CONTAINER */}
-            {/* Mobile: 1 col, Tablet: 2 cols, Desktop: 3 cols (Matches your image) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
               {locations.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => handleLocationClick(item.location)}
-                  className="
-              group flex items-center 
-              bg-white 
-              border border-gray-200 
-              rounded-sm 
-              overflow-hidden 
-              hover:shadow-lg transition-all duration-300 cursor-pointer
-            "
+                  className="group flex items-center bg-white border border-gray-200 rounded-sm overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
                 >
-                  {/* LEFT IMAGE */}
                   <div className="w-32 h-28 shrink-0 overflow-hidden">
                     <img
                       src={item.image}
@@ -201,22 +219,15 @@ const Estate_Section = () => {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                   </div>
-
-                  {/* RIGHT CONTENT */}
                   <div className="flex flex-1 items-end justify-between px-4 py-2">
                     <div className="flex flex-col gap-6 md:gap-9">
-                      {/* Title */}
                       <h3 className="playfair-display text-lg text-black font-medium leading-tight">
                         {item.location}
                       </h3>
-
-                      {/* Listings Count */}
                       <span className="text-[10px] font-sans text-gray-400 font-bold uppercase tracking-widest">
                         {item.listings} LISTINGS
                       </span>
                     </div>
-
-                    {/* ARROW ICON (Pushed to the right) */}
                     <div className="text-gray-400 group-hover:text-black transition-colors duration-300">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -230,13 +241,10 @@ const Estate_Section = () => {
                       </svg>
                     </div>
                   </div>
-
                 </div>
               ))}
-
             </div>
           </section>
-
         </section>
 
         <div className="w-[92%] md:w-[95%] h-px bg-gray-300 border-0 justify-self-center"></div>
@@ -272,16 +280,17 @@ const Estate_Section = () => {
                 </div>
               )}
             </div>
+
+            <Pagination 
+              currentPage={page} 
+              totalPages={totalPages} 
+              onPageChange={handlePageChange} 
+            />
           </div>
-
         </section>
-
-
       </div>
-
-
     </div>
   )
 }
 
-export default Estate_Section
+export default Estate_Section;

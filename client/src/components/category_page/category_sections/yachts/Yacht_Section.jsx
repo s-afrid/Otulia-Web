@@ -3,8 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Yacht_Hero from './Yacht_Hero';
 import FilterBar from '../cars/FilterBar';
 import AssetCard from '../../../AssetCard';
-import yachtFilterOptions from '../../../../json/yacht_filter_options.json';
 import SortDropdown from '../SortDropdown';
+import yachtFilterOptions from '../../../../json/yacht_filter_options.json';
+import Pagination from '../../../Pagination';
 
 // Import Logos
 import azimutLogo from '../../../../assets/yacht_brands/Azimut_Yachts.png';
@@ -21,8 +22,8 @@ import pershingLogo from '../../../../assets/yacht_brands/Pershing.png';
 const Yacht_Section = () => {
     const [list, setlist] = useState([]);
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(12);
-    const [hasMore, setHasMore] = useState(true);
+    const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({});
     const [currentSort, setCurrentSort] = useState('Newest');
     const [filterBarKey, setFilterBarKey] = useState(0);
@@ -52,10 +53,13 @@ const Yacht_Section = () => {
         { id: 9, name: 'Custom Line', logo: customLineLogo },
         { id: 10, name: 'Pershing', logo: pershingLogo },
     ];
-        const datafetch = async (reset = false) => {
+
+    const datafetch = async (pageNum) => {
+        setLoading(true);
+        
         const searchParams = new URLSearchParams(location.search);
-        searchParams.set('limit', limit);
-        searchParams.set('page', reset ? 1 : page);
+        searchParams.set('limit', 9);
+        searchParams.set('page', pageNum);
 
         // Ensure sort is set from state if not in URL, or sync from URL
         if (!searchParams.has('sort')) {
@@ -99,26 +103,25 @@ const Yacht_Section = () => {
                 throw new Error(`Response status: ${response.status}`);
             }
             const result = await response.json();
-            if (result.length < limit) {
-                setHasMore(false);
-            }
-            if (reset || page === 1) {
-                setlist(result);
-            } else {
-                setlist(prevList => [...prevList, ...result]);
-            }
+            
+            const data = result.data || result;
+            const pagination = result.pagination || { totalPages: 1 };
+            
+            setlist(data);
+            setTotalPages(pagination.totalPages);
         } catch (error) {
             console.error(error.message);
+        } finally {
+            setLoading(false);
         }
     }
 
     useEffect(() => {
-        datafetch();
-    }, [page, limit]);
+        datafetch(page);
+    }, [location.search, page]);
 
     useEffect(() => {
         setPage(1);
-        datafetch(true);
         const searchParams = new URLSearchParams(location.search);
         if (searchParams.has('location') || searchParams.has('acquisition')) {
             if (featuredListRef.current) {
@@ -128,9 +131,12 @@ const Yacht_Section = () => {
         }
     }, [location.search]);
 
-    const loadMore = () => {
-        setPage(prevPage => prevPage + 1);
-    }
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+        if (featuredListRef.current) {
+            featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
 
     const handleFilter = (newFilters) => {
         const searchParams = new URLSearchParams(location.search);
@@ -142,7 +148,7 @@ const Yacht_Section = () => {
             }
         }
         navigate(`?${searchParams.toString()}`, { replace: true });
-    }
+    };
 
     const handleSortChange = (newSort) => {
         setCurrentSort(newSort);
@@ -152,32 +158,33 @@ const Yacht_Section = () => {
     };
 
     const priceRanges = [
-        '$1M – $3M',
-        '$3M – $8M',
-        '$8M – $20M',
-        '$20M – $50M',
-        '$50M+'
+        '$100K – $250K',
+        '$250K – $500K',
+        '$500K – $1M',
+        '$1M – $2M',
+        '$2M – $5M',
+        '$5M+'
     ];
 
     return (
-        <div className=''>
+        <div className="">
             <Yacht_Hero />
-            <div className='bg-white'>
 
-                <section className="w-full px-3 md:px-16 py-16 bg-white">
+            <div className="bg-white">
+                <section className="w-full px-3 md:px-16 py-12 bg-white">
                     <div className="flex flex-col items-center justify-center mb-10">
-                        <h2 className="text-3xl md:text-5xl playfair-display text-black mb-14 text-center">
-                            Elite Shipyards
+                        <h2 className="text-3xl md:text-4xl playfair-display text-black mb-12 text-center">
+                            Popular Brands
                         </h2>
 
-                        <div className='grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-20 w-full items-center justify-center max-w-7xl mx-auto'>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-16 w-full items-center justify-center">
                             {brands.map((item) => (
-                                <div key={item.id} className="w-full flex justify-center group transform transition-all duration-300 hover:scale-110">
+                                <div key={item.id} className="w-full flex justify-center group">
                                     <img
                                         src={item.logo}
                                         alt={item.name}
                                         onClick={() => handleBrandClick(item.name)}
-                                        className='h-12 md:h-16 w-auto object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer mix-blend-multiply'
+                                        className="h-16 md:h-20 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-pointer mix-blend-multiply"
                                     />
                                 </div>
                             ))}
@@ -185,31 +192,27 @@ const Yacht_Section = () => {
                     </div>
                 </section>
 
-                <div className="w-[92%] md:w-[70%] h-px bg-gray-200 border-0 justify-self-center"></div>
+                <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
                 <section className="w-full px-3 md:px-16 py-12 bg-white">
-                    <FilterBar
-                        onFilter={handleFilter}
-                        filterOptions={yachtFilterOptions}
-                        priceRanges={priceRanges}
-                        key={filterBarKey}
-                        hideLocation={true}
-                    />
+                    <FilterBar onFilter={handleFilter} key={filterBarKey} priceRanges={priceRanges} filterOptions={yachtFilterOptions} hideLocation={true} />
                 </section>
 
-                <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white pb-32">
-                    <h2 className="text-3xl md:text-4xl playfair-display text-black mb-8 flex justify-between items-center px-4">
-                        <span className='font-light tracking-tight'>Featured Yacht Listings</span>
-                        <SortDropdown onSortChange={handleSortChange} currentSort={currentSort} />
+                <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white">
+                    <h2 className="text-3xl md:text-4xl playfair-display text-black mb-7 text-center flex justify-between">
+                        <span>Featured List</span>
+                        <span>
+                            <SortDropdown onSortChange={handleSortChange} currentSort={currentSort} />
+                        </span>
                     </h2>
 
-                    <div className="w-[92%] md:w-full h-px bg-gray-200 border-0 mb-12"></div>
+                    <div className="w-[92%] md:w-[95%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
-                    <div className='w-full max-w-[1700px] mx-auto'>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-7">
                             {list.length > 0 ? (
                                 list.map((item, idx) => (
-                                    <div key={item._id} className="animate-fade-in">
+                                    <div key={item._id}>
                                         <AssetCard item={item} idx={idx} />
                                     </div>
                                 ))
@@ -219,16 +222,12 @@ const Yacht_Section = () => {
                                 </div>
                             )}
                         </div>
-                        {hasMore && list.length > 0 && (
-                            <div className="text-center mt-12">
-                                <button
-                                    onClick={loadMore}
-                                    className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors"
-                                >
-                                    Load More
-                                </button>
-                            </div>
-                        )}
+
+                        <Pagination 
+                            currentPage={page} 
+                            totalPages={totalPages} 
+                            onPageChange={handlePageChange} 
+                        />
                     </div>
                 </section>
             </div>
@@ -236,4 +235,4 @@ const Yacht_Section = () => {
     )
 }
 
-export default Yacht_Section
+export default Yacht_Section;

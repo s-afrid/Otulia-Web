@@ -6,6 +6,7 @@ import AssetCard from '../../../AssetCard';
 import SortDropdown from '../SortDropdown';
 import carFilterOptions from '../../../../json/car_filter_options.json';
 import Cars_Search from './Cars_Search';
+import Pagination from '../../../Pagination';
 
 // Import Logos
 import astonMartinLogo from '../../../../assets/car_brands/Aston_Martin_Wings.svg';
@@ -21,7 +22,9 @@ import shelbyLogo from '../../../../assets/car_brands/Shelby_American.svg';
 
 const Cars_Section = () => {
   const [list, setlist] = useState([]);
-  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({});
   const [currentSort, setCurrentSort] = useState('Newest');
   const [filterBarKey, setFilterBarKey] = useState(0);
@@ -30,9 +33,12 @@ const Cars_Section = () => {
   const featuredListRef = useRef(null);
 
   // Fetch data
-  const datafetch = async () => {
+  const datafetch = async (pageNum) => {
+    setLoading(true);
+    
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set('limit', limit);
+    searchParams.set('limit', 9);
+    searchParams.set('page', pageNum);
 
     // Ensure sort is set from state if not in URL, or sync from URL
     if (!searchParams.has('sort')) {
@@ -75,14 +81,25 @@ const Cars_Section = () => {
         throw new Error(`Response status: ${response.status}`);
       }
       const result = await response.json();
-      setlist(result);
+      
+      const data = result.data || result;
+      const pagination = result.pagination || { totalPages: 1 };
+      
+      setlist(data);
+      setTotalPages(pagination.totalPages);
     } catch (error) {
       console.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    datafetch();
+    datafetch(page);
+  }, [location.search, page]);
+
+  useEffect(() => {
+    setPage(1);
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.has('location') || searchParams.has('acquisition')) {
       if (featuredListRef.current) {
@@ -91,7 +108,14 @@ const Cars_Section = () => {
       setFilters({});
       setFilterBarKey(prevKey => prevKey + 1);
     }
-  }, [location.search, limit]);
+  }, [location.search]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    if (featuredListRef.current) {
+      featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const handleFilter = (newFilters) => {
     const searchParams = new URLSearchParams(location.search); // Preserve existing params (like sort)
@@ -242,6 +266,12 @@ const Cars_Section = () => {
                 </div>
               )}
             </div>
+
+            <Pagination 
+              currentPage={page} 
+              totalPages={totalPages} 
+              onPageChange={handlePageChange} 
+            />
           </div>
         </section>
       </div>

@@ -80,12 +80,21 @@ router.get("/cars", async (req, res) => {
     if (sort === 'Newest') sortOptions = { createdAt: -1 };
     if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
+    const total = await CarAsset.countDocuments(query);
     const data = await CarAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
       .sort(sortOptions);
 
-    res.json(data);
+    res.json({
+      data,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   } catch (err) {
     console.error("Error in /api/assets/cars:", err);
     res.status(500).json({ message: "Failed to fetch vehicle assets" });
@@ -153,12 +162,21 @@ router.get("/estates", async (req, res) => {
     if (sort === 'Newest') sortOptions = { createdAt: -1 };
     if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
+    const total = await EstateAsset.countDocuments(query);
     const data = await EstateAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
       .sort(sortOptions);
 
-    res.json(data);
+    res.json({
+      data,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch estate assets" });
   }
@@ -224,12 +242,21 @@ router.get("/bikes", async (req, res) => {
     if (sort === 'Newest') sortOptions = { createdAt: -1 };
     if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
+    const total = await BikeAsset.countDocuments(query);
     const data = await BikeAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
       .sort(sortOptions);
 
-    res.json(data);
+    res.json({
+      data,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch bike assets" });
   }
@@ -295,12 +322,21 @@ router.get("/yachts", async (req, res) => {
     if (sort === 'Newest') sortOptions = { createdAt: -1 };
     if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
+    const total = await YachtAsset.countDocuments(query);
     const data = await YachtAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
       .sort(sortOptions);
 
-    res.json(data);
+    res.json({
+      data,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch yacht assets" });
   }
@@ -708,6 +744,18 @@ router.get("/combined", async (req, res) => {
         return [...car, ...estate, ...bike, ...yacht, ...other];
     };
 
+    const countResults = async (q) => {
+        const [car, estate, bike, yacht, other] = await Promise.all([
+            CarAsset.countDocuments(q),
+            EstateAsset.countDocuments(q),
+            BikeAsset.countDocuments(q),
+            YachtAsset.countDocuments(q),
+            Listing.countDocuments(q),
+        ]);
+        return car + estate + bike + yacht + other;
+    };
+
+    let total = await countResults(query);
     let combinedAssets = await fetchResults(query);
 
     // --- COMPREHENSIVE FALLBACK LOGIC ---
@@ -733,6 +781,7 @@ router.get("/combined", async (req, res) => {
                     { $or: fallbackOrClauses }
                 ]
             };
+            total = await countResults(fallbackQuery);
             combinedAssets = await fetchResults(fallbackQuery);
         }
     }
@@ -743,7 +792,15 @@ router.get("/combined", async (req, res) => {
     else if (sort === 'Oldest') combinedAssets.sort((a, b) => a.createdAt - b.createdAt);
     else combinedAssets.sort((a, b) => b.createdAt - a.createdAt);
 
-    res.json(combinedAssets);
+    res.json({
+      data: combinedAssets,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   } catch (err) {
     console.error("Combined assets error:", err);
     res.status(500).json({ message: "Failed to fetch combined assets" });
