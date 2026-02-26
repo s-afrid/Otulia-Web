@@ -288,6 +288,14 @@ router.post('/create', authMiddleware, upload.fields([
 
         const updateData = { images: imageUrls, documents: docUrls };
 
+        // --- Formatting Helpers ---
+        const addUnit = (val, unit) => {
+            if (!val) return val;
+            const strVal = val.toString().toLowerCase();
+            if (strVal.includes(unit.toLowerCase())) return val;
+            return `${val} ${unit}`;
+        };
+
         if (category === 'Car') {
             updateData.brand = req.body.make || 'Unknown';
             
@@ -306,9 +314,10 @@ router.post('/create', authMiddleware, upload.fields([
             updateData.variant = req.body.variant;
             updateData.highlights = req.body.highlights ? JSON.parse(req.body.highlights) : [];
             updateData.videoUrl = req.body.videoUrl;
+
             updateData.keySpecifications = {
-                power: req.body.horsepower,
-                topSpeed: req.body.topSpeed,
+                power: addUnit(req.body.horsepower, 'hp'),
+                topSpeed: addUnit(req.body.topSpeed, 'mph'),
                 engineType: req.body.engineType
             };
             updateData.specification = {
@@ -318,10 +327,10 @@ router.post('/create', authMiddleware, upload.fields([
                 body: req.body.bodyType,
                 series: req.body.series,
                 mileage: req.body.mileage,
-                power: req.body.horsepower,
+                power: addUnit(req.body.horsepower, 'hp'),
                 cylinderCapacity: req.body.cylinderCapacity,
                 configuration: req.body.configuration,
-                topSpeed: req.body.topSpeed,
+                topSpeed: addUnit(req.body.topSpeed, 'mph'),
                 engineType: req.body.engineType,
                 steering: req.body.steering,
                 transmission: req.body.transmission,
@@ -358,8 +367,9 @@ router.post('/create', authMiddleware, upload.fields([
             updateData.highlights = req.body.highlights ? JSON.parse(req.body.highlights) : [];
             updateData.videoUrl = req.body.videoUrl;
             updateData.keySpecifications = {
-                engineCapacity: req.body.engineCapacity,
-                mileage: req.body.mileage,
+                engineCapacity: addUnit(req.body.engineCapacity, 'cc'),
+                mileage: addUnit(req.body.mileage, 'km'),
+                topSpeed: addUnit(req.body.topSpeed, 'km/h'),
                 fuelType: req.body.fuelType
             };
             updateData.specification = {
@@ -367,10 +377,11 @@ router.post('/create', authMiddleware, upload.fields([
                 brand: req.body.brand,
                 model: req.body.model,
                 variant: req.body.variant,
-                engineCapacityCC: req.body.engineCapacity,
-                maxPower: req.body.maxPower,
-                maxTorque: req.body.maxTorque,
-                mileageKM: req.body.mileage,
+                engineCapacityCC: addUnit(req.body.engineCapacity, 'cc'),
+                topSpeed: addUnit(req.body.topSpeed, 'km/h'),
+                maxPower: addUnit(req.body.maxPower, 'hp'),
+                maxTorque: addUnit(req.body.maxTorque, 'Nm'),
+                mileageKM: addUnit(req.body.mileage, 'km'),
                 fuelType: req.body.fuelType,
                 transmission: req.body.transmission,
                 color: req.body.color,
@@ -398,23 +409,23 @@ router.post('/create', authMiddleware, upload.fields([
             updateData.highlights = req.body.highlights ? JSON.parse(req.body.highlights) : [];
             updateData.videoUrl = req.body.videoUrl;
             updateData.keySpecifications = {
-                length: req.body.length,
+                length: addUnit(req.body.length, 'm'),
                 bathrooms: req.body.bathrooms,
-                fuelCapacity: req.body.fuelCapacity,
+                fuelCapacity: addUnit(req.body.fuelCapacity, 'L'),
                 engineType: req.body.engineType,
                 bedrooms: req.body.bedrooms,
-                topSpeed: req.body.topSpeed
+                topSpeed: addUnit(req.body.topSpeed, 'knots')
             };
             updateData.specification = {
                 yearOfConstruction: req.body.year,
                 brandBuilder: req.body.builder,
                 model: req.body.model,
-                length: req.body.length,
-                beam: req.body.beam,
-                draft: req.body.draft,
+                length: addUnit(req.body.length, 'm'),
+                beam: addUnit(req.body.beam, 'm'),
+                draft: addUnit(req.body.draft, 'm'),
                 engineType: req.body.engineType,
-                cruisingSpeed: req.body.cruisingSpeed,
-                topSpeed: req.body.topSpeed,
+                cruisingSpeed: addUnit(req.body.cruisingSpeed, 'knots'),
+                topSpeed: addUnit(req.body.topSpeed, 'knots'),
                 usageHours: req.body.usageHours,
                 fuelConsumption: req.body.fuelConsumption,
                 guestCapacity: req.body.guestCapacity,
@@ -439,16 +450,16 @@ router.post('/create', authMiddleware, upload.fields([
                 bedrooms: req.body.bedrooms,
                 bathrooms: req.body.bathrooms,
                 floors: req.body.floors,
-                builtUpArea: req.body.builtUpArea,
-                landArea: req.body.landArea,
+                builtUpArea: addUnit(req.body.builtUpArea, 'sq ft'),
+                landArea: addUnit(req.body.landArea, 'sq ft'),
                 propertyType: req.body.propertyType
             };
             updateData.specification = {
                 yearOfConstruction: req.body.year,
                 propertyType: req.body.propertyType,
                 architectureStyle: req.body.architectureStyle,
-                builtUpArea: req.body.builtUpArea,
-                landArea: req.body.landArea,
+                builtUpArea: addUnit(req.body.builtUpArea, 'sq ft'),
+                landArea: addUnit(req.body.landArea, 'sq ft'),
                 floors: req.body.floors,
                 bedrooms: req.body.bedrooms,
                 bathrooms: req.body.bathrooms,
@@ -577,6 +588,14 @@ router.put('/:id', authMiddleware, upload.fields([
         if (videoUrl !== undefined) listing.videoUrl = videoUrl;
         if (isPublic !== undefined) listing.status = (isPublic === 'true' || isPublic === true) ? 'Active' : 'Draft';
 
+        // --- Formatting Helper ---
+        const addUnit = (val, unit) => {
+            if (!val) return val;
+            const strVal = val.toString().toLowerCase();
+            if (strVal.includes(unit.toLowerCase())) return val;
+            return `${val} ${unit}`;
+        };
+
         if (req.body.highlights) {
             try {
                 listing.highlights = JSON.parse(req.body.highlights);
@@ -618,10 +637,18 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.bodyType) spec.body = req.body.bodyType;
             if (req.body.series) spec.series = req.body.series;
             if (req.body.mileage) { spec.mileage = req.body.mileage; }
-            if (req.body.horsepower) { spec.power = req.body.horsepower; keySpec.power = req.body.horsepower; }
+            if (req.body.horsepower) { 
+                const p = addUnit(req.body.horsepower, 'hp');
+                spec.power = p; 
+                keySpec.power = p; 
+            }
             if (req.body.cylinderCapacity) { spec.cylinderCapacity = req.body.cylinderCapacity; }
             if (req.body.configuration) spec.configuration = req.body.configuration;
-            if (req.body.topSpeed) { spec.topSpeed = req.body.topSpeed; keySpec.topSpeed = req.body.topSpeed; }
+            if (req.body.topSpeed) { 
+                const ts = addUnit(req.body.topSpeed, 'mph');
+                spec.topSpeed = ts; 
+                keySpec.topSpeed = ts; 
+            }
             if (req.body.engineType) { spec.engineType = req.body.engineType; keySpec.engineType = req.body.engineType; }
             if (req.body.steering) spec.steering = req.body.steering;
             if (req.body.transmission) spec.transmission = req.body.transmission;
@@ -670,10 +697,23 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.brand) spec.brand = req.body.brand;
             if (req.body.model) spec.model = req.body.model;
             if (req.body.variant) spec.variant = req.body.variant;
-            if (req.body.engineCapacity) { spec.engineCapacityCC = Number(req.body.engineCapacity); keySpec.engineCapacity = req.body.engineCapacity; }
-            if (req.body.maxPower) spec.maxPower = req.body.maxPower;
-            if (req.body.maxTorque) spec.maxTorque = req.body.maxTorque;
-            if (req.body.mileage) { spec.mileageKM = Number(req.body.mileage); keySpec.mileage = req.body.mileage; }
+            if (req.body.engineCapacity) { 
+                const ec = addUnit(req.body.engineCapacity, 'cc');
+                spec.engineCapacityCC = ec; 
+                keySpec.engineCapacity = ec; 
+            }
+            if (req.body.topSpeed) {
+                const ts = addUnit(req.body.topSpeed, 'km/h');
+                spec.topSpeed = ts;
+                keySpec.topSpeed = ts;
+            }
+            if (req.body.maxPower) spec.maxPower = addUnit(req.body.maxPower, 'hp');
+            if (req.body.maxTorque) spec.maxTorque = addUnit(req.body.maxTorque, 'Nm');
+            if (req.body.mileage) { 
+                const mil = addUnit(req.body.mileage, 'km');
+                spec.mileageKM = mil; 
+                keySpec.mileage = mil; 
+            }
             if (req.body.fuelType) { spec.fuelType = req.body.fuelType; keySpec.fuelType = req.body.fuelType; }
             if (req.body.transmission) { spec.transmission = req.body.transmission; }
             if (req.body.color) { spec.color = req.body.color; }
@@ -682,17 +722,6 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.condition) spec.condition = req.body.condition;
             if (req.body.ownershipCount) spec.ownershipCount = Number(req.body.ownershipCount);
             if (req.body.accidentHistory) spec.accidentHistory = req.body.accidentHistory;
-
-            // Handle Specific Bike Documents (Sync with Cloudinary logic)
-            const bikeDocFields = ['registrationRC', 'insurance', 'serviceHistory'];
-            for (const field of bikeDocFields) {
-                if (req.files[field]) {
-                    // Extract existing URL from documents array if present (this part is tricky since they are all in one array)
-                    // For simplicity, we are appending all to 'documents' field in the model.
-                    // If you need specific fields in the model for these, they should be added to the schema.
-                    // Currently everything uploaded as a doc goes into listing.documents.
-                }
-            }
 
             listing.specification = spec;
             listing.keySpecifications = keySpec;
@@ -724,17 +753,30 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.year) spec.yearOfConstruction = req.body.year;
             if (req.body.builder) spec.brandBuilder = req.body.builder;
             if (req.body.model) spec.model = req.body.model;
-            if (req.body.length) { spec.length = req.body.length; keySpec.length = req.body.length; }
-            if (req.body.beam) { spec.beam = req.body.beam; }
-            if (req.body.draft) { spec.draft = req.body.draft; }
+            if (req.body.length) { 
+                const len = addUnit(req.body.length, 'm');
+                spec.length = len; 
+                keySpec.length = len; 
+            }
+            if (req.body.beam) { spec.beam = addUnit(req.body.beam, 'm'); }
+            if (req.body.draft) { spec.draft = addUnit(req.body.draft, 'm'); }
             if (req.body.engineType) { spec.engineType = req.body.engineType; keySpec.engineType = req.body.engineType; }
-            if (req.body.cruisingSpeed) { spec.cruisingSpeed = req.body.cruisingSpeed; }
-            if (req.body.topSpeed) { spec.topSpeed = req.body.topSpeed; keySpec.topSpeed = req.body.topSpeed; }
+            if (req.body.cruisingSpeed) { spec.cruisingSpeed = addUnit(req.body.cruisingSpeed, 'knots'); }
+            if (req.body.topSpeed) { 
+                const ts = addUnit(req.body.topSpeed, 'knots');
+                spec.topSpeed = ts; 
+                keySpec.topSpeed = ts; 
+            }
             if (req.body.usageHours) spec.usageHours = req.body.usageHours;
             if (req.body.fuelConsumption) spec.fuelConsumption = req.body.fuelConsumption;
             if (req.body.guestCapacity) { spec.guestCapacity = req.body.guestCapacity; }
             if (req.body.crewCapacity) { spec.crewCapacity = req.body.crewCapacity; }
-            if (req.body.fuelCapacity) keySpec.fuelCapacity = req.body.fuelCapacity;
+            if (req.body.fuelCapacity) {
+                const fc = addUnit(req.body.fuelCapacity, 'L');
+                keySpec.fuelCapacity = fc;
+                // Add to spec if needed, but schema only has it in keySpec?
+                // Yacht schema has fuelConsumption but not fuelCapacity in spec.
+            }
             if (req.body.bathrooms) keySpec.bathrooms = req.body.bathrooms;
             if (req.body.bedrooms) keySpec.bedrooms = req.body.bedrooms;
             if (req.body.fuelType) spec.fuelType = req.body.fuelType;
@@ -762,8 +804,16 @@ router.put('/:id', authMiddleware, upload.fields([
 
             if (req.body.year) spec.yearOfConstruction = req.body.year;
             if (req.body.propertyType) { spec.propertyType = req.body.propertyType; keySpec.propertyType = req.body.propertyType; }
-            if (req.body.builtUpArea) { spec.builtUpArea = req.body.builtUpArea; keySpec.builtUpArea = req.body.builtUpArea; }
-            if (req.body.landArea) { spec.landArea = req.body.landArea; keySpec.landArea = req.body.landArea; }
+            if (req.body.builtUpArea) { 
+                const bua = addUnit(req.body.builtUpArea, 'sq ft');
+                spec.builtUpArea = bua; 
+                keySpec.builtUpArea = bua; 
+            }
+            if (req.body.landArea) { 
+                const la = addUnit(req.body.landArea, 'sq ft');
+                spec.landArea = la; 
+                keySpec.landArea = la; 
+            }
             if (req.body.floors) { spec.floors = Number(req.body.floors); keySpec.floors = req.body.floors; }
             if (req.body.bedrooms) { spec.bedrooms = Number(req.body.bedrooms); keySpec.bedrooms = req.body.bedrooms; }
             if (req.body.bathrooms) { spec.bathrooms = Number(req.body.bathrooms); keySpec.bathrooms = req.body.bathrooms; }

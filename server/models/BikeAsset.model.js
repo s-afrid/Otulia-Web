@@ -19,6 +19,7 @@ const bikeAssetSchema = new mongoose.Schema(
     keySpecifications: {
       engineCapacity: String,
       mileage: String,
+      topSpeed: String,
       fuelType: String
     },
 
@@ -31,15 +32,16 @@ const bikeAssetSchema = new mongoose.Schema(
       variant: String,
       year: String,                //
       condition: String,           //
+      topSpeed: String,
 
       // Engine & Performance
       engineType: String,          //
-      engineCapacityCC: Number,    // (Mapped from "803 cc")
+      engineCapacityCC: String,    // (Mapped from "803 cc")
       maxPower: String,            //
       maxTorque: String,           //
       transmission: String,        //
       fuelSystem: String,          //
-      mileageKM: Number,           // (Mapped from "18-20 km/l")
+      mileageKM: String,           // (Mapped from "18-20 km/l")
       fuelType: String,            //
 
       // Chassis & Suspension

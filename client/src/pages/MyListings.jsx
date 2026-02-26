@@ -5,12 +5,13 @@ import AssetCard from '../components/AssetCard';
 import CreateListingModal from '../components/CreateListingModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import DealerVerificationModal from '../components/inventory/DealerVerificationModal';
-import { FiGrid, FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { FiGrid, FiPlus, FiEdit2, FiTrash2, FiArrowRight, FiZap, FiShield, FiTrendingUp } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
 import UpgradeModal from '../components/UpgradeModal';
 
 const MyListings = () => {
     const { token, isAuthenticated, user, login } = useAuth();
+    const navigate = useNavigate();
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -288,7 +289,7 @@ const MyListings = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 pb-20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 pb-10">
                         {listings.map(item => (
                             <div key={item._id} className="relative group overflow-hidden rounded-2xl">
                                 <AssetCard item={item} />
@@ -318,6 +319,83 @@ const MyListings = () => {
                                 </div>
                             </div>
                         ))}
+
+                        {/* Upgrade Card for Freemium Users */}
+                        {user?.plan === 'Freemium' && (
+                            <div 
+                                onClick={() => navigate('/pricing')}
+                                className="relative flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/50 hover:bg-white hover:border-[#D90416] transition-all cursor-pointer group min-h-[350px]"
+                            >
+                                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                    <FiZap className="text-3xl text-[#D90416]" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">Unlock Full Potential</h3>
+                                <p className="text-gray-500 text-sm text-center mb-6">
+                                    Increase your listing limit and get premium exposure for your assets.
+                                </p>
+                                <div className="flex items-center gap-2 text-[#D90416] font-bold text-sm tracking-widest uppercase">
+                                    <span>Upgrade Now</span>
+                                    <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Benefits Section for Freemium Users */}
+                {user?.plan === 'Freemium' && (
+                    <div className="mb-20 mt-10 p-8 md:p-12 rounded-3xl bg-black text-white overflow-hidden relative">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-600/10 rounded-full -ml-32 -mb-32 blur-3xl"></div>
+
+                        <div className="relative z-10">
+                            <h2 className="text-2xl md:text-3xl font-bold mb-10 playfair-display">Why upgrade to a Premium Plan?</h2>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                                <div className="flex flex-col gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                                        <FiZap className="text-xl text-yellow-400" />
+                                    </div>
+                                    <h4 className="text-lg font-bold">Increased Limits</h4>
+                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                        List up to 100 assets with our Business VIP plan. Never worry about reaching your capacity again.
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-col gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                                        <FiTrendingUp className="text-xl text-green-400" />
+                                    </div>
+                                    <h4 className="text-lg font-bold">Priority Exposure</h4>
+                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                        Get your listings featured at the top of search results and on the homepage for maximum visibility.
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-col gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                                        <FiShield className="text-xl text-blue-400" />
+                                    </div>
+                                    <h4 className="text-lg font-bold">Advanced Analytics</h4>
+                                    <p className="text-gray-400 text-sm leading-relaxed">
+                                        Access detailed insights about your listing performance, views, and lead engagement statistics.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-12 flex flex-col sm:flex-row items-center gap-6 border-t border-white/10 pt-10">
+                                <div>
+                                    <p className="text-white font-medium text-lg">Ready to take your dealership to the next level?</p>
+                                    <p className="text-gray-400 text-sm">Plans starting from just $99/month</p>
+                                </div>
+                                <button 
+                                    onClick={() => navigate('/pricing')}
+                                    className="px-8 py-4 bg-white text-black rounded-full font-bold uppercase tracking-widest text-sm hover:bg-gray-200 transition-all sm:ml-auto whitespace-nowrap"
+                                >
+                                    Explore Plans
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
