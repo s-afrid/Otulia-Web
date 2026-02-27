@@ -19,7 +19,6 @@ import ImageCropModal from '../components/ImageCropModal';
 import numberWithCommas from '../modules/numberwithcomma';
 import SEO from '../components/SEO';
 
-import SEO from '../components/SEO';
 
 const paypalOptions = {
     "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
