@@ -7,6 +7,7 @@ import {
     FiMoreVertical, FiShoppingBag, FiShield, FiArrowUpRight, FiBriefcase, FiFileText
 } from 'react-icons/fi';
 import numberWithCommas from '../modules/numberwithcomma';
+import SEO from '../components/SEO';
 
 const AdminDashboard = () => {
     const { token, user } = useAuth();
@@ -163,6 +164,7 @@ const AdminDashboard = () => {
 
     return (
         <div className="min-h-screen bg-[#F9FAFB] flex montserrat">
+            <SEO title="Admin Dashboard" description="Otulia System Administration" />
             {/* SIDEBAR */}
             <aside className={`w-72 border-r flex-col fixed inset-y-0 z-50 bg-white border-gray-100 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} transition-transform duration-300 ease-in-out`}>
                 <div className="p-8 pb-12 flex justify-between items-center">

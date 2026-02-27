@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import numberWithCommas from '../modules/numberwithcomma';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import SEO from '../components/SEO';
 
 const CartPage = () => {
     const { cart, removeFromCart, cartTotal, clearCart } = useCart();
@@ -85,6 +86,7 @@ const CartPage = () => {
 
     return (
         <div className="min-h-screen bg-white pt-24">
+            <SEO title="My Cart" description="Review your selected luxury assets before completing your transaction." />
             <Navbar />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <h1 className="text-3xl font-bold font-playfair mb-8">Your Cart</h1>

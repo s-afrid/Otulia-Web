@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { GoogleLogin } from '@react-oauth/google';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import SEO from '../components/SEO';
 
 const SignupPage = () => {
     const [name, setName] = useState('');
@@ -40,7 +41,10 @@ const SignupPage = () => {
 
     return (
         <div className="relative min-h-screen flex items-center justify-center bg-black font-sans overflow-hidden space-y-10">
-
+            <SEO 
+                title="Sign Up"
+                description="Join Otulia and begin your legacy. Create an account to buy, sell, and rent exclusive luxury assets."
+            />
             {/* Full Screen Background */}
             <div className="absolute inset-0 z-0">
                 

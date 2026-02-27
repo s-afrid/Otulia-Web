@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FiCheckCircle } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
+import Navbar from '../components/Navbar';
 
 const ContactSales = () => {
     const navigate = useNavigate();
@@ -54,6 +56,7 @@ const ContactSales = () => {
     if (success) {
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8">
+                <SEO title="Inquiry Received" description="Thank you for your inquiry. Our sales team will get back to you shortly." />
                 <FiCheckCircle className="text-6xl text-green-500 mb-6" />
                 <h2 className="text-3xl font-bold text-gray-900 font-playfair mb-4 text-center">Inquiry Received</h2>
                 <p className="text-gray-500 text-center max-w-lg mb-8">
@@ -71,7 +74,12 @@ const ContactSales = () => {
 
     return (
         <div className="min-h-screen bg-[#F9FAFB] py-20 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto">
+            <SEO 
+                title="Contact Sales"
+                description="Connect with our sales team for custom solutions, enterprise accounts, and luxury asset management."
+            />
+            <Navbar />
+            <div className="max-w-3xl mx-auto mt-20">
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-bold text-gray-900 font-playfair mb-4">Contact Sales</h1>
                     <p className="text-lg text-gray-500 max-w-2xl mx-auto">

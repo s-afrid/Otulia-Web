@@ -8,6 +8,7 @@ import carFilterOptions from '../json/car_filter_options.json';
 import bikeFilterOptions from '../json/bike_filter_options.json';
 import yachtFilterOptions from '../json/yacht_filter_options.json';
 import Pagination from '../components/Pagination';
+import SEO from '../components/SEO';
 
 const Rent = () => {
   const [activeCategory, setActiveCategory] = useState('All');
@@ -115,6 +116,10 @@ const Rent = () => {
 
   return (
     <div className='relative w-full overflow-x-hidden pt-24 min-h-screen bg-white'>
+      <SEO 
+        title={`Rent Luxury ${activeCategory !== 'All' ? activeCategory : 'Assets'}`}
+        description={`Rent exclusive ${activeCategory.toLowerCase()} from our premium collection on Otulia.`}
+      />
       <Navbar hideSearch={true} />
       {/* Simple Hero */}
       <div className="bg-black text-white py-16 px-4 text-center">

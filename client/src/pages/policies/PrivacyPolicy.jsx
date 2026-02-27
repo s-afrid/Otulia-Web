@@ -1,9 +1,14 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
+import SEO from '../../components/SEO';
 
 const PrivacyPolicy = () => {
     return (
         <div className="w-full bg-white pt-40 pb-16 montserrat">
+            <SEO 
+                title="Privacy Policy"
+                description="Learn how Otulia protects and manages your personal information and luxury transaction data."
+            />
             <Navbar />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 className="text-4xl font-playfair font-bold text-gray-900 mb-8 text-center">Privacy Policy</h1>

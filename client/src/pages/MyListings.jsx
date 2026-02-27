@@ -8,6 +8,7 @@ import DealerVerificationModal from '../components/inventory/DealerVerificationM
 import { FiGrid, FiPlus, FiEdit2, FiTrash2, FiArrowRight, FiZap, FiShield, FiTrendingUp } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import UpgradeModal from '../components/UpgradeModal';
+import SEO from '../components/SEO';
 
 const MyListings = () => {
     const { token, isAuthenticated, user, login } = useAuth();
@@ -209,6 +210,7 @@ const MyListings = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            <SEO title="My Listings" description="Manage your luxury asset listings on Otulia." />
             <Navbar />
             <CreateListingModal
                 isOpen={isModalOpen}

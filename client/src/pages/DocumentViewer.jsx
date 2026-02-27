@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { FiDownload, FiArrowLeft, FiLoader } from 'react-icons/fi';
 import { useSearchParams } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const DocumentViewer = () => {
     const location = useLocation();
@@ -46,6 +47,7 @@ const DocumentViewer = () => {
     if (!docUrl || error && !loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-4">
+                <SEO title="Document Error" description="There was an error loading the requested document." />
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">{error || 'No document URL provided.'}</h2>
                 <p className="text-gray-500 mb-8">Please return to the dashboard and try again.</p>
                 <Link to="/admin" className="px-6 py-3 bg-black text-white rounded-xl font-bold text-sm hover:bg-[#D48D2A] transition-colors">
@@ -79,6 +81,7 @@ const DocumentViewer = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col montserrat">
+            <SEO title={`View Document: ${docName}`} description="Secure document viewer for Otulia verification files." />
             <header className="bg-white shadow-sm sticky top-0 z-50">
                 <div className="container mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
                     

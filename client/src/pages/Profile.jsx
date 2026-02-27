@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import UserPlaceholder from '../assets/user.png';
 import VerificationModal from '../components/VerificationModal';
 import ImageCropModal from '../components/ImageCropModal';
+import SEO from '../components/SEO';
 
 const Profile = () => {
   const { user, logout, refreshUser, token } = useAuth();
@@ -149,6 +150,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
+      <SEO title="My Profile" description="Manage your Otulia profile, view your order history, and update your account details." />
       <Navbar />
 
       <div className="pt-32 pb-20 px-6 max-w-6xl mx-auto">

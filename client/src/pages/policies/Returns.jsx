@@ -1,9 +1,14 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
+import SEO from '../../components/SEO';
 
 const Returns = () => {
     return (
         <div className="w-full bg-white pt-40 pb-16 montserrat">
+            <SEO 
+                title="Returns & Refund Policy"
+                description="Read our returns and refund policies for luxury asset purchases and rentals on Otulia."
+            />
             <Navbar />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 className="text-4xl font-playfair font-bold text-gray-900 mb-8 text-center">Returns & Refund Policy</h1>

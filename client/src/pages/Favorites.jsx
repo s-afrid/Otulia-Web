@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import AssetCard from '../components/AssetCard';
 import { FiHeart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const Favorites = () => {
     const { token, isAuthenticated, user } = useAuth();
@@ -51,6 +52,7 @@ const Favorites = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            <SEO title="My Favorites" description="View and manage your saved luxury assets on Otulia." />
             <Navbar />
 
             <div className="pt-28 max-w-7xl mx-auto px-6">

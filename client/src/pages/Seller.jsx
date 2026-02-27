@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
+import SEO from '../components/SEO';
 
 const Seller = () => {
   const [formData, setFormData] = useState({
@@ -54,6 +55,7 @@ const Seller = () => {
 
   return (
     <div className="relative w-full overflow-x-hidden bg-white montserrat pb-20">
+      <SEO title="Start Selling" description="Partner with Otulia and get global exposure for your luxury assets." />
       <Navbar hideSearch={true} />
 
       {/* HERO SECTION */}

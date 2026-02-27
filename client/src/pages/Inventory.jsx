@@ -17,6 +17,9 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import DealerVerificationModal from '../components/inventory/DealerVerificationModal';
 import ImageCropModal from '../components/ImageCropModal';
 import numberWithCommas from '../modules/numberwithcomma';
+import SEO from '../components/SEO';
+
+import SEO from '../components/SEO';
 
 const paypalOptions = {
     "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
@@ -102,6 +105,7 @@ const Inventory = () => {
             // If verification is pending, we can optionally show a banner or status
         }
     }, [user]);
+
     const [companyInfo, setCompanyInfo] = useState({
         name: '',
         email: '',
@@ -362,6 +366,9 @@ const Inventory = () => {
 
     return (
         <div className="min-h-screen bg-[#F9FAFB] flex montserrat">
+            <SEO title="Inventory Dashboard" description="Manage your dealership inventory and leads on Otulia." />
+            <SEO title="Inventory Dashboard" description="Manage your dealership inventory and leads on Otulia." />
+
 
             {/* SIDEBAR */}
             <div className={`w-72 border-r flex flex-col fixed inset-y-0 z-50 transition-colors duration-300 bg-white border-gray-100`}>

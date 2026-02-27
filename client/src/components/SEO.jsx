@@ -33,8 +33,10 @@ export default function SEO({ title, description, name = 'Otulia', type = 'websi
     "itemListElement": [
       { "@type": "SiteNavigationElement", "position": 1, "name": "Shop", "url": `${defaultUrl}/shop` },
       { "@type": "SiteNavigationElement", "position": 2, "name": "Rent", "url": `${defaultUrl}/rent` },
-      { "@type": "SiteNavigationElement", "position": 3, "name": "Community", "url": `${defaultUrl}/community` },
-      { "@type": "SiteNavigationElement", "position": 4, "name": "Login", "url": `${defaultUrl}/login` }
+      { "@type": "SiteNavigationElement", "position": 3, "name": "Explore", "url": `${defaultUrl}/category/cars` },
+      { "@type": "SiteNavigationElement", "position": 4, "name": "Community", "url": `${defaultUrl}/community` },
+      { "@type": "SiteNavigationElement", "position": 5, "name": "About", "url": `${defaultUrl}/about` },
+      { "@type": "SiteNavigationElement", "position": 6, "name": "Login", "url": `${defaultUrl}/login` }
     ]
   };
 

@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar'
 import { GoogleLogin } from '@react-oauth/google';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import SEO from '../components/SEO';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -39,7 +40,10 @@ const LoginPage = () => {
 
     return (
         <div className="relative min-h-screen flex items-center justify-center bg-black font-sans overflow-hidden space-y-10">
-
+            <SEO 
+                title="Login"
+                description="Access your personal sanctuary on Otulia. Log in to manage your luxury listings and favorites."
+            />
             {/* Full Screen Background */}
             <div className="absolute inset-0 z-0">
                 

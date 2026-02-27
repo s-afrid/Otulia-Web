@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { FiCheckCircle } from 'react-icons/fi';
+import SEO from '../components/SEO';
 
 const Success = () => {
     const [searchParams] = useSearchParams();
@@ -51,6 +52,7 @@ const Success = () => {
 
     return (
         <div className="h-screen w-full flex flex-col items-center justify-center bg-gray-50">
+            <SEO title="Payment Successful" description="Your luxury asset transaction has been successfully processed." />
             <div className="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center max-w-md text-center">
                 <FiCheckCircle className="text-6xl text-green-500 mb-4 animate-bounce" />
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">Payment Status</h1>

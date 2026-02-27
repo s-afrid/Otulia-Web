@@ -9,6 +9,7 @@ import carFilterOptions from '../json/car_filter_options.json';
 import bikeFilterOptions from '../json/bike_filter_options.json';
 import yachtFilterOptions from '../json/yacht_filter_options.json';
 import Pagination from '../components/Pagination';
+import SEO from '../components/SEO';
 
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState('All');
@@ -124,6 +125,10 @@ const Shop = () => {
 
   return (
     <div className='relative w-full overflow-x-hidden pt-24 min-h-screen bg-white'>
+      <SEO 
+        title={query ? `Search: ${query}` : `Shop Luxury ${activeCategory !== 'All' ? activeCategory : 'Assets'}`}
+        description={`Browse our exclusive collection of luxury ${activeCategory.toLowerCase()} for sale on Otulia.`}
+      />
       <Navbar hideSearch={true} />
       {/* Simple Hero */}
       <div className="bg-white text-black py-16 px-4 text-center border-b border-gray-100">

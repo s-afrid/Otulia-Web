@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
+import SEO from '../components/SEO';
 
 import { FiUsers, FiStar, FiCalendar, FiShield, FiArrowRight, FiMessageSquare, FiGlobe } from 'react-icons/fi';
 import CommunityHeroImg from '../assets/community_hero.png';
@@ -67,6 +68,10 @@ const Community = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO 
+        title="Community"
+        description="Join the Otulia Community. A global network of elite collectors and luxury enthusiasts."
+      />
       <Navbar hideSearch={true} />
 
       {/* HERO SECTION */}
