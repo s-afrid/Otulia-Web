@@ -7,6 +7,7 @@
 4. [Chapter 4: Authentication & Authorization](#chapter-4-authentication--authorization)
 5. [Chapter 5: Frontend Architecture (React & Vite)](#chapter-5-frontend-architecture-react--vite)
 6. [Chapter 6: Asset Management & Cloudinary](#chapter-6-asset-management--cloudinary)
+7. [Chapter 7: Search Engine Optimization (SEO)](#chapter-7-search-engine-optimization-seo)
 
 ---
 
@@ -106,3 +107,92 @@ Instead of storing images on the server's disk, the application deeply integrate
 
 ### 6.2 Data Synchronization
 When an agent updates their profile (e.g., uploading a new company logo or profile picture), the backend utilizes a utility function (`updateUserAssetsAgent`) to propagate these updates to all assets owned by that agent. This denormalization strategy ensures that asset queries are fast and do not require heavy database `JOIN`/`populate` operations for agent details.
+
+---
+
+## Chapter 7: Search Engine Optimization (SEO)
+
+To ensure high visibility and a professional search presence, the platform implements modern technical SEO standards.
+
+### 7.1 Dynamic Metadata (`SEO.jsx`)
+
+The `SEO` component uses `react-helmet-async` to dynamically inject meta tags into the document head.
+
+```javascript
+// Line-by-line breakdown
+export default function SEO({ title, description, name = 'Otulia', type = 'website', image, url }) {
+  // Sets a fallback description if none is provided for the specific page
+  const defaultDescription = 'The premier destination for buying and selling editorial-grade luxury assets worldwide.';
+  
+  // Defines the base URL and branding suffix for titles
+  const defaultUrl = 'https://otulia.com';
+  const seoTitle = title ? `${title} | Otulia` : 'Otulia - Buy & Sell Luxury Assets Worldwide';
+
+  // JSON-LD Structured Data: This explains the site structure to Google's bots explicitly.
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Otulia",
+    "url": defaultUrl,
+    "logo": "https://otulia.com/logos/logo.png"
+  };
+
+  return (
+    <Helmet>
+      {/* Standard Meta: Controls the title bar and search snippet description */}
+      <title>{seoTitle}</title>
+      <meta name="description" content={description || defaultDescription} />
+
+      {/* Open Graph (OG): Used for Facebook/LinkedIn link previews */}
+      <meta property="og:title" content={seoTitle} />
+      <meta property="og:image" content={image || defaultImage} />
+
+      {/* JSON-LD Script: Injects the organization schema for Google Sitelinks */}
+      <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+    </Helmet>
+  );
+}
+```
+
+### 7.2 The Dynamic Sitemap (`sitemap.routes.js`)
+
+Unlike a static file, this route generates a fresh map of your database every time a search engine requests it.
+
+```javascript
+router.get('/sitemap.xml', async (req, res) => {
+    // 1. Fetches all active assets from MongoDB
+    const [cars, yachts, estates, bikes] = await Promise.all([
+        CarAsset.find({ status: 'Active' }).select('_id updatedAt'),
+        // ... (repeated for other asset types)
+    ]);
+
+    // 2. Builds the XML skeleton
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
+
+    // 3. Loops through assets to create individual URLs
+    cars.forEach(asset => {
+        xml += `
+        <url>
+            <loc>${BASE_URL}/asset/car/${asset._id}</loc>
+            <lastmod>${new Date(asset.updatedAt).toISOString()}</lastmod>
+            <priority>0.9</priority>
+        </url>`;
+    });
+
+    // 4. Sends the response as XML rather than HTML
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
+});
+```
+
+### 7.3 Server-Level Routing (`index.js`)
+
+To prevent search engine bots from accidentally loading the React index page when they want the sitemap, the route is placed at the absolute top of the middleware chain:
+
+```javascript
+// This MUST come before app.use(express.static)
+app.use("/", sitemapRoutes);
+app.use(express.static(path.join(__dirname, "../client/dist")));
+```
+This ensures that `/sitemap.xml` is recognized as a server-side data request rather than a frontend URL path.
