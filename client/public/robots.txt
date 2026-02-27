@@ -7,4 +7,4 @@ Disallow: /signup
 Disallow: /cart
 Disallow: /success
 
-Sitemap: https://otulia.com/api/sitemap.xml
+Sitemap: https://otulia.com/sitemap.xml

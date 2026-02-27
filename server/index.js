@@ -34,8 +34,10 @@ app.use(corsMiddleware);
 const PORT = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
+// root level routes
+app.use("/", sitemapRoutes);
+
 // routes register
-app.use("/api", sitemapRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/home", homeRoutes);
 app.use("/api/listings", createListingRoutes); // Routes: /create, /delete/:id
