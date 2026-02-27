@@ -7,6 +7,7 @@ import EstateKeyFeatures from "../estate/EstateKeyFeat";
 import EstateFeatures from "../estate/EstateFeatures";
 import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
+import SEO from "../../../components/SEO";
 
 const Estate_Section = () => {
   const [info, setInfo] = useState(null);
@@ -87,7 +88,12 @@ const Estate_Section = () => {
   return (
     <div className="flex flex-col">
       
-
+      <SEO 
+        title={`${info.title} | Luxury Estate`}
+        description={info.description}
+        image={info.images?.[0]}
+        type="article"
+      />
 
       <EstateGallery images={info.images} />
 

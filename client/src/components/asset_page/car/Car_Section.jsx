@@ -7,6 +7,7 @@ import CarKeyFeatures from "../car/CarKeyFeat";
 import CarFeatures from "../car/CarFeatures";
 import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
+import SEO from "../../../components/SEO";
 
 const Car_Section = () => {
   const [info, setInfo] = useState(null); // Initialize as null to track loading state
@@ -87,7 +88,12 @@ const Car_Section = () => {
 
   return (
     <div className="flex flex-col">
-      
+      <SEO 
+        title={`${info.brand || ''} ${info.title}`}
+        description={info.description}
+        image={info.images?.[0]}
+        type="article"
+      />
 
       {/* Pass images array safely */}
       <CarGallery images={info.images} />

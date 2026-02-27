@@ -7,7 +7,7 @@ import YachtKeyFeatures from "./YachtKeyFeat";
 import YachtFeatures from "./YachtFeatures";
 import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
-
+import SEO from "../../../components/SEO";
 
 const Yacht_Section = () => {
     const [info, setInfo] = useState(null);
@@ -79,6 +79,12 @@ const Yacht_Section = () => {
 
     return (
         <div className="flex flex-col">
+            <SEO 
+                title={`${info.brand || ''} ${info.title}`}
+                description={info.description}
+                image={info.images?.[0]}
+                type="article"
+            />
             
             <YachtGallery images={info.images} />
 

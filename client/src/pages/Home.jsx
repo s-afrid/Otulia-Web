@@ -5,12 +5,16 @@ import TrendingListings from '../components/home_page/TrendingListings'
 import MostPopularAssets from '../components/home_page/MostPopularAssets'
 import BlogSection from '../components/home_page/BlogSection'
 import BrandCarousel from '../components/home_page/BrandCarousel'
-
+import SEO from '../components/SEO'
 
 
 const Home = () => {
   return (
     <div className='relative w-full overflow-x-hidden'>
+      <SEO 
+        title="Home" 
+        description="The premier destination for buying and selling editorial-grade luxury cars, yachts, estates, and bikes." 
+      />
       <Navbar />
       <Hero />
 

@@ -23,6 +23,7 @@ const inventoryRoutes = require("./routes/inventory.routes.js");
 const leadRoutes = require("./routes/lead.routes.js");
 const couponRoutes = require("./routes/coupon.routes.js");
 const contactRoutes = require("./routes/contact.routes.js");
+const sitemapRoutes = require("./routes/sitemap.routes.js");
 
 const app = express();
 
@@ -34,6 +35,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 // routes register
+app.use("/api", sitemapRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/home", homeRoutes);
 app.use("/api/listings", createListingRoutes); // Routes: /create, /delete/:id

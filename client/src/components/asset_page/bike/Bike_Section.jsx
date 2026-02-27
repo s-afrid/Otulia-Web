@@ -7,6 +7,7 @@ import BikeKeyFeatures from "./BikeKeyFeat";
 import BikeFeatures from "./BikeFeatures";
 import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
+import SEO from "../../../components/SEO";
 
 const Bike_Section = () => {
     const [info, setInfo] = useState(null);
@@ -79,7 +80,12 @@ const Bike_Section = () => {
 
     return (
         <div className="flex flex-col">
-           
+           <SEO 
+                title={`${info.brand || ''} ${info.title}`}
+                description={info.description}
+                image={info.images?.[0]}
+                type="article"
+            />
             <BikeGallery images={info.images} />
 
             {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="BikeAsset" /> */}

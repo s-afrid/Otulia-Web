@@ -42,7 +42,7 @@ const Hero = () => {
         ))}
         
         {/* Dark Overlay */}
-        <div className='absolute inset-0 bg-black/40 -z-5' />
+        <div className='absolute inset-0 bg-black/20 -z-5' />
 
         <div className='absolute top-[200px] md:top-[300px] left-[3%] md:left-[5%] flex flex-col gap-4'>
           <h1 className='text-white text-3xl md:text-6xl playfair-display'>Discovery Luxury at Otulia</h1>
