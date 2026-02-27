@@ -31,11 +31,12 @@ connectDB();
 
 app.use(express.json());
 app.use(corsMiddleware);
+
+// Sitemap MUST be at the top of all routes
+app.use("/", sitemapRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, "../client/dist")));
-
-// root level routes
-app.use("/", sitemapRoutes);
 
 // routes register
 app.use("/api/auth", authRoutes);
