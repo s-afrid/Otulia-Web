@@ -4,27 +4,63 @@ const PopularLinks = () => {
     const linkGroups = [
         {
             title: 'Cities & Regions',
-            links: ['Private islands for sale', 'Balearic islands homes for sale', 'Dubai apartments for sale', 'London property for sale', 'Marbella homes for sale']
+            links: [
+                { name: 'Private islands for sale', path: '/category/estates?type=Island' },
+                { name: 'Balearic islands homes for sale', path: '/category/estates?location=Balearic' },
+                { name: 'Dubai apartments for sale', path: '/category/estates?location=Dubai' },
+                { name: 'London property for sale', path: '/category/estates?location=London' },
+                { name: 'Marbella homes for sale', path: '/category/estates?location=Marbella' }
+            ]
         },
         {
             title: 'Countries',
-            links: ['Homes for sale in Australia', 'Homes for sale in British Virgin Islands', 'Homes for sale in France', 'Homes for sale in Greece', 'Homes for sale in Italy']
+            links: [
+                { name: 'Homes for sale in Australia', path: '/category/estates?location=Australia' },
+                { name: 'Homes for sale in British Virgin Islands', path: '/category/estates?location=British%20Virgin%20Islands' },
+                { name: 'Homes for sale in France', path: '/category/estates?location=France' },
+                { name: 'Homes for sale in Greece', path: '/category/estates?location=Greece' },
+                { name: 'Homes for sale in Italy', path: '/category/estates?location=Italy' }
+            ]
         },
         {
             title: 'Cars',
-            links: ['Ferrari for sale', 'Aston Martin for sale', 'Lamborghini for sale', 'Porsche for sale', 'Rolls-Royce for sale']
+            links: [
+                { name: 'Ferrari for sale', path: '/category/cars?brand=Ferrari' },
+                { name: 'Aston Martin for sale', path: '/category/cars?brand=Aston%20Martin' },
+                { name: 'Lamborghini for sale', path: '/category/cars?brand=Lamborghini' },
+                { name: 'Porsche for sale', path: '/category/cars?brand=Porsche' },
+                { name: 'Rolls-Royce for sale', path: '/category/cars?brand=Rolls-Royce' }
+            ]
         },
         {
             title: 'Jets & Helicopters',
-            links: ['Bombardier for sale', 'Cessna for sale', 'Gulfstream for sale', 'Eurocopter for sale', 'Bell for sale']
+            links: [
+                { name: 'Bombardier for sale', path: '/shop?search=Bombardier' },
+                { name: 'Cessna for sale', path: '/shop?search=Cessna' },
+                { name: 'Gulfstream for sale', path: '/shop?search=Gulfstream' },
+                { name: 'Eurocopter for sale', path: '/shop?search=Eurocopter' },
+                { name: 'Bell for sale', path: '/shop?search=Bell' }
+            ]
         },
         {
             title: 'Yachts',
-            links: ['Ferretti for sale', 'Benetti for sale', 'Azimut for sale', 'Feadship for sale', 'Sunseeker for sale']
+            links: [
+                { name: 'Ferretti for sale', path: '/category/yachts?brand=Ferretti' },
+                { name: 'Benetti for sale', path: '/category/yachts?brand=Benetti' },
+                { name: 'Azimut for sale', path: '/category/yachts?brand=Azimut' },
+                { name: 'Feadship for sale', path: '/category/yachts?brand=Feadship' },
+                { name: 'Sunseeker for sale', path: '/category/yachts?brand=Sunseeker' }
+            ]
         },
         {
             title: 'Watches',
-            links: ['IWC for sale', 'Patek Philippe for sale', 'Richard Mille for sale', 'Rolex for sale', 'Audemars Piguet for sale']
+            links: [
+                { name: 'IWC for sale', path: '/shop?search=IWC' },
+                { name: 'Patek Philippe for sale', path: '/shop?search=Patek%20Philippe' },
+                { name: 'Richard Mille for sale', path: '/shop?search=Richard%20Mille' },
+                { name: 'Rolex for sale', path: '/shop?search=Rolex' },
+                { name: 'Audemars Piguet for sale', path: '/shop?search=Audemars%20Piguet' }
+            ]
         }
     ]
 
@@ -38,8 +74,8 @@ const PopularLinks = () => {
                         <ul className="flex flex-col gap-2">
                             {group.links.map((link, lIdx) => (
                                 <li key={lIdx}>
-                                    <a href="#" className="text-sm text-gray-500 hover:text-black transition-colors">
-                                        {link}
+                                    <a href={link.path} className="text-sm text-gray-500 hover:text-black transition-colors">
+                                        {link.name}
                                     </a>
                                 </li>
                             ))}
