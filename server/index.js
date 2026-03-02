@@ -34,6 +34,19 @@ app.use(corsMiddleware);
 // Sitemap MUST be at the top of all routes
 app.use("/", sitemapRoutes);
 
+// Redirect /about-us to /about for SEO
+app.get("/about-us", (req, res) => {
+  res.redirect(301, "/about");
+});
+
+// Additional SEO Redirects
+app.get("/frequently-asked-questions", (req, res) => res.redirect(301, "/faq"));
+app.get("/terms-and-conditions", (req, res) => res.redirect(301, "/terms"));
+app.get("/contact-us", (req, res) => res.redirect(301, "/contact"));
+app.get("/legal/privacy", (req, res) => res.redirect(301, "/privacy-policy"));
+app.get("/shipping-info", (req, res) => res.redirect(301, "/shipping"));
+app.get("/return-policy", (req, res) => res.redirect(301, "/returns"));
+
 const PORT = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, "../client/dist")));
 

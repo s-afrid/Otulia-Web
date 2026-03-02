@@ -46,6 +46,9 @@ export default function SEO({ title, description, name = 'Otulia', type = 'websi
       <title>{seoTitle}</title>
       <meta name="description" content={description || defaultDescription} />
       
+      {/* Canonical Link */}
+      <link rel="canonical" href={url || defaultUrl + window.location.pathname} />
+      
       {/* Structured Data */}
       <script type="application/ld+json">
         {JSON.stringify(structuredData)}

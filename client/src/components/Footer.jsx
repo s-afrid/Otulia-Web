@@ -34,7 +34,7 @@ const Footer = () => {
     const company = [
         {
             id: 1,
-            page: 'About Us',
+            page: 'About',
             navigate: '/about'
         },
         {

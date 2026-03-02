@@ -2,8 +2,6 @@ User-agent: *
 Disallow: /admin/
 Disallow: /admin
 Disallow: /profile
-Disallow: /login
-Disallow: /signup
 Disallow: /cart
 Disallow: /success
 

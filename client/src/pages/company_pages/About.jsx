@@ -6,7 +6,7 @@ const About = () => {
     return (
         <div className="w-full bg-white pt-40 pb-16 montserrat">
             <SEO 
-                title="About Us"
+                title="About"
                 description="Learn more about Otulia, the premier digital marketplace for the world's most exclusive luxury assets."
             />
             <Navbar />
