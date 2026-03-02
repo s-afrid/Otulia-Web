@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import UserURL from '../../assets/user.png'
 import { FiUser, FiCreditCard, FiGrid, FiLogOut, FiActivity, FiHeart, FiSettings } from 'react-icons/fi';
+import { optimizeCloudinaryUrl } from '../../utils/imageUtils';
 
 const ProfileDropdown = ({text}) => {
     const { user, logout } = useAuth();
@@ -37,7 +38,7 @@ const ProfileDropdown = ({text}) => {
             >
                 <div className="relative">
                     <img
-                        src={user.profilePicture || UserURL}
+                        src={optimizeCloudinaryUrl(user.profilePicture || UserURL, 100, 100)}
                         alt="user"
                         className="w-9 h-9 rounded-full object-cover border border-gray-200"
                     />

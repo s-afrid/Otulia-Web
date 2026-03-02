@@ -6,6 +6,7 @@ import Cart from "./navbar/Cart";
 import { Link, useNavigate } from "react-router-dom";
 import UserURL from '../assets/user.png';
 import { FiGrid, FiLogOut, FiShoppingCart } from 'react-icons/fi';
+import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 
 const NavbarMobile = () => {
   const { isAuthenticated, loading, user, logout } = useAuth();
@@ -30,7 +31,7 @@ const NavbarMobile = () => {
                 {/* Profile Info */}
                 <Link to="/profile" className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
                   <img
-                    src={user.profilePicture || UserURL}
+                    src={optimizeCloudinaryUrl(user.profilePicture || UserURL, 100, 100)}
                     alt="user"
                     className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
                   />

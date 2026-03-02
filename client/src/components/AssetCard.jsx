@@ -4,6 +4,7 @@ import numberWithCommas from '../modules/numberwithcomma'
 import { useAuth } from '../contexts/AuthContext'
 import { HiOutlineEye } from 'react-icons/hi2'
 import formatNumber from '../modules/formatNumber'
+import { optimizeCloudinaryUrl } from '../utils/imageUtils'
 
 const AssetCard = ({ item }) => {
   const navigate = useNavigate()
@@ -181,7 +182,7 @@ const AssetCard = ({ item }) => {
 
         {/* SINGLE IMAGE DISPLAY */}
         <img
-          src={validImages[0]}
+          src={optimizeCloudinaryUrl(validImages[0], 500)} // Force to max 500px for the grid
           alt={item.title}
           loading="lazy"
           className={`w-full h-full object-cover transition-transform duration-1000 ease-in-out ${isHovered ? "scale-110" : "scale-100"}`}
@@ -254,7 +255,7 @@ const AssetCard = ({ item }) => {
 
           {!homepage && item.agent && (
             <div className="flex-shrink-0 flex gap-2 items-center p-1.5 border border-gray-200 rounded-lg bg-white shadow-sm -mt-1">
-              <img className="w-6 h-6 lg:w-8 lg:h-8 rounded-full object-cover" src={item.agent.photo} alt="agent" />
+              <img className="w-6 h-6 lg:w-8 lg:h-8 rounded-full object-cover" src={optimizeCloudinaryUrl(item.agent.photo, 100, 100)} alt="agent" />
               {/* UPDATED RESPONSIVENESS: Hidden on mobile/tablet, visible on XL screens */}
               <p className="text-[10px] hidden xl:block text-gray-500 font-medium uppercase tracking-wider truncate max-w-[80px]">
                 {item.agent.name}

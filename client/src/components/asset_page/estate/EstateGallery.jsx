@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { optimizeCloudinaryUrl } from '../../../utils/imageUtils';
 
 const EstateGallery = ({ images }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -52,8 +53,9 @@ const EstateGallery = ({ images }) => {
       {/* 1. MAIN IMAGE CONTAINER */}
       <div className="relative w-full aspect-[16/9] md:aspect-[2/1] bg-gray-100 overflow-hidden mb-4 rounded-sm shadow-sm group">
         <img 
-          src={images[activeIndex]} 
+          src={optimizeCloudinaryUrl(images[activeIndex], 1200)} 
           alt={`Property View ${activeIndex + 1}`} 
+          fetchpriority="high"
           className="w-full h-full object-cover transition-transform duration-500"
         />
 
@@ -121,8 +123,9 @@ const EstateGallery = ({ images }) => {
                 `}
               >
                 <img 
-                  src={img} 
+                  src={optimizeCloudinaryUrl(img, 150, 150)} 
                   alt={`Thumbnail ${idx}`} 
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
               </div>
