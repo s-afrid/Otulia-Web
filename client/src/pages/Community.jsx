@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar';
 import SEO from '../components/SEO';
 
 import { FiUsers, FiStar, FiCalendar, FiShield, FiArrowRight, FiMessageSquare, FiGlobe } from 'react-icons/fi';
-import CommunityHeroImg from '../assets/community_hero.png';
+import CommunityHeroImg from '../assets/community_hero.webp';
 
 const Community = () => {
   const pillars = [

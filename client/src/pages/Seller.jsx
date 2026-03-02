@@ -25,7 +25,7 @@ const Seller = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/seller/submit', {
+      const response = await fetch('/api/seller/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

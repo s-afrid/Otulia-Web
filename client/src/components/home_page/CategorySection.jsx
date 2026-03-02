@@ -8,7 +8,7 @@ const CategorySection = () => {
     const categories = [
         {
             id: 1,
-            image: '/images/category_car.jpg',
+            image: '/images/category_car.webp',
             alt: 'Luxury Car',
             name: 'Cars',
             navigate: 'cars',
@@ -16,7 +16,7 @@ const CategorySection = () => {
         },
         {
             id: 2,
-            image: '/images/category_house.jpg',
+            image: '/images/category_house.webp',
             alt: 'Luxury House',
             name: 'Real Estate',
             navigate: 'estates',
@@ -24,7 +24,7 @@ const CategorySection = () => {
         },
         {
             id: 3,
-            image: '/images/category_yacht.jpg',
+            image: '/images/category_yacht.webp',
             alt: 'Luxury Yacht',
             name: 'Yachts',
             navigate: 'yachts',
@@ -32,7 +32,7 @@ const CategorySection = () => {
         },
         {
             id: 4,
-            image: '/images/category_bike.jpg',
+            image: '/images/category_bike.webp',
             alt: 'Superbike',
             name: 'Bikes',
             navigate: 'bikes',
