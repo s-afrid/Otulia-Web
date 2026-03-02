@@ -70,18 +70,19 @@ const carAssetSchema = new mongoose.Schema(
     },
 
     documents: [{ type: String }],
-    status: { type: String, enum: ['Active', 'Sold', 'Rented', 'Draft'], default: 'Active' },
-    category: { type: String, default: 'vehicles' },
+    status: { type: String, enum: ['Active', 'Sold', 'Rented', 'Draft'], default: 'Active', index: true },
+    category: { type: String, default: 'vehicles', index: true },
     type: { type: String, enum: ['Sale', 'Rent'], default: 'Sale' },
     acquisition: {
       type: String,
       enum: ['rent', 'buy', 'rent/buy'],
-      required: true
+      required: true,
+      index: true
     },
 
-    isTrending: { type: Boolean, default: false },
+    isTrending: { type: Boolean, default: false, index: true },
 
-    popularity: { type: Number, min: 1, max: 10 },
+    popularity: { type: Number, min: 1, max: 10, index: true },
 
     views: { type: Number, default: 0 },
 
@@ -92,5 +93,10 @@ const carAssetSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Compound index for status and price for category filtering
+carAssetSchema.index({ status: 1, price: 1 });
+// Compound index for trending assets on homepage
+carAssetSchema.index({ status: 1, isTrending: 1 });
 
 module.exports = mongoose.model("CarAsset", carAssetSchema);

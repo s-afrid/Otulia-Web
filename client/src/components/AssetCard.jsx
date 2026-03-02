@@ -183,6 +183,7 @@ const AssetCard = ({ item }) => {
         <img
           src={validImages[0]}
           alt={item.title}
+          loading="lazy"
           className={`w-full h-full object-cover transition-transform duration-1000 ease-in-out ${isHovered ? "scale-110" : "scale-100"}`}
         />
 

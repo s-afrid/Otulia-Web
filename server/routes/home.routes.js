@@ -34,12 +34,15 @@ router.get("/featured", async (req, res) => {
 
 router.get("/popularity", async (req, res) => {
   try {
+    // Fetch top 10 from each category at DB level first, then merge and pick top 10 overall
+    // This is much more memory efficient than fetching ALL documents
+    const limit = 10;
     const [carAssets, estateAssets, bikeAssets, yachtAssets] =
       await Promise.all([
-        CarAsset.find(),
-        EstateAsset.find(),
-        BikeAsset.find(),
-        YachtAsset.find(),
+        CarAsset.find().sort({ popularity: -1 }).limit(limit),
+        EstateAsset.find().sort({ popularity: -1 }).limit(limit),
+        BikeAsset.find().sort({ popularity: -1 }).limit(limit),
+        YachtAsset.find().sort({ popularity: -1 }).limit(limit),
       ]);
 
     const combinedAssets = [
@@ -66,12 +69,13 @@ router.get("/popularity", async (req, res) => {
 
 router.get("/trending", async (req, res) => {
   try {
+    const limit = 5;
     let [carAssets, estateAssets, bikeAssets, yachtAssets] =
       await Promise.all([
-        CarAsset.find({ isTrending: true }).limit(5),
-        EstateAsset.find({ isTrending: true }).limit(5),
-        BikeAsset.find({ isTrending: true }).limit(5),
-        YachtAsset.find({ isTrending: true }).limit(5),
+        CarAsset.find({ isTrending: true }).limit(limit),
+        EstateAsset.find({ isTrending: true }).limit(limit),
+        BikeAsset.find({ isTrending: true }).limit(limit),
+        YachtAsset.find({ isTrending: true }).limit(limit),
       ]);
 
     const totalTrending = carAssets.length + estateAssets.length + bikeAssets.length + yachtAssets.length;
@@ -80,10 +84,10 @@ router.get("/trending", async (req, res) => {
       // Fallback: Fetch latest items if no trending items exist
       [carAssets, estateAssets, bikeAssets, yachtAssets] =
         await Promise.all([
-          CarAsset.find().sort({ createdAt: -1 }).limit(5),
-          EstateAsset.find().sort({ createdAt: -1 }).limit(5),
-          BikeAsset.find().sort({ createdAt: -1 }).limit(5),
-          YachtAsset.find().sort({ createdAt: -1 }).limit(5),
+          CarAsset.find().sort({ createdAt: -1 }).limit(limit),
+          EstateAsset.find().sort({ createdAt: -1 }).limit(limit),
+          BikeAsset.find().sort({ createdAt: -1 }).limit(limit),
+          YachtAsset.find().sort({ createdAt: -1 }).limit(limit),
         ]);
     }
 
