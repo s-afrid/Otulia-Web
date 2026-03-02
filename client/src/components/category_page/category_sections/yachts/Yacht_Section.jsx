@@ -8,16 +8,16 @@ import yachtFilterOptions from '../../../../json/yacht_filter_options.json';
 import Pagination from '../../../Pagination';
 
 // Import Logos
-import azimutLogo from '../../../../assets/yacht_brands/Azimut_Yachts.png';
-import sunseekerLogo from '../../../../assets/yacht_brands/Sunseeker.jfif';
-import princessLogo from '../../../../assets/yacht_brands/Princess-Yachts.jpg';
-import ferrettiLogo from '../../../../assets/yacht_brands/Ferretti_Yachts.png';
-import benettiLogo from '../../../../assets/yacht_brands/Benetti.svg';
-import heesenLogo from '../../../../assets/yacht_brands/Heesen.jpg';
-import wallyLogo from '../../../../assets/yacht_brands/Wally.jfif';
-import rivaLogo from '../../../../assets/yacht_brands/Riva.jpg';
-import customLineLogo from '../../../../assets/yacht_brands/Custom_Line.jpg';
-import pershingLogo from '../../../../assets/yacht_brands/Pershing.png';
+import azimutLogo from '../../../../assets/yacht_brands/Azimut_Yachts.webp';
+import sunseekerLogo from '../../../../assets/yacht_brands/Sunseeker.webp';
+import princessLogo from '../../../../assets/yacht_brands/Princess-Yachts.webp';
+import ferrettiLogo from '../../../../assets/yacht_brands/Ferretti_Yachts.webp';
+import benettiLogo from '../../../../assets/yacht_brands/Benetti.webp';
+import heesenLogo from '../../../../assets/yacht_brands/Heesen.webp';
+import wallyLogo from '../../../../assets/yacht_brands/Wally.webp';
+import rivaLogo from '../../../../assets/yacht_brands/Riva.webp';
+import customLineLogo from '../../../../assets/yacht_brands/Custom_Line.webp';
+import pershingLogo from '../../../../assets/yacht_brands/Pershing.webp';
 
 const Yacht_Section = () => {
     const [list, setlist] = useState([]);
