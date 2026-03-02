@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import freemiumUrl from '../../assets/pricing/freemium.jpg'
-import premiumUrl from '../../assets/pricing/premium.jpg'
-import businessUrl from '../../assets/pricing/business_plan.jpg'
+// import freemiumUrl from '../../assets/pricing/freemium.jpg'
+// import premiumUrl from '../../assets/pricing/premium.jpg'
+// import businessUrl from '../../assets/pricing/business_plan.jpg'
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 
@@ -75,7 +75,6 @@ const PricingSection = () => {
       name: 'Freemium',
       price: '0',
       frequency: '',
-      image: freemiumUrl,
       buttonColor: 'bg-[#D90416]',
       features: [
         'Upto 5 Listings',
@@ -91,7 +90,6 @@ const PricingSection = () => {
       name: 'Premium Basic',
       price: '99',
       frequency: 'Every month',
-      image: premiumUrl,
       buttonColor: 'bg-[#D90416]',
       features: [
         'Upto 25 listings',
@@ -107,7 +105,6 @@ const PricingSection = () => {
       name: 'Business VIP',
       price: '299',
       frequency: 'Every month',
-      image: businessUrl,
       buttonColor: 'bg-[#D90416]',
       features: [
         'Upto 50 listings',
