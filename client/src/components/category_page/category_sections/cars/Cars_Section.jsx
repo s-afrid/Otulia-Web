@@ -9,16 +9,16 @@ import Cars_Search from './Cars_Search';
 import Pagination from '../../../Pagination';
 
 // Import Logos
-import astonMartinLogo from '../../../../assets/car_brands/Aston_Martin_Wings.svg';
-import audiLogo from '../../../../assets/car_brands/Audi.svg';
-import bmwLogo from '../../../../assets/car_brands/BMW.svg';
-import bugattiLogo from '../../../../assets/car_brands/Bugatti.svg';
-import ferrariLogo from '../../../../assets/car_brands/Ferrari.jpg';
-import koenigseggLogo from '../../../../assets/car_brands/Koenigsegg_Automotive_AB.png';
-import lexusLogo from '../../../../assets/car_brands/Lexus.jpg';
-import mercedesLogo from '../../../../assets/car_brands/Mercedes-Benz.svg';
-import porscheLogo from '../../../../assets/car_brands/Porsche.jpg';
-import shelbyLogo from '../../../../assets/car_brands/Shelby_American.svg';
+import astonMartinLogo from '../../../../assets/car_brands/Aston_Martin_Wings.webp';
+import audiLogo from '../../../../assets/car_brands/Audi.webp';
+import bmwLogo from '../../../../assets/car_brands/BMW.webp';
+import bugattiLogo from '../../../../assets/car_brands/Bugatti.webp';
+import ferrariLogo from '../../../../assets/car_brands/Ferrari.webp';
+import koenigseggLogo from '../../../../assets/car_brands/Koenigsegg_Automotive_AB.webp';
+import lexusLogo from '../../../../assets/car_brands/Lexus.webp';
+import mercedesLogo from '../../../../assets/car_brands/Mercedes-Benz.webp';
+import porscheLogo from '../../../../assets/car_brands/Porsche.webp';
+import shelbyLogo from '../../../../assets/car_brands/Shelby_American.webp';
 
 const Cars_Section = () => {
   const [list, setlist] = useState([]);
