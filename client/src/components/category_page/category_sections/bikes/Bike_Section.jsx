@@ -8,16 +8,16 @@ import bikeFilterOptions from '../../../../json/bike_filter_options.json';
 import Pagination from '../../../Pagination';
 
 // Import Logos
-import ducatiLogo from '../../../../assets/bike_brands/Ducati.png';
-import kawasakiLogo from '../../../../assets/bike_brands/Kawasaki.png';
-import bmwBikeLogo from '../../../../assets/bike_brands/BMW.png';
-import yamahaLogo from '../../../../assets/bike_brands/Yamaha.png';
-import harleyLogo from '../../../../assets/bike_brands/Harley-Davidson.png';
-import indianLogo from '../../../../assets/bike_brands/Indian_Motorcycles.jpg';
-import ktmLogo from '../../../../assets/bike_brands/KTM.svg';
-import triumphLogo from '../../../../assets/bike_brands/Triumph.jpg';
-import hondaLogo from '../../../../assets/bike_brands/Honda.svg';
-import royalEnfieldLogo from '../../../../assets/bike_brands/Royal-Enfield.png';
+import ducatiLogo from '../../../../assets/bike_brands/Ducati.webp';
+import kawasakiLogo from '../../../../assets/bike_brands/Kawasaki.webp';
+import bmwBikeLogo from '../../../../assets/bike_brands/BMW.webp';
+import yamahaLogo from '../../../../assets/bike_brands/Yamaha.webp';
+import harleyLogo from '../../../../assets/bike_brands/Harley-Davidson.webp';
+import indianLogo from '../../../../assets/bike_brands/Indian_Motorcycles.webp';
+import ktmLogo from '../../../../assets/bike_brands/KTM.webp';
+import triumphLogo from '../../../../assets/bike_brands/Triumph.webp';
+import hondaLogo from '../../../../assets/bike_brands/Honda.webp';
+import royalEnfieldLogo from '../../../../assets/bike_brands/Royal-Enfield.webp';
 
 const Bike_Section = () => {
     const [list, setlist] = useState([]);

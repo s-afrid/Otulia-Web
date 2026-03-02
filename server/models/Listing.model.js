@@ -27,6 +27,7 @@ const listingSchema = new mongoose.Schema(
         category: {
             type: String,
             required: true, // car , bike , yacht, estate
+            index: true
         },
 
         location: {
@@ -50,6 +51,7 @@ const listingSchema = new mongoose.Schema(
         isFeatured: {
             type: Boolean,
             default: false,
+            index: true
         },
 
         views: {
@@ -72,13 +74,15 @@ const listingSchema = new mongoose.Schema(
         status: {
             type: String,
             enum: ['Active', 'Sold', 'Rented'],
-            default: 'Active'
+            default: 'Active',
+            index: true
         },
 
         type: {
             type: String,
             enum: ['Sale', 'Rent'],
-            default: 'Sale'
+            default: 'Sale',
+            index: true
         },
         acquisition: {
             type: String,
@@ -88,5 +92,10 @@ const listingSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+// Compound index for Featured listings on homepage
+listingSchema.index({ status: 1, isFeatured: 1 });
+// Compound index for category filtering and sorting by price
+listingSchema.index({ status: 1, category: 1, price: 1 });
 
 module.exports = mongoose.model("Listing", listingSchema);
