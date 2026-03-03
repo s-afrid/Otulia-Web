@@ -71,6 +71,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const [galleryImages, setGalleryImages] = useState([]);
     const [existingImages, setExistingImages] = useState([]);
     const [documents, setDocuments] = useState([]); // General docs
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleRemoveFile = (index, type) => {
         if (type === 'cover') setCoverImage(null);
@@ -336,8 +337,14 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
             if (response.ok) {
                 const result = await response.json();
+                setIsSuccess(true);
                 onCreated(result, !!editData);
-                onClose();
+                
+                // Close after a short delay so user sees success
+                setTimeout(() => {
+                    onClose();
+                    setIsSuccess(false);
+                }, 1500);
             } else {
                 const err = await response.json();
                 alert(err.message || 'Failed to list asset');
@@ -356,6 +363,20 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         { id: 'Estate', label: 'Real Estate', icon: estateIcon },
         { id: 'Bike', label: 'Bike', icon: bikeIcon },
     ];
+
+    if (isSuccess) {
+        return (
+            <div className="fixed inset-0 z-[100] bg-gray-900/40 backdrop-blur-md flex items-center justify-center p-4">
+                <div className="bg-white rounded-[2.5rem] w-full max-w-lg p-12 text-center shadow-2xl animate-in zoom-in-95 duration-300">
+                    <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+                        <FiCheckCircle />
+                    </div>
+                    <h2 className="text-3xl font-bold playfair-display text-gray-900 mb-2">Success!</h2>
+                    <p className="text-gray-500">Your luxury listing has been {editData ? 'updated' : 'created'} successfully.</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 z-[100] bg-gray-900/40 backdrop-blur-md flex items-center justify-center p-4">

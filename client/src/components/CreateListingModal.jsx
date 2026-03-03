@@ -119,6 +119,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
     const [images, setImages] = useState([]);
     const [existingImages, setExistingImages] = useState(editData?.images || []);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleRemoveFile = (index, type) => {
         if (type === 'images') {
@@ -349,7 +350,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
         try {
             const url = editData
-                ? `/api/listings/${editData._id}`
+                ? `/api/listings/${editData._id || editData.id}`
                 : '/api/listings/create';
 
             const method = editData ? 'PUT' : 'POST';
@@ -364,8 +365,13 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
             if (response.ok) {
                 const result = await response.json();
+                setIsSuccess(true);
                 onCreated(result, !!editData);
-                onClose();
+
+                setTimeout(() => {
+                    onClose();
+                    setIsSuccess(false);
+                }, 1500);
             } else {
                 const errData = await response.json();
                 alert(errData.error || `Failed to ${editData ? 'update' : 'create'} listing`);
@@ -377,6 +383,20 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             setLoading(false);
         }
     };
+
+    if (isSuccess) {
+        return (
+            <div className="fixed inset-0 z-[100] bg-gray-900/40 backdrop-blur-md flex items-center justify-center p-4">
+                <div className="bg-white rounded-[2rem] w-full max-w-md p-12 text-center shadow-2xl animate-in zoom-in-95 duration-300">
+                    <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+                        <FiCheckCircle />
+                    </div>
+                    <h2 className="text-3xl font-bold playfair-display text-gray-900 mb-2">Success!</h2>
+                    <p className="text-gray-500">Your luxury listing has been {editData ? 'updated' : 'created'} successfully.</p>
+                </div>
+            </div>
+        );
+    }
 
     const handleCheckboxToggle = (listName, value) => {
         setFormData(prev => {

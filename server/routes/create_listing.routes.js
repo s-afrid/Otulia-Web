@@ -92,40 +92,40 @@ const deleteFolderFromCloudinary = async (folderPath) => {
 // Brand Logo Mappings
 const BRAND_LOGOS = {
     'Car': {
-        'Aston Martin': 'Aston_Martin_Wings.svg',
-        'Audi': 'Audi.svg',
-        'BMW': 'BMW.svg',
-        'Bugatti': 'Bugatti.svg',
-        'Ferrari': 'Ferrari.jpg',
-        'Koenigsegg': 'Koenigsegg_Automotive_AB.jfif',
-        'Lexus': 'Lexus.jpg',
-        'Mercedes-Benz': 'Mercedes-Benz.svg',
-        'Porsche': 'Porsche.jpg',
-        'Shelby': 'Shelby_American.svg'
+        'Aston Martin': 'Aston_Martin_Wings.webp',
+        'Audi': 'Audi.webp',
+        'BMW': 'BMW.webp',
+        'Bugatti': 'Bugatti.webp',
+        'Ferrari': 'Ferrari.webp',
+        'Koenigsegg': 'Koenigsegg_Automotive_AB.webp',
+        'Lexus': 'Lexus.webp',
+        'Mercedes-Benz': 'Mercedes-Benz.webp',
+        'Porsche': 'Porsche.webp',
+        'Shelby': 'Shelby_American.webp'
     },
     'Bike': {
-        'BMW': 'BMW.png',
-        'Ducati': 'Ducati.png',
-        'Harley-Davidson': 'Harley-Davidson.png',
-        'Honda': 'Honda.svg',
-        'Indian': 'Indian_Motorcycles.jpg',
-        'Kawasaki': 'Kawasaki.png',
-        'KTM': 'KTM.svg',
-        'Royal Enfield': 'Royal-Enfield.png',
-        'Triumph': 'Triumph.jpg',
-        'Yamaha': 'Yamaha.png'
+        'BMW': 'BMW.webp',
+        'Ducati': 'Ducati.webp',
+        'Harley-Davidson': 'Harley-Davidson.webp',
+        'Honda': 'Honda.webp',
+        'Indian': 'Indian_Motorcycles.webp',
+        'Kawasaki': 'Kawasaki.webp',
+        'KTM': 'KTM.webp',
+        'Royal Enfield': 'Royal-Enfield.webp',
+        'Triumph': 'Triumph.webp',
+        'Yamaha': 'Yamaha.webp'
     },
     'Yacht': {
-        'Azimut': 'Azimut_Yachts.png',
-        'Benetti': 'Benetti.svg',
-        'Custom Line': 'Custom_Line.jpg',
-        'Ferretti': 'Ferretti_Yachts.png',
-        'Heesen': 'Heesen.jpg',
-        'Pershing': 'Pershing.png',
-        'Princess': 'Princess-Yachts.jpg',
-        'Riva': 'Riva.jpg',
-        'Sunseeker': 'Sunseeker.jfif',
-        'Wally': 'Wally.jfif'
+        'Azimut': 'Azimut_Yachts.webp',
+        'Benetti': 'Benetti.webp',
+        'Custom Line': 'Custom_Line.webp',
+        'Ferretti': 'Ferretti_Yachts.webp',
+        'Heesen': 'Heesen.webp',
+        'Pershing': 'Pershing.webp',
+        'Princess': 'Princess-Yachts.webp',
+        'Riva': 'Riva.webp',
+        'Sunseeker': 'Sunseeker.webp',
+        'Wally': 'Wally.webp'
     }
 };
 
@@ -298,7 +298,7 @@ router.post('/create', authMiddleware, upload.fields([
         };
 
         if (category === 'Car') {
-            updateData.brand = req.body.make;
+            updateData.brand = req.body.make || req.body.brand;
             
             // Assign brand logo
             if (updateData.brand) {
@@ -310,7 +310,7 @@ router.post('/create', authMiddleware, upload.fields([
                             public_id: 'logo'
                         });
                         updateData.brand_logo = logoResult.secure_url;
-                    } catch (logoErr) { console.error(logoErr); }
+                    } catch (logoErr) { console.error("Logo Upload Error:", logoErr); }
                 }
             }
 
@@ -354,18 +354,20 @@ router.post('/create', authMiddleware, upload.fields([
                 longitude: req.body.longitude,
             };
         } else if (category === 'Bike') {
-            updateData.brand = req.body.brand;
+            updateData.brand = req.body.brand || req.body.make;
 
             // Assign brand logo
-            const logoPath = getBrandLogoPath('Bike', updateData.brand);
-            if (logoPath && fs.existsSync(logoPath)) {
-                try {
-                    const logoResult = await cloudinary.uploader.upload(logoPath, {
-                        folder: `${folderPath}/brand_logo`,
-                        public_id: 'logo'
-                    });
-                    updateData.brand_logo = logoResult.secure_url;
-                } catch (logoErr) { console.error(logoErr); }
+            if (updateData.brand) {
+                const logoPath = getBrandLogoPath('Bike', updateData.brand);
+                if (logoPath && fs.existsSync(logoPath)) {
+                    try {
+                        const logoResult = await cloudinary.uploader.upload(logoPath, {
+                            folder: `${folderPath}/brand_logo`,
+                            public_id: 'logo'
+                        });
+                        updateData.brand_logo = logoResult.secure_url;
+                    } catch (logoErr) { console.error("Logo Upload Error:", logoErr); }
+                }
             }
 
             updateData.variant = req.body.variant;
@@ -402,15 +404,17 @@ router.post('/create', authMiddleware, upload.fields([
             updateData.builder = req.body.builder;
 
             // Assign brand logo
-            const logoPath = getBrandLogoPath('Yacht', updateData.builder);
-            if (logoPath && fs.existsSync(logoPath)) {
-                try {
-                    const logoResult = await cloudinary.uploader.upload(logoPath, {
-                        folder: `${folderPath}/brand_logo`,
-                        public_id: 'logo'
-                    });
-                    updateData.brand_logo = logoResult.secure_url;
-                } catch (logoErr) { console.error(logoErr); }
+            if (updateData.builder) {
+                const logoPath = getBrandLogoPath('Yacht', updateData.builder);
+                if (logoPath && fs.existsSync(logoPath)) {
+                    try {
+                        const logoResult = await cloudinary.uploader.upload(logoPath, {
+                            folder: `${folderPath}/brand_logo`,
+                            public_id: 'logo'
+                        });
+                        updateData.brand_logo = logoResult.secure_url;
+                    } catch (logoErr) { console.error("Logo Upload Error:", logoErr); }
+                }
             }
 
             updateData.highlights = req.body.highlights ? JSON.parse(req.body.highlights) : [];
@@ -621,10 +625,11 @@ router.put('/:id', authMiddleware, upload.fields([
         // --- TYPE SPECIFIC UPDATES ---
 
         if (modelName === 'CarAsset') {
-            if (req.body.make) {
-                // If brand name changed, try to update logo too
-                if (listing.brand !== req.body.make) {
-                    const logoPath = getBrandLogoPath('Car', req.body.make);
+            const carBrand = req.body.make || req.body.brand;
+            if (carBrand) {
+                // If brand name changed OR brand_logo is missing, try to update logo
+                if (listing.brand !== carBrand || !listing.brand_logo) {
+                    const logoPath = getBrandLogoPath('Car', carBrand);
                     if (logoPath && fs.existsSync(logoPath)) {
                         try {
                             const logoResult = await cloudinary.uploader.upload(logoPath, {
@@ -638,7 +643,7 @@ router.put('/:id', authMiddleware, upload.fields([
                         }
                     }
                 }
-                listing.brand = req.body.make;
+                listing.brand = carBrand;
             }
             if (req.body.variant) listing.variant = req.body.variant;
 
@@ -688,9 +693,10 @@ router.put('/:id', authMiddleware, upload.fields([
             listing.markModified('keySpecifications');
 
         } else if (modelName === 'BikeAsset') {
-            if (req.body.brand) {
-                if (listing.brand !== req.body.brand) {
-                    const logoPath = getBrandLogoPath('Bike', req.body.brand);
+            const bikeBrand = req.body.brand || req.body.make;
+            if (bikeBrand) {
+                if (listing.brand !== bikeBrand || !listing.brand_logo) {
+                    const logoPath = getBrandLogoPath('Bike', bikeBrand);
                     if (logoPath && fs.existsSync(logoPath)) {
                         try {
                             const logoResult = await cloudinary.uploader.upload(logoPath, {
@@ -704,7 +710,7 @@ router.put('/:id', authMiddleware, upload.fields([
                         }
                     }
                 }
-                listing.brand = req.body.brand;
+                listing.brand = bikeBrand;
             }
             const spec = listing.specification || {};
             const keySpec = listing.keySpecifications || {};
@@ -748,7 +754,7 @@ router.put('/:id', authMiddleware, upload.fields([
 
         } else if (modelName === 'YachtAsset') {
             if (req.body.builder) {
-                if (listing.builder !== req.body.builder) {
+                if (listing.builder !== req.body.builder || !listing.brand_logo) {
                     const logoPath = getBrandLogoPath('Yacht', req.body.builder);
                     if (logoPath && fs.existsSync(logoPath)) {
                         try {
