@@ -34,11 +34,11 @@ const DescriptionSidebar = ({ isOpen, onClose, description }) => {
       >
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <h2 className="text-xl font-bold playfair-display text-black">Description</h2>
-          <button 
+          <button
+            aria-label="Close description"
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <FiX className="text-2xl text-gray-600" />
+          >            <FiX className="text-2xl text-gray-600" />
           </button>
         </div>
 

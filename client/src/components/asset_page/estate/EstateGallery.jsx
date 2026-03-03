@@ -54,8 +54,10 @@ const EstateGallery = ({ images }) => {
       <div className="relative w-full aspect-[16/9] md:aspect-[2/1] bg-gray-100 overflow-hidden mb-4 rounded-sm shadow-sm group">
         <img 
           src={optimizeCloudinaryUrl(images[activeIndex], 1200)} 
-          alt={`Property View ${activeIndex + 1}`} 
+          alt={`Vehicle View ${activeIndex + 1}`} 
           fetchpriority="high"
+          width="1200"
+          height="675"
           className="w-full h-full object-cover transition-transform duration-500"
         />
 
@@ -64,6 +66,7 @@ const EstateGallery = ({ images }) => {
           <>
             <button 
               onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+              aria-label="Previous image"
               className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-black rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -72,6 +75,7 @@ const EstateGallery = ({ images }) => {
             </button>
             <button 
               onClick={(e) => { e.stopPropagation(); handleNext(); }}
+              aria-label="Next image"
               className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-black rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -126,6 +130,8 @@ const EstateGallery = ({ images }) => {
                   src={optimizeCloudinaryUrl(img, 150, 150)} 
                   alt={`Thumbnail ${idx}`} 
                   loading="lazy"
+                  width="112"
+                  height="80"
                   className="w-full h-full object-cover"
                 />
               </div>

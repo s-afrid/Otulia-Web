@@ -59,6 +59,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
 
       {/* 2. HAMBURGER (Dynamic Color) */}
       <button
+        aria-label="Open menu"
         // Use 'isDarkText' to swap color so it is visible on white backgrounds
         className={`block md:hidden focus:outline-none z-50 ${isDarkText?"text-black":"text-white"}`}
         onClick={() => setpanelFlag(true)}
@@ -82,6 +83,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
           }`}
       >
         <button
+          aria-label="Close menu"
           onClick={() => setpanelFlag(false)}
           className="absolute top-6 right-6 text-[#2C2C2C] focus:outline-none"
         >

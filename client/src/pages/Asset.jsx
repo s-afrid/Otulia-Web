@@ -8,7 +8,9 @@ const Asset = () => {
   return (
     <div className='pt-24'>
       <Navbar />
-      <Asset_Section />
+      <main>
+        <Asset_Section />
+      </main>
     </div>
   )
 }
