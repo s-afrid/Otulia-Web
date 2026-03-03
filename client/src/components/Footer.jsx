@@ -7,7 +7,7 @@ const Footer = () => {
         {
             id:1,
             name: 'Explore Categories',
-            navigate: '#Category'
+            navigate: '/#Category'
         },
         {
             id:2,

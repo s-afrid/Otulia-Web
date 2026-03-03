@@ -1054,4 +1054,118 @@ router.get("/location-suggestions", async (req, res) => {
   }
 });
 
+/**
+ * SIMILAR ASSETS
+ * /api/assets/similar/:category/:id
+ */
+router.get("/similar/:category/:id", async (req, res) => {
+  try {
+    const { category, id } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid asset ID" });
+    }
+
+    let Model;
+    const catLower = category.toLowerCase();
+    if (catLower.includes('car')) Model = CarAsset;
+    else if (catLower.includes('estate')) Model = EstateAsset;
+    else if (catLower.includes('bike')) Model = BikeAsset;
+    else if (catLower.includes('yacht')) Model = YachtAsset;
+    else return res.status(400).json({ message: "Invalid category" });
+
+    const currentAsset = await Model.findById(id);
+    if (!currentAsset) return res.status(404).json({ message: "Asset not found" });
+
+    // Define similarity criteria: 
+    // 1. Same brand/builder (for vehicles) or same location (for estates)
+    // 2. Similar price (+/- 20%)
+    const priceMin = currentAsset.price * 0.8;
+    const priceMax = currentAsset.price * 1.2;
+
+    let orClauses = [];
+    
+    if (catLower.includes('estate')) {
+      // For estates: Location is primary
+      if (currentAsset.location) {
+        orClauses.push({ location: { $regex: currentAsset.location, $options: 'i' } });
+      }
+    } else {
+      // For vehicles: Brand/Builder is primary
+      if (currentAsset.brand) orClauses.push({ brand: currentAsset.brand });
+      if (currentAsset.builder) orClauses.push({ builder: currentAsset.builder });
+    }
+
+    // Secondary: Similar Price
+    orClauses.push({ price: { $gte: priceMin, $lte: priceMax } });
+
+    const query = {
+      _id: { $ne: id },
+      status: 'Active',
+      $or: orClauses
+    };
+
+    // To ensure "First Brand/Location then Price" priority, we can fetch them and sort or use a weighted approach.
+    // For simplicity and performance, we'll fetch them and use JS to sort by match type.
+    const similar = await Model.find(query).limit(20); 
+    
+    const sortedSimilar = similar.sort((a, b) => {
+      // Priority 1: Brand/Location match
+      let aMatch = false;
+      let bMatch = false;
+
+      if (catLower.includes('estate')) {
+        aMatch = a.location === currentAsset.location;
+        bMatch = b.location === currentAsset.location;
+      } else {
+        aMatch = (a.brand && a.brand === currentAsset.brand) || (a.builder && a.builder === currentAsset.builder);
+        bMatch = (b.brand && b.brand === currentAsset.brand) || (b.builder && b.builder === currentAsset.builder);
+      }
+
+      if (aMatch && !bMatch) return -1;
+      if (!aMatch && bMatch) return 1;
+      return 0; // Both are matches or both are price-only matches
+    }).slice(0, 10);
+
+    res.json(sortedSimilar);
+  } catch (error) {
+    console.error("Similar assets error:", error);
+    res.status(500).json({ message: "Failed to fetch similar assets" });
+  }
+});
+
+/**
+ * ASSETS BY AGENT (SAME CATEGORY)
+ * /api/assets/agent/:agentId/:category
+ */
+router.get("/agent/:agentId/:category", async (req, res) => {
+  try {
+    const { agentId, category } = req.params;
+    const { excludeId } = req.query;
+
+    let Model;
+    const catLower = category.toLowerCase();
+    if (catLower.includes('car')) Model = CarAsset;
+    else if (catLower.includes('estate')) Model = EstateAsset;
+    else if (catLower.includes('bike')) Model = BikeAsset;
+    else if (catLower.includes('yacht')) Model = YachtAsset;
+    else return res.status(400).json({ message: "Invalid category" });
+
+    const query = {
+      'agent.id': agentId,
+      status: 'Active'
+    };
+
+    if (excludeId && mongoose.Types.ObjectId.isValid(excludeId)) {
+      query._id = { $ne: excludeId };
+    }
+
+    const assets = await Model.find(query).limit(10);
+    res.json(assets);
+  } catch (error) {
+    console.error("Agent assets error:", error);
+    res.status(500).json({ message: "Failed to fetch agent assets" });
+  }
+});
+
 module.exports = router;

@@ -8,13 +8,12 @@ import CarFeatures from "../car/CarFeatures";
 import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
 import SEO from "../../../components/SEO";
+import AssetSlider from "../../AssetSlider";
 
 const Car_Section = () => {
   const [info, setInfo] = useState(null); // Initialize as null to track loading state
-  const [list, setList] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [similarAssets, setSimilarAssets] = useState([]);
+  const [agentAssets, setAgentAssets] = useState([]);
 
   // 1. Get ID correctly regardless of URL structure
   const { id } = useParams();
@@ -34,48 +33,44 @@ const Car_Section = () => {
       const result = await response.json();
 
       setInfo(result);
+      // Fetch similar and agent assets once we have info
+      fetchSimilar(result._id || result.id);
+      if (result.agent?.id) {
+        fetchAgentAssets(result.agent.id, result._id || result.id);
+      }
     } catch (error) {
       console.error("Error fetching car info:", error.message);
+    }
+  };
+
+  const fetchSimilar = async (assetId) => {
+    try {
+      const response = await fetch(`/api/assets/similar/car/${assetId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setSimilarAssets(data);
+      }
+    } catch (error) {
+      console.error("Similar Fetch Error:", error);
+    }
+  };
+
+  const fetchAgentAssets = async (agentId, currentId) => {
+    try {
+      const response = await fetch(`/api/assets/agent/${agentId}/car?excludeId=${currentId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setAgentAssets(data);
+      }
+    } catch (error) {
+      console.error("Agent Assets Fetch Error:", error);
     }
   };
 
   // Fetch data when ID changes
   useEffect(() => {
     infoFetch();
-    setPage(1);
-    dataFetch(1, true);
   }, [id]);
-
-  // Fetch sidebar list
-  const dataFetch = async (pageNum, isInitial = false) => {
-    if (!isInitial) setLoadingMore(true);
-    const url = `/api/assets/car?limit=6&page=${pageNum}`;
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
-      const result = await response.json();
-      
-      if (isInitial) {
-        setList(result);
-      } else {
-        setList(prev => [...prev, ...result]);
-      }
-      
-      setHasMore(result.length === 6);
-    } catch (error) {
-      console.error(error.message);
-    } finally {
-      setLoadingMore(false);
-    }
-  };
-
-  const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    dataFetch(nextPage);
-  };
 
   // 2. Loading State: Don't render until info is loaded
   if (!info) {
@@ -123,34 +118,19 @@ const Car_Section = () => {
         />
       </div>
 
-      <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
-
-      <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white">
-        <h2 className="text-3xl md:text-5xl font-bold playfair-display text-black">
-          More Cars
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-7">
-          {list.map((item, idx) => (
-            <div key={item._id || idx}>
-              <AssetCard item={item} idx={idx} />
-            </div>
-          ))}
+      {similarAssets.length > 0 && (
+        <div className="py-8 bg-gray-50/50">
+          <AssetSlider title="Similar Cars" items={similarAssets} />
         </div>
+      )}
 
-        {hasMore && list.length > 0 && (
-          <div className="mt-12 flex justify-center">
-            <button
-              onClick={handleLoadMore}
-              disabled={loadingMore}
-              className="px-8 py-3 bg-black text-white rounded-full font-bold uppercase tracking-widest text-xs hover:bg-gray-800 transition-all disabled:opacity-50"
-            >
-              {loadingMore ? 'Loading...' : 'View More Cars'}
-            </button>
-          </div>
-        )}
-      </div>
+      {agentAssets.length > 0 && (
+        <div className="py-8">
+          <AssetSlider title={`More from ${info.agent?.name || 'this Agent'}`} items={agentAssets} />
+        </div>
+      )}
 
-  
+      <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
       
     </div>
   );
