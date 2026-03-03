@@ -203,6 +203,8 @@ const Inventory = () => {
     };
 
     const handleTogglePublic = async (item) => {
+        if (updatingId) return; // Prevent multiple clicks
+        
         setUpdatingId(item.id);
         const isCurrentPublic = item.status === 'Active';
         try {
@@ -214,15 +216,20 @@ const Inventory = () => {
                 },
                 body: JSON.stringify({
                     itemId: item.id,
-                    model: item.category,
+                    model: item.itemModel || item.category,
                     isPublic: !isCurrentPublic
                 })
             });
+
             if (response.ok) {
                 await fetchDashboard();
+            } else {
+                const errorData = await response.json();
+                alert(errorData.error || "Failed to update visibility");
             }
         } catch (error) {
             console.error("Toggle Error:", error);
+            alert("Connection error while updating visibility");
         } finally {
             setUpdatingId(null);
         }
@@ -928,11 +935,17 @@ const Inventory = () => {
                                                     <td className="px-4 py-4">
                                                         <div
                                                             onClick={() => handleTogglePublic(item)}
-                                                            className={`w-11 h-6 rounded-full relative cursor-pointer transition-all duration-300 ${item.status === 'Active' ? 'bg-[#D48D2A]' : 'bg-gray-200'
+                                                            className={`w-11 h-6 rounded-full relative cursor-pointer transition-all duration-300 ${updatingId === item.id ? 'opacity-50 cursor-not-allowed' : ''} ${item.status === 'Active' ? 'bg-[#D48D2A]' : 'bg-gray-200'
                                                                 }`}
                                                         >
-                                                            <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all duration-300 shadow-sm ${item.status === 'Active' ? 'left-6' : 'left-0.5'
-                                                                }`}></div>
+                                                            {updatingId === item.id ? (
+                                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                                </div>
+                                                            ) : (
+                                                                <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all duration-300 shadow-sm ${item.status === 'Active' ? 'left-6' : 'left-0.5'
+                                                                    }`}></div>
+                                                            )}
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
@@ -1315,9 +1328,15 @@ const Inventory = () => {
                                                 </span>
                                                 <div
                                                     onClick={() => handleTogglePublic(item)}
-                                                    className={`w-12 h-6 rounded-full relative cursor-pointer transition-all duration-300 ${item.status === 'Active' ? 'bg-[#D48D2A]' : 'bg-gray-200'}`}
+                                                    className={`w-12 h-6 rounded-full relative cursor-pointer transition-all duration-300 ${updatingId === item.id ? 'opacity-50 cursor-not-allowed' : ''} ${item.status === 'Active' ? 'bg-[#D48D2A]' : 'bg-gray-200'}`}
                                                 >
-                                                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${item.status === 'Active' ? 'left-7' : 'left-1'}`}></div>
+                                                    {updatingId === item.id ? (
+                                                        <div className="absolute inset-0 flex items-center justify-center">
+                                                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${item.status === 'Active' ? 'left-7' : 'left-1'}`}></div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

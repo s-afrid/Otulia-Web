@@ -255,10 +255,12 @@ router.post('/toggle-visibility', authMiddleware, async (req, res) => {
         const { itemId, model, isPublic } = req.body;
 
         let Model;
-        if (model.includes('Car')) Model = CarAsset;
-        else if (model.includes('Estate')) Model = EstateAsset;
-        else if (model.includes('Bike')) Model = BikeAsset;
-        else if (model.includes('Yacht')) Model = YachtAsset;
+        const modelLower = (model || "").toLowerCase();
+        
+        if (modelLower.includes('car') || modelLower.includes('vehicle')) Model = CarAsset;
+        else if (modelLower.includes('estate') || modelLower.includes('real')) Model = EstateAsset;
+        else if (modelLower.includes('bike')) Model = BikeAsset;
+        else if (modelLower.includes('yacht')) Model = YachtAsset;
         else return res.status(400).json({ error: 'Invalid asset model' });
 
         const item = await Model.findById(itemId);
