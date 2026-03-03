@@ -80,7 +80,7 @@ const Yacht_Section = () => {
     return (
         <div className="flex flex-col">
             <SEO 
-                title={`${info.brand || ''} ${info.title}`}
+                title={info.title}
                 description={info.description}
                 image={info.images?.[0]}
                 type="article"

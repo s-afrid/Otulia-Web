@@ -298,18 +298,20 @@ router.post('/create', authMiddleware, upload.fields([
         };
 
         if (category === 'Car') {
-            updateData.brand = req.body.make || 'Unknown';
+            updateData.brand = req.body.make;
             
             // Assign brand logo
-            const logoPath = getBrandLogoPath('Car', updateData.brand);
-            if (logoPath && fs.existsSync(logoPath)) {
-                try {
-                    const logoResult = await cloudinary.uploader.upload(logoPath, {
-                        folder: `${folderPath}/brand_logo`,
-                        public_id: 'logo'
-                    });
-                    updateData.brand_logo = logoResult.secure_url;
-                } catch (logoErr) { console.error(logoErr); }
+            if (updateData.brand) {
+                const logoPath = getBrandLogoPath('Car', updateData.brand);
+                if (logoPath && fs.existsSync(logoPath)) {
+                    try {
+                        const logoResult = await cloudinary.uploader.upload(logoPath, {
+                            folder: `${folderPath}/brand_logo`,
+                            public_id: 'logo'
+                        });
+                        updateData.brand_logo = logoResult.secure_url;
+                    } catch (logoErr) { console.error(logoErr); }
+                }
             }
 
             updateData.variant = req.body.variant;
