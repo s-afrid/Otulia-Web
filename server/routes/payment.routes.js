@@ -197,6 +197,57 @@ router.post('/capture-order', authMiddleware, async (req, res) => {
     }
 });
 
+// Direct activation with coupon (e.g. for free activation/bypass)
+router.post('/activate-with-coupon', authMiddleware, async (req, res) => {
+    const { plan, couponCode } = req.body;
+    
+    if (!plan || !couponCode) {
+        return res.status(400).json({ error: "Plan and coupon code are required" });
+    }
+
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        // Validate account age
+        const accountAgeInMs = Date.now() - new Date(user.createdAt).getTime();
+        const threeMonthsInMs = 3 * 30 * 24 * 60 * 60 * 1000;
+        if (accountAgeInMs > threeMonthsInMs) {
+            return res.status(403).json({ error: "Coupon eligibility expired" });
+        }
+
+        // Validate coupon
+        const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
+        if (!coupon || !coupon.isValid()) {
+            return res.status(400).json({ error: "Invalid or expired coupon" });
+        }
+
+        // Restrict direct activation to specific coupon code
+        if (coupon.code !== 'FREE100') {
+            return res.status(403).json({ error: "This coupon is not eligible for direct activation" });
+        }
+        
+        // Fulfillment
+        const expiryDate = new Date();
+        expiryDate.setMonth(expiryDate.getMonth() + 1);
+        user.plan = plan;
+        user.planExpiresAt = expiryDate;
+        await user.save();
+
+        // Increment usage
+        coupon.usageCount += 1;
+        await coupon.save();
+
+        // Update assets
+        await updateUserAssetsAgent(user._id, { plan: plan });
+
+        return res.json({ success: true, message: `Successfully activated ${plan} with coupon`, user });
+    } catch (err) {
+        console.error("Direct activation error:", err);
+        res.status(500).json({ error: "Activation failed" });
+    }
+});
+
 // Cancel Subscription (Existing Logic Preserved)
 router.post('/cancel-subscription', authMiddleware, async (req, res) => {
     try {
