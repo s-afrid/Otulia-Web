@@ -182,7 +182,7 @@ const AssetCard = ({ item }) => {
 
         {/* SINGLE IMAGE DISPLAY */}
         <img
-          src={optimizeCloudinaryUrl(validImages[0], 500)} // Force to max 500px for the grid
+          src={optimizeCloudinaryUrl(validImages[0], 800)} // Force to max 800px for better quality on retina displays
           alt={item.title}
           loading="lazy"
           className={`w-full h-full object-cover transition-transform duration-1000 ease-in-out ${isHovered ? "scale-110" : "scale-100"}`}

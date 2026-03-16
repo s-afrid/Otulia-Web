@@ -14,8 +14,8 @@ export const optimizeCloudinaryUrl = (originalUrl, width = null, height = null) 
   // If the URL isn't from Cloudinary, just return it safely
   if (!originalUrl.includes('cloudinary.com')) return originalUrl;
 
-  // Base compression: Auto format (WebP/AVIF) and Auto quality
-  let transforms = "f_auto,q_auto";
+  // Base compression: Force WebP format for optimal performance and set quality to 'good' (or 'best') to preserve details.
+  let transforms = "f_webp,q_auto:good";
 
   // If you pass dimensions, add them to shrink the physical file size
   if (width) transforms += `,w_${width}`;
