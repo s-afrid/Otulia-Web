@@ -29,14 +29,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+    limits: { fileSize: 5 * 1024 * 1024 }, // Reduced to 5MB to prevent timeouts on slow connections
     fileFilter: (req, file, cb) => {
         if (file.fieldname === 'images') {
-            const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
+            const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']; // Added WebP support
             if (allowed.includes(file.mimetype)) {
                 cb(null, true);
             } else {
-                cb(new Error('Only .jpg, .png and .jpeg are allowed for images'), false);
+                cb(new Error('Only .jpg, .png, .webp and .jpeg are allowed for images'), false);
             }
         } else {
             cb(null, true);
@@ -268,23 +268,38 @@ router.post('/create', authMiddleware, upload.fields([
         try {
             if (req.files['images']) {
                 for (const file of req.files['images']) {
-                    const result = await cloudinary.uploader.upload(file.path, { folder: folderPath });
-                    imageUrls.push(result.secure_url);
-                    fs.unlinkSync(file.path);
+                    try {
+                        const result = await cloudinary.uploader.upload(file.path, { folder: folderPath });
+                        imageUrls.push(result.secure_url);
+                    } catch (uploadErr) {
+                        console.error(`Error uploading image ${file.path}:`, uploadErr);
+                    } finally {
+                        if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+                    }
                 }
             }
             const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
             for (const field of docFields) {
                 if (req.files[field]) {
                     for (const file of req.files[field]) {
-                        const result = await cloudinary.uploader.upload(file.path, { folder: folderPath, resource_type: 'auto' });
-                        docUrls.push(result.secure_url);
-                        fs.unlinkSync(file.path);
+                        try {
+                            const result = await cloudinary.uploader.upload(file.path, { folder: folderPath, resource_type: 'auto' });
+                            docUrls.push(result.secure_url);
+                        } catch (uploadErr) {
+                            console.error(`Error uploading document ${file.path}:`, uploadErr);
+                        } finally {
+                            if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+                        }
                     }
                 }
             }
         } catch (uploadError) {
             console.error("Cloudinary Upload Error:", uploadError);
+        } finally {
+            // Final cleanup safety check: delete any remaining files from this request
+            Object.values(req.files).flat().forEach(file => {
+                if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+            });
         }
 
         const updateData = { images: imageUrls, documents: docUrls };
@@ -555,40 +570,61 @@ router.put('/:id', authMiddleware, upload.fields([
 
         const folderPath = getAssetFolderPath(categoryName, id);
 
-        if (req.files['images']) {
-            // Delete old images from Cloudinary
-            if (listing.images && listing.images.length > 0) {
-                for (const oldUrl of listing.images) {
-                    await deleteFromCloudinary(oldUrl);
-                }
-            }
-
-            const newImageUrls = [];
-            for (const file of req.files['images']) {
-                const result = await cloudinary.uploader.upload(file.path, { folder: folderPath });
-                newImageUrls.push(result.secure_url);
-                fs.unlinkSync(file.path);
-            }
-            listing.images = newImageUrls.slice(0, 15);
-        }
-
-        const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
-        for (const field of docFields) {
-            if (req.files[field]) {
-                // Delete old documents from Cloudinary
-                if (listing.documents && listing.documents.length > 0) {
-                    for (const oldUrl of listing.documents) {
+        try {
+            if (req.files['images']) {
+                // Delete old images from Cloudinary
+                if (listing.images && listing.images.length > 0) {
+                    for (const oldUrl of listing.images) {
                         await deleteFromCloudinary(oldUrl);
                     }
                 }
 
-                const newDocUrls = [];
-                for (const file of req.files[field]) {
-                    const result = await cloudinary.uploader.upload(file.path, { folder: folderPath, resource_type: 'auto' });
-                    newDocUrls.push(result.secure_url);
-                    fs.unlinkSync(file.path);
+                const newImageUrls = [];
+                for (const file of req.files['images']) {
+                    try {
+                        const result = await cloudinary.uploader.upload(file.path, { folder: folderPath });
+                        newImageUrls.push(result.secure_url);
+                    } catch (uploadErr) {
+                        console.error(`Error updating image ${file.path}:`, uploadErr);
+                    } finally {
+                        if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+                    }
                 }
-                listing.documents = newDocUrls.slice(0, 10);
+                listing.images = newImageUrls.slice(0, 15);
+            }
+
+            const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
+            for (const field of docFields) {
+                if (req.files[field]) {
+                    // Delete old documents from Cloudinary
+                    if (listing.documents && listing.documents.length > 0) {
+                        for (const oldUrl of listing.documents) {
+                            await deleteFromCloudinary(oldUrl);
+                        }
+                    }
+
+                    const newDocUrls = [];
+                    for (const file of req.files[field]) {
+                        try {
+                            const result = await cloudinary.uploader.upload(file.path, { folder: folderPath, resource_type: 'auto' });
+                            newDocUrls.push(result.secure_url);
+                        } catch (uploadErr) {
+                            console.error(`Error updating document ${file.path}:`, uploadErr);
+                        } finally {
+                            if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+                        }
+                    }
+                    listing.documents = newDocUrls.slice(0, 10);
+                }
+            }
+        } catch (uploadError) {
+            console.error("Cloudinary Upload Error:", uploadError);
+        } finally {
+            // Final cleanup safety check: delete any remaining files from this request
+            if (req.files) {
+                Object.values(req.files).flat().forEach(file => {
+                    if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+                });
             }
         }
 
