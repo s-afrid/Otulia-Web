@@ -51,6 +51,9 @@ const Inventory = () => {
     const [cropSrc, setCropSrc] = useState(null);
     const [leadEmailNotifications, setLeadEmailNotifications] = useState(user?.leadEmailNotifications !== false);
 
+    // Logic to allow editing for Premium users even after verification
+    const canEditProfile = !isVerifiedDealer || (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP');
+
     // Delete Confirmation State
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [listingToDelete, setListingToDelete] = useState(null);
@@ -159,7 +162,7 @@ const Inventory = () => {
         const file = e.target.files[0];
         if (!file) return;
 
-        if (isVerifiedDealer) {
+        if (!canEditProfile) {
             alert("Verified dealers cannot change their company logo. Please contact support for assistance.");
             return;
         }
@@ -1407,17 +1410,17 @@ const Inventory = () => {
                                     {/* Logo Upload */}
                                     <div className="lg:col-span-4 space-y-4">
                                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Company Logo</p>
-                                        <label className={`block w-full h-64 border-2 border-dashed rounded-[2rem] transition-all cursor-pointer overflow-hidden group ${isVerifiedDealer ? 'border-emerald-100 bg-emerald-50/20' : 'border-gray-100 bg-gray-50/50 hover:bg-gray-50 hover:border-[#D48D2A]'}`}>
+                                        <label className={`block w-full h-64 border-2 border-dashed rounded-[2rem] transition-all cursor-pointer overflow-hidden group ${!canEditProfile ? 'border-emerald-100 bg-emerald-50/20' : 'border-gray-100 bg-gray-50/50 hover:bg-gray-50 hover:border-[#D48D2A]'}`}>
                                             {companyInfo.logo ? (
                                                 <div className="relative h-full w-full">
                                                     <img src={companyInfo.logo} className="w-full h-full object-contain p-4" alt="Company Logo" />
-                                                    {!isVerifiedDealer && (
+                                                    {canEditProfile && (
                                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2">
                                                             <FiUpload className="text-xl" />
                                                             <span className="text-xs font-bold uppercase tracking-widest">Change Logo</span>
                                                         </div>
                                                     )}
-                                                    {isVerifiedDealer && (
+                                                    {!canEditProfile && (
                                                         <div className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-emerald-500">
                                                             <FiCheckCircle />
                                                         </div>
@@ -1434,22 +1437,22 @@ const Inventory = () => {
                                                     </div>
                                                 </div>
                                             )}
-                                            {!isVerifiedDealer && <input type="file" className="hidden" onChange={handleLogoUpload} accept=".jpg,.jpeg,.png" disabled={logoLoading} />}
+                                            {canEditProfile && <input type="file" className="hidden" onChange={handleLogoUpload} accept=".jpg,.jpeg,.png" disabled={logoLoading} />}
                                         </label>
-                                        {isVerifiedDealer && <p className="text-[10px] text-emerald-600 font-bold text-center italic">Verified Logo - Locked</p>}
+                                        {!canEditProfile && <p className="text-[10px] text-emerald-600 font-bold text-center italic">Verified Logo - Locked</p>}
                                     </div>
 
                                     {/* Form Fields */}
                                     <div className="lg:col-span-8 space-y-8">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            <SettingsInputField label="Company Name" value={companyInfo.name} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({ ...companyInfo, name: e.target.value })} />
+                                            <SettingsInputField label="Company Name" value={companyInfo.name} readOnly={!canEditProfile} onChange={(e) => setCompanyInfo({ ...companyInfo, name: e.target.value })} />
                                             <SettingsInputField label="Website" value={companyInfo.website} icon={<FiGlobe />} readOnly={false} onChange={(e) => setCompanyInfo({ ...companyInfo, website: e.target.value })} />
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <SettingsInputField label="Public Email" value={companyInfo.email} icon={<FiMail />} readOnly={true} />
-                                            <SettingsInputField label="Public Phone" value={companyInfo.phone} icon={<FiPhone />} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({ ...companyInfo, phone: e.target.value })} />
+                                            <SettingsInputField label="Public Phone" value={companyInfo.phone} icon={<FiPhone />} readOnly={!canEditProfile} onChange={(e) => setCompanyInfo({ ...companyInfo, phone: e.target.value })} />
                                         </div>
-                                        <SettingsInputField label="Office Address" value={companyInfo.address} icon={<FiMapPin />} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({ ...companyInfo, address: e.target.value })} />
+                                        <SettingsInputField label="Office Address" value={companyInfo.address} icon={<FiMapPin />} readOnly={!canEditProfile} onChange={(e) => setCompanyInfo({ ...companyInfo, address: e.target.value })} />
                                     </div>
                                 </div>
                             </div>

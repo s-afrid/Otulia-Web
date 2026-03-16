@@ -404,7 +404,23 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
 
-    // Lock certain fields if verified
+    // Allow Premium users to edit even if verified
+    const isPremium = user.plan === 'Premium Basic' || user.plan === 'Business VIP';
+
+    // Lock certain fields if verified (unless Premium)
+    if (user.isVerified && !isPremium) {
+      if (name && name !== user.name) return res.status(403).json({ error: "VERIFIED_NAME_LOCKED" });
+      if (phone && phone !== user.phone) return res.status(403).json({ error: "VERIFIED_PHONE_LOCKED" });
+      
+      if (company) {
+        if (company.companyName && company.companyName !== user.company?.companyName) 
+          return res.status(403).json({ error: "VERIFIED_COMPANY_NAME_LOCKED" });
+        if (company.address && company.address !== user.company?.address) 
+          return res.status(403).json({ error: "VERIFIED_ADDRESS_LOCKED" });
+      }
+    }
+
+    /* Original restricted logic preserved
     if (user.isVerified) {
       if (name && name !== user.name) return res.status(403).json({ error: "VERIFIED_NAME_LOCKED" });
       if (phone && phone !== user.phone) return res.status(403).json({ error: "VERIFIED_PHONE_LOCKED" });
@@ -416,6 +432,7 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
           return res.status(403).json({ error: "VERIFIED_ADDRESS_LOCKED" });
       }
     }
+    */
 
     if (name) user.name = name;
     if (phone) user.phone = phone;
@@ -553,10 +570,17 @@ router.post("/upload-company-logo", authMiddleware, uploadCompanyLogo.single('co
 
     const currentUser = await User.findById(req.user.id);
     
-    // Check if verified - lock update
+    // Check if verified - lock update (Unless Premium)
+    const isPremium = currentUser.plan === 'Premium Basic' || currentUser.plan === 'Business VIP';
+    if (currentUser.isVerified && !isPremium) {
+      return res.status(403).json({ error: "VERIFIED_USER_CANNOT_CHANGE_LOGO" });
+    }
+
+    /* Original restricted logic preserved
     if (currentUser.isVerified) {
       return res.status(403).json({ error: "VERIFIED_USER_CANNOT_CHANGE_LOGO" });
     }
+    */
 
     // Delete old company logo if exists
     if (currentUser.company && currentUser.company.companyLogo) {
