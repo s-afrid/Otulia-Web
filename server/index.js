@@ -26,6 +26,22 @@ const sitemapRoutes = require("./routes/sitemap.routes.js");
 
 const app = express();
 
+// Enforce HTTPS and Non-WWW Canonical Domain in Production
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === "production") {
+    const host = req.get("host");
+    const isNotHttps = req.headers["x-forwarded-proto"] !== "https";
+    const hasWww = host.startsWith("www.");
+
+    if (isNotHttps || hasWww) {
+      const newHost = host.replace(/^www\./, "");
+      // Redirect to https://otulia.com...
+      return res.redirect(301, `https://${newHost}${req.url}`);
+    }
+  }
+  next();
+});
+
 connectDB();
 
 app.use(express.json());
