@@ -750,7 +750,9 @@ router.post("/submit-verification", authMiddleware, uploadVerification.any(), as
     // 2. Notify User (Email)
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
         const transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: process.env.EMAIL_HOST || "smtp.gmail.com",
+            port: parseInt(process.env.EMAIL_PORT) || 587,
+            secure: parseInt(process.env.EMAIL_PORT) === 465,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
@@ -786,7 +788,9 @@ router.post("/submit-verification", authMiddleware, uploadVerification.any(), as
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
             const adminDashboardLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/admin`;
             const transporter = nodemailer.createTransport({
-                service: "gmail",
+                host: process.env.EMAIL_HOST || "smtp.gmail.com",
+                port: parseInt(process.env.EMAIL_PORT) || 587,
+                secure: parseInt(process.env.EMAIL_PORT) === 465,
                 auth: {
                     user: process.env.EMAIL_USER,
                     pass: process.env.EMAIL_PASS,

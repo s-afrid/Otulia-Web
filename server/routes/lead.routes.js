@@ -5,9 +5,11 @@ const User = require("../models/User.model");
 const authMiddleware = require("../middleware/auth.middleware");
 const nodemailer = require("nodemailer");
 
-// Email Transporter (Placeholder - Update with real SMTP credentials in .env)
+// Email Transporter (Support for Hostinger/Custom SMTP)
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: process.env.EMAIL_HOST || "smtp.gmail.com",
+    port: parseInt(process.env.EMAIL_PORT) || 587,
+    secure: parseInt(process.env.EMAIL_PORT) === 465, // true for 465 (SSL), false for others (TLS)
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
