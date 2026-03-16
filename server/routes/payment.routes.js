@@ -149,6 +149,20 @@ router.post('/capture-order', authMiddleware, async (req, res) => {
                 // Update Plan Logic
                 const expiryDate = new Date();
                 expiryDate.setMonth(expiryDate.getMonth() + 1);
+                
+                // Auto-verify Premium Basic users
+                if (plan === 'Premium Basic') {
+                    user.isVerified = true;
+                    user.verificationStatus = 'Verified';
+                    if (user.role === 'user') user.role = 'agent';
+                }
+
+                /* Original logic preserved
+                user.plan = plan;
+                user.planExpiresAt = expiryDate;
+                await user.save();
+                */
+
                 user.plan = plan;
                 user.planExpiresAt = expiryDate;
                 await user.save();
@@ -230,6 +244,20 @@ router.post('/activate-with-coupon', authMiddleware, async (req, res) => {
         // Fulfillment
         const expiryDate = new Date();
         expiryDate.setMonth(expiryDate.getMonth() + 1);
+
+        // Auto-verify Premium Basic users
+        if (plan === 'Premium Basic') {
+            user.isVerified = true;
+            user.verificationStatus = 'Verified';
+            if (user.role === 'user') user.role = 'agent';
+        }
+
+        /* Original logic preserved
+        user.plan = plan;
+        user.planExpiresAt = expiryDate;
+        await user.save();
+        */
+
         user.plan = plan;
         user.planExpiresAt = expiryDate;
         await user.save();

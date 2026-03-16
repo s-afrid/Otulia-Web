@@ -359,11 +359,34 @@ router.post("/upgrade-plan", authMiddleware, async (req, res) => {
     const expiryDate = new Date();
     expiryDate.setMonth(expiryDate.getMonth() + 1); // 1 month subscription
 
+    // Auto-verify Premium Basic users (Skipping manual verification process)
+    const updateData = { plan, planExpiresAt: expiryDate };
+    if (plan === 'Premium Basic') {
+      updateData.isVerified = true;
+      updateData.verificationStatus = 'Verified';
+      // If user is a standard user, upgrade to agent role as verified
+      // (This matches the admin approval logic)
+    }
+
+    /* Original non-auto-verify logic preserved for future revert
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { plan, planExpiresAt: expiryDate },
       { new: true }
     ).select("-password");
+    */
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      updateData,
+      { new: true }
+    ).select("-password");
+
+    // Also update role if they just became verified
+    if (plan === 'Premium Basic' && user.role === 'user') {
+      user.role = 'agent';
+      await user.save();
+    }
 
     res.json({ message: "PLAN_UPGRADED_SUCCESSFULLY", user });
   } catch (err) {
