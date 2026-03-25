@@ -59,14 +59,11 @@ router.post('/create-order', authMiddleware, async (req, res) => {
     // Apply Coupon if exists
     if (couponCode) {
         try {
-            // Check user account age first
             const user = await User.findById(req.user.id);
-            const accountAgeInMs = Date.now() - new Date(user.createdAt).getTime();
-            const threeMonthsInMs = 3 * 30 * 24 * 60 * 60 * 1000;
 
-            if (user && accountAgeInMs <= threeMonthsInMs) {
+            if (user) {
                 const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
-                if (coupon && coupon.isValid()) {
+                if (coupon && coupon.isValid(user._id)) {
                     if (coupon.discountType === 'percentage') {
                         totalAmount = totalAmount * (1 - coupon.discountValue / 100);
                     } else if (coupon.discountType === 'fixed') {
@@ -138,7 +135,10 @@ router.post('/capture-order', authMiddleware, async (req, res) => {
                 try {
                     await Coupon.findOneAndUpdate(
                         { code: couponCode.toUpperCase() },
-                        { $inc: { usageCount: 1 } }
+                        { 
+                            $inc: { usageCount: 1 },
+                            $addToSet: { usedBy: user._id }
+                        }
                     );
                 } catch (couponErr) {
                     console.error("Failed to increment coupon usage:", couponErr);
@@ -223,17 +223,10 @@ router.post('/activate-with-coupon', authMiddleware, async (req, res) => {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ error: "User not found" });
 
-        // Validate account age
-        const accountAgeInMs = Date.now() - new Date(user.createdAt).getTime();
-        const threeMonthsInMs = 3 * 30 * 24 * 60 * 60 * 1000;
-        if (accountAgeInMs > threeMonthsInMs) {
-            return res.status(403).json({ error: "Coupon eligibility expired" });
-        }
-
         // Validate coupon
         const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
-        if (!coupon || !coupon.isValid()) {
-            return res.status(400).json({ error: "Invalid or expired coupon" });
+        if (!coupon || !coupon.isValid(user._id)) {
+            return res.status(400).json({ error: "Invalid, expired, or already used coupon" });
         }
 
         // Restrict direct activation to specific coupon code
@@ -252,18 +245,14 @@ router.post('/activate-with-coupon', authMiddleware, async (req, res) => {
             if (user.role === 'user') user.role = 'agent';
         }
 
-        /* Original logic preserved
-        user.plan = plan;
-        user.planExpiresAt = expiryDate;
-        await user.save();
-        */
-
         user.plan = plan;
         user.planExpiresAt = expiryDate;
         await user.save();
 
-        // Increment usage
+        // Increment usage and record user
         coupon.usageCount += 1;
+        if (!coupon.usedBy) coupon.usedBy = [];
+        coupon.usedBy.push(user._id);
         await coupon.save();
 
         // Update assets

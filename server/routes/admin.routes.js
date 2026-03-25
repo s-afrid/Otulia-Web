@@ -7,6 +7,7 @@ const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
+const Coupon = require("../models/Coupon.model");
 const authMiddleware = require("../middleware/auth.middleware");
 const nodemailer = require("nodemailer");
 
@@ -310,6 +311,83 @@ The Otulia Team`,
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "VERIFICATION_ACTION_FAILED" });
+    }
+});
+
+/**
+ * GET ALL COUPONS
+ */
+router.get("/coupons", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        const coupons = await Coupon.find({}).sort({ createdAt: -1 });
+        res.json(coupons);
+    } catch (err) {
+        res.status(500).json({ error: "FETCH_COUPONS_FAILED" });
+    }
+});
+
+/**
+ * ADD NEW COUPON
+ */
+router.post("/coupons", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        const { code, discountType, discountValue, expiresAt, usageLimit, usageLimitPerUser, isActive } = req.body;
+        
+        const existing = await Coupon.findOne({ code: code.toUpperCase() });
+        if (existing) return res.status(400).json({ error: "COUPON_ALREADY_EXISTS" });
+
+        const coupon = new Coupon({
+            code: code.toUpperCase(),
+            discountType,
+            discountValue,
+            expiresAt,
+            usageLimit: usageLimit || null,
+            usageLimitPerUser: usageLimitPerUser || 1,
+            isActive: isActive !== undefined ? isActive : true
+        });
+
+        await coupon.save();
+        res.status(201).json(coupon);
+    } catch (err) {
+        res.status(500).json({ error: "CREATE_COUPON_FAILED" });
+    }
+});
+
+/**
+ * UPDATE COUPON
+ */
+router.put("/coupons/:id", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        const { code, discountType, discountValue, expiresAt, usageLimit, usageLimitPerUser, isActive, usageCount } = req.body;
+        
+        const coupon = await Coupon.findByIdAndUpdate(req.params.id, {
+            code: code?.toUpperCase(),
+            discountType,
+            discountValue,
+            expiresAt,
+            usageLimit: usageLimit === '' ? null : usageLimit,
+            usageLimitPerUser: usageLimitPerUser || 1,
+            isActive,
+            usageCount
+        }, { new: true });
+
+        if (!coupon) return res.status(404).json({ error: "COUPON_NOT_FOUND" });
+        res.json(coupon);
+    } catch (err) {
+        res.status(500).json({ error: "UPDATE_COUPON_FAILED" });
+    }
+});
+
+/**
+ * DELETE COUPON
+ */
+router.delete("/coupons/:id", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        const coupon = await Coupon.findByIdAndDelete(req.params.id);
+        if (!coupon) return res.status(404).json({ error: "COUPON_NOT_FOUND" });
+        res.json({ message: "COUPON_DELETED" });
+    } catch (err) {
+        res.status(500).json({ error: "DELETE_COUPON_FAILED" });
     }
 });
 

@@ -340,53 +340,44 @@ const PricingSection = () => {
 
             {/* Body */}
             <div className="p-6">
-              {!isEligibleForDiscount() ? (
-                <div className="mb-6 p-4 bg-orange-50 border border-orange-100 rounded-lg text-orange-800 text-xs">
-                  <p className="font-bold mb-1">Coupon Eligibility Expired</p>
-                  Discounts are only available for the first 3 months of membership. Your account is now eligible for standard pricing.
-                </div>
-              ) : (
-                <>
-                  <div className="mb-4 flex justify-between items-center">
-                    <span className="text-gray-600 font-medium">Original Price</span>
-                    <span className="text-lg font-medium text-gray-400 line-through">${selectedPlan.price}</span>
-                  </div>
+              <div className="mb-4 flex justify-between items-center">
+                <span className="text-gray-600 font-medium">Original Price</span>
+                <span className="text-lg font-medium text-gray-400 line-through">${selectedPlan.price}</span>
+              </div>
 
-                  {/* Coupon Section */}
-                  <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-                      Have a Coupon?
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                        placeholder="Enter Code"
-                        className="flex-1 px-3 py-2 border border-gray-200 rounded text-sm focus:outline-none focus:border-black"
-                      />
-                      <button
-                        onClick={handleApplyCoupon}
-                        disabled={isValidatingCoupon || !couponCode.trim()}
-                        className="px-4 py-2 bg-black text-white text-xs font-bold rounded uppercase hover:bg-gray-800 disabled:bg-gray-300"
-                      >
-                        {isValidatingCoupon ? '...' : 'Apply'}
-                      </button>
-                    </div>
-                    {couponError && <p className="text-red-500 text-[10px] mt-1 font-medium">{couponError}</p>}
-                    {appliedCoupon && (
-                      <div className="flex justify-between items-center mt-2 text-emerald-600 text-xs font-bold">
-                        <span>Coupon "{appliedCoupon.code}" Applied!</span>
-                        <span>
-                          -{appliedCoupon.discountType === 'percentage' 
-                            ? `${appliedCoupon.discountValue}%` 
-                            : `$${appliedCoupon.discountValue}`}
-                        </span>
-                      </div>
-                    )}
+              {/* Coupon Section */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                  Have a Coupon?
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter Code"
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded text-sm focus:outline-none focus:border-black"
+                  />
+                  <button
+                    onClick={handleApplyCoupon}
+                    disabled={isValidatingCoupon || !couponCode.trim()}
+                    className="px-4 py-2 bg-black text-white text-xs font-bold rounded uppercase hover:bg-gray-800 disabled:bg-gray-300"
+                  >
+                    {isValidatingCoupon ? '...' : 'Apply'}
+                  </button>
+                </div>
+                {couponError && <p className="text-red-500 text-[10px] mt-1 font-medium">{couponError}</p>}
+                {appliedCoupon && (
+                  <div className="flex justify-between items-center mt-2 text-emerald-600 text-xs font-bold">
+                    <span>Coupon "{appliedCoupon.code}" Applied!</span>
+                    <span>
+                      -{appliedCoupon.discountType === 'percentage' 
+                        ? `${appliedCoupon.discountValue}%` 
+                        : `$${appliedCoupon.discountValue}`}
+                    </span>
                   </div>
-                </>
-              )}
+                )}
+              </div>
 
               <div className="mb-6 flex justify-between items-center">
                 <span className="text-gray-600 font-medium">Total Amount</span>
