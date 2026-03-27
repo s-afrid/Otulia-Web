@@ -163,6 +163,9 @@ router.post('/create', authMiddleware, upload.fields([
         let { title, price, category, location, description } = req.body;
         if (!location) location = 'Unspecified';
 
+        console.log(`[Create Listing] Request received — userId: ${req.user?.id}, category: ${category}, title: "${title}", price: ${price}`);
+        console.log(`[Create Listing] Image files received: ${req.files?.['images']?.length || 0}, doc files: ${req.files?.['documents']?.length || 0}`);
+
         // Auto-generate title if not provided
         if (!title) {
             const makeOrBrand = req.body.make || req.body.brand || req.body.builder || '';
@@ -178,10 +181,16 @@ router.post('/create', authMiddleware, upload.fields([
             } else {
                 title = `Untitled ${category} Asset`;
             }
+            console.log(`[Create Listing] Auto-generated title: "${title}"`);
         }
 
         const user = await User.findById(req.user.id);
-        if (!user) return res.status(404).json({ error: "User not found" });
+        if (!user) {
+            console.warn(`[Create Listing] User not found for id: ${req.user.id}`);
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        console.log(`[Create Listing] User found — email: ${user.email}, plan: ${user.plan}, currentListings: ${user.myListings.length}`);
 
         // Enforce tiered limits
         const planLimits = {
@@ -193,6 +202,7 @@ router.post('/create', authMiddleware, upload.fields([
         const currentLimit = planLimits[user.plan] || 5;
 
         if (user.myListings.length >= currentLimit) {
+            console.warn(`[Create Listing] Limit reached for user ${user.email} — plan: ${user.plan}, limit: ${currentLimit}, current: ${user.myListings.length}`);
             return res.status(403).json({
                 error: "LIMIT_REACHED",
                 message: `You have reached the listing limit for your ${user.plan} plan (${currentLimit} assets). Please upgrade to list more.`
@@ -258,35 +268,44 @@ router.post('/create', authMiddleware, upload.fields([
             default: newListing = new Listing({ ...baseData, category: category || 'General' }); modelType = 'Listing';
         }
 
+        console.log(`[Create Listing] Saving initial ${modelType} document to DB...`);
         const savedListing = await newListing.save();
         const assetId = savedListing._id.toString();
         const folderPath = getAssetFolderPath(category, assetId);
+        console.log(`[Create Listing] DB save successful — assetId: ${assetId}, cloudinary folder: ${folderPath}`);
 
         const imageUrls = [];
         const docUrls = [];
 
         try {
             if (req.files['images']) {
+                console.log(`[Create Listing] Uploading ${req.files['images'].length} image(s) to Cloudinary...`);
                 for (const file of req.files['images']) {
                     try {
                         const result = await cloudinary.uploader.upload(file.path, { folder: folderPath });
                         imageUrls.push(result.secure_url);
+                        console.log(`[Create Listing] Image uploaded: ${result.secure_url}`);
                     } catch (uploadErr) {
-                        console.error(`Error uploading image ${file.path}:`, uploadErr);
+                        console.error(`[Create Listing] Image upload FAILED for ${file.originalname}:`, uploadErr.message);
+                        console.error(`[Create Listing] Cloudinary image error detail:`, uploadErr);
                     } finally {
                         if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
                     }
                 }
+                console.log(`[Create Listing] Images done — ${imageUrls.length}/${req.files['images'].length} uploaded successfully.`);
             }
             const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
             for (const field of docFields) {
                 if (req.files[field]) {
+                    console.log(`[Create Listing] Uploading ${req.files[field].length} file(s) for field "${field}"...`);
                     for (const file of req.files[field]) {
                         try {
                             const result = await cloudinary.uploader.upload(file.path, { folder: folderPath, resource_type: 'auto' });
                             docUrls.push(result.secure_url);
+                            console.log(`[Create Listing] Doc uploaded (${field}): ${result.secure_url}`);
                         } catch (uploadErr) {
-                            console.error(`Error uploading document ${file.path}:`, uploadErr);
+                            console.error(`[Create Listing] Doc upload FAILED for field "${field}", file "${file.originalname}":`, uploadErr.message);
+                            console.error(`[Create Listing] Cloudinary doc error detail:`, uploadErr);
                         } finally {
                             if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
                         }
@@ -294,7 +313,8 @@ router.post('/create', authMiddleware, upload.fields([
                 }
             }
         } catch (uploadError) {
-            console.error("Cloudinary Upload Error:", uploadError);
+            console.error("[Create Listing] Unexpected Cloudinary upload error:", uploadError.message);
+            console.error("[Create Listing] Stack:", uploadError.stack);
         } finally {
             // Final cleanup safety check: delete any remaining files from this request
             Object.values(req.files).flat().forEach(file => {
@@ -519,13 +539,16 @@ router.post('/create', authMiddleware, upload.fields([
             default: Model = Listing;
         }
 
+        console.log(`[Create Listing] Updating DB record with ${imageUrls.length} image(s) and ${docUrls.length} doc(s)...`);
         const finalListing = await Model.findByIdAndUpdate(savedListing._id, updateData, { new: true });
         await User.findByIdAndUpdate(req.user.id, {
             $push: { myListings: { item: finalListing._id, itemModel: modelType } }
         });
+        console.log(`[Create Listing] Success — listing ${finalListing._id} created for user ${user.email}`);
         res.status(201).json(finalListing);
     } catch (error) {
-        console.error("Create Listing Error:", error);
+        console.error("[Create Listing] Unexpected top-level error:", error.message);
+        console.error("[Create Listing] Stack:", error.stack);
         res.status(500).json({ error: "Failed to create listing" });
     }
 });

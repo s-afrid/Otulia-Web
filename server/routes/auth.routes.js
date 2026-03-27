@@ -51,38 +51,55 @@ const getPublicIdFromUrl = (url) => {
 router.post("/google-login", async (req, res) => {
   try {
     const { idToken } = req.body;
+    console.log("[Google Login] Request received. idToken present:", !!idToken);
 
     if (!idToken) {
+      console.warn("[Google Login] No idToken provided in request body.");
       return res.status(400).json({ error: "TOKEN_REQUIRED" });
     }
 
-    const ticket = await client.verifyIdToken({
-      idToken,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    console.log("[Google Login] Verifying idToken with Google. Client ID:", process.env.GOOGLE_CLIENT_ID);
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      console.log("[Google Login] Token verified successfully.");
+    } catch (verifyErr) {
+      console.error("[Google Login] Token verification FAILED:", verifyErr.message);
+      console.error("[Google Login] Full verify error:", verifyErr);
+      return res.status(401).json({ error: "INVALID_GOOGLE_TOKEN" });
+    }
 
     const payload = ticket.getPayload();
     const { email, name, sub: googleId, picture } = payload;
+    console.log(`[Google Login] Token payload — email: ${email}, googleId: ${googleId}`);
 
     let user = await User.findOne({
       $or: [{ email }, { googleId }]
     });
 
     if (!user) {
-      // Create new user if not exists
+      console.log(`[Google Login] No existing user found for ${email}. Creating new user.`);
       user = await User.create({
         name,
         email,
         googleId,
         profilePicture: picture,
       });
+      console.log(`[Google Login] New user created — id: ${user._id}, email: ${user.email}`);
     } else {
-      // Link googleId to existing email user and update profile picture only if not already set
+      console.log(`[Google Login] Existing user found — id: ${user._id}, email: ${user.email}, role: ${user.role}`);
+      const wasLinked = !user.googleId;
       user.googleId = user.googleId || googleId;
       if (!user.profilePicture) {
         user.profilePicture = picture;
       }
       await user.save();
+      if (wasLinked) {
+        console.log(`[Google Login] Linked Google account to existing email user: ${email}`);
+      }
     }
 
     const token = jwt.sign(
@@ -91,6 +108,7 @@ router.post("/google-login", async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    console.log(`[Google Login] JWT issued for user: ${user.email} (role: ${user.role})`);
     res.json({
       token,
       user: {
@@ -103,7 +121,8 @@ router.post("/google-login", async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Google Login Error:", err);
+    console.error("[Google Login] Unexpected error:", err.message);
+    console.error("[Google Login] Stack:", err.stack);
     res.status(500).json({
       error: "GOOGLE_LOGIN_FAILED",
     });
@@ -171,8 +190,10 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(`[Login] Attempt for email: ${email}`);
 
     if (!email || !password) {
+      console.warn("[Login] Missing email or password in request body.");
       return res.status(400).json({
         error: "ALL_FIELDS_REQUIRED",
       });
@@ -180,13 +201,24 @@ router.post("/login", async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
+      console.warn(`[Login] No user found for email: ${email}`);
       return res.status(401).json({
         error: "INVALID_CREDENTIALS",
       });
     }
 
+    console.log(`[Login] User found — id: ${user._id}, role: ${user.role}, hasPassword: ${!!user.password}, hasGoogleId: ${!!user.googleId}`);
+
+    if (!user.password) {
+      console.warn(`[Login] User ${email} has no password — account was created via Google OAuth. Cannot use email/password login.`);
+      return res.status(401).json({
+        error: "GOOGLE_ACCOUNT_NO_PASSWORD",
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.warn(`[Login] Password mismatch for user: ${email}`);
       return res.status(401).json({
         error: "INVALID_CREDENTIALS",
       });
@@ -198,6 +230,7 @@ router.post("/login", async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    console.log(`[Login] Success for user: ${email} (role: ${user.role})`);
     res.json({
       token,
       user: {
@@ -210,6 +243,8 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (err) {
+    console.error(`[Login] Unexpected error:`, err.message);
+    console.error(`[Login] Stack:`, err.stack);
     res.status(500).json({
       error: "LOGIN_FAILED",
     });
