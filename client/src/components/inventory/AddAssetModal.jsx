@@ -242,6 +242,17 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
     const handleSubmit = async () => {
         setLoading(true);
+        console.log(`[AddAssetModal] Starting ${editData ? 'update' : 'creation'} process for ${assetType}...`);
+        console.log(`[AddAssetModal] Initial Form Data:`, formData);
+
+        // Client-side validation logs
+        if (!formData.price && !formData.isPriceOnRequest) {
+            console.error("[AddAssetModal] Validation Error: Price is missing");
+            alert("Please enter a price or select 'Price on Request'");
+            setLoading(false);
+            return;
+        }
+
         const data = new FormData();
 
         // Sync highlights to main fields to ensure backend keySpecs are populated
@@ -268,7 +279,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
         }
 
-        // Construct Fixed Highlights based on Asset Type (Validation Removed)
+        // Construct Fixed Highlights based on Asset Type
         let constructedHighlights = [];
         if (assetType === 'Car') {
             constructedHighlights = [
@@ -304,7 +315,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
         // Append to FormData
         Object.keys(formData).forEach(key => {
-            // Skip separate highlight keys and internal lists, handle them explicitly
             if (key.startsWith('highlight_') || ['highlights', 'amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
                 return;
             }
@@ -322,12 +332,16 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         galleryImages.forEach(img => data.append('images', img));
         documents.forEach(doc => data.append('documents', doc));
 
+        console.log(`[AddAssetModal] Prepared FormData. Images: ${galleryImages.length + (coverImage ? 1 : 0)}, Docs: ${documents.length}`);
+
         try {
             const url = editData
                 ? `/api/listings/${editData.id || editData._id}`
                 : '/api/listings/create';
 
             const method = editData ? 'PUT' : 'POST';
+
+            console.log(`[AddAssetModal] Sending ${method} request to ${url}...`);
 
             const response = await fetch(url, {
                 method: method,
@@ -337,21 +351,28 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
             if (response.ok) {
                 const result = await response.json();
+                console.log(`[AddAssetModal] SUCCESS:`, result);
                 setIsSuccess(true);
                 onCreated(result, !!editData);
                 
-                // Close after a short delay so user sees success
                 setTimeout(() => {
                     onClose();
                     setIsSuccess(false);
                 }, 1500);
             } else {
-                const err = await response.json();
-                alert(err.message || 'Failed to list asset');
+                const errData = await response.json();
+                console.error(`[AddAssetModal] Server Error (${response.status}):`, errData);
+                
+                let errorMsg = errData.error || errData.message || `Failed to ${editData ? 'update' : 'create'} listing`;
+                if (errData.error === 'LIMIT_REACHED') {
+                    errorMsg = `Limit Reached: ${errData.message}`;
+                }
+                
+                alert(errorMsg);
             }
         } catch (error) {
-            console.error(error);
-            alert('Connection error');
+            console.error(`[AddAssetModal] Network/Fatal Error:`, error);
+            alert(`Unable to connect to the server. Please check your internet connection and try again.`);
         } finally {
             setLoading(false);
         }
