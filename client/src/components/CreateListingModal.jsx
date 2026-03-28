@@ -408,7 +408,10 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 const errData = await response.json();
                 console.error(`[CreateListing] Server Error (${response.status}):`, errData);
                 
-                let errorMsg = errData.error || errData.message || `Failed to ${editData ? 'update' : 'create'} listing`;
+                let errorMsg = errData.error === 'FILE_TOO_LARGE' 
+                    ? "One or more files exceed the 5MB limit. Please compress your images and try again."
+                    : (errData.error || errData.message || `Failed to ${editData ? 'update' : 'create'} listing`);
+
                 if (errData.error === 'LIMIT_REACHED') {
                     errorMsg = `Limit Reached: ${errData.message}`;
                 }

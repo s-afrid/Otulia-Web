@@ -263,9 +263,9 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
         // Final size check before sending
         const allFiles = [coverImage, ...galleryImages, ...documents].filter(Boolean);
-        const oversized = allFiles.find(f => f.size > 10 * 1024 * 1024);
+        const oversized = allFiles.find(f => f.size > 5 * 1024 * 1024);
         if (oversized) {
-            alert(`File "${oversized.name}" exceeds the 10MB limit. Please upload a smaller version.`);
+            alert(`File "${oversized.name}" exceeds the 5MB limit. Please upload a smaller version.`);
             setLoading(false);
             return;
         }

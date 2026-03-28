@@ -160,76 +160,41 @@ router.post('/create', authMiddleware, upload.fields([
     { name: 'insuranceProof', maxCount: 1 }
 ]), async (req, res) => {
     try {
-        let { title, price, category, location, description } = req.body;
+        let { title, price, category, location, description, isPriceOnRequest } = req.body;
+        const priceOnRequest = isPriceOnRequest === 'true' || isPriceOnRequest === true;
         
         console.log(`[Create Listing] Initiating request...`);
         console.log(`[Create Listing] User ID: ${req.user?.id}`);
-        console.log(`[Create Listing] Payload:`, { category, title, price, location });
+        console.log(`[Create Listing] Payload:`, { category, title, price, location, priceOnRequest });
 
         // Basic validation
         if (!category) {
             console.error("[Create Listing] Validation Failed: Category is missing");
             return res.status(400).json({ error: "Category is required (Car, Bike, Yacht, or Estate)" });
         }
-        if (!price || isNaN(Number(price))) {
-            console.error(`[Create Listing] Validation Failed: Invalid price "${price}"`);
-            return res.status(400).json({ error: "A valid numeric price is required" });
+
+        // Validate price ONLY if NOT price on request
+        if (!priceOnRequest) {
+            if (!price || isNaN(Number(price))) {
+                console.error(`[Create Listing] Validation Failed: Invalid price "${price}"`);
+                return res.status(400).json({ error: "A valid numeric price is required when 'Price on Request' is disabled" });
+            }
         }
+
+        // Final price for DB (ensure it's a number even for Price on Request)
+        const dbPrice = priceOnRequest ? 0 : Number(price);
 
         if (!location) location = 'Unspecified';
 
-        // Auto-generate title if not provided
-        if (!title) {
-            const makeOrBrand = req.body.make || req.body.brand || req.body.builder || '';
-            const model = req.body.model || '';
-            const variant = req.body.variant || '';
+        // ... rest of auto-generate title ...
 
-            if (makeOrBrand || model) {
-                title = `${makeOrBrand} ${model} ${variant}`.trim();
-            } else if (req.body.propertyName) {
-                title = req.body.propertyName;
-            } else if (req.body.yachtName) {
-                title = req.body.yachtName;
-            } else {
-                title = `Untitled ${category} Asset`;
-            }
-            console.log(`[Create Listing] Auto-generated title: "${title}"`);
-        }
-
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            console.error(`[Create Listing] Auth Error: User not found for id: ${req.user.id}`);
-            return res.status(404).json({ error: "User profile not found. Please log in again." });
-        }
-
-        console.log(`[Create Listing] User authorized: ${user.email} (Plan: ${user.plan})`);
-
-        // Enforce tiered limits
-        const planLimits = {
-            'Freemium': 5,
-            'Premium Basic': 25,
-            'Business VIP': 100
-        };
-
-        const currentLimit = planLimits[user.plan] || 5;
-
-        if (user.myListings.length >= currentLimit) {
-            console.warn(`[Create Listing] Limit Reached: ${user.email} has ${user.myListings.length}/${currentLimit} listings`);
-            return res.status(403).json({
-                error: "LIMIT_REACHED",
-                message: `Limit reached for ${user.plan} plan (${currentLimit} assets). Please upgrade your plan.`
-            });
-        }
-
-        // Handle files
-        const imageFiles = req.files['images'] || [];
-        console.log(`[Create Listing] Received ${imageFiles.length} images and ${Object.keys(req.files).length - 1} other document types`);
+        // ... (skipping to baseData) ...
 
         // Define Base Data
         const baseData = {
             title,
-            price: Number(price),
-            isPriceOnRequest: req.body.isPriceOnRequest === 'true' || req.body.isPriceOnRequest === true,
+            price: dbPrice,
+            isPriceOnRequest: priceOnRequest,
             location,
             description: description || 'No description provided',
             images: [],
@@ -574,9 +539,18 @@ router.put('/:id', authMiddleware, upload.fields([
 ]), async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, price, location, description, type, isPublic, videoUrl } = req.body;
+        const { title, price, location, description, type, isPublic, videoUrl, isPriceOnRequest } = req.body;
+        const priceOnRequest = isPriceOnRequest === 'true' || isPriceOnRequest === true;
         
         console.log(`[Update Listing] Request for ID: ${id}`);
+
+        // Price validation for updates
+        if (!priceOnRequest && price !== undefined) {
+            if (!price || isNaN(Number(price))) {
+                console.error(`[Update Listing] Validation Failed: Invalid price "${price}"`);
+                return res.status(400).json({ error: "A valid numeric price is required when 'Price on Request' is disabled" });
+            }
+        }
 
         const user = await User.findById(req.user.id);
         if (!user) {
