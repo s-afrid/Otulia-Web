@@ -72,8 +72,7 @@ router.get("/trending", async (req, res) => {
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-    console.log(`[Trending] Fetching most viewed assets since ${threeDaysAgo.toISOString()}...`);
-
+    
     // Aggregate views from the last 3 days
     const trendingActivities = await UserActivity.aggregate([
       {
@@ -121,7 +120,7 @@ router.get("/trending", async (req, res) => {
 
     // Fallback: If no activity in last 3 days, use total views or marked trending
     if (trendingAssets.length < 5) {
-      console.log("[Trending] Low activity in last 3 days, falling back to all-time popular/marked assets...");
+     
 
       const [cars, bikes, yachts, estates] = await Promise.all([
         CarAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5),
@@ -142,7 +141,7 @@ router.get("/trending", async (req, res) => {
       }
     }
 
-    console.log(`[Trending] Returning ${trendingAssets.length} assets.`);
+   
     res.json(trendingAssets);
 
   } catch (error) {
