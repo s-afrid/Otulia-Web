@@ -38,8 +38,28 @@ const Car_Section = () => {
       if (result.agent?.id) {
         fetchAgentAssets(result.agent.id, result._id || result.id);
       }
+
+      // Record VIEW activity
+      recordView(result._id || result.id);
+
     } catch (error) {
       console.error("Error fetching car info:", error.message);
+    }
+  };
+
+  const recordView = async (assetId) => {
+    try {
+      await fetch('/api/activity/record', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assetId,
+          assetModel: 'CarAsset',
+          activityType: 'VIEW'
+        })
+      });
+    } catch (e) {
+      console.error("Failed to record view activity", e);
     }
   };
 

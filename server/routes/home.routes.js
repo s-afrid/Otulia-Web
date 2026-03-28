@@ -4,6 +4,7 @@ const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
+const UserActivity = require("../models/UserActivity.model");
 
 const router = express.Router();
 
@@ -62,46 +63,91 @@ router.get("/popularity", async (req, res) => {
   }
 });
 
-/** 
- * TRENDIND LISTINGS
- * isTrending: true
+/**
+ * TRENDING LISTINGS
+ * Logic: Most views (VIEW) from UserActivity in the last 3 days
  */
-
 router.get("/trending", async (req, res) => {
   try {
-    const limit = 5;
-    let [carAssets, estateAssets, bikeAssets, yachtAssets] =
-      await Promise.all([
-        CarAsset.find({ isTrending: true }).limit(limit),
-        EstateAsset.find({ isTrending: true }).limit(limit),
-        BikeAsset.find({ isTrending: true }).limit(limit),
-        YachtAsset.find({ isTrending: true }).limit(limit),
-      ]);
+    const threeDaysAgo = new Date();
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-    const totalTrending = carAssets.length + estateAssets.length + bikeAssets.length + yachtAssets.length;
+    console.log(`[Trending] Fetching most viewed assets since ${threeDaysAgo.toISOString()}...`);
 
-    if (totalTrending === 0) {
-      // Fallback: Fetch latest items if no trending items exist
-      [carAssets, estateAssets, bikeAssets, yachtAssets] =
-        await Promise.all([
-          CarAsset.find().sort({ createdAt: -1 }).limit(limit),
-          EstateAsset.find().sort({ createdAt: -1 }).limit(limit),
-          BikeAsset.find().sort({ createdAt: -1 }).limit(limit),
-          YachtAsset.find().sort({ createdAt: -1 }).limit(limit),
-        ]);
+    // Aggregate views from the last 3 days
+    const trendingActivities = await UserActivity.aggregate([
+      {
+        $match: {
+          activityType: "VIEW",
+          createdAt: { $gte: threeDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: { assetId: "$assetId", assetModel: "$assetModel" },
+          viewCount: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { viewCount: -1 }
+      },
+      {
+        $limit: 15
+      }
+    ]);
+
+    let trendingAssets = [];
+
+    if (trendingActivities.length > 0) {
+      // Fetch the actual asset documents
+      for (const item of trendingActivities) {
+        let Model;
+        switch (item._id.assetModel) {
+          case 'CarAsset': Model = CarAsset; break;
+          case 'BikeAsset': Model = BikeAsset; break;
+          case 'YachtAsset': Model = YachtAsset; break;
+          case 'EstateAsset': Model = EstateAsset; break;
+          default: continue;
+        }
+
+        const asset = await Model.findById(item._id.assetId)
+          .select("title images price category location agent isTrending status");
+
+        if (asset && asset.status === 'Active') {
+          trendingAssets.push(asset);
+        }
+      }
     }
 
-    const combinedAssets = [
-      ...carAssets,
-      ...estateAssets,
-      ...bikeAssets,
-      ...yachtAssets,
-    ];
+    // Fallback: If no activity in last 3 days, use total views or marked trending
+    if (trendingAssets.length < 5) {
+      console.log("[Trending] Low activity in last 3 days, falling back to all-time popular/marked assets...");
 
-    res.json(combinedAssets);
+      const [cars, bikes, yachts, estates] = await Promise.all([
+        CarAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5),
+        BikeAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5),
+        YachtAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5),
+        EstateAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5),
+      ]);
+
+      const fallbackAssets = [...cars, ...bikes, ...yachts, ...estates];
+
+      // Merge unique assets
+      const existingIds = new Set(trendingAssets.map(a => a._id.toString()));
+      for (const asset of fallbackAssets) {
+        if (!existingIds.has(asset._id.toString()) && trendingAssets.length < 15) {
+          trendingAssets.push(asset);
+          existingIds.add(asset._id.toString());
+        }
+      }
+    }
+
+    console.log(`[Trending] Returning ${trendingAssets.length} assets.`);
+    res.json(trendingAssets);
+
   } catch (error) {
+    console.error("Trending Fetch Error:", error);
     res.status(500).json({ message: "Failed to fetch trending assets" });
   }
 });
-
 module.exports = router;
