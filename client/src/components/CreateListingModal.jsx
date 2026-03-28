@@ -265,6 +265,15 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
     const handleFileChange = (e, type) => {
         const files = Array.from(e.target.files);
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
+        // Size validation
+        const oversizedFiles = files.filter(f => f.size > MAX_SIZE);
+        if (oversizedFiles.length > 0) {
+            alert(`Some files are too large. Maximum size per file is 5MB. Affected files: ${oversizedFiles.map(f => f.name).join(', ')}`);
+            return;
+        }
+
         if (type === 'images') {
             setImages(prev => [...prev, ...files].slice(0, 10));
         }
@@ -281,6 +290,14 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         if (!formData.price && !formData.isPriceOnRequest) {
             console.error("[CreateListing] Validation Error: Price is missing");
             alert("Please enter a price or select 'Price on Request'");
+            setLoading(false);
+            return;
+        }
+
+        // Final size check before sending
+        const oversized = images.find(f => f.size > 5 * 1024 * 1024);
+        if (oversized) {
+            alert(`File "${oversized.name}" exceeds the 5MB limit. Please upload a smaller version.`);
             setLoading(false);
             return;
         }

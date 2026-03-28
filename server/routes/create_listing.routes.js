@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Reduced to 5MB to prevent timeouts on slow connections
+    limits: { fileSize: 5 * 1024 * 1024 }, // Set to 5MB
     fileFilter: (req, file, cb) => {
         if (file.fieldname === 'images') {
             const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']; // Added WebP support

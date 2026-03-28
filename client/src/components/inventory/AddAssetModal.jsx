@@ -81,13 +81,21 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
     const handleFileUpload = (e, type) => {
         const files = Array.from(e.target.files);
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
+        // Size validation
+        const oversizedFiles = files.filter(f => f.size > MAX_SIZE);
+        if (oversizedFiles.length > 0) {
+            alert(`Some files are too large. Maximum size per file is 5MB. Affected files: ${oversizedFiles.map(f => f.name).join(', ')}`);
+            return;
+        }
 
         // Image validation
         if (type === 'cover' || type === 'gallery') {
-            const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
+            const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
             const invalidFiles = files.filter(f => !allowed.includes(f.type));
             if (invalidFiles.length > 0) {
-                alert('Only .jpg, .png and .jpeg are allowed for images');
+                alert('Only .jpg, .png, .webp and .jpeg are allowed for images');
                 return;
             }
         }
@@ -253,6 +261,15 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             return;
         }
 
+        // Final size check before sending
+        const allFiles = [coverImage, ...galleryImages, ...documents].filter(Boolean);
+        const oversized = allFiles.find(f => f.size > 10 * 1024 * 1024);
+        if (oversized) {
+            alert(`File "${oversized.name}" exceeds the 10MB limit. Please upload a smaller version.`);
+            setLoading(false);
+            return;
+        }
+
         const data = new FormData();
 
         // Sync highlights to main fields to ensure backend keySpecs are populated
@@ -363,7 +380,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 const errData = await response.json();
                 console.error(`[AddAssetModal] Server Error (${response.status}):`, errData);
                 
-                let errorMsg = errData.error || errData.message || `Failed to ${editData ? 'update' : 'create'} listing`;
+                let errorMsg = errData.error === 'FILE_TOO_LARGE' 
+                    ? "One or more files exceed the 10MB limit. Please compress your images and try again."
+                    : (errData.error || errData.message || `Failed to ${editData ? 'update' : 'create'} listing`);
+
                 if (errData.error === 'LIMIT_REACHED') {
                     errorMsg = `Limit Reached: ${errData.message}`;
                 }
