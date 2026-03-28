@@ -274,6 +274,17 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         e.preventDefault();
         setLoading(true);
 
+        console.log(`[CreateListing] Starting ${editData ? 'update' : 'creation'} process...`);
+        console.log(`[CreateListing] Initial Form Data:`, formData);
+
+        // Client-side validation logs
+        if (!formData.price && !formData.isPriceOnRequest) {
+            console.error("[CreateListing] Validation Error: Price is missing");
+            alert("Please enter a price or select 'Price on Request'");
+            setLoading(false);
+            return;
+        }
+
         // Sync highlights to main fields to ensure backend keySpecs are populated
         if (formData.category === 'Car') {
             if (!formData.horsepower) formData.horsepower = formData.highlight_hp;
@@ -345,8 +356,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         });
 
         data.append('highlights', JSON.stringify(constructedHighlights));
-
         images.forEach(file => data.append('images', file));
+
+        console.log(`[CreateListing] Prepared FormData. Images attached: ${images.length}`);
 
         try {
             const url = editData
@@ -354,6 +366,8 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 : '/api/listings/create';
 
             const method = editData ? 'PUT' : 'POST';
+
+            console.log(`[CreateListing] Sending ${method} request to ${url}...`);
 
             const response = await fetch(url, {
                 method: method,
@@ -365,6 +379,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
             if (response.ok) {
                 const result = await response.json();
+                console.log(`[CreateListing] SUCCESS:`, result);
                 setIsSuccess(true);
                 onCreated(result, !!editData);
 
@@ -374,11 +389,18 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 }, 1500);
             } else {
                 const errData = await response.json();
-                alert(errData.error || `Failed to ${editData ? 'update' : 'create'} listing`);
+                console.error(`[CreateListing] Server Error (${response.status}):`, errData);
+                
+                let errorMsg = errData.error || errData.message || `Failed to ${editData ? 'update' : 'create'} listing`;
+                if (errData.error === 'LIMIT_REACHED') {
+                    errorMsg = `Limit Reached: ${errData.message}`;
+                }
+                
+                alert(errorMsg);
             }
         } catch (error) {
-            console.error(error);
-            alert(`Error ${editData ? 'updating' : 'creating'} listing`);
+            console.error(`[CreateListing] Network/Fatal Error:`, error);
+            alert(`Unable to connect to the server. Please check your internet connection and try again.`);
         } finally {
             setLoading(false);
         }

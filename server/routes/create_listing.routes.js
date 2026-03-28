@@ -161,10 +161,22 @@ router.post('/create', authMiddleware, upload.fields([
 ]), async (req, res) => {
     try {
         let { title, price, category, location, description } = req.body;
-        if (!location) location = 'Unspecified';
+        
+        console.log(`[Create Listing] Initiating request...`);
+        console.log(`[Create Listing] User ID: ${req.user?.id}`);
+        console.log(`[Create Listing] Payload:`, { category, title, price, location });
 
-        console.log(`[Create Listing] Request received — userId: ${req.user?.id}, category: ${category}, title: "${title}", price: ${price}`);
-        console.log(`[Create Listing] Image files received: ${req.files?.['images']?.length || 0}, doc files: ${req.files?.['documents']?.length || 0}`);
+        // Basic validation
+        if (!category) {
+            console.error("[Create Listing] Validation Failed: Category is missing");
+            return res.status(400).json({ error: "Category is required (Car, Bike, Yacht, or Estate)" });
+        }
+        if (!price || isNaN(Number(price))) {
+            console.error(`[Create Listing] Validation Failed: Invalid price "${price}"`);
+            return res.status(400).json({ error: "A valid numeric price is required" });
+        }
+
+        if (!location) location = 'Unspecified';
 
         // Auto-generate title if not provided
         if (!title) {
@@ -186,11 +198,11 @@ router.post('/create', authMiddleware, upload.fields([
 
         const user = await User.findById(req.user.id);
         if (!user) {
-            console.warn(`[Create Listing] User not found for id: ${req.user.id}`);
-            return res.status(404).json({ error: "User not found" });
+            console.error(`[Create Listing] Auth Error: User not found for id: ${req.user.id}`);
+            return res.status(404).json({ error: "User profile not found. Please log in again." });
         }
 
-        console.log(`[Create Listing] User found — email: ${user.email}, plan: ${user.plan}, currentListings: ${user.myListings.length}`);
+        console.log(`[Create Listing] User authorized: ${user.email} (Plan: ${user.plan})`);
 
         // Enforce tiered limits
         const planLimits = {
@@ -202,35 +214,16 @@ router.post('/create', authMiddleware, upload.fields([
         const currentLimit = planLimits[user.plan] || 5;
 
         if (user.myListings.length >= currentLimit) {
-            console.warn(`[Create Listing] Limit reached for user ${user.email} — plan: ${user.plan}, limit: ${currentLimit}, current: ${user.myListings.length}`);
+            console.warn(`[Create Listing] Limit Reached: ${user.email} has ${user.myListings.length}/${currentLimit} listings`);
             return res.status(403).json({
                 error: "LIMIT_REACHED",
-                message: `You have reached the listing limit for your ${user.plan} plan (${currentLimit} assets). Please upgrade to list more.`
+                message: `Limit reached for ${user.plan} plan (${currentLimit} assets). Please upgrade your plan.`
             });
-        }
-
-        // Featured listing based on plan
-        // Premium Basic: 5 days featured
-        // Business VIP: 13 days featured
-        // Freemium: No featured
-        let isFeatured = false;
-        let featuredExpiresAt = null;
-
-        if (user.plan === 'Premium Basic') {
-            isFeatured = true;
-            featuredExpiresAt = new Date();
-            featuredExpiresAt.setDate(featuredExpiresAt.getDate() + 5); // 5 days
-        } else if (user.plan === 'Business VIP') {
-            isFeatured = true;
-            featuredExpiresAt = new Date();
-            featuredExpiresAt.setDate(featuredExpiresAt.getDate() + 13); // 13 days
         }
 
         // Handle files
         const imageFiles = req.files['images'] || [];
-        const docFiles = req.files['documents'] || [];
-
-
+        console.log(`[Create Listing] Received ${imageFiles.length} images and ${Object.keys(req.files).length - 1} other document types`);
 
         // Define Base Data
         const baseData = {
@@ -260,52 +253,55 @@ router.post('/create', authMiddleware, upload.fields([
 
         let newListing;
         let modelType;
-        switch (category) {
-            case 'Car': newListing = new CarAsset({ ...baseData, category: 'vehicles' }); modelType = 'CarAsset'; break;
-            case 'Bike': newListing = new BikeAsset({ ...baseData, category: 'bikes' }); modelType = 'BikeAsset'; break;
-            case 'Yacht': newListing = new YachtAsset({ ...baseData, category: 'yachts' }); modelType = 'YachtAsset'; break;
-            case 'Estate': newListing = new EstateAsset({ ...baseData, category: 'estates' }); modelType = 'EstateAsset'; break;
-            default: newListing = new Listing({ ...baseData, category: category || 'General' }); modelType = 'Listing';
+        try {
+            switch (category) {
+                case 'Car': newListing = new CarAsset({ ...baseData, category: 'vehicles' }); modelType = 'CarAsset'; break;
+                case 'Bike': newListing = new BikeAsset({ ...baseData, category: 'bikes' }); modelType = 'BikeAsset'; break;
+                case 'Yacht': newListing = new YachtAsset({ ...baseData, category: 'yachts' }); modelType = 'YachtAsset'; break;
+                case 'Estate': newListing = new EstateAsset({ ...baseData, category: 'estates' }); modelType = 'EstateAsset'; break;
+                default: 
+                    console.error(`[Create Listing] Error: Invalid category "${category}"`);
+                    return res.status(400).json({ error: `Invalid category: ${category}` });
+            }
+        } catch (schemaErr) {
+            console.error(`[Create Listing] Schema Mapping Error:`, schemaErr.message);
+            return res.status(500).json({ error: "Internal error preparing asset data" });
         }
 
-        console.log(`[Create Listing] Saving initial ${modelType} document to DB...`);
+        console.log(`[Create Listing] Saving initial ${modelType} to database...`);
         const savedListing = await newListing.save();
         const assetId = savedListing._id.toString();
         const folderPath = getAssetFolderPath(category, assetId);
-        console.log(`[Create Listing] DB save successful — assetId: ${assetId}, cloudinary folder: ${folderPath}`);
+        console.log(`[Create Listing] DB Save Successful. ID: ${assetId}. Target Cloudinary Folder: ${folderPath}`);
 
         const imageUrls = [];
         const docUrls = [];
 
         try {
             if (req.files['images']) {
-                console.log(`[Create Listing] Uploading ${req.files['images'].length} image(s) to Cloudinary...`);
+                console.log(`[Create Listing] Uploading ${req.files['images'].length} images to Cloudinary...`);
                 for (const file of req.files['images']) {
                     try {
                         const result = await cloudinary.uploader.upload(file.path, { folder: folderPath });
                         imageUrls.push(result.secure_url);
-                        console.log(`[Create Listing] Image uploaded: ${result.secure_url}`);
                     } catch (uploadErr) {
-                        console.error(`[Create Listing] Image upload FAILED for ${file.originalname}:`, uploadErr.message);
-                        console.error(`[Create Listing] Cloudinary image error detail:`, uploadErr);
+                        console.error(`[Create Listing] Cloudinary Image Upload FAILED (${file.originalname}):`, uploadErr.message);
                     } finally {
                         if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
                     }
                 }
-                console.log(`[Create Listing] Images done — ${imageUrls.length}/${req.files['images'].length} uploaded successfully.`);
             }
+
             const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
             for (const field of docFields) {
                 if (req.files[field]) {
-                    console.log(`[Create Listing] Uploading ${req.files[field].length} file(s) for field "${field}"...`);
+                    console.log(`[Create Listing] Uploading document(s) for field: ${field}...`);
                     for (const file of req.files[field]) {
                         try {
                             const result = await cloudinary.uploader.upload(file.path, { folder: folderPath, resource_type: 'auto' });
                             docUrls.push(result.secure_url);
-                            console.log(`[Create Listing] Doc uploaded (${field}): ${result.secure_url}`);
                         } catch (uploadErr) {
-                            console.error(`[Create Listing] Doc upload FAILED for field "${field}", file "${file.originalname}":`, uploadErr.message);
-                            console.error(`[Create Listing] Cloudinary doc error detail:`, uploadErr);
+                            console.error(`[Create Listing] Cloudinary Doc Upload FAILED (${field}):`, uploadErr.message);
                         } finally {
                             if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
                         }
@@ -313,13 +309,16 @@ router.post('/create', authMiddleware, upload.fields([
                 }
             }
         } catch (uploadError) {
-            console.error("[Create Listing] Unexpected Cloudinary upload error:", uploadError.message);
-            console.error("[Create Listing] Stack:", uploadError.stack);
+            console.error("[Create Listing] Critical Cloudinary error:", uploadError.message);
         } finally {
-            // Final cleanup safety check: delete any remaining files from this request
-            Object.values(req.files).flat().forEach(file => {
-                if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
-            });
+            // Clean up any files that weren't processed or deleted
+            if (req.files) {
+                Object.values(req.files).flat().forEach(file => {
+                    if (fs.existsSync(file.path)) {
+                        try { fs.unlinkSync(file.path); } catch(e) {}
+                    }
+                });
+            }
         }
 
         const updateData = { images: imageUrls, documents: docUrls };
@@ -345,7 +344,7 @@ router.post('/create', authMiddleware, upload.fields([
                             public_id: 'logo'
                         });
                         updateData.brand_logo = logoResult.secure_url;
-                    } catch (logoErr) { console.error("Logo Upload Error:", logoErr); }
+                    } catch (logoErr) { console.error("[Create Listing] Logo Upload Error:", logoErr.message); }
                 }
             }
 
@@ -401,7 +400,7 @@ router.post('/create', authMiddleware, upload.fields([
                             public_id: 'logo'
                         });
                         updateData.brand_logo = logoResult.secure_url;
-                    } catch (logoErr) { console.error("Logo Upload Error:", logoErr); }
+                    } catch (logoErr) { console.error("[Create Listing] Logo Upload Error:", logoErr.message); }
                 }
             }
 
@@ -448,7 +447,7 @@ router.post('/create', authMiddleware, upload.fields([
                             public_id: 'logo'
                         });
                         updateData.brand_logo = logoResult.secure_url;
-                    } catch (logoErr) { console.error("Logo Upload Error:", logoErr); }
+                    } catch (logoErr) { console.error("[Create Listing] Logo Upload Error:", logoErr.message); }
                 }
             }
 
@@ -539,17 +538,21 @@ router.post('/create', authMiddleware, upload.fields([
             default: Model = Listing;
         }
 
-        console.log(`[Create Listing] Updating DB record with ${imageUrls.length} image(s) and ${docUrls.length} doc(s)...`);
+        console.log(`[Create Listing] Finalizing record update with media...`);
         const finalListing = await Model.findByIdAndUpdate(savedListing._id, updateData, { new: true });
+        
+        console.log(`[Create Listing] Linking listing to user profile...`);
         await User.findByIdAndUpdate(req.user.id, {
             $push: { myListings: { item: finalListing._id, itemModel: modelType } }
         });
-        console.log(`[Create Listing] Success — listing ${finalListing._id} created for user ${user.email}`);
+
+        console.log(`[Create Listing] SUCCESS: Asset ${finalListing._id} created for ${user.email}`);
         res.status(201).json(finalListing);
+
     } catch (error) {
-        console.error("[Create Listing] Unexpected top-level error:", error.message);
-        console.error("[Create Listing] Stack:", error.stack);
-        res.status(500).json({ error: "Failed to create listing" });
+        console.error("[Create Listing] UNEXPECTED FATAL ERROR:", error.message);
+        console.error(error.stack);
+        res.status(500).json({ error: "Server error while creating listing. Please try again later." });
     }
 });
 
@@ -572,10 +575,20 @@ router.put('/:id', authMiddleware, upload.fields([
     try {
         const { id } = req.params;
         const { title, price, location, description, type, isPublic, videoUrl } = req.body;
+        
+        console.log(`[Update Listing] Request for ID: ${id}`);
+
         const user = await User.findById(req.user.id);
+        if (!user) {
+            console.error(`[Update Listing] Auth Error: User not found`);
+            return res.status(404).json({ error: "User not found" });
+        }
 
         const listingEntry = user.myListings.find(entry => entry.item && entry.item.toString() === id);
-        if (!listingEntry) return res.status(404).json({ error: "Listing not found in your profile." });
+        if (!listingEntry) {
+            console.warn(`[Update Listing] Unauthorized attempt or invalid ID for user ${user.email}`);
+            return res.status(404).json({ error: "Listing not found in your profile." });
+        }
 
         const modelName = listingEntry.itemModel || 'Listing';
         let Model;
@@ -589,12 +602,16 @@ router.put('/:id', authMiddleware, upload.fields([
         }
 
         const listing = await Model.findById(id);
-        if (!listing) return res.status(404).json({ error: "Listing not found." });
+        if (!listing) {
+            console.error(`[Update Listing] DB Error: Asset not found for ID: ${id}`);
+            return res.status(404).json({ error: "Asset record missing." });
+        }
 
         const folderPath = getAssetFolderPath(categoryName, id);
 
         try {
             if (req.files['images']) {
+                console.log(`[Update Listing] Replacing images for ID: ${id}`);
                 // Delete old images from Cloudinary
                 if (listing.images && listing.images.length > 0) {
                     for (const oldUrl of listing.images) {
@@ -608,7 +625,7 @@ router.put('/:id', authMiddleware, upload.fields([
                         const result = await cloudinary.uploader.upload(file.path, { folder: folderPath });
                         newImageUrls.push(result.secure_url);
                     } catch (uploadErr) {
-                        console.error(`Error updating image ${file.path}:`, uploadErr);
+                        console.error(`[Update Listing] Image Upload Error:`, uploadErr.message);
                     } finally {
                         if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
                     }
@@ -619,20 +636,16 @@ router.put('/:id', authMiddleware, upload.fields([
             const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
             for (const field of docFields) {
                 if (req.files[field]) {
-                    // Delete old documents from Cloudinary
-                    if (listing.documents && listing.documents.length > 0) {
-                        for (const oldUrl of listing.documents) {
-                            await deleteFromCloudinary(oldUrl);
-                        }
-                    }
-
+                    console.log(`[Update Listing] Updating document field: ${field}`);
+                    // Delete old documents if needed (Logic depends on whether you want to replace or append)
+                    // For now, replacing to match image logic
                     const newDocUrls = [];
                     for (const file of req.files[field]) {
                         try {
                             const result = await cloudinary.uploader.upload(file.path, { folder: folderPath, resource_type: 'auto' });
                             newDocUrls.push(result.secure_url);
                         } catch (uploadErr) {
-                            console.error(`Error updating document ${file.path}:`, uploadErr);
+                            console.error(`[Update Listing] Doc Upload Error (${field}):`, uploadErr.message);
                         } finally {
                             if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
                         }
@@ -641,12 +654,13 @@ router.put('/:id', authMiddleware, upload.fields([
                 }
             }
         } catch (uploadError) {
-            console.error("Cloudinary Upload Error:", uploadError);
+            console.error("[Update Listing] Cloudinary Error:", uploadError.message);
         } finally {
-            // Final cleanup safety check: delete any remaining files from this request
             if (req.files) {
                 Object.values(req.files).flat().forEach(file => {
-                    if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+                    if (fs.existsSync(file.path)) {
+                        try { fs.unlinkSync(file.path); } catch(e) {}
+                    }
                 });
             }
         }
@@ -686,7 +700,6 @@ router.put('/:id', authMiddleware, upload.fields([
         if (modelName === 'CarAsset') {
             const carBrand = req.body.make || req.body.brand;
             if (carBrand) {
-                // If brand name changed OR brand_logo is missing, try to update logo
                 if (listing.brand !== carBrand || !listing.brand_logo) {
                     const logoPath = getBrandLogoPath('Car', carBrand);
                     if (logoPath && fs.existsSync(logoPath)) {
@@ -697,9 +710,7 @@ router.put('/:id', authMiddleware, upload.fields([
                             });
                             listing.brand_logo = logoResult.secure_url;
                             listing.markModified('brand_logo');
-                        } catch (logoErr) {
-                            console.error("Brand Logo Update Error:", logoErr);
-                        }
+                        } catch (logoErr) { console.error("[Update Listing] Logo Error:", logoErr.message); }
                     }
                 }
                 listing.brand = carBrand;
@@ -764,9 +775,7 @@ router.put('/:id', authMiddleware, upload.fields([
                             });
                             listing.brand_logo = logoResult.secure_url;
                             listing.markModified('brand_logo');
-                        } catch (logoErr) {
-                            console.error("Brand Logo Update Error:", logoErr);
-                        }
+                        } catch (logoErr) { console.error("[Update Listing] Logo Error:", logoErr.message); }
                     }
                 }
                 listing.brand = bikeBrand;
@@ -823,9 +832,7 @@ router.put('/:id', authMiddleware, upload.fields([
                             });
                             listing.brand_logo = logoResult.secure_url;
                             listing.markModified('brand_logo');
-                        } catch (logoErr) {
-                            console.error("Brand Logo Update Error:", logoErr);
-                        }
+                        } catch (logoErr) { console.error("[Update Listing] Logo Error:", logoErr.message); }
                     }
                 }
                 listing.builder = req.body.builder;
@@ -857,8 +864,6 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.fuelCapacity) {
                 const fc = addUnit(req.body.fuelCapacity, 'L');
                 keySpec.fuelCapacity = fc;
-                // Add to spec if needed, but schema only has it in keySpec?
-                // Yacht schema has fuelConsumption but not fuelCapacity in spec.
             }
             if (req.body.bathrooms) keySpec.bathrooms = req.body.bathrooms;
             if (req.body.bedrooms) keySpec.bedrooms = req.body.bedrooms;
@@ -926,10 +931,12 @@ router.put('/:id', authMiddleware, upload.fields([
         }
 
         const updatedListing = await listing.save();
+        console.log(`[Update Listing] SUCCESS: Asset ${id} updated for ${user.email}`);
         res.json(updatedListing);
+
     } catch (error) {
-        console.error("Update Listing Error:", error);
-        res.status(500).json({ error: "Failed to update listing" });
+        console.error("[Update Listing] FATAL ERROR:", error.message);
+        res.status(500).json({ error: "Failed to update listing. Check server logs." });
     }
 });
 
@@ -939,40 +946,42 @@ router.put('/:id', authMiddleware, upload.fields([
 router.delete('/:id', authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(`[Delete Listing] Request for ID: ${id}`);
+
         const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
         const listingEntry = user.myListings.find(entry => entry.item && entry.item.toString() === id);
-        if (!listingEntry) return res.status(404).json({ error: "Listing not found in your profile." });
+        if (!listingEntry) {
+            console.warn(`[Delete Listing] Unauthorized/Invalid ID for user ${user.email}`);
+            return res.status(404).json({ error: "Listing not found in your profile." });
+        }
 
         const modelName = listingEntry.itemModel || 'Listing';
         let Model;
+        let categoryName;
         switch (modelName) {
-            case 'CarAsset': Model = CarAsset; break;
-            case 'BikeAsset': Model = BikeAsset; break;
-            case 'YachtAsset': Model = YachtAsset; break;
-            case 'EstateAsset': Model = EstateAsset; break;
-            default: Model = Listing;
+            case 'CarAsset': Model = CarAsset; categoryName = 'Car'; break;
+            case 'BikeAsset': Model = BikeAsset; categoryName = 'Bike'; break;
+            case 'YachtAsset': Model = YachtAsset; categoryName = 'Yacht'; break;
+            case 'EstateAsset': Model = EstateAsset; categoryName = 'Estate'; break;
+            default: Model = Listing; categoryName = 'General';
         }
 
         const listing = await Model.findById(id);
-        if (!listing) return res.status(404).json({ error: "Listing not found." });
-
-        // Delete the entire asset folder from Cloudinary
-        let categoryName;
-        switch (modelName) {
-            case 'CarAsset': categoryName = 'Car'; break;
-            case 'BikeAsset': categoryName = 'Bike'; break;
-            case 'YachtAsset': categoryName = 'Yacht'; break;
-            case 'EstateAsset': categoryName = 'Estate'; break;
-            default: categoryName = 'General';
+        if (listing) {
+            console.log(`[Delete Listing] Purging Cloudinary folder for asset ${id}...`);
+            const folderPath = `${categoryName}/${id}`;
+            await deleteFolderFromCloudinary(folderPath);
+            await Model.findByIdAndDelete(id);
         }
-        const folderPath = `${categoryName}/${id}`;
-        await deleteFolderFromCloudinary(folderPath);
 
-        await Model.findByIdAndDelete(id);
         await User.findByIdAndUpdate(req.user.id, { $pull: { myListings: { item: id } } });
+        
+        console.log(`[Delete Listing] SUCCESS: Asset ${id} removed for ${user.email}`);
         res.json({ message: "Listing deleted successfully" });
     } catch (error) {
-        console.error("Delete Listing Error:", error);
+        console.error("[Delete Listing] ERROR:", error.message);
         res.status(500).json({ error: "Failed to delete listing" });
     }
 });
