@@ -272,7 +272,7 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
               className="text-2xl md:text-5xl font-bold text-black"
               style={{ fontFamily: '"Times New Roman", Times, serif' }}
             >
-              {item.isPriceOnRequest ? 'Price On Request' : `$ ${numberWithCommas(price)}`}
+              {item.isPriceOnRequest ? 'Price on Demand' : `$ ${numberWithCommas(price)}`}
               {!item.isPriceOnRequest && type === 'Rent' && <span className="text-lg font-normal text-gray-500 font-sans">/ day</span>}
             </h2>
           </div>

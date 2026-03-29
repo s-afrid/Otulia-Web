@@ -18,7 +18,7 @@ router.get("/featured", async (req, res) => {
   try {
     const listings = await Listing.find({ isFeatured: true })
       .limit(6)
-      .select("title images price category location agent");
+      .select("title images price category location agent isPriceOnRequest type keySpecifications");
 
     res.json(listings);
 
@@ -110,7 +110,7 @@ router.get("/trending", async (req, res) => {
         }
 
         const asset = await Model.findById(item._id.assetId)
-          .select("title images price category location agent isTrending status");
+          .select("title images price category location agent isTrending status isPriceOnRequest type keySpecifications");
 
         if (asset && asset.status === 'Active') {
           trendingAssets.push(asset);

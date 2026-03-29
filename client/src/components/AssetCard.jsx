@@ -265,7 +265,7 @@ const AssetCard = ({ item }) => {
         </div>
 
         <p className="text-xl font-bold text-black mb-1 font-sans">
-          {item.isPriceOnRequest ? 'Price On Request' : (typeof item.price === 'number' ? `$ ${numberWithCommas(item.price)}` : item.price)}
+          {item.isPriceOnRequest ? 'Price on Demand' : (typeof item.price === 'number' ? `$ ${numberWithCommas(item.price)}` : item.price)}
           {!item.isPriceOnRequest && item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal"> / day</span>}
         </p>
 
