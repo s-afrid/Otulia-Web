@@ -160,11 +160,12 @@ router.post('/create', authMiddleware, upload.fields([
     { name: 'insuranceProof', maxCount: 1 }
 ]), async (req, res) => {
     try {
+        const user = req.user;
         let { title, price, category, location, description, isPriceOnRequest } = req.body;
         const priceOnRequest = isPriceOnRequest === 'true' || isPriceOnRequest === true;
         
         console.log(`[Create Listing] Initiating request...`);
-        console.log(`[Create Listing] User ID: ${req.user?.id}`);
+        console.log(`[Create Listing] User ID: ${user?._id || user?.id}`);
         console.log(`[Create Listing] Payload:`, { category, title, price, location, priceOnRequest });
 
         // Basic validation
