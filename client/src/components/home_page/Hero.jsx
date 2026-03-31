@@ -65,7 +65,7 @@ const Hero = () => {
             </NavLink>
             </li>
           <li className='cursor-pointer hover:text-white/70 transition-colors'>
-            <NavLink to={'/seller'}>
+            <NavLink to={'/listings'}>
             Sell With Us
             </NavLink>
             </li>
