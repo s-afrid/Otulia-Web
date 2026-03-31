@@ -163,7 +163,7 @@ router.post('/create', authMiddleware, upload.fields([
         const user = req.user;
         let { title, price, category, location, description, isPriceOnRequest } = req.body;
         const priceOnRequest = isPriceOnRequest === 'true' || isPriceOnRequest === true;
-        
+
         console.log(`[Create Listing] Initiating request...`);
         console.log(`[Create Listing] User ID: ${user?._id || user?.id}`);
         console.log(`[Create Listing] Payload:`, { category, title, price, location, priceOnRequest });
@@ -179,14 +179,14 @@ router.post('/create', authMiddleware, upload.fields([
         if (typeof price === 'string') {
             sanitizedPrice = price.replace(/[,$\s]/g, ''); // Handle comma, currency and spaces
         }
-        
+
         if (!priceOnRequest) {
             if (!sanitizedPrice || isNaN(Number(sanitizedPrice))) {
                 console.error(`[Create Listing] Validation Failed: Invalid price "${price}"`);
                 return res.status(400).json({ error: "A valid numeric price is required when 'Price on Request' is disabled" });
             }
         }
-        
+
         const dbPrice = priceOnRequest ? 0 : Number(sanitizedPrice);
 
         if (!location) location = 'Unspecified';
@@ -198,7 +198,7 @@ router.post('/create', authMiddleware, upload.fields([
             const brand = req.body.make || req.body.brand || req.body.builder || '';
             const model = req.body.model || '';
             const altName = req.body.propertyName || req.body.yachtName || '';
-            
+
             if (year || brand || model) {
                 title = `${year} ${brand} ${model}`.trim();
             } else if (altName) {
@@ -247,7 +247,7 @@ router.post('/create', authMiddleware, upload.fields([
                 case 'Bike': newListing = new BikeAsset({ ...baseData, category: 'bikes' }); modelType = 'BikeAsset'; break;
                 case 'Yacht': newListing = new YachtAsset({ ...baseData, category: 'yachts' }); modelType = 'YachtAsset'; break;
                 case 'Estate': newListing = new EstateAsset({ ...baseData, category: 'estates' }); modelType = 'EstateAsset'; break;
-                default: 
+                default:
                     console.error(`[Create Listing] Error: Invalid category "${category}"`);
                     return res.status(400).json({ error: `Invalid category: ${category}` });
             }
@@ -303,13 +303,18 @@ router.post('/create', authMiddleware, upload.fields([
             if (req.files) {
                 Object.values(req.files).flat().forEach(file => {
                     if (fs.existsSync(file.path)) {
-                        try { fs.unlinkSync(file.path); } catch(e) {}
+                        try { fs.unlinkSync(file.path); } catch (e) { }
                     }
                 });
             }
         }
 
-        const updateData = { images: imageUrls, documents: docUrls };
+        // Include title in update data to ensure it's saved properly
+        const updateData = {
+            images: imageUrls,
+            documents: docUrls,
+            title: title
+        };
 
         // --- Formatting Helpers ---
         const addUnit = (val, unit) => {
@@ -321,7 +326,7 @@ router.post('/create', authMiddleware, upload.fields([
 
         if (category === 'Car') {
             updateData.brand = req.body.make || req.body.brand;
-            
+
             // Assign brand logo
             if (updateData.brand) {
                 const logoPath = getBrandLogoPath('Car', updateData.brand);
@@ -528,7 +533,7 @@ router.post('/create', authMiddleware, upload.fields([
 
         console.log(`[Create Listing] Finalizing record update with media...`);
         const finalListing = await Model.findByIdAndUpdate(savedListing._id, updateData, { new: true });
-        
+
         console.log(`[Create Listing] Linking listing to user profile...`);
         await User.findByIdAndUpdate(req.user.id, {
             $push: { myListings: { item: finalListing._id, itemModel: modelType } }
@@ -564,7 +569,7 @@ router.put('/:id', authMiddleware, upload.fields([
         const { id } = req.params;
         const { title, price, location, description, type, isPublic, videoUrl, isPriceOnRequest } = req.body;
         const priceOnRequest = isPriceOnRequest === 'true' || isPriceOnRequest === true;
-        
+
         console.log(`[Update Listing] Request for ID: ${id}`);
 
         // Price validation for updates
@@ -656,7 +661,7 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.files) {
                 Object.values(req.files).flat().forEach(file => {
                     if (fs.existsSync(file.path)) {
-                        try { fs.unlinkSync(file.path); } catch(e) {}
+                        try { fs.unlinkSync(file.path); } catch (e) { }
                     }
                 });
             }
@@ -723,17 +728,17 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.bodyType) spec.body = req.body.bodyType;
             if (req.body.series) spec.series = req.body.series;
             if (req.body.mileage) { spec.mileage = req.body.mileage; }
-            if (req.body.horsepower) { 
+            if (req.body.horsepower) {
                 const p = addUnit(req.body.horsepower, 'hp');
-                spec.power = p; 
-                keySpec.power = p; 
+                spec.power = p;
+                keySpec.power = p;
             }
             if (req.body.cylinderCapacity) { spec.cylinderCapacity = req.body.cylinderCapacity; }
             if (req.body.configuration) spec.configuration = req.body.configuration;
-            if (req.body.topSpeed) { 
+            if (req.body.topSpeed) {
                 const ts = addUnit(req.body.topSpeed, 'mph');
-                spec.topSpeed = ts; 
-                keySpec.topSpeed = ts; 
+                spec.topSpeed = ts;
+                keySpec.topSpeed = ts;
             }
             if (req.body.engineType) { spec.engineType = req.body.engineType; keySpec.engineType = req.body.engineType; }
             if (req.body.steering) spec.steering = req.body.steering;
@@ -784,10 +789,10 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.brand) spec.brand = req.body.brand;
             if (req.body.model) spec.model = req.body.model;
             if (req.body.variant) spec.variant = req.body.variant;
-            if (req.body.engineCapacity) { 
+            if (req.body.engineCapacity) {
                 const ec = addUnit(req.body.engineCapacity, 'cc');
-                spec.engineCapacityCC = ec; 
-                keySpec.engineCapacity = ec; 
+                spec.engineCapacityCC = ec;
+                keySpec.engineCapacity = ec;
             }
             if (req.body.topSpeed) {
                 const ts = addUnit(req.body.topSpeed, 'km/h');
@@ -796,10 +801,10 @@ router.put('/:id', authMiddleware, upload.fields([
             }
             if (req.body.maxPower) spec.maxPower = addUnit(req.body.maxPower, 'hp');
             if (req.body.maxTorque) spec.maxTorque = addUnit(req.body.maxTorque, 'Nm');
-            if (req.body.mileage) { 
+            if (req.body.mileage) {
                 const mil = addUnit(req.body.mileage, 'km');
-                spec.mileageKM = mil; 
-                keySpec.mileage = mil; 
+                spec.mileageKM = mil;
+                keySpec.mileage = mil;
             }
             if (req.body.fuelType) { spec.fuelType = req.body.fuelType; keySpec.fuelType = req.body.fuelType; }
             if (req.body.transmission) { spec.transmission = req.body.transmission; }
@@ -840,19 +845,19 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.year) spec.yearOfConstruction = req.body.year;
             if (req.body.builder) spec.brandBuilder = req.body.builder;
             if (req.body.model) spec.model = req.body.model;
-            if (req.body.length) { 
+            if (req.body.length) {
                 const len = addUnit(req.body.length, 'm');
-                spec.length = len; 
-                keySpec.length = len; 
+                spec.length = len;
+                keySpec.length = len;
             }
             if (req.body.beam) { spec.beam = addUnit(req.body.beam, 'm'); }
             if (req.body.draft) { spec.draft = addUnit(req.body.draft, 'm'); }
             if (req.body.engineType) { spec.engineType = req.body.engineType; keySpec.engineType = req.body.engineType; }
             if (req.body.cruisingSpeed) { spec.cruisingSpeed = addUnit(req.body.cruisingSpeed, 'knots'); }
-            if (req.body.topSpeed) { 
+            if (req.body.topSpeed) {
                 const ts = addUnit(req.body.topSpeed, 'knots');
-                spec.topSpeed = ts; 
-                keySpec.topSpeed = ts; 
+                spec.topSpeed = ts;
+                keySpec.topSpeed = ts;
             }
             if (req.body.usageHours) spec.usageHours = req.body.usageHours;
             if (req.body.fuelConsumption) spec.fuelConsumption = req.body.fuelConsumption;
@@ -891,15 +896,15 @@ router.put('/:id', authMiddleware, upload.fields([
 
             if (req.body.year) spec.yearOfConstruction = req.body.year;
             if (req.body.propertyType) { spec.propertyType = req.body.propertyType; keySpec.propertyType = req.body.propertyType; }
-            if (req.body.builtUpArea) { 
+            if (req.body.builtUpArea) {
                 const bua = addUnit(req.body.builtUpArea, 'sq ft');
-                spec.builtUpArea = bua; 
-                keySpec.builtUpArea = bua; 
+                spec.builtUpArea = bua;
+                keySpec.builtUpArea = bua;
             }
-            if (req.body.landArea) { 
+            if (req.body.landArea) {
                 const la = addUnit(req.body.landArea, 'sq ft');
-                spec.landArea = la; 
-                keySpec.landArea = la; 
+                spec.landArea = la;
+                keySpec.landArea = la;
             }
             if (req.body.floors) { spec.floors = Number(req.body.floors); keySpec.floors = req.body.floors; }
             if (req.body.bedrooms) { spec.bedrooms = Number(req.body.bedrooms); keySpec.bedrooms = req.body.bedrooms; }
@@ -974,7 +979,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
         }
 
         await User.findByIdAndUpdate(req.user.id, { $pull: { myListings: { item: id } } });
-        
+
         console.log(`[Delete Listing] SUCCESS: Asset ${id} removed for ${user.email}`);
         res.json({ message: "Listing deleted successfully" });
     } catch (error) {
