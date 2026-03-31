@@ -1,0 +1,4 @@
+[dotenv@17.2.3] injecting env (14) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+Server running on 3001
+MongoDb connected

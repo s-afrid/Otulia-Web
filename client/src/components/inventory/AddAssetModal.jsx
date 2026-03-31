@@ -46,10 +46,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
         // Yacht Specific
         yachtName: '', builder: '', length: '', beam: '', draft: '',
-        cruisingSpeed: '', topSpeed: '', usageHours: '', fuelConsumption: '',
-        guestCapacity: '', crewCapacity: '', engineType: '',
-        hullMaterial: '', interiorMaterial: '', exteriorColor: '',
-        countryOfFirstDelivery: '', numberOfOwners: '',
+        cruisingSpeed: '', usageHours: '', fuelConsumption: '',
+        guestCapacity: '', crewCapacity: '', hullMaterial: '',
 
         // Real Estate Specific
         propertyName: '', propertyType: '', country: '', city: '', address: '',
@@ -166,7 +164,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 interiorColor: spec.interiorColor || '',
                 condition: spec.condition || '',
                 accidentHistory: spec.accidentHistory || '',
-                
+
                 // Car Specific
                 horsepower: spec.power || '',
                 cylinderCapacity: spec.cylinderCapacity || '',
@@ -371,7 +369,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 console.log(`[AddAssetModal] SUCCESS:`, result);
                 setIsSuccess(true);
                 onCreated(result, !!editData);
-                
+
                 setTimeout(() => {
                     onClose();
                     setIsSuccess(false);
@@ -379,15 +377,15 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             } else {
                 const errData = await response.json();
                 console.error(`[AddAssetModal] Server Error (${response.status}):`, errData);
-                
-                let errorMsg = errData.error === 'FILE_TOO_LARGE' 
+
+                let errorMsg = errData.error === 'FILE_TOO_LARGE'
                     ? "One or more files exceed the 10MB limit. Please compress your images and try again."
                     : (errData.error || errData.message || `Failed to ${editData ? 'update' : 'create'} listing`);
 
                 if (errData.error === 'LIMIT_REACHED') {
                     errorMsg = `Limit Reached: ${errData.message}`;
                 }
-                
+
                 alert(errorMsg);
             }
         } catch (error) {
@@ -485,32 +483,32 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                             {/* Common Details for all types */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8 pb-8 border-b border-gray-50">
-                                <InputField 
-                                    label={assetType === 'Estate' ? "Property Name" : (assetType === 'Yacht' ? "Yacht Name" : "Make / Brand")} 
-                                    name={assetType === 'Estate' ? "propertyName" : (assetType === 'Yacht' ? "yachtName" : "make")} 
-                                    value={assetType === 'Estate' ? formData.propertyName : (assetType === 'Yacht' ? formData.yachtName : formData.make)} 
-                                    placeholder={assetType === 'Estate' ? "e.g., Monaco Penthouse" : "e.g., Ferrari / Azimut"} 
-                                    onChange={handleInputChange} 
+                                <InputField
+                                    label={assetType === 'Estate' ? "Property Name" : (assetType === 'Yacht' ? "Yacht Name" : "Make / Brand")}
+                                    name={assetType === 'Estate' ? "propertyName" : (assetType === 'Yacht' ? "yachtName" : "make")}
+                                    value={assetType === 'Estate' ? formData.propertyName : (assetType === 'Yacht' ? formData.yachtName : formData.make)}
+                                    placeholder={assetType === 'Estate' ? "e.g., Monaco Penthouse" : "e.g., Ferrari / Azimut"}
+                                    onChange={handleInputChange}
                                 />
                                 <InputField label="Model" name="model" value={formData.model} placeholder="e.g., SF90 / Grande 32" onChange={handleInputChange} />
                                 <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} />
                                 <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
                                 <div className="flex flex-col gap-3">
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Price ($)</label>
-                                    <input 
-                                        type="number" 
-                                        name="price" 
-                                        value={formData.price} 
+                                    <input
+                                        type="number"
+                                        name="price"
+                                        value={formData.price}
                                         disabled={formData.isPriceOnRequest}
                                         required={!formData.isPriceOnRequest}
                                         placeholder={formData.isPriceOnRequest ? "Price on Request" : "0.00"}
-                                        className="w-full p-3.5 bg-gray-50/50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all disabled:opacity-50 font-medium" 
-                                        onChange={handleInputChange} 
+                                        className="w-full p-3.5 bg-gray-50/50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all disabled:opacity-50 font-medium"
+                                        onChange={handleInputChange}
                                     />
                                     <div className="relative">
-                                        <select 
-                                            name="isPriceOnRequest" 
-                                            value={formData.isPriceOnRequest} 
+                                        <select
+                                            name="isPriceOnRequest"
+                                            value={formData.isPriceOnRequest}
                                             className="w-full p-3 bg-gray-50/50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all appearance-none cursor-pointer pr-10 text-[10px] font-bold uppercase tracking-widest text-gray-500"
                                             onChange={(e) => setFormData({ ...formData, isPriceOnRequest: e.target.value === 'true' })}
                                         >

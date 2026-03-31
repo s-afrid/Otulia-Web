@@ -174,22 +174,44 @@ router.post('/create', authMiddleware, upload.fields([
             return res.status(400).json({ error: "Category is required (Car, Bike, Yacht, or Estate)" });
         }
 
-        // Validate price ONLY if NOT price on request
+        // Sanitize and validate price
+        let sanitizedPrice = price;
+        if (typeof price === 'string') {
+            sanitizedPrice = price.replace(/[,$\s]/g, ''); // Handle comma, currency and spaces
+        }
+        
         if (!priceOnRequest) {
-            if (!price || isNaN(Number(price))) {
+            if (!sanitizedPrice || isNaN(Number(sanitizedPrice))) {
                 console.error(`[Create Listing] Validation Failed: Invalid price "${price}"`);
                 return res.status(400).json({ error: "A valid numeric price is required when 'Price on Request' is disabled" });
             }
         }
-
-        // Final price for DB (ensure it's a number even for Price on Request)
-        const dbPrice = priceOnRequest ? 0 : Number(price);
+        
+        const dbPrice = priceOnRequest ? 0 : Number(sanitizedPrice);
 
         if (!location) location = 'Unspecified';
+        if (!description) description = 'No luxury description provided';
 
-        // ... rest of auto-generate title ...
+        // Auto-generate title if missing or from relevant fields
+        if (!title || title.trim() === '') {
+            const year = req.body.year || '';
+            const brand = req.body.make || req.body.brand || req.body.builder || '';
+            const model = req.body.model || '';
+            const altName = req.body.propertyName || req.body.yachtName || '';
+            
+            if (year || brand || model) {
+                title = `${year} ${brand} ${model}`.trim();
+            } else if (altName) {
+                title = altName;
+            }
+        }
 
-        // ... (skipping to baseData) ...
+        // Final fallback for title
+        if (!title || title.trim() === '') {
+            title = `Luxury ${category}`;
+        }
+
+
 
         // Define Base Data
         const baseData = {

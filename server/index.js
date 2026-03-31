@@ -105,21 +105,21 @@ const multer = require("multer");
 
 // Global Error Handler for Multer and other specific errors
 app.use((err, req, res, next) => {
-    if (err instanceof multer.MulterError) {
-        if (err.code === "LIMIT_FILE_SIZE") {
-            console.error(`[Multer Error] File too large: ${err.message}`);
-            return res.status(400).json({ 
-                error: "FILE_TOO_LARGE", 
-                message: "One or more files are too large. Maximum allowed size per file is 5MB." 
-            });
-        }
-        console.error(`[Multer Error] ${err.code}: ${err.message}`);
-        return res.status(400).json({ error: "UPLOAD_ERROR", message: err.message });
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      console.error(`[Multer Error] File too large: ${err.message}`);
+      return res.status(400).json({
+        error: "FILE_TOO_LARGE",
+        message: "One or more files are too large. Maximum allowed size per file is 5MB."
+      });
     }
-    
-    // Generic error fallback
-    console.error(`[Internal Error]`, err);
-    res.status(500).json({ error: "INTERNAL_SERVER_ERROR", message: "An unexpected error occurred." });
+    console.error(`[Multer Error] ${err.code}: ${err.message}`);
+    return res.status(400).json({ error: "UPLOAD_ERROR", message: err.message });
+  }
+
+  // Generic error fallback
+  console.error(`[Internal Error]`, err);
+  res.status(500).json({ error: "INTERNAL_SERVER_ERROR", message: "An unexpected error occurred." });
 });
 
 app.listen(PORT, '0.0.0.0', () => {
