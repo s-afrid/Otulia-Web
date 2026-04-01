@@ -932,6 +932,20 @@ router.put('/:id', authMiddleware, upload.fields([
             listing.markModified('keySpecifications');
         }
 
+        // Regenerate title from updated fields if not explicitly provided
+        if (!title) {
+            const updatedBrand = listing.brand || listing.builder || '';
+            const updatedModel = (listing.specification && listing.specification.model) || '';
+            const updatedYear = (listing.specification && (listing.specification.yearOfConstruction || listing.specification.year)) || '';
+            const updatedPropName = listing.propertyName || '';
+
+            if (updatedPropName) {
+                listing.title = updatedPropName;
+            } else if (updatedBrand || updatedModel) {
+                listing.title = `${updatedYear} ${updatedBrand} ${updatedModel}`.trim();
+            }
+        }
+
         const updatedListing = await listing.save();
         console.log(`[Update Listing] SUCCESS: Asset ${id} updated for ${user.email}`);
         res.json(updatedListing);
