@@ -13,6 +13,40 @@ const authMiddleware = require('../middleware/auth.middleware');
 const { cloudinary } = require('../config/cloudinary');
 const { getAssetFolderPath } = require('../config/cloudinaryFolders');
 
+// Helper to generate asset title
+const generateAssetTitle = (reqBody, category, existingTitle) => {
+    const { title, year, make, brand, builder, model, propertyName, yachtName, variant } = reqBody;
+
+    // If title is explicitly provided in request, use it
+    if (title && typeof title === 'string' && title.trim() !== '') return title.trim();
+
+    // Fields used for auto-generation (Luxury Format: Brand Model | Variant)
+    const autoBrand = (make || brand || builder || '').trim();
+    const autoModel = (model || '').trim();
+    const autoVariant = (variant || '').trim();
+    const altName = (propertyName || yachtName || '').trim();
+
+    let generatedTitle = '';
+    if (autoBrand || autoModel) {
+        generatedTitle = `${autoBrand} ${autoModel}`.trim();
+        if (autoVariant) {
+            generatedTitle += ` | ${autoVariant}`;
+        }
+    } else if (altName) {
+        generatedTitle = altName;
+    }
+
+    // Fallback: If nothing was generated from the request body
+    if (!generatedTitle || generatedTitle.trim() === '') {
+        // Use existing title if available
+        if (existingTitle) return existingTitle;
+        // Final fallback
+        return `Luxury ${category || 'Asset'}`;
+    }
+
+    return generatedTitle;
+};
+
 // Setup storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -192,24 +226,10 @@ router.post('/create', authMiddleware, upload.fields([
         if (!location) location = 'Unspecified';
         if (!description) description = 'No luxury description provided';
 
-        // Auto-generate title if missing or from relevant fields
-        if (!title || title.trim() === '') {
-            const year = req.body.year || '';
-            const brand = req.body.make || req.body.brand || req.body.builder || '';
-            const model = req.body.model || '';
-            const altName = req.body.propertyName || req.body.yachtName || '';
+        if (!description) description = 'No luxury description provided';
 
-            if (year || brand || model) {
-                title = `${year} ${brand} ${model}`.trim();
-            } else if (altName) {
-                title = altName;
-            }
-        }
-
-        // Final fallback for title
-        if (!title || title.trim() === '') {
-            title = `Luxury ${category}`;
-        }
+        // --- TITLE GENERATION ---
+        title = generateAssetTitle(req.body, category);
 
 
 
@@ -667,7 +687,8 @@ router.put('/:id', authMiddleware, upload.fields([
             }
         }
 
-        if (title) listing.title = title;
+        // --- TITLE GENERATION ---
+        listing.title = generateAssetTitle(req.body, categoryName, listing.title);
         if (price !== undefined) listing.price = Number(price);
         if (req.body.isPriceOnRequest !== undefined) {
             listing.isPriceOnRequest = req.body.isPriceOnRequest === 'true' || req.body.isPriceOnRequest === true;
