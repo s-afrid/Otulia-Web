@@ -15,30 +15,25 @@ const { getAssetFolderPath } = require('../config/cloudinaryFolders');
 
 // Helper to generate asset title
 const generateAssetTitle = (reqBody, category, existingTitle) => {
-    const { title, year, make, brand, builder, model, propertyName, yachtName, variant } = reqBody;
+    const { title, make, brand, builder, model, propertyName, yachtName, variant } = reqBody;
 
     // If title is explicitly provided in request, use it
     if (title && typeof title === 'string' && title.trim() !== '') return title.trim();
 
-    // Fields used for auto-generation (Luxury Format: Year Brand Model | Variant)
-    const autoYear = (year || '').trim();
-    const autoBrand = (make || brand || builder || '').trim();
+    // Fields used for auto-generation (Format: [Brand/Builder/Name] [Model])
+    const autoBrand = (make || brand || builder || propertyName || yachtName || '').trim();
     const autoModel = (model || '').trim();
     const autoVariant = (variant || '').trim();
-    const altName = (propertyName || yachtName || '').trim();
 
     let generatedTitle = '';
     
-    // Priority 1: Brand/Builder and Model
     if (autoBrand || autoModel) {
-        generatedTitle = `${autoYear} ${autoBrand} ${autoModel}`.trim();
+        generatedTitle = `${autoBrand} ${autoModel}`.trim();
+        
+        // Append variant if available for extra detail
         if (autoVariant) {
             generatedTitle += ` | ${autoVariant}`;
         }
-    } 
-    // Priority 2: Yacht Name or Property Name
-    else if (altName) {
-        generatedTitle = `${autoYear} ${altName}`.trim();
     }
 
     // Fallback: If nothing was generated from the request body
@@ -49,7 +44,7 @@ const generateAssetTitle = (reqBody, category, existingTitle) => {
         return `Luxury ${category || 'Asset'}`;
     }
 
-    // Sanitize any double spaces that might occur if year/brand/model are partially missing
+    // Sanitize any double spaces
     return generatedTitle.replace(/\s+/g, ' ').trim();
 };
 
