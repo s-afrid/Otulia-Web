@@ -20,20 +20,25 @@ const generateAssetTitle = (reqBody, category, existingTitle) => {
     // If title is explicitly provided in request, use it
     if (title && typeof title === 'string' && title.trim() !== '') return title.trim();
 
-    // Fields used for auto-generation (Luxury Format: Brand Model | Variant)
+    // Fields used for auto-generation (Luxury Format: Year Brand Model | Variant)
+    const autoYear = (year || '').trim();
     const autoBrand = (make || brand || builder || '').trim();
     const autoModel = (model || '').trim();
     const autoVariant = (variant || '').trim();
     const altName = (propertyName || yachtName || '').trim();
 
     let generatedTitle = '';
+    
+    // Priority 1: Brand/Builder and Model
     if (autoBrand || autoModel) {
-        generatedTitle = `${autoBrand} ${autoModel}`.trim();
+        generatedTitle = `${autoYear} ${autoBrand} ${autoModel}`.trim();
         if (autoVariant) {
             generatedTitle += ` | ${autoVariant}`;
         }
-    } else if (altName) {
-        generatedTitle = altName;
+    } 
+    // Priority 2: Yacht Name or Property Name
+    else if (altName) {
+        generatedTitle = `${autoYear} ${altName}`.trim();
     }
 
     // Fallback: If nothing was generated from the request body
@@ -44,7 +49,8 @@ const generateAssetTitle = (reqBody, category, existingTitle) => {
         return `Luxury ${category || 'Asset'}`;
     }
 
-    return generatedTitle;
+    // Sanitize any double spaces that might occur if year/brand/model are partially missing
+    return generatedTitle.replace(/\s+/g, ' ').trim();
 };
 
 // Setup storage
@@ -951,20 +957,6 @@ router.put('/:id', authMiddleware, upload.fields([
             listing.keySpecifications = keySpec;
             listing.markModified('specification');
             listing.markModified('keySpecifications');
-        }
-
-        // Regenerate title from updated fields if not explicitly provided
-        if (!title) {
-            const updatedBrand = listing.brand || listing.builder || '';
-            const updatedModel = (listing.specification && listing.specification.model) || '';
-            const updatedYear = (listing.specification && (listing.specification.yearOfConstruction || listing.specification.year)) || '';
-            const updatedPropName = listing.propertyName || '';
-
-            if (updatedPropName) {
-                listing.title = updatedPropName;
-            } else if (updatedBrand || updatedModel) {
-                listing.title = `${updatedYear} ${updatedBrand} ${updatedModel}`.trim();
-            }
         }
 
         const updatedListing = await listing.save();

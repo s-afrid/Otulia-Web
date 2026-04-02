@@ -484,15 +484,33 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                             {/* Common Details for all types */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8 pb-8 border-b border-gray-50">
                                 <InputField
-                                    label={assetType === 'Estate' ? "Property Name" : (assetType === 'Yacht' ? "Yacht Name" : "Make / Brand")}
+                                    label={assetType === 'Estate' ? "Property Name *" : (assetType === 'Yacht' ? "Yacht Name *" : "Make / Brand *")}
                                     name={assetType === 'Estate' ? "propertyName" : (assetType === 'Yacht' ? "yachtName" : "make")}
                                     value={assetType === 'Estate' ? formData.propertyName : (assetType === 'Yacht' ? formData.yachtName : formData.make)}
                                     placeholder={assetType === 'Estate' ? "e.g., Monaco Penthouse" : "e.g., Ferrari / Azimut"}
                                     onChange={handleInputChange}
+                                    required
                                 />
-                                <InputField label="Model" name="model" value={formData.model} placeholder="e.g., SF90 / Grande 32" onChange={handleInputChange} />
+                                {assetType === 'Yacht' && (
+                                    <InputField 
+                                        label="Builder *" 
+                                        name="builder" 
+                                        value={formData.builder} 
+                                        placeholder="e.g., Azimut / Sunseeker" 
+                                        onChange={handleInputChange} 
+                                        required
+                                    />
+                                )}
+                                <InputField 
+                                    label="Model *" 
+                                    name="model" 
+                                    value={formData.model} 
+                                    placeholder="e.g., SF90 / Grande 32" 
+                                    onChange={handleInputChange} 
+                                    required
+                                />
                                 <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} />
-                                <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
+                                <InputField label="Year *" name="year" type="number" value={formData.year} onChange={handleInputChange} required />
                                 <div className="flex flex-col gap-3">
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Price ($)</label>
                                     <input

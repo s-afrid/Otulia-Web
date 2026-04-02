@@ -581,6 +581,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
                             {formData.category === 'Yacht' && (
                                 <>
+                                    <InputField label="Builder" name="builder" value={formData.builder} onChange={handleInputChange} />
                                     <InputField label="Length (m)" name="length" type="number" value={formData.length} onChange={handleInputChange} />
                                     <InputField label="Beam (m)" name="beam" type="number" value={formData.beam} onChange={handleInputChange} />
                                     <InputField label="Draft (m)" name="draft" type="number" value={formData.draft} onChange={handleInputChange} />
