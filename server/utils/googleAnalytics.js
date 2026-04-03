@@ -12,16 +12,24 @@ let analyticsClient = null;
 
 try {
   if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
-    // Handle keys that might be wrapped in extra quotes from environment managers
     let privateKey = process.env.GOOGLE_PRIVATE_KEY;
+
+    // 1. Remove wrapping double quotes if they exist
     if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-      privateKey = privateKey.substring(1, privateKey.length - 1);
+      privateKey = privateKey.slice(1, -1);
     }
+
+    // 2. Handle double-escaped or literal \n strings
+    // This handles both "\n" and "\\n" to ensure OpenSSL gets real newlines
+    privateKey = privateKey.replace(/\\n/g, '\n');
+
+    // 3. Trim any stray whitespace
+    privateKey = privateKey.trim();
     
     analyticsClient = new BetaAnalyticsDataClient({
       credentials: {
         client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: privateKey.replace(/\\n/g, '\n'),
+        private_key: privateKey,
       },
     });
     console.log('[GA4] Analytics Client Initialized');
