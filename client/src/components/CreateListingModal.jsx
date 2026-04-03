@@ -68,19 +68,19 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         // Yacht Specific
         yachtName: editData?.title || '',
         builder: editData?.builder || editData?.specification?.builder || '',
-        length: editData?.specification?.length || '',
-        beam: editData?.specification?.beam || '',
-        draft: editData?.specification?.draft || '',
-        cruisingSpeed: editData?.specification?.cruisingSpeed || '',
-        topSpeed: editData?.specification?.topSpeed || '',
-        usageHours: editData?.specification?.usageHours || '',
-        fuelConsumption: editData?.specification?.fuelConsumption || '',
-        guestCapacity: editData?.specification?.guestCapacity || '',
-        crewCapacity: editData?.specification?.crewCapacity || '',
-        engineType: editData?.specification?.engineType || '',
-        hullMaterial: editData?.specification?.hullMaterial || '',
-        exteriorColor: editData?.specification?.exteriorColor || '',
-        numberOfOwners: editData?.specification?.numberOfOwners || '',
+        yachtLength: editData?.specification?.length || '',
+        yachtBeam: editData?.specification?.beam || '',
+        yachtDraft: editData?.specification?.draft || '',
+        yachtCruisingSpeed: editData?.specification?.cruisingSpeed || '',
+        yachtTopSpeed: editData?.specification?.topSpeed || '',
+        yachtUsageHours: editData?.specification?.usageHours || '',
+        yachtFuelConsumption: editData?.specification?.fuelConsumption || '',
+        yachtGuestCapacity: editData?.specification?.guestCapacity || '',
+        yachtCrewCapacity: editData?.specification?.crewCapacity || '',
+        yachtEngineType: editData?.specification?.engineType || '',
+        yachtHullMaterial: editData?.specification?.hullMaterial || '',
+        yachtExteriorColor: editData?.specification?.exteriorColor || '',
+        yachtNumberOfOwners: editData?.specification?.numberOfOwners || '',
 
         // Estate Specific
         propertyName: editData?.title || editData?.propertyName || '',
@@ -184,19 +184,19 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
                 yachtName: editData.title || '',
                 builder: editData.builder || spec.builder || spec.brandBuilder || '',
-                length: spec.length || '',
-                beam: spec.beam || '',
-                draft: spec.draft || '',
-                cruisingSpeed: spec.cruisingSpeed || '',
-                topSpeed: spec.topSpeed || '',
-                usageHours: spec.usageHours || '',
-                fuelConsumption: spec.fuelConsumption || '',
-                guestCapacity: spec.guestCapacity || '',
-                crewCapacity: spec.crewCapacity || '',
-                engineType: spec.engineType || '',
-                hullMaterial: spec.hullMaterial || '',
-                exteriorColor: spec.exteriorColor || '',
-                numberOfOwners: spec.numberOfOwners || '',
+                yachtLength: spec.length || '',
+                yachtBeam: spec.beam || '',
+                yachtDraft: spec.draft || '',
+                yachtCruisingSpeed: spec.cruisingSpeed || '',
+                yachtTopSpeed: spec.topSpeed || '',
+                yachtUsageHours: spec.usageHours || '',
+                yachtFuelConsumption: spec.fuelConsumption || '',
+                yachtGuestCapacity: spec.guestCapacity || '',
+                yachtCrewCapacity: spec.crewCapacity || '',
+                yachtEngineType: spec.engineType || '',
+                yachtHullMaterial: spec.hullMaterial || '',
+                yachtExteriorColor: spec.exteriorColor || '',
+                yachtNumberOfOwners: spec.numberOfOwners || '',
 
                 propertyName: editData.title || editData.propertyName || '',
                 propertyType: keySpec.propertyType || spec.propertyType || '',
@@ -240,8 +240,8 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 matchingNumbers: '', accidentFree: '', countryOfFirstDelivery: '',
                 numberOfOwners: '1', currentCarLocation: '',
                 brand: '', engineCapacity: '', maxPower: '', maxTorque: '', abs: '', tractionControl: '', color: '', ownershipCount: '1',
-                yachtName: '', builder: '', length: '', beam: '', draft: '', cruisingSpeed: '', topSpeed: '', usageHours: '', fuelConsumption: '',
-                guestCapacity: '', crewCapacity: '', engineType: '', hullMaterial: '', exteriorColor: '', numberOfOwners: '',
+                yachtName: '', builder: '', yachtLength: '', yachtBeam: '', yachtDraft: '', yachtCruisingSpeed: '', yachtTopSpeed: '', yachtUsageHours: '', yachtFuelConsumption: '',
+                yachtGuestCapacity: '', yachtCrewCapacity: '', yachtEngineType: '', yachtHullMaterial: '', yachtExteriorColor: '', yachtNumberOfOwners: '',
                 propertyName: '', propertyType: '', architectureStyle: '', builtUpArea: '',
                 landArea: '', bedrooms: '', bathrooms: '', floors: '', garageCapacity: '', furnishingStatus: '',
                 configuration: '', interiorColorTheme: '', exteriorFinish: '',
@@ -582,21 +582,21 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                             {formData.category === 'Yacht' && (
                                 <>
                                     <InputField label="Builder" name="builder" value={formData.builder} onChange={handleInputChange} />
-                                    <InputField label="Length (m)" name="length" type="number" value={formData.length} onChange={handleInputChange} />
-                                    <InputField label="Beam (m)" name="beam" type="number" value={formData.beam} onChange={handleInputChange} />
-                                    <InputField label="Draft (m)" name="draft" type="number" value={formData.draft} onChange={handleInputChange} />
-                                    <InputField label="Engine Type" name="engineType" value={formData.engineType} onChange={handleInputChange} />
-                                    <InputField label="Cruising Speed (knots)" name="cruisingSpeed" type="number" value={formData.cruisingSpeed} onChange={handleInputChange} />
-                                    <InputField label="Top Speed (knots)" name="topSpeed" type="number" value={formData.topSpeed} onChange={handleInputChange} />
-                                    <InputField label="Usage Hours" name="usageHours" value={formData.usageHours} onChange={handleInputChange} />
-                                    <InputField label="Fuel Consumption" name="fuelConsumption" value={formData.fuelConsumption} onChange={handleInputChange} />
-                                    <InputField label="Guest Capacity" name="guestCapacity" type="number" value={formData.guestCapacity} onChange={handleInputChange} />
-                                    <InputField label="Crew Capacity" name="crewCapacity" type="number" value={formData.crewCapacity} onChange={handleInputChange} />
+                                    <InputField label="Length (m)" name="yachtLength" type="number" value={formData.yachtLength} onChange={handleInputChange} />
+                                    <InputField label="Beam (m)" name="yachtBeam" type="number" value={formData.yachtBeam} onChange={handleInputChange} />
+                                    <InputField label="Draft (m)" name="yachtDraft" type="number" value={formData.yachtDraft} onChange={handleInputChange} />
+                                    <InputField label="Engine Type" name="yachtEngineType" value={formData.yachtEngineType} onChange={handleInputChange} />
+                                    <InputField label="Cruising Speed (knots)" name="yachtCruisingSpeed" type="number" value={formData.yachtCruisingSpeed} onChange={handleInputChange} />
+                                    <InputField label="Top Speed (knots)" name="yachtTopSpeed" type="number" value={formData.yachtTopSpeed} onChange={handleInputChange} />
+                                    <InputField label="Usage Hours" name="yachtUsageHours" value={formData.yachtUsageHours} onChange={handleInputChange} />
+                                    <InputField label="Fuel Consumption" name="yachtFuelConsumption" value={formData.yachtFuelConsumption} onChange={handleInputChange} />
+                                    <InputField label="Guest Capacity" name="yachtGuestCapacity" type="number" value={formData.yachtGuestCapacity} onChange={handleInputChange} />
+                                    <InputField label="Crew Capacity" name="yachtCrewCapacity" type="number" value={formData.yachtCrewCapacity} onChange={handleInputChange} />
                                     <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Diesel', 'Gasoline', 'Hybrid', 'Electric']} onChange={handleInputChange} />
-                                    <SelectField label="Hull Material" name="hullMaterial" value={formData.hullMaterial} options={['Fiberglass', 'Steel', 'Aluminum', 'Carbon Fiber', 'Wood']} onChange={handleInputChange} />
+                                    <SelectField label="Hull Material" name="yachtHullMaterial" value={formData.yachtHullMaterial} options={['Fiberglass', 'Steel', 'Aluminum', 'Carbon Fiber', 'Wood']} onChange={handleInputChange} />
                                     <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} />
-                                    <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} />
-                                    <InputField label="Number of Owners" name="numberOfOwners" type="number" value={formData.numberOfOwners} onChange={handleInputChange} />
+                                    <InputField label="Exterior Color" name="yachtExteriorColor" value={formData.yachtExteriorColor} onChange={handleInputChange} />
+                                    <InputField label="Number of Owners" name="yachtNumberOfOwners" type="number" value={formData.yachtNumberOfOwners} onChange={handleInputChange} />
                                     <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} />
                                     <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} />
                                 </>

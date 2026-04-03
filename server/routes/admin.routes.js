@@ -10,6 +10,7 @@ const YachtAsset = require("../models/YachtAsset.model");
 const Coupon = require("../models/Coupon.model");
 const authMiddleware = require("../middleware/auth.middleware");
 const nodemailer = require("nodemailer");
+const ga = require("../utils/googleAnalytics");
 
 // Email Transporter (Support for Hostinger/Custom SMTP)
 const transporter = nodemailer.createTransport({
@@ -48,6 +49,9 @@ router.get("/stats", authMiddleware, adminCheck, async (req, res) => {
         // Mock revenue for now (integration with Payment/Order model required for real value)
         const revenue = 4900000;
 
+        // Fetch real-time active users from GA4
+        const activeUsers = await ga.getRealtimeActiveUsers();
+
         res.json({
             revenue,
             revenueGrowth: 18.2,
@@ -55,6 +59,7 @@ router.get("/stats", authMiddleware, adminCheck, async (req, res) => {
             newUsersThisMonth: await User.countDocuments({ createdAt: { $gte: new Date(new Date().setDate(1)) } }), // Users created this month
             partnerStores,
             views: 2100000, // Mock platform views
+            activeUsers: activeUsers || 0,
             notifications: user.notifications || []
         });
     } catch (err) {
@@ -99,7 +104,14 @@ router.get("/users", authMiddleware, adminCheck, async (req, res) => {
  */
 router.get("/analytics", authMiddleware, adminCheck, async (req, res) => {
     try {
-        // Mock 12 months data
+        // Fetch real data from GA4
+        const [sessionsOverTime, deviceDistribution, topCountries] = await Promise.all([
+            ga.getSessionsOverTime(),
+            ga.getDeviceDistribution(),
+            ga.getTopCountries()
+        ]);
+
+        // Mock 12 months data for revenue (remains mock until payment integration)
         const monthlyRevenue = [
             { name: 'Jan', value: 4000 },
             { name: 'Feb', value: 3000 },
@@ -115,17 +127,24 @@ router.get("/analytics", authMiddleware, adminCheck, async (req, res) => {
             { name: 'Dec', value: 8900 },
         ];
 
-        const userGrowth = [
-            { name: 'Jan', users: 100 },
-            { name: 'Feb', users: 200 },
-            { name: 'Mar', users: 400 },
-            { name: 'Apr', users: 800 },
-            { name: 'May', users: 1500 },
-            { name: 'Jun', users: 3000 }
+        // If GA data is available, use it, otherwise fallback to some mock growth data
+        const userGrowth = sessionsOverTime || [
+            { name: 'Jan', value: 100 },
+            { name: 'Feb', value: 200 },
+            { name: 'Mar', value: 400 },
+            { name: 'Apr', value: 800 },
+            { name: 'May', value: 1500 },
+            { name: 'Jun', value: 3000 }
         ];
 
-        res.json({ monthlyRevenue, userGrowth });
+        res.json({ 
+            monthlyRevenue, 
+            userGrowth, 
+            deviceDistribution: deviceDistribution || [],
+            topCountries: topCountries || []
+        });
     } catch (err) {
+        console.error('[Analytics Route Error]', err);
         res.status(500).json({ error: "FETCH_ANALYTICS_FAILED" });
     }
 });
