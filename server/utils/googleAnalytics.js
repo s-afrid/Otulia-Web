@@ -15,44 +15,65 @@ try {
   if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
     let privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
-    // 1. If the key is passed as a JSON string (sometimes happens in certain environments)
-    if (privateKey.trim().startsWith('{')) {
+    // --- Aggressive Normalization ---
+    
+    // 1. Remove wrapping quotes (single or double) and extra spaces
+    privateKey = privateKey.trim().replace(/^['"](.*)['"]$/s, '$1').trim();
+
+    // 2. Handle JSON encapsulation if necessary
+    if (privateKey.startsWith('{')) {
       try {
         const parsed = JSON.parse(privateKey);
-        if (parsed.private_key) privateKey = parsed.private_key;
-      } catch (e) {
-        // Not a JSON or malformed, continue with original
+        if (parsed.private_key) privateKey = parsed.private_key.trim();
+      } catch (e) {}
+    }
+
+    // 3. Convert all forms of escaped newlines back to actual newlines
+    // This handles literal "\n", double-escaped "\\n", and even triple-escaped
+    privateKey = privateKey.replace(/\\n/g, '\n');
+
+    // 4. If the key is entirely on one line but contains headers, it's missing newlines
+    // OpenSSL 3.0 requires the header, footer, and the content to be separated by newlines
+    if (privateKey.includes('PRIVATE KEY') && !privateKey.includes('\n')) {
+      // Find the header/footer markers
+      const beginMarker = privateKey.match(/-----BEGIN [A-Z ]+-----/);
+      const endMarker = privateKey.match(/-----END [A-Z ]+-----/);
+      
+      if (beginMarker && endMarker) {
+        const header = beginMarker[0];
+        const footer = endMarker[0];
+        const content = privateKey
+          .replace(header, '')
+          .replace(footer, '')
+          .trim()
+          .replace(/\s/g, ''); // Remove all spaces in base64 block
+        
+        // Reconstruct with proper PEM standard (64 chars per line)
+        const lines = content.match(/.{1,64}/g) || [];
+        privateKey = `${header}\n${lines.join('\n')}\n${footer}\n`;
       }
     }
 
-    // 2. Remove wrapping quotes (single or double)
-    privateKey = privateKey.replace(/^['"](.*)['"]$/s, '$1');
-
-    // 3. Handle double-escaped or literal \n strings
-    // This handles "\n", "\\n", and even "\\\n"
-    privateKey = privateKey.replace(/\\n/g, '\n');
-
-    // 4. Ensure headers and footers are correctly formatted with newlines if they are missing
-    // OpenSSL 3.0 (Node 17+) is very strict about PEM headers/footers
-    if (privateKey.includes('BEGIN PRIVATE KEY') && !privateKey.includes('\n')) {
-      // If it looks like a single line but has the header, it might be missing newlines entirely
-      // This is a common issue when copy-pasting into certain UI dashboards
-      privateKey = privateKey
-        .replace('-----BEGIN PRIVATE KEY-----', '-----BEGIN PRIVATE KEY-----\n')
-        .replace('-----END PRIVATE KEY-----', '\n-----END PRIVATE KEY-----');
+    // 5. Final validation of markers
+    if (!privateKey.includes('-----BEGIN') || !privateKey.includes('-----END')) {
+      console.error('[GA4] Warning: Private key appears to be missing PEM headers/footers.');
     }
 
-    // 5. Final trim
-    privateKey = privateKey.trim();
-
-    // 6. Proactive Verification: Check if OpenSSL can actually parse this key
-    // This will catch the "DECODER routines::unsupported" error immediately during startup
+    // 6. Proactive Diagnostic Check
     try {
       crypto.createPrivateKey(privateKey);
+      console.log('[GA4] OpenSSL Validation Passed');
     } catch (cryptoError) {
-      console.error('[GA4] Critical: The GOOGLE_PRIVATE_KEY provided cannot be parsed by OpenSSL.');
-      console.error('[GA4] OpenSSL Error Detail:', cryptoError.message);
-      console.error('[GA4] Tip: Ensure the key is a valid PKCS#8 PEM format and includes headers/footers.');
+      console.error('[GA4] OpenSSL Validation FAILED.');
+      console.error('[GA4] Error Code:', cryptoError.code);
+      console.error('[GA4] Error Message:', cryptoError.message);
+      
+      // Safe metadata logging for the user to verify their env var
+      const keyLength = privateKey.length;
+      const newlineCount = (privateKey.match(/\n/g) || []).length;
+      console.error(`[GA4] Key Metadata: Length=${keyLength}, Newlines=${newlineCount}`);
+      console.error(`[GA4] Key Starts with: ${privateKey.substring(0, 20)}...`);
+      console.error(`[GA4] Key Ends with: ...${privateKey.substring(privateKey.length - 20)}`);
     }
     
     analyticsClient = new BetaAnalyticsDataClient({
@@ -63,10 +84,10 @@ try {
     });
     console.log('[GA4] Analytics Client Initialized');
   } else {
-    console.warn('[GA4] Missing credentials. Analytics will use mock data.');
+    console.warn('[GA4] Missing credentials (EMAIL or PRIVATE_KEY). Analytics using mock data.');
   }
 } catch (error) {
-  console.error('[GA4] Initialization Error:', error.message);
+  console.error('[GA4] Fatal Initialization Error:', error.message);
 }
 
 const PROPERTY_ID = process.env.GA_PROPERTY_ID;
