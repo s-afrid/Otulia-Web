@@ -15,70 +15,46 @@ try {
   if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
     let privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
-    // --- Aggressive Normalization ---
+    // --- Standard Normalization ---
+    privateKey = privateKey.trim();
     
-    // 1. Remove wrapping quotes (single or double) and extra spaces
-    privateKey = privateKey.trim().replace(/^['"](.*)['"]$/s, '$1').trim();
-
-    // 2. Handle JSON encapsulation if necessary
+    // 1. Handle JSON encapsulation
     if (privateKey.startsWith('{')) {
       try {
         const parsed = JSON.parse(privateKey);
-        if (parsed.private_key) privateKey = parsed.private_key.trim();
+        if (parsed.private_key) privateKey = parsed.private_key;
       } catch (e) {}
     }
 
-    // 3. Convert all forms of escaped newlines back to actual newlines
+    // 2. Remove any wrapping quotes that might have been passed from the shell/env
+    privateKey = privateKey.replace(/^['"](.*)['"]$/s, '$1');
+
+    // 3. Convert literal \n or \\n to actual newlines
     privateKey = privateKey.replace(/\\n/g, '\n');
 
-    // 4. SURGICAL EXTRACTION: Only keep what is between the BEGIN and END markers
-    // This removes trailing backslashes, extra quotes, or shell artifacts
-    const pemMatch = privateKey.match(/-----BEGIN [A-Z ]+-----[^-]+-----END [A-Z ]+-----/s);
-    if (pemMatch) {
-      privateKey = pemMatch[0];
+    // 4. STRIP AND REBUILD (The most robust way for OpenSSL 3.0)
+    // This removes everything except the base64 content and re-adds headers correctly
+    const stripped = privateKey
+      .replace(/-----BEGIN [A-Z ]+-----/g, '')
+      .replace(/-----END [A-Z ]+-----/g, '')
+      .replace(/\s+/g, ''); // Remove all whitespace, newlines, tabs
+
+    if (stripped.length > 100) {
+      // Reconstruct PEM: Header + 64-char lines + Footer
+      const lines = stripped.match(/.{1,64}/g) || [];
+      privateKey = `-----BEGIN PRIVATE KEY-----\n${lines.join('\n')}\n-----END PRIVATE KEY-----\n`;
     }
 
-    // 5. If the key is entirely on one line but contains headers, it's missing newlines
-    if (privateKey.includes('PRIVATE KEY') && !privateKey.includes('\n')) {
-      // Find the header/footer markers
-      const beginMarker = privateKey.match(/-----BEGIN [A-Z ]+-----/);
-      const endMarker = privateKey.match(/-----END [A-Z ]+-----/);
-      
-      if (beginMarker && endMarker) {
-        const header = beginMarker[0];
-        const footer = endMarker[0];
-        const content = privateKey
-          .replace(header, '')
-          .replace(footer, '')
-          .trim()
-          .replace(/\s/g, ''); // Remove all spaces in base64 block
-        
-        // Reconstruct with proper PEM standard (64 chars per line)
-        const lines = content.match(/.{1,64}/g) || [];
-        privateKey = `${header}\n${lines.join('\n')}\n${footer}\n`;
-      }
-    }
-
-    // 5. Final validation of markers
-    if (!privateKey.includes('-----BEGIN') || !privateKey.includes('-----END')) {
-      console.error('[GA4] Warning: Private key appears to be missing PEM headers/footers.');
-    }
-
-    // 6. Proactive Diagnostic Check
+    // 5. Proactive Diagnostic Check
     try {
       crypto.createPrivateKey(privateKey);
       console.log('[GA4] OpenSSL Validation Passed');
     } catch (cryptoError) {
       console.error('[GA4] OpenSSL Validation FAILED.');
-      console.error('[GA4] Error Code:', cryptoError.code);
-      console.error('[GA4] Error Message:', cryptoError.message);
+      console.error('[GA4] Error:', cryptoError.message);
       
-      // Safe metadata logging for the user to verify their env var
-      const keyLength = privateKey.length;
-      const newlineCount = (privateKey.match(/\n/g) || []).length;
-      console.error(`[GA4] Key Metadata: Length=${keyLength}, Newlines=${newlineCount}`);
-      console.error(`[GA4] Key Starts with: ${privateKey.substring(0, 20)}...`);
-      console.error(`[GA4] Key Ends with: ...${privateKey.substring(privateKey.length - 20)}`);
+      // Safety check: Log the reconstructed key's structure (not the secret itself)
+      console.error(`[GA4] Structure: Length=${privateKey.length}, Lines=${(privateKey.match(/\n/g) || []).length}`);
     }
     
     analyticsClient = new BetaAnalyticsDataClient({
@@ -89,7 +65,7 @@ try {
     });
     console.log('[GA4] Analytics Client Initialized');
   } else {
-    console.warn('[GA4] Missing credentials (EMAIL or PRIVATE_KEY). Analytics using mock data.');
+    console.warn('[GA4] Missing credentials. Analytics using mock data.');
   }
 } catch (error) {
   console.error('[GA4] Fatal Initialization Error:', error.message);
