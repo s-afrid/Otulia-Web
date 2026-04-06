@@ -100,7 +100,7 @@ const Bike_Section = () => {
                 image={info.images?.[0]}
                 type="article"
             />
-            <BikeGallery images={info.images} />
+            <BikeGallery images={info.images} videoUrl={info.videoUrl} />
 
             {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="BikeAsset" /> */}
 

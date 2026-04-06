@@ -101,7 +101,7 @@ const Yacht_Section = () => {
                 type="article"
             />
             
-            <YachtGallery images={info.images} />
+            <YachtGallery images={info.images} videoUrl={info.videoUrl} />
 
             {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="YachtAsset" /> */}
 

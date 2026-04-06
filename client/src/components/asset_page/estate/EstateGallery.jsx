@@ -1,14 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { optimizeCloudinaryUrl } from '../../../utils/imageUtils';
 
-const EstateGallery = ({ images }) => {
+const EstateGallery = ({ images, videoUrl }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollContainerRef = useRef(null);
+
+  const hasVideo = videoUrl && (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be'));
+  const totalItems = images.length + (hasVideo ? 1 : 0);
+
+  const getYouTubeId = (url) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  const videoId = hasVideo ? getYouTubeId(videoUrl) : null;
   
   // Handlers for main arrows
   const handlePrev = () => {
     setActiveIndex((prev) => {
-      const newIndex = prev === 0 ? images.length - 1 : prev - 1;
+      const newIndex = prev === 0 ? totalItems - 1 : prev - 1;
       scrollToThumbnail(newIndex);
       return newIndex;
     });
@@ -16,7 +27,7 @@ const EstateGallery = ({ images }) => {
 
   const handleNext = () => {
     setActiveIndex((prev) => {
-      const newIndex = prev === images.length - 1 ? 0 : prev + 1;
+      const newIndex = prev === totalItems - 1 ? 0 : prev + 1;
       scrollToThumbnail(newIndex);
       return newIndex;
     });
@@ -38,11 +49,11 @@ const EstateGallery = ({ images }) => {
     scrollToThumbnail(activeIndex);
   }, [activeIndex]);
 
-  // Safety check: If no images are passed, show a placeholder or nothing
-  if (!images || images.length === 0) {
+  // Safety check: If no images are passed and no video, show a placeholder
+  if ((!images || images.length === 0) && !hasVideo) {
     return (
       <div className="w-full h-64 bg-gray-100 flex items-center justify-center text-gray-400">
-        No Images Available
+        No Media Available
       </div>
     );
   }
@@ -50,24 +61,37 @@ const EstateGallery = ({ images }) => {
   return (
     <div className="w-full max-w-[90%] mx-auto p-4 bg-white">
       
-      {/* 1. MAIN IMAGE CONTAINER */}
+      {/* 1. MAIN MEDIA CONTAINER */}
       <div className="relative w-full aspect-[16/9] md:aspect-[2/1] bg-gray-100 overflow-hidden mb-4 rounded-sm shadow-sm group">
-        <img 
-          src={optimizeCloudinaryUrl(images[activeIndex], 1200)} 
-          alt={`Vehicle View ${activeIndex + 1}`} 
-          fetchpriority="high"
-          width="1200"
-          height="675"
-          className="w-full h-full object-cover transition-transform duration-500"
-        />
+        {activeIndex < images.length ? (
+          <img 
+            src={optimizeCloudinaryUrl(images[activeIndex], 1200)} 
+            alt={`Estate View ${activeIndex + 1}`} 
+            fetchpriority="high"
+            width="1200"
+            height="675"
+            className="w-full h-full object-cover transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full">
+            <iframe
+              className="w-full h-full"
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=0`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
 
-        {/* Navigation Arrows (Overlay) - Only show if more than 1 image */}
-        {images.length > 1 && (
+        {/* Navigation Arrows (Overlay) - Only show if more than 1 item */}
+        {totalItems > 1 && (
           <>
             <button 
               onClick={(e) => { e.stopPropagation(); handlePrev(); }}
-              aria-label="Previous image"
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-black rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              aria-label="Previous media"
+              className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-black rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -75,8 +99,8 @@ const EstateGallery = ({ images }) => {
             </button>
             <button 
               onClick={(e) => { e.stopPropagation(); handleNext(); }}
-              aria-label="Next image"
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-black rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              aria-label="Next media"
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 hover:bg-white text-black rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -85,10 +109,10 @@ const EstateGallery = ({ images }) => {
           </>
         )}
 
-        {/* Overlay Dots (Bottom Center) - Only if images < 15 to avoid clutter */}
-        {images.length > 1 && images.length < 15 && (
+        {/* Overlay Dots (Bottom Center) - Only if totalItems < 15 to avoid clutter */}
+        {totalItems > 1 && totalItems < 15 && (
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-            {images.map((_, idx) => (
+            {[...Array(totalItems)].map((_, idx) => (
               <div 
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
@@ -101,8 +125,8 @@ const EstateGallery = ({ images }) => {
         )}
       </div>
 
-      {/* 2. THUMBNAIL STRIP - Hide if only 1 image */}
-      {images.length > 1 && (
+      {/* 2. THUMBNAIL STRIP - Hide if only 1 item */}
+      {totalItems > 1 && (
         <div className="relative flex items-center justify-between border border-gray-200 p-2 rounded-sm bg-gray-50">
           
           {/* Thumbnails Grid with Ref for auto-scroll */}
@@ -136,6 +160,33 @@ const EstateGallery = ({ images }) => {
                 />
               </div>
             ))}
+            {hasVideo && (
+              <div 
+                onClick={() => setActiveIndex(images.length)}
+                className={`
+                  relative cursor-pointer shrink-0 
+                  w-20 h-14 md:w-28 md:h-20 
+                  overflow-hidden rounded-sm bg-black
+                  transition-all duration-300
+                  ${activeIndex === images.length 
+                    ? 'ring-2 ring-black opacity-100 scale-95' 
+                    : 'opacity-60 hover:opacity-100'
+                  }
+                `}
+              >
+                <img 
+                  src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`} 
+                  alt="Video Thumbnail" 
+                  loading="lazy"
+                  className="w-full h-full object-cover opacity-50"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" className="w-8 h-8">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+            )}
           </div>
 
         </div>

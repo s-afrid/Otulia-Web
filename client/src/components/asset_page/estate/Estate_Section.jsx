@@ -104,7 +104,7 @@ const Estate_Section = () => {
         type="article"
       />
 
-      <EstateGallery images={info.images} />
+      <EstateGallery images={info.images} videoUrl={info.videoUrl} />
 
       {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="EstateAsset" /> */}
 

@@ -111,7 +111,7 @@ const Car_Section = () => {
       />
 
       {/* Pass images array safely */}
-      <CarGallery images={info.images} />
+      <CarGallery images={info.images} videoUrl={info.videoUrl} />
 
       {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="CarAsset" /> */}
 
