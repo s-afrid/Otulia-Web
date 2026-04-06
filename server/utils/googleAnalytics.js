@@ -29,11 +29,16 @@ try {
     }
 
     // 3. Convert all forms of escaped newlines back to actual newlines
-    // This handles literal "\n", double-escaped "\\n", and even triple-escaped
     privateKey = privateKey.replace(/\\n/g, '\n');
 
-    // 4. If the key is entirely on one line but contains headers, it's missing newlines
-    // OpenSSL 3.0 requires the header, footer, and the content to be separated by newlines
+    // 4. SURGICAL EXTRACTION: Only keep what is between the BEGIN and END markers
+    // This removes trailing backslashes, extra quotes, or shell artifacts
+    const pemMatch = privateKey.match(/-----BEGIN [A-Z ]+-----[^-]+-----END [A-Z ]+-----/s);
+    if (pemMatch) {
+      privateKey = pemMatch[0];
+    }
+
+    // 5. If the key is entirely on one line but contains headers, it's missing newlines
     if (privateKey.includes('PRIVATE KEY') && !privateKey.includes('\n')) {
       // Find the header/footer markers
       const beginMarker = privateKey.match(/-----BEGIN [A-Z ]+-----/);
