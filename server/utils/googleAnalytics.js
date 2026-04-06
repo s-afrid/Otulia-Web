@@ -1,4 +1,5 @@
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
+const crypto = require('crypto');
 
 /**
  * Google Analytics 4 (GA4) Data API Client
@@ -14,17 +15,45 @@ try {
   if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
     let privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
-    // 1. Remove wrapping double quotes if they exist
-    if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-      privateKey = privateKey.slice(1, -1);
+    // 1. If the key is passed as a JSON string (sometimes happens in certain environments)
+    if (privateKey.trim().startsWith('{')) {
+      try {
+        const parsed = JSON.parse(privateKey);
+        if (parsed.private_key) privateKey = parsed.private_key;
+      } catch (e) {
+        // Not a JSON or malformed, continue with original
+      }
     }
 
-    // 2. Handle double-escaped or literal \n strings
-    // This handles both "\n" and "\\n" to ensure OpenSSL gets real newlines
+    // 2. Remove wrapping quotes (single or double)
+    privateKey = privateKey.replace(/^['"](.*)['"]$/s, '$1');
+
+    // 3. Handle double-escaped or literal \n strings
+    // This handles "\n", "\\n", and even "\\\n"
     privateKey = privateKey.replace(/\\n/g, '\n');
 
-    // 3. Trim any stray whitespace
+    // 4. Ensure headers and footers are correctly formatted with newlines if they are missing
+    // OpenSSL 3.0 (Node 17+) is very strict about PEM headers/footers
+    if (privateKey.includes('BEGIN PRIVATE KEY') && !privateKey.includes('\n')) {
+      // If it looks like a single line but has the header, it might be missing newlines entirely
+      // This is a common issue when copy-pasting into certain UI dashboards
+      privateKey = privateKey
+        .replace('-----BEGIN PRIVATE KEY-----', '-----BEGIN PRIVATE KEY-----\n')
+        .replace('-----END PRIVATE KEY-----', '\n-----END PRIVATE KEY-----');
+    }
+
+    // 5. Final trim
     privateKey = privateKey.trim();
+
+    // 6. Proactive Verification: Check if OpenSSL can actually parse this key
+    // This will catch the "DECODER routines::unsupported" error immediately during startup
+    try {
+      crypto.createPrivateKey(privateKey);
+    } catch (cryptoError) {
+      console.error('[GA4] Critical: The GOOGLE_PRIVATE_KEY provided cannot be parsed by OpenSSL.');
+      console.error('[GA4] OpenSSL Error Detail:', cryptoError.message);
+      console.error('[GA4] Tip: Ensure the key is a valid PKCS#8 PEM format and includes headers/footers.');
+    }
     
     analyticsClient = new BetaAnalyticsDataClient({
       credentials: {
