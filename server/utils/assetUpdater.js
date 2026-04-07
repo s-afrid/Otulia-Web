@@ -19,6 +19,9 @@ const updateUserAssetsAgent = async (userId, updateData) => {
     if (updateData.email) updateQuery['agent.email'] = updateData.email;
     if (updateData.company) updateQuery['agent.company'] = updateData.company;
     if (updateData.companyLogo) updateQuery['agent.companyLogo'] = updateData.companyLogo;
+    if (updateData.companyDescription) updateQuery['agent.companyDescription'] = updateData.companyDescription;
+    if (updateData.address) updateQuery['agent.address'] = updateData.address;
+    if (updateData.website) updateQuery['agent.website'] = updateData.website;
     if (updateData.plan) updateQuery['agent.plan'] = updateData.plan;
 
     if (Object.keys(updateQuery).length === 0) return;

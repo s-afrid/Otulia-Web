@@ -338,19 +338,19 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
 
             {/* Company Footer */}
             <div className="flex items-center justify-between montserrat">
-              <div>
-                <p className="text-xs font-bold text-black uppercase tracking-wide mb-2">
+              <div className="flex-1 min-w-0 mr-4">
+                <p className="text-xs font-bold text-black uppercase tracking-widest mb-1 truncate">
                   {agent.company}
                 </p>
-                <p className="text-xs text-gray-400 decoration-gray-300 cursor-pointer">
-                  {type === 'Rent' ? 'View Rental Fleet' : 'Listings for Sale'}
+                <p className="text-[10px] text-gray-400 uppercase tracking-widest">
+                  {type === 'Rent' ? 'Charter Fleet' : 'Exclusive Collection'}
                 </p>
               </div>
-              {agent.plan && agent.plan !== 'Freemium' && (
+              {agent.companyLogo && (
                 <img
                   src={agent.companyLogo}
-                  alt="Company Logo"
-                  className="h-10 lg:h-[50px] w-auto object-contain bg-black p-1"
+                  alt={agent.company}
+                  className="h-10 md:h-12 max-w-[120px] object-contain object-right"
                 />
               )}
             </div>

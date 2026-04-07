@@ -9,6 +9,7 @@ import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
+import CompanyProfileSection from "../CompanyProfileSection";
 
 const Car_Section = () => {
   const [info, setInfo] = useState(null); // Initialize as null to track loading state
@@ -137,6 +138,8 @@ const Car_Section = () => {
           lng={info.specification?.longitude} 
         />
       </div>
+
+      <CompanyProfileSection agent={info.agent} />
 
       {similarAssets.length > 0 && (
         <div className="py-8 bg-gray-50/50">

@@ -58,7 +58,7 @@ const AssetCard = ({ item }) => {
   */
 
   // 3. DETAILS LOGIC
-  let displayDetails = item.details;
+  let displayDetails = item.details ? item.details.replace(/\s\|\s/g, ' \u00B7 ') : null;
 
   // Set category based on explicit field or infer from specs
   // Also determine exact Model for API
@@ -87,13 +87,13 @@ const AssetCard = ({ item }) => {
       const p2 = specs.engineType || specs.cylinderCapacity; // Engine Type > CC
       const p3 = specs.power ? (specs.power.toLowerCase().includes('hp') ? specs.power : `${specs.power} hp`) : null;
 
-      displayDetails = [p1, p2, p3].filter(Boolean).join(' | ');
+      displayDetails = [p1, p2, p3].filter(Boolean).join(' \u00B7 ');
       category = 'car';
     } else {
       const beds = specs.bedrooms ? `${specs.bedrooms} Beds` : null;
       const baths = specs.bathrooms ? `${specs.bathrooms} Baths` : null;
       const area = specs.builtUpArea || specs.landArea;
-      displayDetails = [beds, baths, area].filter(Boolean).join(' | ');
+      displayDetails = [beds, baths, area].filter(Boolean).join(' \u00B7 ');
       category = 'estate';
     }
   }
@@ -155,7 +155,7 @@ const AssetCard = ({ item }) => {
       onClick={() => navigate(`/asset/${category}/${item._id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="relative border border-gray-100 shadow-sm transition-all duration-300 bg-white cursor-pointer block hover:shadow-lg"
+      className="relative border border-gray-100 shadow-sm transition-all duration-300 bg-white cursor-pointer flex flex-col hover:shadow-lg h-full"
     >
       {/* Image Container (Mask) */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
@@ -207,9 +207,26 @@ const AssetCard = ({ item }) => {
         )}
         */}
 
+        {/* Badges Container */}
+        <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
+          {item.videoUrl && (
+            <div className="bg-white/90 backdrop-blur-sm text-black px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded shadow-sm border border-gray-100 flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-2.5 h-2.5">
+                <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
+              </svg>
+              Video
+            </div>
+          )}
+          {item.type === 'Rent' && (
+            <div className="bg-black/80 backdrop-blur-md text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded shadow-lg">
+              For Rent
+            </div>
+          )}
+        </div>
+
         {/* Heart Button */}
         <button
-          className={`absolute top-2 right-3 z-20 focus:outline-none transition-transform duration-300 ${isHovered ? "scale-110" : "scale-100"
+          className={`absolute top-3 right-3 z-20 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-all duration-300 group/heart ${isHovered ? "scale-110" : "scale-100"
             }`}
           onClick={handleHeartClick}
         >
@@ -217,9 +234,9 @@ const AssetCard = ({ item }) => {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill={isLiked ? "#ef4444" : "none"}
-            stroke={isLiked ? "none" : "white"}
+            stroke={isLiked ? "#ef4444" : "currentColor"}
             strokeWidth="2"
-            className="w-8 h-8 drop-shadow-md"
+            className={`w-4 h-4 transition-colors ${isLiked ? "" : "text-gray-600 group-hover/heart:text-black"}`}
           >
             <path
               strokeLinecap="round"
@@ -229,66 +246,88 @@ const AssetCard = ({ item }) => {
           </svg>
         </button>
 
-        {/* Rent Badge */}
-        {item.type === 'Rent' && (
-          <div className="absolute top-3 left-3 z-20 bg-black/80 backdrop-blur-md text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded shadow-lg">
-            For Rent
-          </div>
-        )}
+        {/* Image Count */}
+        <div className="absolute bottom-3 right-3 z-20 bg-black/40 backdrop-blur-sm text-white px-2 py-0.5 text-[8px] font-medium rounded-sm">
+          {activeImageIndex + 1}/{item.images?.length || 1}
+        </div>
       </div>
 
       {/* Content Section */}
-      <div className="p-5">
-        <div className="flex justify-between items-start gap-2 mb-1">
-          <div className="flex-1 min-w-0">
-            <h3 className={`text-black leading-tight break-words ${
-              item.title.length > 40 
-                ? 'text-[10px] sm:text-xs md:text-sm lg:text-base'
-                : item.title.length > 25
-                ? 'text-xs sm:text-sm md:text-base lg:text-lg'
-                : 'text-sm sm:text-base md:text-lg lg:text-xl'
-            }`}
-              style={{ fontFamily: '"Times New Roman", Times, serif' }}>
+      <div className="p-5 flex flex-col h-full grow">
+        <div className="flex-1">
+          {/* PRICE */}
+          <div className="flex justify-between items-baseline mb-1">
+            <p className="text-xl md:text-2xl font-semibold text-black font-sans tracking-tight">
+              {item.isPriceOnRequest ? 'Price on Demand' : (typeof item.price === 'number' ? `$ ${numberWithCommas(item.price)}` : item.price)}
+              {!item.isPriceOnRequest && item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal"> / day</span>}
+            </p>
+          </div>
+
+          {/* DETAILS / SPECS */}
+          <p className="text-[10px] md:text-[11px] text-gray-500 font-medium mb-3 uppercase tracking-wider">
+            {displayDetails || "View Details"}
+          </p>
+
+          {/* TITLE */}
+          <div className="mb-1">
+            <h3 className={`text-black leading-tight break-words playfair-display mb-1 ${item.title.length > 40
+              ? 'text-sm md:text-base'
+              : 'text-base md:text-lg lg:text-xl'
+              }`}>
               {item.title}
             </h3>
           </div>
 
-          {!homepage && item.agent && (
-            <div className="flex-shrink-0 flex gap-2 items-center p-1.5 border border-gray-200 rounded-lg bg-white shadow-sm -mt-1">
-              <img className="w-6 h-6 lg:w-8 lg:h-8 rounded-full object-cover" src={optimizeCloudinaryUrl(item.agent.photo, 100, 100)} alt="agent" />
-              {/* UPDATED RESPONSIVENESS: Hidden on mobile/tablet, visible on XL screens */}
-              <p className="text-[10px] hidden xl:block text-gray-500 font-medium uppercase tracking-wider truncate max-w-[80px]">
-                {item.agent.name}
-              </p>
+          {/* LOCATION */}
+          <p className="text-[10px] md:text-[11px] text-gray-400 mb-4 font-normal uppercase tracking-widest truncate">
+            {item.location}
+          </p>
+
+          {isMyListings && (
+            <div className="flex items-center gap-1.5 mb-3 -mt-2 bg-gray-50 w-fit px-2 py-0.5 rounded-full border border-gray-100">
+              <HiOutlineEye className="text-sm text-gray-500" />
+              <span className="text-[10px] font-bold text-gray-600 montserrat">
+                {formatNumber(item.views || 0)} views
+              </span>
             </div>
           )}
         </div>
 
-        <p className="text-xl font-bold text-black mb-1 font-sans">
-          {item.isPriceOnRequest ? 'Price on Demand' : (typeof item.price === 'number' ? `$ ${numberWithCommas(item.price)}` : item.price)}
-          {!item.isPriceOnRequest && item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal"> / day</span>}
-        </p>
+        <div>
+          {/* DIVIDER */}
+          <div className="w-full h-px bg-gray-100 my-4"></div>
 
-        <p className="text-[10px] text-gray-400 mb-2 font-normal uppercase tracking-widest truncate">
-          {item.location}
-        </p>
+          {/* FOOTER: COMPANY & AGENT */}
+          <div className="flex items-center justify-between min-h-[40px] gap-3">
+            {/* COMPANY LOGO */}
+            <div className="flex-1 min-w-0">
+              {item.agent?.companyLogo ? (
+                <img
+                  src={optimizeCloudinaryUrl(item.agent.companyLogo, 300)}
+                  alt={item.agent.company}
+                  className="h-8 max-w-[140px] object-contain object-left grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                />
+              ) : item.agent?.company ? (
+                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest truncate block">
+                  {item.agent.company}
+                </span>
+              ) : null}
+            </div>
 
-        {isMyListings && (
-          <div className="flex items-center gap-1.5 mb-3 -mt-1 bg-gray-50 w-fit px-2 py-0.5 rounded-full border border-gray-100">
-            <HiOutlineEye className="text-sm text-gray-500" />
-            <span className="text-[10px] font-bold text-gray-600 montserrat">
-              {formatNumber(item.views || 0)} views
-            </span>
+            {/* AGENT INFO */}
+            {item.agent && (
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <p className="text-[10px] text-gray-500 font-medium uppercase tracking-widest hidden xl:block">
+                  {item.agent.name}
+                </p>
+                <img
+                  className="w-8 h-8 lg:w-9 lg:h-9 rounded-full object-cover border border-gray-200 shadow-sm hover:border-gray-400 transition-colors"
+                  src={optimizeCloudinaryUrl(item.agent.photo, 100, 100)}
+                  alt={item.agent.name}
+                />
+              </div>
+            )}
           </div>
-        )}
-
-        <div className="w-full h-px bg-gray-100 mb-2"></div>
-
-        <div className="flex items-center justify-between">
-          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest truncate">
-            {displayDetails || "View Details"}
-          </p>
-
         </div>
       </div>
     </div>

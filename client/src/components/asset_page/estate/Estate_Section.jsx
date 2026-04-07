@@ -9,6 +9,7 @@ import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
+import CompanyProfileSection from "../CompanyProfileSection";
 
 const Estate_Section = () => {
   const [info, setInfo] = useState(null);
@@ -128,6 +129,8 @@ const Estate_Section = () => {
           lng={info.specification?.longitude} 
         />
       </div>
+
+      <CompanyProfileSection agent={info.agent} />
 
       {similarAssets.length > 0 && (
         <div className="py-8 bg-gray-50/50">

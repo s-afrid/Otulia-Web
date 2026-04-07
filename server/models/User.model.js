@@ -50,6 +50,7 @@ const userSchema = new mongoose.Schema(
       companyLogo: String,
       address: String,
       website: String,
+      description: String,
     },
 
     isVerified: {

@@ -9,6 +9,7 @@ import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
+import CompanyProfileSection from "../CompanyProfileSection";
 
 const Bike_Section = () => {
     const [info, setInfo] = useState(null);
@@ -113,14 +114,15 @@ const Bike_Section = () => {
             <BikeKeyFeatures item={info} />
 
             <BikeFeatures item={info} />
+            <div className="flex items-center justify-center mb-4">
+                <LocationMap 
+                    locationName={info.location} 
+                    lat={info.specification?.latitude} 
+                    lng={info.specification?.longitude} 
+                />
+            </div>
 
-                        <div className="flex items-center justify-center mb-4">
-                            <LocationMap 
-                                locationName={info.location} 
-                                lat={info.specification?.latitude} 
-                                lng={info.specification?.longitude} 
-                            />
-                        </div>
+            <CompanyProfileSection agent={info.agent} />
 
             {similarAssets.length > 0 && (
                 <div className="py-8 bg-gray-50/50">

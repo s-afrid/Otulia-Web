@@ -492,6 +492,9 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
       photo: user.profilePicture,
       company: user.company?.companyName,
       companyLogo: user.company?.companyLogo,
+      companyDescription: user.company?.description,
+      address: user.company?.address,
+      website: user.company?.website,
       plan: user.plan
     });
 

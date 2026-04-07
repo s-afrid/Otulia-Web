@@ -43,6 +43,9 @@ const listingSchema = new mongoose.Schema(
             email: String,
             company: String,
             companyLogo: String,
+            companyDescription: String,
+            address: String,
+            website: String,
             plan: String,
             joined: { type: Number },
             createdAt: Date

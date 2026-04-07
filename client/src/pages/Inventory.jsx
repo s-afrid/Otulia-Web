@@ -114,7 +114,8 @@ const Inventory = () => {
         phone: '',
         address: '',
         website: '',
-        logo: null
+        logo: null,
+        description: ''
     });
 
     useEffect(() => {
@@ -146,7 +147,8 @@ const Inventory = () => {
                         phone: resData.userProfile.phone || '',
                         address: comp.address || '',
                         website: comp.website || '',
-                        logo: comp.companyLogo || null
+                        logo: comp.companyLogo || null,
+                        description: comp.description || ''
                     });
                     setLeadEmailNotifications(resData.userProfile.leadEmailNotifications !== false);
                 }
@@ -262,7 +264,8 @@ const Inventory = () => {
                         companyName: companyInfo.name,
                         companyLogo: companyInfo.logo,
                         address: companyInfo.address,
-                        website: companyInfo.website
+                        website: companyInfo.website,
+                        description: companyInfo.description
                     }
                 })
             });
@@ -1453,6 +1456,17 @@ const Inventory = () => {
                                             <SettingsInputField label="Public Phone" value={companyInfo.phone} icon={<FiPhone />} readOnly={!canEditProfile} onChange={(e) => setCompanyInfo({ ...companyInfo, phone: e.target.value })} />
                                         </div>
                                         <SettingsInputField label="Office Address" value={companyInfo.address} icon={<FiMapPin />} readOnly={!canEditProfile} onChange={(e) => setCompanyInfo({ ...companyInfo, address: e.target.value })} />
+                                        <div className="space-y-4">
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Company Description</p>
+                                            <textarea 
+                                                value={companyInfo.description}
+                                                onChange={(e) => setCompanyInfo({ ...companyInfo, description: e.target.value })}
+                                                readOnly={!canEditProfile}
+                                                rows={5}
+                                                placeholder="Tell your clients about your agency, expertise, and history..."
+                                                className={`w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm font-medium focus:outline-none focus:border-[#D48D2A] transition-all resize-none custom-scrollbar ${!canEditProfile ? 'opacity-70 cursor-not-allowed' : 'hover:border-gray-200'}`}
+                                            ></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
