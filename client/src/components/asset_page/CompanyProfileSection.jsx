@@ -90,7 +90,7 @@ const CompanyProfileSection = ({ agent }) => {
             )}
              <div>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Joined</p>
-              <p className="text-sm font-medium text-gray-900">{agent.joined ? new Date(agent.joined).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "Recently"}</p>
+              <p className="text-sm font-medium text-gray-900">{agent.createdAt ? new Date(agent.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : "Recently"}</p>
             </div>
           </div>
         </div>
