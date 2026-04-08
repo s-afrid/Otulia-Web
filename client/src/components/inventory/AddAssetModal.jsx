@@ -99,7 +99,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         }
 
         if (type === 'cover') setCoverImage(files[0]);
-        else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 10));
+        else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 14));
         else if (type === 'document') setDocuments(prev => [...prev, ...files].slice(0, 5));
     };
 
@@ -903,7 +903,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     </div>
                                                     <div>
                                                         <h4 className="text-sm font-bold text-gray-900">Gallery</h4>
-                                                        <p className="text-xs text-gray-400">Additional interior and detail shots (Max 10)</p>
+                                                        <p className="text-xs text-gray-400">Additional interior and detail shots (Max 14)</p>
                                                     </div>
                                                 </div>
 

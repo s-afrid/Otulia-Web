@@ -275,7 +275,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         }
 
         if (type === 'images') {
-            setImages(prev => [...prev, ...files].slice(0, 10));
+            setImages(prev => [...prev, ...files].slice(0, 15));
         }
     };
 
@@ -736,7 +736,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                 </div>
                                 <div>
                                     <h4 className="text-sm font-bold text-gray-900">Asset Images</h4>
-                                    <p className="text-xs text-gray-400">Upload high-quality images (Max 10)</p>
+                                    <p className="text-xs text-gray-400">Upload high-quality images (Max 15)</p>
                                 </div>
                             </div>
 
