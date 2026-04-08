@@ -253,7 +253,7 @@ const AssetCard = ({ item }) => {
       </div>
 
       {/* Content Section */}
-      <div className="p-5 flex flex-col h-full grow">
+      <div className="p-5 flex flex-col grow">
         <div className="flex-1">
           {/* PRICE */}
           <div className="flex justify-between items-baseline mb-1">

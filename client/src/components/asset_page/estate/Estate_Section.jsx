@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import EstateGallery from "../estate/EstateGallery";
+import AssetGallery from "../AssetGallery";
 import AssetStats from "../AssetStats";
 import EstateDetails from "../estate/EstateDetails";
 import EstateKeyFeatures from "../estate/EstateKeyFeat";
@@ -105,7 +105,7 @@ const Estate_Section = () => {
         type="article"
       />
 
-      <EstateGallery images={info.images} videoUrl={info.videoUrl} />
+      <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Estate" />
 
       {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="EstateAsset" /> */}
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom"; // 1. Import useParams
-import CarGallery from "../car/CarGallery";
+import AssetGallery from "../AssetGallery";
 import AssetStats from "../AssetStats";
 import CarDetails from "../car/CarDetails";
 import CarKeyFeatures from "../car/CarKeyFeat";
@@ -112,7 +112,7 @@ const Car_Section = () => {
       />
 
       {/* Pass images array safely */}
-      <CarGallery images={info.images} videoUrl={info.videoUrl} />
+      <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Car" />
 
       {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="CarAsset" /> */}
 

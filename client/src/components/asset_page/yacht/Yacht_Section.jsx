@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import YachtGallery from "./YachtGallery";
+import AssetGallery from "../AssetGallery";
 import AssetStats from "../AssetStats";
 import YachtDetails from "./YachtDetails";
 import YachtKeyFeatures from "./YachtKeyFeat";
@@ -102,7 +102,7 @@ const Yacht_Section = () => {
                 type="article"
             />
             
-            <YachtGallery images={info.images} videoUrl={info.videoUrl} />
+            <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Yacht" />
 
             {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="YachtAsset" /> */}
 

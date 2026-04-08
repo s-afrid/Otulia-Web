@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import BikeGallery from "./BikeGallery";
+import AssetGallery from "../AssetGallery";
 import AssetStats from "../AssetStats";
 import BikeDetails from "./BikeDetails";
 import BikeKeyFeatures from "./BikeKeyFeat";
@@ -101,7 +101,7 @@ const Bike_Section = () => {
                 image={info.images?.[0]}
                 type="article"
             />
-            <BikeGallery images={info.images} videoUrl={info.videoUrl} />
+            <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Bike" />
 
             {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="BikeAsset" /> */}
 
