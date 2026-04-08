@@ -34,15 +34,20 @@ try {
 
     // 4. STRIP AND REBUILD (The most robust way for OpenSSL 3.0)
     // This removes everything except the base64 content and re-adds headers correctly
+    let header = 'PRIVATE KEY';
+    if (privateKey.includes('RSA PRIVATE KEY')) header = 'RSA PRIVATE KEY';
+
     const stripped = privateKey
       .replace(/-----BEGIN [A-Z ]+-----/g, '')
       .replace(/-----END [A-Z ]+-----/g, '')
-      .replace(/\s+/g, ''); // Remove all whitespace, newlines, tabs
+      .replace(/\\n/g, '') // Remove literal \n strings if any survived
+      .replace(/\s+/g, '') // Remove all actual whitespace, newlines, tabs
+      .replace(/[^A-Za-z0-9+/=]/g, ''); // Final safety: remove anything not Base64
 
     if (stripped.length > 100) {
       // Reconstruct PEM: Header + 64-char lines + Footer
       const lines = stripped.match(/.{1,64}/g) || [];
-      privateKey = `-----BEGIN PRIVATE KEY-----\n${lines.join('\n')}\n-----END PRIVATE KEY-----\n`;
+      privateKey = `-----BEGIN ${header}-----\n${lines.join('\n')}\n-----END ${header}-----\n`;
     }
 
     // 5. Proactive Diagnostic Check
@@ -53,8 +58,16 @@ try {
       console.error('[GA4] OpenSSL Validation FAILED.');
       console.error('[GA4] Error:', cryptoError.message);
       
-      // Safety check: Log the reconstructed key's structure (not the secret itself)
-      console.error(`[GA4] Structure: Length=${privateKey.length}, Lines=${(privateKey.match(/\n/g) || []).length}`);
+      // If reconstruction failed, try a simpler fallback
+      // Sometimes the "PRIVATE KEY" vs "RSA PRIVATE KEY" matters
+      if (header === 'PRIVATE KEY') {
+        try {
+          const fallbackKey = privateKey.replace('PRIVATE KEY', 'RSA PRIVATE KEY');
+          crypto.createPrivateKey(fallbackKey);
+          privateKey = fallbackKey;
+          console.log('[GA4] Fallback to RSA PRIVATE KEY header worked');
+        } catch (e) {}
+      }
     }
     
     analyticsClient = new BetaAnalyticsDataClient({
