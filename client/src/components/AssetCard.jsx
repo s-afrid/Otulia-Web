@@ -301,7 +301,7 @@ const AssetCard = ({ item }) => {
           <div className="flex items-center justify-between min-h-[40px] gap-3">
             {/* COMPANY LOGO */}
             <div className="flex-1 min-w-0">
-              {item.agent?.companyLogo ? (
+              {item.agent?.companyLogo && item.agent.companyLogo !== item.agent?.photo ? (
                 <img
                   src={optimizeCloudinaryUrl(item.agent.companyLogo, 300)}
                   alt={item.agent.company}
