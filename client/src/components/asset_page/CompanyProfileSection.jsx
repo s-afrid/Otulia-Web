@@ -16,7 +16,7 @@ const CompanyProfileSection = ({ agent }) => {
         
         {/* Left: Logo */}
         <div className="w-full lg:w-1/4 flex justify-center lg:justify-start">
-          {agent.companyLogo ? (
+          {agent.companyLogo && agent.companyLogo !== agent?.photo ? (
             <img 
               src={agent.companyLogo} 
               alt={agent.company} 
@@ -24,7 +24,7 @@ const CompanyProfileSection = ({ agent }) => {
             />
           ) : (
             <div className="h-24 md:h-32 aspect-square bg-gray-50 flex items-center justify-center rounded-xl border border-gray-100">
-              <span className="text-gray-300 font-bold text-xl">{agent.company?.[0]}</span>
+              <span className="text-gray-300 font-bold text-xl">{agent.company?.[0] || 'A'}</span>
             </div>
           )}
         </div>
