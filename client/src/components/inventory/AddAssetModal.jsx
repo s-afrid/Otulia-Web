@@ -247,17 +247,52 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     };
 
     const handleSubmit = async () => {
+        // Comprehensive Validation
+        const commonFields = ['model', 'variant', 'year', 'location', 'description'];
+        if (assetType === 'Estate') commonFields.push('propertyName');
+        else if (assetType === 'Yacht') commonFields.push('yachtName', 'builder');
+        else commonFields.push('make');
+        
+        for (const field of commonFields) {
+            if (!formData[field] && formData[field] !== 0) {
+                const label = field.replace(/([A-Z])/g, ' $1').toLowerCase();
+                alert(`Please fill in the ${label} field.`);
+                return;
+            }
+        }
+
+        if (!formData.price && !formData.isPriceOnRequest) {
+            alert("Please enter a price or select 'Price on Request'");
+            return;
+        }
+
+        let specFields = [];
+        if (assetType === 'Car') {
+            specFields = ['horsepower', 'topSpeed', 'engineType', 'mileage', 'fuelType', 'transmission', 'engine', 'exteriorColor', 'interiorColor', 'condition', 'ownershipCount', 'accidentHistory', 'configuration', 'cylinderCapacity', 'interiorMaterial', 'countryOfFirstDelivery', 'bodyType', 'series', 'steering', 'driveType', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'latitude', 'longitude', 'highlight_speed', 'highlight_engine_type', 'highlight_hp'];
+        } else if (assetType === 'Yacht') {
+            specFields = ['length', 'beam', 'draft', 'engineType', 'cruisingSpeed', 'topSpeed', 'usageHours', 'fuelConsumption', 'guestCapacity', 'crewCapacity', 'fuelType', 'hullMaterial', 'condition', 'interiorMaterial', 'exteriorColor', 'countryOfFirstDelivery', 'numberOfOwners', 'latitude', 'longitude', 'highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
+        } else if (assetType === 'Estate') {
+            specFields = ['propertyType', 'country', 'city', 'areaNeighborhood', 'builtUpArea', 'landArea', 'bedrooms', 'bathrooms', 'floors', 'garageCapacity', 'furnishingStatus', 'latitude', 'longitude', 'highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors', 'architectureStyle', 'configuration', 'condition', 'usageStatus', 'interiorMaterial', 'interiorColorTheme', 'exteriorFinish', 'climateControl'];
+        } else if (assetType === 'Bike') {
+            specFields = ['engineCapacity', 'maxPower', 'maxTorque', 'mileage', 'fuelType', 'transmission', 'color', 'abs', 'tractionControl', 'condition', 'ownershipCount', 'accidentHistory', 'latitude', 'longitude', 'highlight_cc', 'highlight_speed', 'highlight_fuel'];
+        }
+
+        for (const field of specFields) {
+            if (!formData[field] && formData[field] !== 0) {
+                const label = field.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').toLowerCase();
+                alert(`Please fill in the ${label} field.`);
+                return;
+            }
+        }
+
+        if (!editData && !coverImage && galleryImages.length === 0) {
+            alert("Please upload at least one image (Cover or Gallery).");
+            return;
+        }
+
         setLoading(true);
         console.log(`[AddAssetModal] Starting ${editData ? 'update' : 'creation'} process for ${assetType}...`);
         console.log(`[AddAssetModal] Initial Form Data:`, formData);
-
-        // Client-side validation logs
-        if (!formData.price && !formData.isPriceOnRequest) {
-            console.error("[AddAssetModal] Validation Error: Price is missing");
-            alert("Please enter a price or select 'Price on Request'");
-            setLoading(false);
-            return;
-        }
 
         // Final size check before sending
         const allFiles = [coverImage, ...galleryImages, ...documents].filter(Boolean);

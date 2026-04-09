@@ -281,18 +281,49 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Comprehensive Validation
+        const requiredCommon = ['title', 'location', 'description'];
+        for (const field of requiredCommon) {
+            if (!formData[field]) {
+                alert(`Please fill in the ${field} field.`);
+                return;
+            }
+        }
+
+        if (!formData.price && !formData.isPriceOnRequest) {
+            alert("Please enter a price or select 'Price on Request'");
+            return;
+        }
+
+        let specFields = [];
+        if (formData.category === 'Car') {
+            specFields = ['horsepower', 'cylinderCapacity', 'topSpeed', 'fuelType', 'transmission', 'driveType', 'bodyType', 'series', 'steering', 'exteriorColor', 'interiorColor', 'interiorMaterial', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'accidentHistory', 'latitude', 'longitude', 'highlight_speed', 'highlight_engine_type', 'highlight_hp'];
+        } else if (formData.category === 'Bike') {
+            specFields = ['engineCapacity', 'maxPower', 'maxTorque', 'fuelType', 'transmission', 'color', 'abs', 'tractionControl', 'ownershipCount', 'accidentHistory', 'latitude', 'longitude', 'highlight_cc', 'highlight_speed', 'highlight_fuel'];
+        } else if (formData.category === 'Yacht') {
+            specFields = ['builder', 'yachtLength', 'yachtBeam', 'yachtDraft', 'yachtEngineType', 'yachtCruisingSpeed', 'yachtTopSpeed', 'yachtUsageHours', 'yachtFuelConsumption', 'yachtGuestCapacity', 'yachtCrewCapacity', 'fuelType', 'yachtHullMaterial', 'interiorMaterial', 'yachtExteriorColor', 'yachtNumberOfOwners', 'latitude', 'longitude', 'highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
+        } else if (formData.category === 'Estate') {
+            specFields = ['propertyType', 'builtUpArea', 'landArea', 'bedrooms', 'bathrooms', 'floors', 'garageCapacity', 'furnishingStatus', 'configuration', 'architectureStyle', 'interiorMaterial', 'interiorColorTheme', 'exteriorFinish', 'climateControl', 'usageStatus', 'country', 'city', 'address', 'areaNeighborhood', 'latitude', 'longitude', 'highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors'];
+        }
+
+        for (const field of specFields) {
+            if (!formData[field] && formData[field] !== 0) {
+                const label = field.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').toLowerCase();
+                alert(`Please fill in the ${label} field.`);
+                return;
+            }
+        }
+
+        if (!editData && images.length === 0) {
+            alert("Please upload at least one image.");
+            return;
+        }
+
         setLoading(true);
 
         console.log(`[CreateListing] Starting ${editData ? 'update' : 'creation'} process...`);
         console.log(`[CreateListing] Initial Form Data:`, formData);
-
-        // Client-side validation logs
-        if (!formData.price && !formData.isPriceOnRequest) {
-            console.error("[CreateListing] Validation Error: Price is missing");
-            alert("Please enter a price or select 'Price on Request'");
-            setLoading(false);
-            return;
-        }
 
         // Final size check before sending
         const oversized = images.find(f => f.size > 5 * 1024 * 1024);
