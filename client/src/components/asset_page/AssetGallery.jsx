@@ -68,7 +68,7 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
     <div className="w-full max-w-[95%] lg:max-w-[90%] mx-auto px-4 py-6">
       {/* Collage Grid Layout */}
       <div className="relative group">
-        <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-3 h-auto md:h-[450px] lg:h-[550px] rounded-2xl overflow-hidden shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-1 h-auto md:h-[450px] lg:h-[550px] rounded-2xl overflow-hidden shadow-sm">
           
           {/* Main Large Image (Cover) */}
           <div 
