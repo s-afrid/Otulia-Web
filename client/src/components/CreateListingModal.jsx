@@ -18,6 +18,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
     const [formData, setFormData] = useState({
         title: editData?.title || '',
+        listingReference: editData?.listingReference || '',
         price: editData?.price || '',
         isPriceOnRequest: editData?.isPriceOnRequest || false,
         category: normalizeCategory(editData),
@@ -261,6 +262,12 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleGenerateId = () => {
+        const prefix = "#NJM";
+        const randomDigits = Math.floor(1000000 + Math.random() * 9000000).toString();
+        setFormData({ ...formData, listingReference: `${prefix}${randomDigits}` });
     };
 
     const handleFileChange = (e, type) => {
@@ -558,6 +565,28 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-4">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-500">Asset ID (Listing Reference)</label>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <input 
+                                type="text" 
+                                name="listingReference" 
+                                value={formData.listingReference} 
+                                placeholder="e.g. #NJM0134201"
+                                className="flex-1 p-3 bg-white rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors font-mono"
+                                onChange={handleInputChange} 
+                            />
+                            <button 
+                                type="button"
+                                onClick={handleGenerateId}
+                                className="px-6 py-3 bg-[#D48D2A] text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-[#b87a24] transition-all whitespace-nowrap"
+                            >
+                                Generate ID
+                            </button>
+                        </div>
+                        <p className="text-[10px] text-gray-400 italic">Leave empty to generate automatically on submission, or click "Generate ID" to see it now.</p>
                     </div>
 
                     <div>

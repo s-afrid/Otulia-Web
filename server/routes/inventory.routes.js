@@ -163,25 +163,53 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             };
         });
 
-        // Top Performing Assets
-        const topAssets = [...detailedItems].sort((a, b) => b.views - a.views).slice(0, 5).map(item => ({
-            name: item.title,
-            category: item.category,
-            views: item.views,
-            leads: activities.filter(a => a.assetId.toString() === item.id.toString()).length,
-            trend: item.views > 50 ? 'Up' : 'Stable', // Simple logic
-            color: item.views > 50 ? 'text-emerald-500' : 'text-gray-400'
-        }));
+        // Map leads to assets for performance tracking
+        const assetLeadsMap = {};
+        assetIds.forEach(id => {
+            const idStr = id.toString();
+            const assetLeadsCount = newLeads.filter(l => l.assetId?.toString() === idStr).length +
+                                    activities.filter(a => a.assetId?.toString() === idStr).length;
+            assetLeadsMap[idStr] = assetLeadsCount;
+        });
 
-        // Needs Attention Assets
-        const bottomAssets = [...detailedItems].sort((a, b) => a.views - b.views).slice(0, 5).map(item => ({
-            name: item.title,
-            category: item.category,
-            views: item.views,
-            leads: activities.filter(a => a.assetId.toString() === item.id.toString()).length,
-            trend: 'Down',
-            color: 'text-orange-500'
-        }));
+        // Top Performing Assets (Most Leads)
+        const topAssets = [...detailedItems]
+            .map(item => ({
+                ...item,
+                leads: assetLeadsMap[item.id.toString()] || 0
+            }))
+            .sort((a, b) => b.leads - a.leads || b.views - a.views)
+            .slice(0, 5)
+            .map(item => ({
+                name: item.title,
+                category: item.category,
+                views: item.views,
+                leads: item.leads,
+                trend: item.leads > 0 ? 'Up' : 'Stable',
+                color: item.leads > 0 ? 'text-emerald-500' : 'text-gray-400'
+            }));
+
+        // Needs Attention Assets (Good Views but Least Leads)
+        // We define "good views" as at least the median views or at least 1 view if all are low
+        const allViews = detailedItems.map(i => i.views).sort((a, b) => a - b);
+        const medianViews = allViews.length > 0 ? allViews[Math.floor(allViews.length / 2)] : 0;
+
+        const bottomAssets = [...detailedItems]
+            .map(item => ({
+                ...item,
+                leads: assetLeadsMap[item.id.toString()] || 0
+            }))
+            .filter(item => item.views >= Math.max(1, medianViews)) // Only consider items that people are actually seeing
+            .sort((a, b) => a.leads - b.leads || b.views - a.views) // Sort by least leads first, then by most views if leads are equal
+            .slice(0, 5)
+            .map(item => ({
+                name: item.title,
+                category: item.category,
+                views: item.views,
+                leads: item.leads,
+                trend: 'Down',
+                color: 'text-orange-500'
+            }));
 
         // Leads by Category
         const categoryCounts = {

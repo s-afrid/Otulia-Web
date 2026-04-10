@@ -1168,4 +1168,37 @@ router.get("/agent/:agentId/:category", async (req, res) => {
   }
 });
 
+/**
+ * SEARCH BY LISTING REFERENCE ID
+ * /api/assets/search/id/:id
+ */
+router.get("/search/id/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Clean ID (handle URL encoding like #)
+    const cleanId = id.startsWith("#") ? id : `#${id}`;
+
+    // Search across all models
+    const [car, bike, yacht, estate, generic] = await Promise.all([
+      CarAsset.findOne({ listingReference: cleanId }),
+      BikeAsset.findOne({ listingReference: cleanId }),
+      YachtAsset.findOne({ listingReference: cleanId }),
+      EstateAsset.findOne({ listingReference: cleanId }),
+      Listing.findOne({ listingReference: cleanId })
+    ]);
+
+    if (car) return res.json({ redirect: `/asset/car/${car._id}`, found: true });
+    if (bike) return res.json({ redirect: `/asset/bike/${bike._id}`, found: true });
+    if (yacht) return res.json({ redirect: `/asset/yacht/${yacht._id}`, found: true });
+    if (estate) return res.json({ redirect: `/asset/estate/${estate._id}`, found: true });
+    if (generic) return res.json({ redirect: `/asset/listing/${generic._id}`, found: true });
+
+    res.json({ found: false, message: "No asset found with this reference ID" });
+  } catch (err) {
+    console.error("Search by ID error:", err);
+    res.status(500).json({ message: "Failed to search by ID" });
+  }
+});
+
 module.exports = router;

@@ -48,6 +48,32 @@ const generateAssetTitle = (reqBody, category, existingTitle) => {
     return generatedTitle.replace(/\s+/g, ' ').trim();
 };
 
+// Helper to generate a unique listing reference
+const generateUniqueListingReference = async (Model) => {
+    const prefix = "#NJM";
+    let isUnique = false;
+    let reference = "";
+
+    while (!isUnique) {
+        // Generate 7 random digits
+        const randomDigits = Math.floor(1000000 + Math.random() * 9000000).toString();
+        reference = `${prefix}${randomDigits}`;
+
+        // Check uniqueness across all asset models
+        const existingCar = await CarAsset.findOne({ listingReference: reference });
+        const existingBike = await BikeAsset.findOne({ listingReference: reference });
+        const existingYacht = await YachtAsset.findOne({ listingReference: reference });
+        const existingEstate = await EstateAsset.findOne({ listingReference: reference });
+        const existingListing = await Listing.findOne({ listingReference: reference });
+
+        if (!existingCar && !existingBike && !existingYacht && !existingEstate && !existingListing) {
+            isUnique = true;
+        }
+    }
+
+    return reference;
+};
+
 // Setup storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -232,11 +258,27 @@ router.post('/create', authMiddleware, upload.fields([
         // --- TITLE GENERATION ---
         title = generateAssetTitle(req.body, category);
 
+        // --- LISTING REFERENCE HANDLING ---
+        let listingReference = req.body.listingReference;
+        if (!listingReference) {
+            listingReference = await generateUniqueListingReference();
+        } else {
+            // Verify uniqueness if provided
+            const existingCar = await CarAsset.findOne({ listingReference });
+            const existingBike = await BikeAsset.findOne({ listingReference });
+            const existingYacht = await YachtAsset.findOne({ listingReference });
+            const existingEstate = await EstateAsset.findOne({ listingReference });
+            const existingListing = await Listing.findOne({ listingReference });
 
+            if (existingCar || existingBike || existingYacht || existingEstate || existingListing) {
+                return res.status(400).json({ error: "Listing Reference ID already exists. Please provide a unique ID or generate one." });
+            }
+        }
 
         // Define Base Data
         const baseData = {
             title,
+            listingReference,
             price: dbPrice,
             isPriceOnRequest: priceOnRequest,
             location,
@@ -699,6 +741,20 @@ router.put('/:id', authMiddleware, upload.fields([
         }
         if (location) listing.location = location;
         if (description) listing.description = description;
+        if (req.body.listingReference && req.body.listingReference !== listing.listingReference) {
+            // Verify uniqueness if changed
+            const reference = req.body.listingReference;
+            const existingCar = await CarAsset.findOne({ listingReference: reference });
+            const existingBike = await BikeAsset.findOne({ listingReference: reference });
+            const existingYacht = await YachtAsset.findOne({ listingReference: reference });
+            const existingEstate = await EstateAsset.findOne({ listingReference: reference });
+            const existingListing = await Listing.findOne({ listingReference: reference });
+
+            if (existingCar || existingBike || existingYacht || existingEstate || existingListing) {
+                return res.status(400).json({ error: "Listing Reference ID already exists. Please provide a unique ID." });
+            }
+            listing.listingReference = reference;
+        }
         if (type) {
             listing.type = type;
             listing.acquisition = (type === 'Rent' ? 'rent' : 'buy');

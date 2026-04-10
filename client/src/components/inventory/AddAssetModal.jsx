@@ -24,6 +24,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const initialFormState = {
         // Common
         make: '', model: '', variant: '', year: new Date().getFullYear(),
+        listingReference: '',
         price: '', isPriceOnRequest: false, type: 'Sale', location: '', description: '',
         videoUrl: '', isPublic: true,
 
@@ -150,6 +151,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 description: editData.description || '',
                 videoUrl: editData.videoUrl || '',
                 isPublic: editData.status === 'Active',
+                listingReference: editData.listingReference || '',
 
                 // Specifics mapping
                 make: editData.brand || spec.brand || '',
@@ -233,6 +235,12 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+    };
+
+    const handleGenerateId = () => {
+        const prefix = "#NJM";
+        const randomDigits = Math.floor(1000000 + Math.random() * 9000000).toString();
+        setFormData(prev => ({ ...prev, listingReference: `${prefix}${randomDigits}` }));
     };
 
     const handleCheckboxToggle = (listName, value) => {
@@ -584,6 +592,29 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     </div>
                                 </div>
                                 <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} required />
+                                
+                                {/* Listing Reference ID Field */}
+                                <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-[#FAFBFB] p-6 rounded-2xl border border-gray-100 flex flex-col sm:flex-row items-end gap-4 mt-2">
+                                    <div className="flex-1 w-full">
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 text-left">Asset ID (Listing Reference)</label>
+                                        <input 
+                                            type="text" 
+                                            name="listingReference" 
+                                            value={formData.listingReference} 
+                                            placeholder="e.g. #NJM0134201"
+                                            className="w-full bg-white border border-gray-200 rounded-xl px-5 py-3.5 text-sm font-mono focus:outline-none focus:border-[#D48D2A] transition-all"
+                                            onChange={handleInputChange} 
+                                        />
+                                    </div>
+                                    <button 
+                                        type="button"
+                                        onClick={handleGenerateId}
+                                        className="px-8 py-3.5 bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-black transition-all whitespace-nowrap"
+                                    >
+                                        Generate ID
+                                    </button>
+                                </div>
+
                                 <LocationInputField label="Location *" name="location" value={formData.location} placeholder="Beverly Hills, CA" onChange={handleInputChange} required />
                             </div>
 

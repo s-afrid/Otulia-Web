@@ -4,6 +4,7 @@ const bikeAssetSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
+    listingReference: { type: String, unique: true, sparse: true, index: true },
 
     price: { type: Number, required: true },
     isPriceOnRequest: { type: Boolean, default: false },

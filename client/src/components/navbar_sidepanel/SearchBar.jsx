@@ -42,10 +42,31 @@ const SearchBar = () => {
     setSuggestions([]);
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    if (query.trim()) {
-      navigate(`/shop?q=${query.trim()}`);
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) return;
+
+    // Check if it's a Listing Reference ID (starts with #NJM or is a 7-10 digit code that might be one)
+    if (trimmedQuery.startsWith('#NJM') || (/^NJM\d{7}$/.test(trimmedQuery)) || (/^#\d{7}$/.test(trimmedQuery))) {
+      try {
+        const idToSearch = trimmedQuery.startsWith('#') ? encodeURIComponent(trimmedQuery) : encodeURIComponent(`#${trimmedQuery}`);
+        const response = await fetch(`/api/assets/search/id/${idToSearch}`);
+        const data = await response.json();
+        
+        if (data.found && data.redirect) {
+          navigate(data.redirect);
+          setQuery('');
+          setSuggestions([]);
+          return;
+        }
+      } catch (error) {
+        console.error("Search by ID failed", error);
+      }
+    }
+
+    if (trimmedQuery) {
+      navigate(`/shop?q=${trimmedQuery}`);
       setSuggestions([]);
     }
   };
