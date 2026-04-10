@@ -247,6 +247,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     };
 
     const handleSubmit = async () => {
+        console.log("[AddAssetModal] handleSubmit called");
+        console.log("[AddAssetModal] editData:", editData);
+        console.log("[AddAssetModal] coverImage:", coverImage);
+        console.log("[AddAssetModal] galleryImages length:", galleryImages.length);
+        console.log("[AddAssetModal] assetType:", assetType);
+        console.log("[AddAssetModal] formData:", formData);
+
         // Comprehensive Validation
         const commonFields = ['model', 'variant', 'year', 'location', 'description'];
         if (assetType === 'Estate') commonFields.push('propertyName');
@@ -524,7 +531,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     value={assetType === 'Estate' ? formData.propertyName : (assetType === 'Yacht' ? formData.yachtName : formData.make)}
                                     placeholder={assetType === 'Estate' ? "e.g., Monaco Penthouse" : "e.g., Ferrari / Azimut"}
                                     onChange={handleInputChange}
-                                    required
+                                    required={false} 
+
                                 />
                                 {assetType === 'Yacht' && (
                                     <InputField 
@@ -533,7 +541,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         value={formData.builder} 
                                         placeholder="e.g., Azimut / Sunseeker" 
                                         onChange={handleInputChange} 
-                                        required
+                                        required={false} 
+
                                     />
                                 )}
                                 <InputField 
@@ -542,7 +551,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     value={formData.model} 
                                     placeholder="e.g., SF90 / Grande 32" 
                                     onChange={handleInputChange} 
-                                    required
+                                    required={false} 
+
                                 />
                                 <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} required />
                                 <InputField label="Year *" name="year" type="number" value={formData.year} onChange={handleInputChange} required />
@@ -553,7 +563,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         name="price"
                                         value={formData.price}
                                         disabled={formData.isPriceOnRequest}
-                                        required={!formData.isPriceOnRequest}
+                                        required={false}
                                         placeholder={formData.isPriceOnRequest ? "Price on Request" : "0.00"}
                                         className="w-full p-3.5 bg-gray-50/50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all disabled:opacity-50 font-medium"
                                         onChange={handleInputChange}
@@ -700,7 +710,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             onChange={handleInputChange}
                                             className="w-full bg-white border border-gray-200 rounded-[1.5rem] p-8 text-sm focus:outline-none focus:border-[#D48D2A] transition-all min-h-[200px] shadow-sm"
                                             placeholder="Provide a detailed description of your asset..."
-                                            required
+                                            required={false} 
+
                                         ></textarea>
                                         <div className="flex justify-between mt-3 px-2">
                                             <p className="text-[10px] text-gray-400 font-bold">Minimum 150 characters</p>
@@ -943,7 +954,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                 </div>
 
                                                 <label className="block">
-                                                    <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'gallery')} required={!editData || existingImages.length === 0} />
+                                                    <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'gallery')} />
                                                     <div className="border-2 border-dashed border-gray-200 bg-white rounded-2xl p-8 cursor-pointer transition-all hover:border-[#D48D2A] text-center">
                                                         <div className="flex flex-col items-center gap-2 text-gray-400">
                                                             <FiUploadCloud className="text-3xl" />

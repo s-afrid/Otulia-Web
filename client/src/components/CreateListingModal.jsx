@@ -281,6 +281,10 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("[CreateListing] handleSubmit called");
+        console.log("[CreateListing] editData:", editData);
+        console.log("[CreateListing] images length:", images.length);
+        console.log("[CreateListing] formData:", formData);
 
         // Comprehensive Validation
         const requiredCommon = ['title', 'location', 'description'];
@@ -501,7 +505,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                 name="price" 
                                 placeholder={formData.isPriceOnRequest ? "Price on Request" : "Enter Price"}
                                 value={formData.price} 
-                                required={!formData.isPriceOnRequest}
+                                required={false}
                                 disabled={formData.isPriceOnRequest}
                                 className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors disabled:opacity-50 disabled:bg-gray-100" 
                                 onChange={handleInputChange} 
@@ -792,7 +796,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                             )}
 
                             <label className="block">
-                                <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'images')} required={!editData || existingImages.length === 0} />
+                                <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, 'images')} />
                                 <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer transition-all hover:border-black hover:bg-white group text-center">
                                     <div className="flex flex-col items-center gap-2 text-gray-400 group-hover:text-black">
                                         <FiUploadCloud className="text-2xl" />
@@ -905,7 +909,8 @@ const LocationInputField = ({ value, onChange }) => {
                 type="text"
                 name="location"
                 value={value}
-                required
+                required={false} 
+
                 onChange={(e) => {
                     onChange(e);
                     setShowSuggestions(true);
