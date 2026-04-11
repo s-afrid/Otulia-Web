@@ -609,13 +609,15 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                 onChange={handleInputChange} 
                                 readOnly={formData.autoGenerateId}
                             />
-                            <button 
-                                type="button"
-                                onClick={handleGenerateId}
-                                className="px-8 py-3.5 bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-black transition-all whitespace-nowrap shadow-lg shadow-black/10"
-                            >
-                                Generate ID
-                            </button>
+                            {formData.autoGenerateId && (
+                                <button 
+                                    type="button"
+                                    onClick={handleGenerateId}
+                                    className="px-8 py-3.5 bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-black transition-all whitespace-nowrap shadow-lg shadow-black/10"
+                                >
+                                    Generate ID
+                                </button>
+                            )}
                         </div>
                     </div>
 
