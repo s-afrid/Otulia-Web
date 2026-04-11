@@ -26,6 +26,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         location: editData?.location || '',
         description: editData?.description || '',
         isPublic: editData?.status === 'Active' ? true : true, // Default to true
+        autoGenerateId: false,
 
         // Car/Bike Common
         make: editData?.brand || (editData?.specification?.brand) || '',
@@ -146,6 +147,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 location: editData.location || '',
                 description: editData.description || '',
                 isPublic: editData.status === 'Active',
+                autoGenerateId: false,
 
                 make: editData.brand || spec.brand || '',
                 model: spec.model || '',
@@ -233,7 +235,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             });
         } else {
             setFormData({
-                title: '', price: '', isPriceOnRequest: false, category: 'Car', type: 'Sale', location: '', description: '', isPublic: true,
+                title: '', price: '', isPriceOnRequest: false, category: 'Car', type: 'Sale', location: '', description: '', isPublic: true, autoGenerateId: false,
                 make: '', model: '', variant: '', year: new Date().getFullYear(),
                 mileage: '', fuelType: '', transmission: '', exteriorColor: '', interiorColor: '',
                 condition: '', accidentHistory: '', horsepower: '', cylinderCapacity: '', topSpeed: '',
@@ -267,7 +269,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     const handleGenerateId = () => {
         const prefix = "#NJM";
         const randomDigits = Math.floor(1000000 + Math.random() * 9000000).toString();
-        setFormData({ ...formData, listingReference: `${prefix}${randomDigits}` });
+        setFormData(prev => ({ ...prev, listingReference: `${prefix}${randomDigits}` }));
     };
 
     const handleFileChange = (e, type) => {
@@ -294,7 +296,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         console.log("[CreateListing] formData:", formData);
 
         // Comprehensive Validation
-        const requiredCommon = ['title', 'location', 'description'];
+        const requiredCommon = ['title', 'location', 'description', 'listingReference'];
         for (const field of requiredCommon) {
             if (!formData[field]) {
                 alert(`Please fill in the ${field} field.`);
@@ -567,26 +569,54 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         </div>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-4">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-500">Asset ID (Listing Reference)</label>
-                        <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="bg-[#FAFBFB] p-6 rounded-2xl border border-gray-100 space-y-4 shadow-sm">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Asset ID (Listing Reference)</label>
+                            <div className="flex items-center gap-6">
+                                <label className="flex items-center gap-2 cursor-pointer group">
+                                    <input 
+                                        type="radio" 
+                                        name="idMode" 
+                                        checked={!formData.autoGenerateId} 
+                                        onChange={() => setFormData(prev => ({ ...prev, autoGenerateId: false }))}
+                                        className="w-4 h-4 border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A] cursor-pointer" 
+                                    />
+                                    <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider group-hover:text-black transition-colors">I have an ID</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer group">
+                                    <input 
+                                        type="radio" 
+                                        name="idMode" 
+                                        checked={formData.autoGenerateId} 
+                                        onChange={() => {
+                                            setFormData(prev => ({ ...prev, autoGenerateId: true }));
+                                            handleGenerateId();
+                                        }}
+                                        className="w-4 h-4 border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A] cursor-pointer" 
+                                    />
+                                    <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider group-hover:text-black transition-colors">Generate ID</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row items-center gap-3">
                             <input 
                                 type="text" 
                                 name="listingReference" 
                                 value={formData.listingReference} 
-                                placeholder="e.g. #NJM0134201"
-                                className="flex-1 p-3 bg-white rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors font-mono"
+                                placeholder="e.g. #NJM8314201"
+                                className="flex-1 p-3.5 bg-white rounded-xl border border-gray-200 focus:outline-none focus:border-[#D48D2A] transition-all font-mono text-sm shadow-sm"
                                 onChange={handleInputChange} 
+                                readOnly={formData.autoGenerateId}
                             />
                             <button 
                                 type="button"
                                 onClick={handleGenerateId}
-                                className="px-6 py-3 bg-[#D48D2A] text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-[#b87a24] transition-all whitespace-nowrap"
+                                className="px-8 py-3.5 bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-black transition-all whitespace-nowrap shadow-lg shadow-black/10"
                             >
                                 Generate ID
                             </button>
                         </div>
-                        <p className="text-[10px] text-gray-400 italic">Leave empty to generate automatically on submission, or click "Generate ID" to see it now.</p>
                     </div>
 
                     <div>

@@ -25,6 +25,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         // Common
         make: '', model: '', variant: '', year: new Date().getFullYear(),
         listingReference: '',
+        autoGenerateId: false,
         price: '', isPriceOnRequest: false, type: 'Sale', location: '', description: '',
         videoUrl: '', isPublic: true,
 
@@ -59,6 +60,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         climateControl: '', usageStatus: '',
         areaNeighborhood: '', latitude: '', longitude: '',
         amenities: [], smartHomeSystems: [], viewTypes: [],
+        autoGenerateId: false,
 
         // Bike Specific
         brand: '', engineCapacity: '', color: '',
@@ -263,7 +265,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         console.log("[AddAssetModal] formData:", formData);
 
         // Comprehensive Validation
-        const commonFields = ['model', 'variant', 'year', 'location', 'description'];
+        const commonFields = ['model', 'variant', 'year', 'location', 'description', 'listingReference'];
         if (assetType === 'Estate') commonFields.push('propertyName');
         else if (assetType === 'Yacht') commonFields.push('yachtName', 'builder');
         else commonFields.push('make');
@@ -594,25 +596,56 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} required />
                                 
                                 {/* Listing Reference ID Field */}
-                                <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-[#FAFBFB] p-6 rounded-2xl border border-gray-100 flex flex-col sm:flex-row items-end gap-4 mt-2">
-                                    <div className="flex-1 w-full">
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 text-left">Asset ID (Listing Reference)</label>
-                                        <input 
-                                            type="text" 
-                                            name="listingReference" 
-                                            value={formData.listingReference} 
-                                            placeholder="e.g. #NJM0134201"
-                                            className="w-full bg-white border border-gray-200 rounded-xl px-5 py-3.5 text-sm font-mono focus:outline-none focus:border-[#D48D2A] transition-all"
-                                            onChange={handleInputChange} 
-                                        />
+                                <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-[#FAFBFB] p-8 rounded-[2rem] border border-gray-100 flex flex-col gap-6 mt-2">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Asset ID (Listing Reference)</label>
+                                        <div className="flex items-center gap-6">
+                                            <label className="flex items-center gap-2 cursor-pointer group">
+                                                <input 
+                                                    type="radio" 
+                                                    name="idMode" 
+                                                    checked={!formData.autoGenerateId} 
+                                                    onChange={() => setFormData(prev => ({ ...prev, autoGenerateId: false }))}
+                                                    className="w-4 h-4 border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A] cursor-pointer" 
+                                                />
+                                                <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider group-hover:text-black transition-colors">I have an ID</span>
+                                            </label>
+                                            <label className="flex items-center gap-2 cursor-pointer group">
+                                                <input 
+                                                    type="radio" 
+                                                    name="idMode" 
+                                                    checked={formData.autoGenerateId} 
+                                                    onChange={() => {
+                                                        setFormData(prev => ({ ...prev, autoGenerateId: true }));
+                                                        handleGenerateId();
+                                                    }}
+                                                    className="w-4 h-4 border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A] cursor-pointer" 
+                                                />
+                                                <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider group-hover:text-black transition-colors">Generate ID</span>
+                                            </label>
+                                        </div>
                                     </div>
-                                    <button 
-                                        type="button"
-                                        onClick={handleGenerateId}
-                                        className="px-8 py-3.5 bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-black transition-all whitespace-nowrap"
-                                    >
-                                        Generate ID
-                                    </button>
+
+                                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                                        <div className="flex-1 w-full">
+                                            <input 
+                                                type="text" 
+                                                name="listingReference" 
+                                                value={formData.listingReference} 
+                                                placeholder="e.g. #NJM8314201"
+                                                className="w-full bg-white border border-gray-200 rounded-xl px-6 py-4 text-sm font-mono focus:outline-none focus:border-[#D48D2A] transition-all shadow-sm"
+                                                onChange={handleInputChange} 
+                                                readOnly={formData.autoGenerateId}
+                                            />
+                                        </div>
+                                        <button 
+                                            type="button"
+                                            onClick={handleGenerateId}
+                                            className="px-10 py-4 bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-black transition-all whitespace-nowrap shadow-lg shadow-black/10"
+                                        >
+                                            Generate ID
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <LocationInputField label="Location *" name="location" value={formData.location} placeholder="Beverly Hills, CA" onChange={handleInputChange} required />
