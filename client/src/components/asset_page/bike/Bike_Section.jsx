@@ -100,6 +100,7 @@ const Bike_Section = () => {
                 description={info.description}
                 image={info.images?.[0]}
                 type="article"
+                productData={info}
             />
             <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Bike" />
 

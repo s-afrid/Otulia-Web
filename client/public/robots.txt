@@ -5,4 +5,4 @@ Disallow: /profile
 Disallow: /cart
 Disallow: /success
 
-Sitemap: https://www.otulia.com/sitemap.xml
+Sitemap: https://otulia.com/sitemap.xml

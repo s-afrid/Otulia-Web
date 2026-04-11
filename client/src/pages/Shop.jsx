@@ -126,7 +126,7 @@ const Shop = () => {
   return (
     <div className='relative w-full overflow-x-hidden pt-24 min-h-screen bg-white'>
       <SEO 
-        title={query ? `Search: ${query}` : `Shop Luxury ${activeCategory !== 'All' ? activeCategory : 'Assets'}`}
+        title={query ? `Search: ${query}` : (activeCategory === 'All' ? 'Buy & Rent Luxury Assets' : `Shop Luxury ${activeCategory}`)}
         description={`Browse our exclusive collection of luxury ${activeCategory.toLowerCase()} for sale on Otulia.`}
       />
       <Navbar hideSearch={true} />

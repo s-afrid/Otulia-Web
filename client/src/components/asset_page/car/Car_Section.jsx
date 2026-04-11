@@ -109,6 +109,7 @@ const Car_Section = () => {
         description={info.description}
         image={info.images?.[0]}
         type="article"
+        productData={info}
       />
 
       {/* Pass images array safely */}
