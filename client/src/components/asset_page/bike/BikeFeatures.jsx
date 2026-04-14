@@ -16,7 +16,7 @@ const BikeFeatures = ({ item }) => {
     if (!value || value === "-" || value === 0 || value === "0") return null;
 
     return (
-      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
+      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat break-inside-avoid">
         <span className="text-gray-500 font-normal text-sm md:text-base">
           {label}
         </span>
@@ -41,10 +41,10 @@ const BikeFeatures = ({ item }) => {
       <h3 className="text-2xl font-bold mb-6">Bike Specifications</h3>
 
       {/* Container - Stacks on mobile, 2 columns on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-0">
+      <div className="columns-1 lg:columns-2 gap-x-16 space-y-0">
         
-        {/* LEFT COLUMN - Identity, Engine & Chassis */}
-        <div className="flex flex-col">
+        {/* Identity, Engine & Chassis */}
+        <div className="flex flex-col break-inside-avoid">
           <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2 mt-4">General Info</h4>
           <SpecRow label="Brand:" value={item?.brand || specs.brand} isLink />
           <SpecRow label="Model:" value={specs.model} isLink />
@@ -57,7 +57,9 @@ const BikeFeatures = ({ item }) => {
             isLink 
             icon={<span className="text-lg">📍</span>}
           />
+        </div>
 
+        <div className="flex flex-col break-inside-avoid">
           <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2 mt-4">Engine & Performance</h4>
           <SpecRow label="Engine Type:" value={specs.engineType} />
           <SpecRow label="Engine Capacity:" value={keySpecs.engineCapacity || specs.engineCapacityCC} />
@@ -69,25 +71,31 @@ const BikeFeatures = ({ item }) => {
           <SpecRow label="Transmission:" value={keySpecs.transmission || specs.transmission} />
         </div>
 
-        {/* RIGHT COLUMN - Safety, Wheels & Condition */}
-        <div className="flex flex-col">
+        {/* Safety, Wheels & Condition */}
+        <div className="flex flex-col break-inside-avoid">
           <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2 mt-4">Chassis & Suspension</h4>
           <SpecRow label="Frame:" value={specs.frame} />
           <SpecRow label="Front Suspension:" value={specs.frontSuspension} />
           <SpecRow label="Front Brake:" value={specs.frontBrake} />
           <SpecRow label="Rear Brake:" value={specs.rearBrake} />
+        </div>
 
+        <div className="flex flex-col break-inside-avoid">
           <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2 mt-4">Safety & Electronics</h4>
           <SpecRow label="ABS:" value={specs.abs} />
           <SpecRow label="Traction Control:" value={specs.tractionControl} />
           <SpecRow label="Ride Modes:" value={specs.rideModes} />
           <SpecRow label="Immobilizer:" value={specs.immobilizer} />
+        </div>
 
+        <div className="flex flex-col break-inside-avoid">
           <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2 mt-4">Wheels & Tyres</h4>
           <SpecRow label="Front Wheel:" value={specs.frontWheel} />
           <SpecRow label="Rear Wheel:" value={specs.rearWheel} />
           <SpecRow label="Tyre Type:" value={specs.tyreType} />
+        </div>
 
+        <div className="flex flex-col break-inside-avoid">
           <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2 mt-4">Condition & Others</h4>
           <SpecRow label="Color:" value={keySpecs.color || specs.color} />
           <SpecRow label="Condition:" value={specs.condition || specs.usageStatus} />

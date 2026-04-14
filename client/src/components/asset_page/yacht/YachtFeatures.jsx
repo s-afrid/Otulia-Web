@@ -16,7 +16,7 @@ const YachtFeatures = ({ item }) => {
     if (!value || value === "-" || value === 0 || value === "0") return null;
 
     return (
-      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
+      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat break-inside-avoid">
         <span className="text-gray-500 font-normal text-sm md:text-base">
           {label}
         </span>
@@ -41,10 +41,10 @@ const YachtFeatures = ({ item }) => {
       <h3 className="text-2xl font-bold mb-6">Yacht Details</h3>
 
       {/* Container - Stacks on mobile, 2 columns on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-0">
+      <div className="columns-1 lg:columns-2 gap-x-16 space-y-0">
         
-        {/* LEFT COLUMN - General Info & Identity */}
-        <div className="flex flex-col">
+        {/* General Info & Identity */}
+        <div className="flex flex-col break-inside-avoid">
           <SpecRow label="Builder:" value={item?.builder || specs.brandBuilder} isLink />
           <SpecRow label="Model:" value={specs.model} isLink />
           <SpecRow label="Yacht Type:" value={specs.yachtType} />
@@ -67,8 +67,8 @@ const YachtFeatures = ({ item }) => {
           <SpecRow label="Fuel Consumption:" value={specs.fuelConsumption} />
         </div>
 
-        {/* RIGHT COLUMN - Technical Specs & Dimensions */}
-        <div className="flex flex-col">
+        {/* Technical Specs & Dimensions */}
+        <div className="flex flex-col break-inside-avoid">
           <SpecRow label="Usage Hours:" value={specs.usageHours} />
           <SpecRow label="Condition:" value={specs.condition} />
           <SpecRow label="Usage Status:" value={specs.usageStatus} />

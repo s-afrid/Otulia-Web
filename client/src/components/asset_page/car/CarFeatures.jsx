@@ -16,7 +16,7 @@ const CarFeatures = ({ item }) => {
     if (!value || value === "-" || value === 0 || value === "0") return null;
 
     return (
-      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
+      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat break-inside-avoid">
         <span className="text-gray-500 font-normal text-sm md:text-base">
           {label}
         </span>
@@ -41,11 +41,10 @@ const CarFeatures = ({ item }) => {
       <h3 className="text-2xl font-bold mb-6">Car Details</h3>
 
       {/* Container - Stacks on mobile, 2 columns on Desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-0">
+      <div className="columns-1 lg:columns-2 gap-x-16 space-y-0">
         
-        {/* LEFT COLUMN - General Info */}
-
-        <div className="flex flex-col">
+        {/* General Info */}
+        <div className="flex flex-col break-inside-avoid">
           {/* Root Level Fields */}
           <SpecRow label="Make:" value={item?.brand} isLink />
           <SpecRow label="Model:" value={specs.model} isLink />
@@ -73,25 +72,25 @@ const CarFeatures = ({ item }) => {
           <SpecRow label="Consumption:" value={specs.consumption} />
         </div>
 
-{/* RIGHT COLUMN - Technical & Condition */}
-<div className="flex flex-col">
-  <SpecRow label="Steering:" value={specs.steering} />
-  <SpecRow label="Transmission:" value={specs.transmission} />
-  <SpecRow label="Drive:" value={specs.drive} />
-  <SpecRow label="Fuel:" value={specs.fuel} />
-  <SpecRow label="Configuration:" value={specs.configuration} />
-  <SpecRow label="Interior material:" value={specs.interiorMaterial} />
-  <SpecRow label="Interior color:" value={specs.interiorColor} />
-  <SpecRow label="Exterior color:" value={specs.exteriorColor} isLink />
-  <SpecRow label="Manufacturer color code:" value={specs.manufacturerColorCode} />
-  <SpecRow label="Matching numbers:" value={specs.matchingNumbers} />
-  <SpecRow label="Condition:" value={specs.condition} />
-  <SpecRow label="New / used:" value={specs.usageStatus} />
-  <SpecRow label="Accident Free:" value={specs.accidentFree} />
-  <SpecRow label="Accident History:" value={specs.accidentHistory} />
-  <SpecRow label="Country of first delivery:" value={specs.countryOfFirstDelivery} />
-  <SpecRow label="Number of vehicle owners:" value={specs.numberOfOwners} />
-</div>
+        {/* Technical & Condition */}
+        <div className="flex flex-col break-inside-avoid">
+          <SpecRow label="Steering:" value={specs.steering} />
+          <SpecRow label="Transmission:" value={specs.transmission} />
+          <SpecRow label="Drive:" value={specs.drive} />
+          <SpecRow label="Fuel:" value={specs.fuel} />
+          <SpecRow label="Configuration:" value={specs.configuration} />
+          <SpecRow label="Interior material:" value={specs.interiorMaterial} />
+          <SpecRow label="Interior color:" value={specs.interiorColor} />
+          <SpecRow label="Exterior color:" value={specs.exteriorColor} isLink />
+          <SpecRow label="Manufacturer color code:" value={specs.manufacturerColorCode} />
+          <SpecRow label="Matching numbers:" value={specs.matchingNumbers} />
+          <SpecRow label="Condition:" value={specs.condition} />
+          <SpecRow label="New / used:" value={specs.usageStatus} />
+          <SpecRow label="Accident Free:" value={specs.accidentFree} />
+          <SpecRow label="Accident History:" value={specs.accidentHistory} />
+          <SpecRow label="Country of first delivery:" value={specs.countryOfFirstDelivery} />
+          <SpecRow label="Number of vehicle owners:" value={specs.numberOfOwners} />
+        </div>
 
       </div>
     </div>
