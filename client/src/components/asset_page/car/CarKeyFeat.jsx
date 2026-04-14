@@ -16,7 +16,7 @@ const CarKeyFeatures = ({ item }) => {
   if (specItems.length === 0) return null;
 
   return (
-    <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-6 bg-white self-center">
+    <div className="w-full px-2 md:px-4 py-6 bg-white self-center">
 
       {/* Changed flex-row to flex-col to stack title on top */}
       <div className="flex flex-col items-center gap-8">

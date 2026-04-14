@@ -71,10 +71,10 @@ const BikeGallery = ({ images, videoUrl }) => {
   }
 
   return (
-    <div className="w-full p-0 bg-white">
+    <div className="w-full px-2 md:px-4 py-4 bg-white">
       
       {/* 1. MAIN MEDIA CONTAINER */}
-      <div className="relative w-full aspect-[16/9] md:aspect-[2/1] bg-gray-100 overflow-hidden mb-4 shadow-sm group">
+      <div className="relative w-full aspect-[16/9] md:aspect-[2/1] bg-gray-100 overflow-hidden mb-4 rounded-lg shadow-sm group">
         {allMedia[activeIndex].type === 'image' ? (
           <img 
             src={optimizeCloudinaryUrl(allMedia[activeIndex].url, 1200)} 

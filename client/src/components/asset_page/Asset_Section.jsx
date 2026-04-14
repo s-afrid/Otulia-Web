@@ -14,7 +14,7 @@ const Asset_Section = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="w-full max-w-[90%] mx-auto px-4 pt-4">
+      <div className="w-full px-2 md:px-4 pt-4">
         <button 
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 px-3 py-1.5 text-black hover:bg-gray-100 rounded-md transition-all font-medium montserrat cursor-pointer w-fit"

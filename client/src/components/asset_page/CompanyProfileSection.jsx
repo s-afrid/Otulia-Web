@@ -11,7 +11,7 @@ const CompanyProfileSection = ({ agent }) => {
   const displayDescription = isExpanded ? description : description.slice(0, 300) + (isLongDescription ? "..." : "");
 
   return (
-    <div className="w-[92%] md:w-[90%] mx-auto py-10 border-t border-gray-100 mt-10">
+    <div className="w-full px-2 md:px-4 py-10 border-t border-gray-100 mt-10">
       <div className="flex flex-col lg:flex-row gap-12 items-start">
         
         {/* Left: Logo */}

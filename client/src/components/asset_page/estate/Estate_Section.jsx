@@ -110,13 +110,13 @@ const Estate_Section = () => {
 
       {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="EstateAsset" /> */}
 
-      <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
+      <div className="w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
 
 
 
       <EstateDetails item={info} />
 
-      <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
+      <div className="w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
 
 
       <EstateKeyFeatures item={info} />
@@ -145,7 +145,7 @@ const Estate_Section = () => {
         </div>
       )}
 
-      <div className="w-[92%] md:w-[90%] h-px bg-gray-300 border-0 self-center my-5"></div>
+      <div className="w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
    
     </div>
   );

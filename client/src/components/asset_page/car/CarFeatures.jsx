@@ -35,7 +35,7 @@ const CarFeatures = ({ item }) => {
 
   return (
 
-    <div className="w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white montserrat">
+    <div className="w-full px-2 md:px-4 py-8 bg-white montserrat">
       
       {/* Title (Optional, matches the form header style) */}
       <h3 className="text-2xl font-bold mb-6">Car Details</h3>
