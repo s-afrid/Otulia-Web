@@ -149,7 +149,7 @@ const YachtDetails = ({ item, modelName = 'CarAsset' }) => {
       onClose={() => setIsSidebarOpen(false)} 
       description={description} 
     />
-    <div className="w-full px-2 md:px-4 py-4 md:py-8 bg-white font-sans">
+    <div className="w-full px-6 md:px-10 py-4 md:py-8 bg-white font-sans">
 
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
 

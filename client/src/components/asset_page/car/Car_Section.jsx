@@ -117,7 +117,7 @@ const Car_Section = () => {
 
       {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="CarAsset" /> */}
 
-      <div className="w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
+      <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
 
       {/* 3. Pass the whole 'item' object (info) to children */}
       {/* This works if your CarDetails expects ({ item }) props */}
@@ -125,7 +125,7 @@ const Car_Section = () => {
       <CarDetails item={info} modelName="CarAsset" />
       </div>
 
-      <div className="w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
+      <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
 
       {/* 4. Pass 'item' to features components */}
       <CarKeyFeatures item={info} />
@@ -154,7 +154,7 @@ const Car_Section = () => {
         </div>
       )}
 
-      <div className="w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
+      <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
       
     </div>
   );

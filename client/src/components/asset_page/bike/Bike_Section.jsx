@@ -106,11 +106,11 @@ const Bike_Section = () => {
 
             {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="BikeAsset" /> */}
 
-            <div className="w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
+            <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
 
             <BikeDetails item={info} modelName="BikeAsset" />
 
-            <div className="w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
+            <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
 
             <BikeKeyFeatures item={info} />
 
@@ -137,7 +137,7 @@ const Bike_Section = () => {
                 </div>
             )}
 
-            <div className="w-[calc(100%-1rem)] md:w-[calc(100%-2rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
+            <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
 
         </div>
     );

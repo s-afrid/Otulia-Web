@@ -37,7 +37,7 @@ const EstateKeyFeatures = ({ item }) => {
   );
 
   return (
-    <div className="w-full px-2 md:px-4 py-8 bg-white font-sans">
+    <div className="w-full px-6 md:px-10 py-8 bg-white font-sans">
       
       {/* Header Box - Centered with Gold Border */}
       <div className="flex justify-center mb-10">

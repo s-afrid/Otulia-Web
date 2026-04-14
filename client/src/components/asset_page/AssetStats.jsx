@@ -96,7 +96,7 @@ const AssetStats = ({ views = 0, likes = 0, assetId, assetType }) => {
     };
 
     return (
-        <div className="w-full px-2 md:px-4 flex items-center gap-6 text-gray-600 mt-2 mb-2">
+        <div className="w-full px-6 md:px-10 flex items-center gap-6 text-gray-600 mt-2 mb-2">
             <div className="flex items-center gap-2">
                 <HiOutlineEye className="text-xl" />
                 <span className="font-medium montserrat text-sm md:text-base">

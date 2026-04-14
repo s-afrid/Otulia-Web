@@ -70,7 +70,7 @@ const EstateGallery = ({ images, videoUrl }) => {
   }
 
   return (
-    <div className="w-full px-2 md:px-4 py-4 bg-white">
+    <div className="w-full px-6 md:px-10 py-4 bg-white">
       
       {/* 1. MAIN MEDIA CONTAINER */}
       <div className="relative w-full aspect-[16/9] md:aspect-[2/1] bg-gray-100 overflow-hidden mb-4 rounded-lg shadow-sm group">

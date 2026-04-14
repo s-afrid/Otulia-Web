@@ -15,7 +15,7 @@ const BikeKeyFeatures = ({ item }) => {
   if (specItems.length === 0) return null;
 
   return (
-    <div className="w-full px-2 md:px-4 py-6 bg-white">
+    <div className="w-full px-6 md:px-10 py-6 bg-white">
       
       {/* Changed layout to flex-col and items-center to stack and center */}
       <div className="flex flex-col items-center gap-8 montserrat">
