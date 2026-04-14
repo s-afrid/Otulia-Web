@@ -450,8 +450,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
     const types = [
         { id: 'Car', label: 'Car', icon: carIcon },
-        { id: 'Yacht', label: 'Yacht', icon: yachtIcon },
         { id: 'Estate', label: 'Real Estate', icon: estateIcon },
+        { id: 'Yacht', label: 'Yacht', icon: yachtIcon },
         { id: 'Bike', label: 'Bike', icon: bikeIcon },
     ];
 
