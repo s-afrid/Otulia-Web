@@ -311,7 +311,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
         let specFields = [];
         if (formData.category === 'Car') {
-            specFields = ['horsepower', 'cylinderCapacity', 'topSpeed', 'fuelType', 'transmission', 'driveType', 'bodyType', 'series', 'steering', 'exteriorColor', 'interiorColor', 'interiorMaterial', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'accidentHistory', 'latitude', 'longitude', 'highlight_speed', 'highlight_engine_type', 'highlight_hp'];
+            specFields = ['horsepower', 'cylinderCapacity', 'fuelType', 'transmission', 'driveType', 'bodyType', 'series', 'steering', 'exteriorColor', 'interiorColor', 'interiorMaterial', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'accidentHistory', 'latitude', 'longitude', 'highlight_engine_type', 'highlight_hp'];
         } else if (formData.category === 'Bike') {
             specFields = ['engineCapacity', 'maxPower', 'maxTorque', 'fuelType', 'transmission', 'color', 'abs', 'tractionControl', 'ownershipCount', 'accidentHistory', 'latitude', 'longitude', 'highlight_cc', 'highlight_speed', 'highlight_fuel'];
         } else if (formData.category === 'Yacht') {
@@ -639,7 +639,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                 <>
                                     <InputField label="Horsepower" name="horsepower" value={formData.horsepower} onChange={handleInputChange} required />
                                     <InputField label="Engine Capacity (L)" name="cylinderCapacity" value={formData.cylinderCapacity} onChange={handleInputChange} required />
-                                    <InputField label="Top Speed" name="topSpeed" value={formData.topSpeed} onChange={handleInputChange} required />
+                                    <InputField label="Top Speed (Optional)" name="topSpeed" value={formData.topSpeed} onChange={handleInputChange} required={false} />
                                     <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} required />
                                     <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} required />
                                     <SelectField label="Drive Type" name="driveType" value={formData.driveType} options={['AWD', 'RWD', 'FWD', '4WD']} onChange={handleInputChange} required />
@@ -785,7 +785,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {formData.category === 'Car' && (
                                 <>
-                                    <InputField label="Top Speed (mph)" name="highlight_speed" value={formData.highlight_speed} placeholder="e.g. 211" onChange={handleInputChange} required />
+                                    <InputField label="Top Speed (mph) (Optional)" name="highlight_speed" value={formData.highlight_speed} placeholder="e.g. 211" onChange={handleInputChange} required={false} />
                                     <InputField label="Engine Type" name="highlight_engine_type" value={formData.highlight_engine_type} placeholder="e.g. V12" onChange={handleInputChange} required />
                                     <InputField label="Horsepower (hp)" name="highlight_hp" value={formData.highlight_hp} placeholder="e.g. 789" onChange={handleInputChange} required />
                                 </>
