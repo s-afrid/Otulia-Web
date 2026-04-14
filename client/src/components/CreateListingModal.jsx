@@ -25,6 +25,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         type: editData?.type || 'Sale',
         location: editData?.location || '',
         description: editData?.description || '',
+        videoUrl: editData?.videoUrl || '',
         isPublic: editData?.status === 'Active' ? true : true, // Default to true
         autoGenerateId: false,
 
@@ -881,6 +882,18 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     ))}
                                 </div>
                             )}
+                        </div>
+
+                        <div className="mt-6">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Video URL (YouTube/Vimeo)</label>
+                            <input 
+                                type="text" 
+                                name="videoUrl" 
+                                value={formData.videoUrl} 
+                                placeholder="https://youtube.com/watch?v=..." 
+                                className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" 
+                                onChange={handleInputChange} 
+                            />
                         </div>
                     </div>
 
