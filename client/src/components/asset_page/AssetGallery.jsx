@@ -9,11 +9,14 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
 
   const hasVideo = videoUrl && (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be'));
   
-  // Combine all media into a single array for easier navigation
-  const allMedia = images.map(img => ({ type: 'image', url: img }));
+  // Combine all media into a single array for easier navigation, prioritizing video
+  const allMedia = [];
   if (hasVideo) {
     allMedia.push({ type: 'video', url: videoUrl });
   }
+  images.forEach(img => {
+    allMedia.push({ type: 'image', url: img });
+  });
 
   const getYouTubeId = (url) => {
     if (!url) return null;

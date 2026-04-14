@@ -16,6 +16,17 @@ const EstateGallery = ({ images, videoUrl }) => {
 
   const videoId = hasVideo ? getYouTubeId(videoUrl) : null;
   
+  // Combine all media for easier indexing, prioritizing video
+  const allMedia = [];
+  if (hasVideo) {
+    allMedia.push({ type: 'video', url: videoUrl, id: videoId });
+  }
+  images.forEach(img => {
+    allMedia.push({ type: 'image', url: img });
+  });
+
+  const totalItems = allMedia.length;
+
   // Handlers for main arrows
   const handlePrev = () => {
     setActiveIndex((prev) => {
@@ -49,8 +60,8 @@ const EstateGallery = ({ images, videoUrl }) => {
     scrollToThumbnail(activeIndex);
   }, [activeIndex]);
 
-  // Safety check: If no images are passed and no video, show a placeholder
-  if ((!images || images.length === 0) && !hasVideo) {
+  // Safety check: If no media, show a placeholder
+  if (totalItems === 0) {
     return (
       <div className="w-full h-64 bg-gray-100 flex items-center justify-center text-gray-400">
         No Media Available
@@ -63,9 +74,9 @@ const EstateGallery = ({ images, videoUrl }) => {
       
       {/* 1. MAIN MEDIA CONTAINER */}
       <div className="relative w-full aspect-[16/9] md:aspect-[2/1] bg-gray-100 overflow-hidden mb-4 rounded-sm shadow-sm group">
-        {activeIndex < images.length ? (
+        {allMedia[activeIndex].type === 'image' ? (
           <img 
-            src={optimizeCloudinaryUrl(images[activeIndex], 1200)} 
+            src={optimizeCloudinaryUrl(allMedia[activeIndex].url, 1200)} 
             alt={`Estate View ${activeIndex + 1}`} 
             fetchpriority="high"
             width="1200"
@@ -76,7 +87,7 @@ const EstateGallery = ({ images, videoUrl }) => {
           <div className="w-full h-full">
             <iframe
               className="w-full h-full"
-              src={`https://www.youtube.com/embed/${videoId}?autoplay=0`}
+              src={`https://www.youtube.com/embed/${allMedia[activeIndex].id}?autoplay=0`}
               title="YouTube video player"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -135,7 +146,7 @@ const EstateGallery = ({ images, videoUrl }) => {
             className="flex gap-2 overflow-x-auto no-scrollbar px-2 w-full scroll-smooth"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} // Hide scrollbar for standard look
           >
-            {images.map((img, idx) => (
+            {allMedia.map((item, idx) => (
               <div 
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
@@ -148,45 +159,35 @@ const EstateGallery = ({ images, videoUrl }) => {
                     ? 'ring-2 ring-black opacity-100 scale-95' 
                     : 'opacity-60 hover:opacity-100'
                   }
+                  ${item.type === 'video' ? 'bg-black' : ''}
                 `}
               >
-                <img 
-                  src={optimizeCloudinaryUrl(img, 150, 150)} 
-                  alt={`Thumbnail ${idx}`} 
-                  loading="lazy"
-                  width="112"
-                  height="80"
-                  className="w-full h-full object-cover"
-                />
+                {item.type === 'image' ? (
+                  <img 
+                    src={optimizeCloudinaryUrl(item.url, 150, 150)} 
+                    alt={`Thumbnail ${idx}`} 
+                    loading="lazy"
+                    width="112"
+                    height="80"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <>
+                    <img 
+                      src={`https://img.youtube.com/vi/${item.id}/mqdefault.jpg`} 
+                      alt="Video Thumbnail" 
+                      loading="lazy"
+                      className="w-full h-full object-cover opacity-50"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" className="w-8 h-8">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
-            {hasVideo && (
-              <div 
-                onClick={() => setActiveIndex(images.length)}
-                className={`
-                  relative cursor-pointer shrink-0 
-                  w-20 h-14 md:w-28 md:h-20 
-                  overflow-hidden rounded-sm bg-black
-                  transition-all duration-300
-                  ${activeIndex === images.length 
-                    ? 'ring-2 ring-black opacity-100 scale-95' 
-                    : 'opacity-60 hover:opacity-100'
-                  }
-                `}
-              >
-                <img 
-                  src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`} 
-                  alt="Video Thumbnail" 
-                  loading="lazy"
-                  className="w-full h-full object-cover opacity-50"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" className="w-8 h-8">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-              </div>
-            )}
           </div>
 
         </div>
