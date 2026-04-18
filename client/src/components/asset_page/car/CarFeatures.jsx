@@ -1,98 +1,131 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FiX } from 'react-icons/fi';
 
 const CarFeatures = ({ item }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // 1. Safe access to nested objects
   const specs = item?.specification || {};
   const keySpecs = item?.keySpecifications || {};
 
-  // 2. Helper to format price
-  const formatPrice = (price) => {
-    if (!price) return "-";
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
-  };
+  // 2. Helper function to check if a value is valid
+  const isValid = (value) => value && value !== "-" && value !== 0 && value !== "0";
 
-  // 3. Helper function to render a single row
-  const SpecRow = ({ label, value, isLink = false, icon = null }) => {
-    if (!value || value === "-" || value === 0 || value === "0") return null;
+  // 3. Collect all valid specifications into an array
+  const allSpecs = [
+    { label: "Make:", value: item?.brand, isLink: true },
+    { label: "Model:", value: specs.model, isLink: true },
+    { label: "Variant:", value: item?.variant || specs.variant },
+    { label: "Series:", value: specs.series },
+    { label: "Body:", value: specs.body },
+    { label: "Year:", value: specs.yearOfConstruction },
+    { label: "Listing Type:", value: item?.type },
+    { 
+      label: "Location:", 
+      value: item?.location, 
+      isLink: true, 
+      icon: <span className="text-lg">📍</span>
+    },
+    { label: "Mileage:", value: specs.mileage },
+    { label: "Top Speed:", value: specs.topSpeed },
+    { label: "Power:", value: specs.power },
+    { label: "Engine Type:", value: specs.engineType || specs.engine },
+    { label: "Cylinder capacity:", value: specs.cylinderCapacity },
+    { label: "CO2 emissions:", value: specs.co2Emission },
+    { label: "Consumption:", value: specs.consumption },
+    { label: "Steering:", value: specs.steering },
+    { label: "Transmission:", value: specs.transmission },
+    { label: "Drive:", value: specs.drive },
+    { label: "Fuel:", value: specs.fuel },
+    { label: "Configuration:", value: specs.configuration },
+    { label: "Interior material:", value: specs.interiorMaterial },
+    { label: "Interior color:", value: specs.interiorColor },
+    { label: "Exterior color:", value: specs.exteriorColor, isLink: true },
+    { label: "Manufacturer color code:", value: specs.manufacturerColorCode },
+    { label: "Matching numbers:", value: specs.matchingNumbers },
+    { label: "Condition:", value: specs.condition },
+    { label: "New / used:", value: specs.usageStatus },
+    { label: "Accident Free:", value: specs.accidentFree },
+    { label: "Accident History:", value: specs.accidentHistory },
+    { label: "Country of first delivery:", value: specs.countryOfFirstDelivery },
+    { label: "Number of vehicle owners:", value: specs.numberOfOwners },
+  ].filter(spec => isValid(spec.value));
 
-    return (
-      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat break-inside-avoid">
-        <span className="text-gray-500 font-normal text-sm md:text-base">
-          {label}
+  // 4. Split allSpecs into two equal columns
+  const midPoint = Math.ceil(allSpecs.length / 2);
+  const leftColumnAll = allSpecs.slice(0, midPoint);
+  const rightColumnAll = allSpecs.slice(midPoint);
+
+  // 5. Limit visible items (e.g., 6 per column)
+  const LIMIT = 6;
+  const leftColumnVisible = leftColumnAll.slice(0, LIMIT);
+  const rightColumnVisible = rightColumnAll.slice(0, LIMIT);
+
+  const SpecRow = ({ label, value, isLink = false, icon = null }) => (
+    <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat break-inside-avoid">
+      <span className="text-gray-500 font-normal text-sm md:text-base">
+        {label}
+      </span>
+      <div className="flex items-center gap-2 text-right">
+        {icon && <span>{icon}</span>}
+        <span
+          className={`text-sm md:text-base font-medium text-black ${isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
+            }`}
+        >
+          {value}
         </span>
-        <div className="flex items-center gap-2 text-right">
-          {icon && <span>{icon}</span>}
-          <span
-            className={`text-sm md:text-base font-medium text-black ${isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
-              }`}
-          >
-            {value}
-          </span>
-        </div>
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
-
     <div className="w-full px-6 md:px-10 py-8 bg-white montserrat">
-      
-      {/* Title (Optional, matches the form header style) */}
-      <h3 className="text-2xl font-bold mb-6">Car Details</h3>
-
-      {/* Container - Stacks on mobile, 2 columns on Desktop */}
-      <div className="columns-1 lg:columns-2 gap-x-16 space-y-0">
-        
-        {/* General Info */}
-        <div className="flex flex-col break-inside-avoid">
-          {/* Root Level Fields */}
-          <SpecRow label="Make:" value={item?.brand} isLink />
-          <SpecRow label="Model:" value={specs.model} isLink />
-          <SpecRow label="Variant:" value={item?.variant || specs.variant} />
-          <SpecRow label="Series:" value={specs.series} />
-          <SpecRow label="Body:" value={specs.body} />
-          <SpecRow label="Year:" value={specs.yearOfConstruction} />
-          <SpecRow label="Listing Type:" value={item?.type} />
-          
-          {/* Location with Icon */}
-          <SpecRow 
-            label="Location:" 
-            value={item?.location} 
-            isLink 
-            icon={<span className="text-lg">📍</span>}
-          />
-          
-          <SpecRow label="Mileage:" value={specs.mileage} />
-
-          <SpecRow label="Top Speed:" value={specs.topSpeed} />
-          <SpecRow label="Power:" value={specs.power} />
-          <SpecRow label="Engine Type:" value={specs.engineType || specs.engine} />
-          <SpecRow label="Cylinder capacity:" value={specs.cylinderCapacity} />
-          <SpecRow label="CO2 emissions:" value={specs.co2Emission} />
-          <SpecRow label="Consumption:" value={specs.consumption} />
-        </div>
-
-        {/* Technical & Condition */}
-        <div className="flex flex-col break-inside-avoid">
-          <SpecRow label="Steering:" value={specs.steering} />
-          <SpecRow label="Transmission:" value={specs.transmission} />
-          <SpecRow label="Drive:" value={specs.drive} />
-          <SpecRow label="Fuel:" value={specs.fuel} />
-          <SpecRow label="Configuration:" value={specs.configuration} />
-          <SpecRow label="Interior material:" value={specs.interiorMaterial} />
-          <SpecRow label="Interior color:" value={specs.interiorColor} />
-          <SpecRow label="Exterior color:" value={specs.exteriorColor} isLink />
-          <SpecRow label="Manufacturer color code:" value={specs.manufacturerColorCode} />
-          <SpecRow label="Matching numbers:" value={specs.matchingNumbers} />
-          <SpecRow label="Condition:" value={specs.condition} />
-          <SpecRow label="New / used:" value={specs.usageStatus} />
-          <SpecRow label="Accident Free:" value={specs.accidentFree} />
-          <SpecRow label="Accident History:" value={specs.accidentHistory} />
-          <SpecRow label="Country of first delivery:" value={specs.countryOfFirstDelivery} />
-          <SpecRow label="Number of vehicle owners:" value={specs.numberOfOwners} />
-        </div>
-
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-2xl font-bold">Car Details</h3>
+        {allSpecs.length > LIMIT * 2 && (
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="text-black font-bold border-b-2 border-black hover:text-gray-600 hover:border-gray-600 transition-all text-sm uppercase tracking-widest"
+          >
+            View All
+          </button>
+        )}
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16">
+        <div className="flex flex-col">
+          {leftColumnVisible.map((spec, idx) => (
+            <SpecRow key={idx} {...spec} />
+          ))}
+        </div>
+        <div className="flex flex-col">
+          {rightColumnVisible.map((spec, idx) => (
+            <SpecRow key={idx} {...spec} />
+          ))}
+        </div>
+      </div>
+
+      {/* VIEW ALL MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <div className="flex justify-between items-center p-6 border-b border-gray-100">
+              <h2 className="text-2xl font-bold playfair-display">All Car Specifications</h2>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <FiX className="text-2xl" />
+              </button>
+            </div>
+
+            <div className="p-8 overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
+                {allSpecs.map((spec, idx) => (
+                  <SpecRow key={idx} {...spec} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

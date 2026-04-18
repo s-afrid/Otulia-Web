@@ -1,94 +1,132 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FiX } from 'react-icons/fi';
 
 const YachtFeatures = ({ item }) => {
-  // 1. Safe access to nested objects based on your Schema
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 1. Safe access to nested objects
   const specs = item?.specification || {};
   const keySpecs = item?.keySpecifications || {};
 
-  // 2. Helper to format price
-  const formatPrice = (price) => {
-    if (!price) return "-";
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
-  };
+  // 2. Helper function to check if a value is valid
+  const isValid = (value) => value && value !== "-" && value !== 0 && value !== "0";
 
-  // 3. Helper function to render a single row
-  const SpecRow = ({ label, value, isLink = false, icon = null }) => {
-    if (!value || value === "-" || value === 0 || value === "0") return null;
+  // 3. Collect all valid specifications into an array
+  const allSpecs = [
+    { label: "Builder:", value: item?.builder || specs.brandBuilder, isLink: true },
+    { label: "Model:", value: specs.model, isLink: true },
+    { label: "Yacht Type:", value: specs.yachtType },
+    { label: "Year:", value: specs.yearOfConstruction },
+    { label: "Listing Type:", value: item?.type },
+    { 
+      label: "Location:", 
+      value: item?.location, 
+      isLink: true, 
+      icon: <span className="text-lg">📍</span>
+    },
+    { label: "Length:", value: keySpecs.length || specs.length },
+    { label: "Beam:", value: keySpecs.beam || specs.beam },
+    { label: "Draft:", value: keySpecs.draft || specs.draft },
+    { label: "Engine / Power:", value: specs.enginePower },
+    { label: "Engine Type:", value: keySpecs.engineType || specs.engineType },
+    { label: "Cruising Speed:", value: keySpecs.cruisingSpeed || specs.cruisingSpeed },
+    { label: "Top Speed:", value: keySpecs.topSpeed || specs.topSpeed },
+    { label: "Fuel Capacity:", value: keySpecs.fuelCapacity },
+    { label: "Fuel Consumption:", value: specs.fuelConsumption },
+    { label: "Usage Hours:", value: specs.usageHours },
+    { label: "Condition:", value: specs.condition },
+    { label: "Usage Status:", value: specs.usageStatus },
+    { label: "Matching Numbers:", value: specs.matchingNumbers },
+    { label: "Country of First Delivery:", value: specs.countryOfFirstDelivery },
+    { label: "Number of Owners:", value: specs.numberOfOwners },
+    { label: "Fuel Type:", value: specs.fuelType },
+    { label: "Transmission:", value: specs.transmission },
+    { label: "Hull Material:", value: specs.hullMaterial },
+    { label: "Configuration:", value: specs.configuration },
+    { label: "Interior Material:", value: specs.interiorMaterial },
+    { label: "Interior Color:", value: specs.interiorColor },
+    { label: "Exterior Color:", value: specs.exteriorColor, isLink: true },
+    { label: "Manufacturer color code:", value: specs.manufacturerColorCode },
+    { label: "Bedrooms / Cabins:", value: keySpecs.bedrooms },
+    { label: "Guest Capacity:", value: keySpecs.guestCapacity || specs.guestCapacity },
+    { label: "Crew Capacity:", value: keySpecs.crewCapacity || specs.crewCapacity },
+  ].filter(spec => isValid(spec.value));
 
-    return (
-      <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat break-inside-avoid">
-        <span className="text-gray-500 font-normal text-sm md:text-base">
-          {label}
-        </span>
-        <div className="flex items-center gap-2 text-right">
-          {icon && <span>{icon}</span>}
-          <span 
-            className={`text-sm md:text-base font-medium text-black ${
-              isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
+  // 4. Split allSpecs into two equal columns
+  const midPoint = Math.ceil(allSpecs.length / 2);
+  const leftColumnAll = allSpecs.slice(0, midPoint);
+  const rightColumnAll = allSpecs.slice(midPoint);
+
+  // 5. Limit visible items (e.g., 6 per column)
+  const LIMIT = 6;
+  const leftColumnVisible = leftColumnAll.slice(0, LIMIT);
+  const rightColumnVisible = rightColumnAll.slice(0, LIMIT);
+
+  const SpecRow = ({ label, value, isLink = false, icon = null }) => (
+    <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat break-inside-avoid">
+      <span className="text-gray-500 font-normal text-sm md:text-base">
+        {label}
+      </span>
+      <div className="flex items-center gap-2 text-right">
+        {icon && <span>{icon}</span>}
+        <span
+          className={`text-sm md:text-base font-medium text-black ${isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
             }`}
-          >
-            {value}
-          </span>
-        </div>
+        >
+          {value}
+        </span>
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <div className="w-full px-6 md:px-10 py-8 bg-white montserrat">
-      
-      {/* Title */}
-      <h3 className="text-2xl font-bold mb-6">Yacht Details</h3>
-
-      {/* Container - Stacks on mobile, 2 columns on Desktop */}
-      <div className="columns-1 lg:columns-2 gap-x-16 space-y-0">
-        
-        {/* General Info & Identity */}
-        <div className="flex flex-col break-inside-avoid">
-          <SpecRow label="Builder:" value={item?.builder || specs.brandBuilder} isLink />
-          <SpecRow label="Model:" value={specs.model} isLink />
-          <SpecRow label="Yacht Type:" value={specs.yachtType} />
-          <SpecRow label="Year:" value={specs.yearOfConstruction} />
-          <SpecRow label="Listing Type:" value={item?.type} />
-          <SpecRow 
-            label="Location:" 
-            value={item?.location} 
-            isLink 
-            icon={<span className="text-lg">📍</span>}
-          />
-          <SpecRow label="Length:" value={keySpecs.length || specs.length} />
-          <SpecRow label="Beam:" value={keySpecs.beam || specs.beam} />
-          <SpecRow label="Draft:" value={keySpecs.draft || specs.draft} />
-          <SpecRow label="Engine / Power:" value={specs.enginePower} />
-          <SpecRow label="Engine Type:" value={keySpecs.engineType || specs.engineType} />
-          <SpecRow label="Cruising Speed:" value={keySpecs.cruisingSpeed || specs.cruisingSpeed} />
-          <SpecRow label="Top Speed:" value={keySpecs.topSpeed || specs.topSpeed} />
-          <SpecRow label="Fuel Capacity:" value={keySpecs.fuelCapacity} />
-          <SpecRow label="Fuel Consumption:" value={specs.fuelConsumption} />
-        </div>
-
-        {/* Technical Specs & Dimensions */}
-        <div className="flex flex-col break-inside-avoid">
-          <SpecRow label="Usage Hours:" value={specs.usageHours} />
-          <SpecRow label="Condition:" value={specs.condition} />
-          <SpecRow label="Usage Status:" value={specs.usageStatus} />
-          <SpecRow label="Matching Numbers:" value={specs.matchingNumbers} />
-          <SpecRow label="Country of First Delivery:" value={specs.countryOfFirstDelivery} />
-          <SpecRow label="Number of Owners:" value={specs.numberOfOwners} />
-          <SpecRow label="Fuel Type:" value={specs.fuelType} />
-          <SpecRow label="Transmission:" value={specs.transmission} />
-          <SpecRow label="Hull Material:" value={specs.hullMaterial} />
-          <SpecRow label="Configuration:" value={specs.configuration} />
-          <SpecRow label="Interior Material:" value={specs.interiorMaterial} />
-          <SpecRow label="Interior Color:" value={specs.interiorColor} />
-          <SpecRow label="Exterior Color:" value={specs.exteriorColor} isLink />
-          <SpecRow label="Manufacturer color code:" value={specs.manufacturerColorCode} />
-          <SpecRow label="Bedrooms / Cabins:" value={keySpecs.bedrooms} />
-          <SpecRow label="Guest Capacity:" value={keySpecs.guestCapacity || specs.guestCapacity} />
-          <SpecRow label="Crew Capacity:" value={keySpecs.crewCapacity || specs.crewCapacity} />
-        </div>
-
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-2xl font-bold">Yacht Details</h3>
+        {allSpecs.length > LIMIT * 2 && (
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="text-black font-bold border-b-2 border-black hover:text-gray-600 hover:border-gray-600 transition-all text-sm uppercase tracking-widest"
+          >
+            View All
+          </button>
+        )}
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16">
+        <div className="flex flex-col">
+          {leftColumnVisible.map((spec, idx) => (
+            <SpecRow key={idx} {...spec} />
+          ))}
+        </div>
+        <div className="flex flex-col">
+          {rightColumnVisible.map((spec, idx) => (
+            <SpecRow key={idx} {...spec} />
+          ))}
+        </div>
+      </div>
+
+      {/* VIEW ALL MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <div className="flex justify-between items-center p-6 border-b border-gray-100">
+              <h2 className="text-2xl font-bold playfair-display">All Yacht Specifications</h2>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <FiX className="text-2xl" />
+              </button>
+            </div>
+
+            <div className="p-8 overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
+                {allSpecs.map((spec, idx) => (
+                  <SpecRow key={idx} {...spec} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
