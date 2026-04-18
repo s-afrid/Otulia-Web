@@ -868,16 +868,27 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                             </label>
 
                             {images.length > 0 && (
-                                <div className="mt-4 space-y-2">
+                                <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
                                     {images.map((file, idx) => (
-                                        <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
-                                            <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0">
-                                                <FiCheckCircle className="text-sm" />
+                                        <div key={idx} className="relative group aspect-video rounded-xl overflow-hidden border border-emerald-100 shadow-sm">
+                                            <img 
+                                                src={URL.createObjectURL(file)} 
+                                                alt={file.name} 
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 text-center">
+                                                <p className="text-[8px] text-white font-bold truncate w-full mb-1">{file.name}</p>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => handleRemoveFile(idx, 'images')}
+                                                    className="bg-white/20 hover:bg-red-500 text-white p-1 rounded-lg transition-all"
+                                                >
+                                                    <FiX className="text-sm" />
+                                                </button>
                                             </div>
-                                            <p className="text-xs font-bold text-gray-700 truncate flex-1">{file.name}</p>
-                                            <button type="button" onClick={() => handleRemoveFile(idx, 'images')} className="p-1 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-all">
-                                                <FiX />
-                                            </button>
+                                            <div className="absolute top-1 right-1 w-4 h-4 rounded bg-emerald-500 flex items-center justify-center text-white shadow-sm">
+                                                <FiCheckCircle className="text-[10px]" />
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -897,8 +908,11 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         </div>
                     </div>
 
-                    <div className="pt-4">
-                        <button disabled={loading} type="submit" className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50">
+                    <div className="pt-4 flex gap-4">
+                        <button type="button" onClick={onClose} className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold uppercase tracking-widest rounded-xl hover:bg-gray-200 transition-all">
+                            Cancel
+                        </button>
+                        <button disabled={loading} type="submit" className="flex-1 py-4 bg-black text-white font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50">
                             {loading ? 'Processing...' : (editData ? 'Update Listing' : 'Submit Listing')}
                         </button>
                     </div>

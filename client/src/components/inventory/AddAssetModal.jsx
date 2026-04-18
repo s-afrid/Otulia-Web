@@ -1029,16 +1029,27 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     </div>
                                                 </label>
 
-                                                <div className="mt-6 grid grid-cols-2 gap-3">
+                                                <div className="mt-6 grid grid-cols-2 gap-4">
                                                     {galleryImages.map((file, idx) => (
-                                                        <div key={idx} className="flex items-center gap-2 bg-white p-2.5 rounded-xl border border-emerald-100 shadow-sm">
-                                                            <div className="w-6 h-6 rounded-md bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                                                        <div key={idx} className="relative group aspect-video rounded-xl overflow-hidden border border-emerald-100 shadow-sm">
+                                                            <img 
+                                                                src={URL.createObjectURL(file)} 
+                                                                alt={file.name} 
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 text-center">
+                                                                <p className="text-[8px] text-white font-bold truncate w-full mb-1">{file.name}</p>
+                                                                <button 
+                                                                    type="button" 
+                                                                    onClick={() => handleRemoveFile(idx, 'gallery')}
+                                                                    className="bg-white/20 hover:bg-red-500 text-white p-1.5 rounded-lg transition-all"
+                                                                >
+                                                                    <FiTrash2 className="text-sm" />
+                                                                </button>
+                                                            </div>
+                                                            <div className="absolute top-2 right-2 w-5 h-5 rounded-md bg-emerald-500 flex items-center justify-center text-white shadow-sm">
                                                                 <FiCheck className="text-[10px]" />
                                                             </div>
-                                                            <p className="text-[10px] font-bold text-gray-700 truncate flex-1">{file.name}</p>
-                                                            <button type="button" onClick={() => handleRemoveFile(idx, 'gallery')} className="text-gray-400 hover:text-red-500 transition-colors">
-                                                                <FiX className="text-sm" />
-                                                            </button>
                                                         </div>
                                                     ))}
                                                 </div>
