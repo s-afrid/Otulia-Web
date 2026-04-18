@@ -305,7 +305,7 @@ const AssetCard = ({ item }) => {
                 <img
                   src={optimizeCloudinaryUrl(item.agent.companyLogo, 300)}
                   alt={item.agent.company}
-                  className="h-8 max-w-[140px] object-contain object-left grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                  className="h-8 max-w-[140px] object-contain object-left"
                 />
               ) : item.agent?.company ? (
                 <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest truncate block">
