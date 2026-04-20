@@ -139,8 +139,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             const keySpec = editData.keySpecifications || {};
 
             // Extract existing highlights if available to populate fields (best effort)
-            // This part is tricky if we don't know which index maps to which field. 
-            // For now, we might leave them empty or user has to re-enter if editing old data that didn't have this structure.
+            const parseNumber = (val) => {
+                if (!val) return '';
+                const match = val.toString().match(/[\d.]+/);
+                return match ? match[0] : val;
+            };
 
             setFormData({
                 ...initialFormState,
@@ -153,6 +156,22 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 videoUrl: editData.videoUrl || '',
                 isPublic: editData.status === 'Active',
                 listingReference: editData.listingReference || '',
+
+                // Fixed Highlights
+                highlight_hp: parseNumber(keySpec.power || spec.power || spec.horsepower || ''),
+                highlight_km: parseNumber(keySpec.mileage || spec.mileage || ''),
+                highlight_cc: parseNumber(keySpec.cylinderCapacity || spec.cylinderCapacity || spec.engineCapacity || ''),
+                highlight_length: parseNumber(keySpec.length || spec.length || ''),
+                highlight_baths: parseNumber(keySpec.bathrooms || spec.bathrooms || ''),
+                highlight_beds: parseNumber(keySpec.bedrooms || spec.bedrooms || ''),
+                highlight_area: parseNumber(keySpec.landArea || spec.landArea || keySpec.builtUpArea || ''),
+                highlight_fuel: parseNumber(keySpec.fuelCapacity || spec.fuelCapacity || ''),
+                highlight_garage: parseNumber(keySpec.garageCapacity || spec.garageCapacity || ''),
+                highlight_built_area: parseNumber(keySpec.builtUpArea || spec.builtUpArea || ''),
+                highlight_floors: parseNumber(keySpec.floors || spec.floors || ''),
+                highlight_speed: parseNumber(keySpec.topSpeed || spec.topSpeed || ''),
+                highlight_engine_type: keySpec.engineType || spec.engineType || '',
+                highlight_engine_hp: parseNumber(keySpec.engineType || spec.engineType || ''),
 
                 // Specifics mapping
                 make: editData.brand || spec.brand || '',

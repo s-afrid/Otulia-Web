@@ -228,11 +228,86 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 smartHomeSystems: editData.smartHomeSystems || [],
                 viewTypes: editData.viewTypes || [],
 
-                highlight_hp: '', highlight_km: '', highlight_cc: '',
-                highlight_length: '', highlight_baths: '', highlight_beds: '',
-                highlight_area: '', highlight_kml: '', highlight_fuel: '',
-                highlight_garage: '', highlight_built_area: '', highlight_floors: '',
-                highlight_engine_hp: '', highlight_speed: '', highlight_engine_type: '',
+                // Fixed Highlights
+                highlight_hp: (() => {
+                    const val = keySpec.power || spec.power || spec.horsepower || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_km: (() => {
+                    const val = keySpec.mileage || spec.mileage || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_cc: (() => {
+                    const val = keySpec.cylinderCapacity || spec.cylinderCapacity || spec.engineCapacity || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_length: (() => {
+                    const val = keySpec.length || spec.length || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_baths: (() => {
+                    const val = keySpec.bathrooms || spec.bathrooms || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_beds: (() => {
+                    const val = keySpec.bedrooms || spec.bedrooms || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_area: (() => {
+                    const val = keySpec.landArea || spec.landArea || keySpec.builtUpArea || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_fuel: (() => {
+                    const val = keySpec.fuelCapacity || spec.fuelCapacity || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_garage: (() => {
+                    const val = keySpec.garageCapacity || spec.garageCapacity || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_built_area: (() => {
+                    const val = keySpec.builtUpArea || spec.builtUpArea || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_floors: (() => {
+                    const val = keySpec.floors || spec.floors || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_speed: (() => {
+                    const val = keySpec.topSpeed || spec.topSpeed || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
+                highlight_engine_type: keySpec.engineType || spec.engineType || '',
+                highlight_engine_hp: (() => {
+                    const val = keySpec.engineType || spec.engineType || '';
+                    if (!val) return '';
+                    const match = val.toString().match(/[\d.]+/);
+                    return match ? match[0] : val;
+                })(),
             });
         } else {
             setFormData({
