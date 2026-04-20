@@ -60,7 +60,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         climateControl: '', usageStatus: '',
         areaNeighborhood: '', latitude: '', longitude: '',
         amenities: [], smartHomeSystems: [], viewTypes: [],
-        autoGenerateId: false,
 
         // Bike Specific
         brand: '', engineCapacity: '', color: '',

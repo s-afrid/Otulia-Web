@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const compression = require("compression");
 const connectDB = require("./db.js");
 const path = require("path");
 
@@ -25,6 +26,7 @@ const contactRoutes = require("./routes/contact.routes.js");
 const sitemapRoutes = require("./routes/sitemap.routes.js");
 
 const app = express();
+app.use(compression());
 
 // Enforce HTTPS and Non-WWW Canonical Domain in Production
 app.use((req, res, next) => {
@@ -64,7 +66,7 @@ app.get("/shipping-info", (req, res) => res.redirect(301, "/shipping"));
 app.get("/return-policy", (req, res) => res.redirect(301, "/returns"));
 
 const PORT = process.env.PORT || 5000;
-app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use(express.static(path.join(__dirname, "../client/dist"), { maxAge: "1y" }));
 
 // routes register
 app.use("/api/auth", authRoutes);
@@ -95,7 +97,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), { maxAge: "1y" }));
 
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));

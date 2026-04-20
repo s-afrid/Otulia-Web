@@ -46,7 +46,12 @@ const BlogSection = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Left: Main Post */}
                 <a href={mainPost.navigate} target='_blank' className="relative group cursor-pointer overflow-hidden aspect-[16/10]">
-                    <img src={mainPost.image} alt={mainPost.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <img 
+                        src={mainPost.image} 
+                        alt={mainPost.title} 
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     <div className="absolute bottom-10 left-10 right-10">
                         <span className="text-white/80 text-sm font-medium mb-4 block tracking-wide uppercase">{mainPost.date}</span>
@@ -64,7 +69,12 @@ const BlogSection = () => {
                     {sidePosts.map((post, idx) => (
                         <a key={idx} href={post.navigate} target='_blank' className="flex gap-6 group cursor-pointer">
                             <div className="w-48 h-32 flex-shrink-0 overflow-hidden">
-                                <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                <img 
+                                    src={post.image} 
+                                    alt={post.title} 
+                                    loading="lazy"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                                />
                             </div>
                             <div className="flex flex-col justify-between">
                                 <span className="text-gray-400 text-xs font-semibold mb-2 uppercase tracking-tight">{post.date}</span>

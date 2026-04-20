@@ -36,6 +36,7 @@ const BrandCarousel = () => {
                         <img 
                             src={brand.logo} 
                             alt={brand.name} 
+                            loading="lazy"
                             className="max-w-full max-h-full object-contain"
                         />
                     </div>
