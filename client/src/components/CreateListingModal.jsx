@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiX, FiUploadCloud, FiCheckCircle, FiChevronDown } from 'react-icons/fi';
+import { FiX, FiUploadCloud, FiCheckCircle, FiChevronDown, FiInfo } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 
 const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
@@ -121,10 +121,30 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     });
 
     const [images, setImages] = useState([]);
+    const [documents, setDocuments] = useState([]);
     const [existingImages, setExistingImages] = useState(editData?.images || []);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [showDraftConfirm, setShowDraftConfirm] = useState(false);
+
+    const handleCloseAttempt = () => {
+        // Check if there is any data to save
+        const hasData = formData.title || formData.price || formData.description || 
+                        formData.make || formData.model || formData.brand || 
+                        formData.propertyName || formData.yachtName ||
+                        images.length > 0;
+        if (!editData && hasData) {
+            setShowDraftConfirm(true);
+        } else {
+            onClose();
+        }
+    };
+
+    const saveAsDraft = async () => {
+        await handleSubmit(null, false);
+    };
 
     const handleRemoveFile = (index, type) => {
+
         if (type === 'images') {
             setImages(images.filter((_, i) => i !== index));
         }
@@ -364,65 +384,61 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (e, draftOverride = null) => {
+        if (e) e.preventDefault();
         console.log("[CreateListing] handleSubmit called");
-        console.log("[CreateListing] editData:", editData);
-        console.log("[CreateListing] images length:", images.length);
-        console.log("[CreateListing] formData:", formData);
+        
+        const isDraft = draftOverride !== null ? draftOverride : !formData.isPublic;
 
-        // Comprehensive Validation
-        const requiredCommon = ['title', 'location', 'description', 'listingReference'];
-        for (const field of requiredCommon) {
-            if (!formData[field]) {
-                alert(`Please fill in the ${field} field.`);
+        // Skip most validations for drafts except for basic identity fields
+        if (!isDraft) {
+            // Comprehensive Validation
+            const requiredCommon = ['title', 'location', 'description', 'listingReference'];
+            for (const field of requiredCommon) {
+                if (!formData[field]) {
+                    alert(`Please fill in the ${field} field.`);
+                    return;
+                }
+            }
+
+            if (!formData.price && !formData.isPriceOnRequest) {
+                alert("Please enter a price or select 'Price on Request'");
                 return;
             }
-        }
 
-        if (!formData.price && !formData.isPriceOnRequest) {
-            alert("Please enter a price or select 'Price on Request'");
-            return;
-        }
+            let specFields = [];
+            if (formData.category === 'Car') {
+                specFields = ['horsepower', 'cylinderCapacity', 'fuelType', 'transmission', 'driveType', 'bodyType', 'series', 'steering', 'exteriorColor', 'interiorColor', 'interiorMaterial', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'accidentHistory', 'latitude', 'longitude', 'highlight_engine_type', 'highlight_hp'];
+            } else if (formData.category === 'Bike') {
+                specFields = ['engineCapacity', 'maxPower', 'maxTorque', 'fuelType', 'transmission', 'color', 'abs', 'tractionControl', 'ownershipCount', 'accidentHistory', 'latitude', 'longitude', 'highlight_cc', 'highlight_speed', 'highlight_fuel'];
+            } else if (formData.category === 'Yacht') {
+                specFields = ['builder', 'yachtLength', 'yachtBeam', 'yachtDraft', 'yachtEngineType', 'yachtCruisingSpeed', 'yachtTopSpeed', 'yachtUsageHours', 'yachtFuelConsumption', 'yachtGuestCapacity', 'yachtCrewCapacity', 'fuelType', 'yachtHullMaterial', 'interiorMaterial', 'yachtExteriorColor', 'yachtNumberOfOwners', 'latitude', 'longitude', 'highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
+            } else if (formData.category === 'Estate') {
+                specFields = ['propertyType', 'builtUpArea', 'landArea', 'bedrooms', 'bathrooms', 'floors', 'garageCapacity', 'furnishingStatus', 'configuration', 'architectureStyle', 'interiorMaterial', 'interiorColorTheme', 'exteriorFinish', 'climateControl', 'usageStatus', 'country', 'city', 'address', 'areaNeighborhood', 'latitude', 'longitude', 'highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors'];
+            }
 
-        let specFields = [];
-        if (formData.category === 'Car') {
-            specFields = ['horsepower', 'cylinderCapacity', 'fuelType', 'transmission', 'driveType', 'bodyType', 'series', 'steering', 'exteriorColor', 'interiorColor', 'interiorMaterial', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'accidentHistory', 'latitude', 'longitude', 'highlight_engine_type', 'highlight_hp'];
-        } else if (formData.category === 'Bike') {
-            specFields = ['engineCapacity', 'maxPower', 'maxTorque', 'fuelType', 'transmission', 'color', 'abs', 'tractionControl', 'ownershipCount', 'accidentHistory', 'latitude', 'longitude', 'highlight_cc', 'highlight_speed', 'highlight_fuel'];
-        } else if (formData.category === 'Yacht') {
-            specFields = ['builder', 'yachtLength', 'yachtBeam', 'yachtDraft', 'yachtEngineType', 'yachtCruisingSpeed', 'yachtTopSpeed', 'yachtUsageHours', 'yachtFuelConsumption', 'yachtGuestCapacity', 'yachtCrewCapacity', 'fuelType', 'yachtHullMaterial', 'interiorMaterial', 'yachtExteriorColor', 'yachtNumberOfOwners', 'latitude', 'longitude', 'highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
-        } else if (formData.category === 'Estate') {
-            specFields = ['propertyType', 'builtUpArea', 'landArea', 'bedrooms', 'bathrooms', 'floors', 'garageCapacity', 'furnishingStatus', 'configuration', 'architectureStyle', 'interiorMaterial', 'interiorColorTheme', 'exteriorFinish', 'climateControl', 'usageStatus', 'country', 'city', 'address', 'areaNeighborhood', 'latitude', 'longitude', 'highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors'];
-        }
+            for (const field of specFields) {
+                if (!formData[field] && formData[field] !== 0) {
+                    const label = field.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').toLowerCase();
+                    alert(`Please fill in the ${label} field.`);
+                    return;
+                }
+            }
 
-        for (const field of specFields) {
-            if (!formData[field] && formData[field] !== 0) {
-                const label = field.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').toLowerCase();
-                alert(`Please fill in the ${label} field.`);
+            if (!editData && images.length === 0) {
+                alert("Please upload at least one image.");
                 return;
             }
-        }
-
-        if (!editData && images.length === 0) {
-            alert("Please upload at least one image.");
-            return;
+        } else {
+            // For drafts, we still need a few things
+            if (!formData.title && !editData) formData.title = 'Draft Asset';
+            if (!formData.listingReference && !editData) handleGenerateId();
         }
 
         setLoading(true);
+        console.log(`[CreateListing] Starting ${editData ? 'update' : 'creation'} process (Draft: ${isDraft})...`);
 
-        console.log(`[CreateListing] Starting ${editData ? 'update' : 'creation'} process...`);
-        console.log(`[CreateListing] Initial Form Data:`, formData);
-
-        // Final size check before sending
-        const oversized = images.find(f => f.size > 5 * 1024 * 1024);
-        if (oversized) {
-            alert(`File "${oversized.name}" exceeds the 5MB limit. Please upload a smaller version.`);
-            setLoading(false);
-            return;
-        }
-
-        // Sync highlights to main fields to ensure backend keySpecs are populated
+        // Sync highlights to main fields
         if (formData.category === 'Car') {
             if (!formData.horsepower) formData.horsepower = formData.highlight_hp;
             if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
@@ -485,8 +501,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             if (['amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
                 data.append(key, JSON.stringify(formData[key]));
             } else if (key.startsWith('highlight_')) {
-                // Skip highlight input fields as they are processed above
                 return;
+            } else if (key === 'isPublic' && draftOverride !== null) {
+                data.append(key, !draftOverride);
             } else {
                 data.append(key, formData[key]);
             }
@@ -495,52 +512,31 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         data.append('highlights', JSON.stringify(constructedHighlights));
         images.forEach(file => data.append('images', file));
 
-        console.log(`[CreateListing] Prepared FormData. Images attached: ${images.length}`);
-
         try {
-            const url = editData
-                ? `/api/listings/${editData._id || editData.id}`
-                : '/api/listings/create';
-
+            const url = editData ? `/api/listings/${editData._id || editData.id}` : '/api/listings/create';
             const method = editData ? 'PUT' : 'POST';
 
-            console.log(`[CreateListing] Sending ${method} request to ${url}...`);
-
             const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
+                method,
+                headers: { 'Authorization': `Bearer ${token}` },
                 body: data
             });
 
             if (response.ok) {
                 const result = await response.json();
-                console.log(`[CreateListing] SUCCESS:`, result);
                 setIsSuccess(true);
                 onCreated(result, !!editData);
-
                 setTimeout(() => {
                     onClose();
                     setIsSuccess(false);
                 }, 1500);
             } else {
                 const errData = await response.json();
-                console.error(`[CreateListing] Server Error (${response.status}):`, errData);
-                
-                let errorMsg = errData.error === 'FILE_TOO_LARGE' 
-                    ? "One or more files exceed the 5MB limit. Please compress your images and try again."
-                    : (errData.error || errData.message || `Failed to ${editData ? 'update' : 'create'} listing`);
-
-                if (errData.error === 'LIMIT_REACHED') {
-                    errorMsg = `Limit Reached: ${errData.message}`;
-                }
-                
-                alert(errorMsg);
+                alert(errData.error || errData.message || "Failed to save asset");
             }
         } catch (error) {
-            console.error(`[CreateListing] Network/Fatal Error:`, error);
-            alert(`Unable to connect to the server. Please check your internet connection and try again.`);
+            console.error(error);
+            alert("Connection error");
         } finally {
             setLoading(false);
         }
@@ -576,7 +572,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
                 <div className="flex justify-between items-center p-6 border-b border-gray-100">
                     <h2 className="text-xl font-bold playfair-display">{editData ? 'Edit Listing' : 'Create New Listing'}</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                    <button onClick={handleCloseAttempt} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <FiX className="text-xl" />
                     </button>
                 </div>
@@ -984,7 +980,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                     </div>
 
                     <div className="pt-4 flex gap-4">
-                        <button type="button" onClick={onClose} className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold uppercase tracking-widest rounded-xl hover:bg-gray-200 transition-all">
+                        <button type="button" onClick={handleCloseAttempt} className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold uppercase tracking-widest rounded-xl hover:bg-gray-200 transition-all">
                             Cancel
                         </button>
                         <button disabled={loading} type="submit" className="flex-1 py-4 bg-black text-white font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50">
@@ -993,6 +989,42 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                     </div>
                 </form>
             </div>
+
+            {/* Draft Confirmation Modal */}
+            {showDraftConfirm && (
+                <div className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mb-6 text-2xl">
+                            <FiInfo />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">Save as Draft?</h3>
+                        <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+                            You have unsaved changes. Would you like to save this asset as a draft so you can finish it later?
+                        </p>
+                        <div className="flex flex-col gap-3">
+                            <button 
+                                onClick={saveAsDraft}
+                                disabled={loading}
+                                className="w-full py-4 bg-black text-white font-bold uppercase text-xs tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50"
+                            >
+                                {loading ? 'Saving Draft...' : 'Yes, Save as Draft'}
+                            </button>
+                            <button 
+                                onClick={onClose}
+                                className="w-full py-4 bg-gray-50 text-red-500 font-bold uppercase text-xs tracking-widest rounded-xl hover:bg-red-50 transition-all border border-gray-100"
+                            >
+                                Discard Changes
+                            </button>
+                            <button 
+                                onClick={() => setShowDraftConfirm(false)}
+                                className="w-full py-4 bg-white text-gray-400 font-bold uppercase text-xs tracking-widest rounded-xl hover:text-gray-600 transition-all"
+                            >
+                                Keep Editing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

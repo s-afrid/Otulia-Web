@@ -72,6 +72,24 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const [existingImages, setExistingImages] = useState([]);
     const [documents, setDocuments] = useState([]); // General docs
     const [isSuccess, setIsSuccess] = useState(false);
+    const [showDraftConfirm, setShowDraftConfirm] = useState(false);
+
+    const handleCloseAttempt = () => {
+        // Only show draft confirmation if we have some data and we're not in edit mode
+        const hasData = formData.price || formData.description || formData.make || formData.model || 
+                        formData.propertyName || formData.yachtName || formData.brand ||
+                        coverImage || galleryImages.length > 0 || documents.length > 0;
+        if (!editData && hasData) {
+            setShowDraftConfirm(true);
+        } else {
+            onClose();
+        }
+    };
+
+    const saveAsDraft = async () => {
+        // We call handleSubmit but with a draft status forced
+        await handleSubmit(null, false);
+    };
 
     const handleRemoveFile = (index, type) => {
         if (type === 'cover') setCoverImage(null);
@@ -274,73 +292,72 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         });
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e, draftOverride = null) => {
         console.log("[AddAssetModal] handleSubmit called");
-        console.log("[AddAssetModal] editData:", editData);
-        console.log("[AddAssetModal] coverImage:", coverImage);
-        console.log("[AddAssetModal] galleryImages length:", galleryImages.length);
-        console.log("[AddAssetModal] assetType:", assetType);
-        console.log("[AddAssetModal] formData:", formData);
-
-        // Comprehensive Validation
-        const commonFields = ['model', 'variant', 'year', 'location', 'description', 'listingReference'];
-        if (assetType === 'Estate') commonFields.push('propertyName');
-        else if (assetType === 'Yacht') commonFields.push('yachtName', 'builder');
-        else commonFields.push('make');
         
-        for (const field of commonFields) {
-            if (!formData[field] && formData[field] !== 0) {
-                const label = field.replace(/([A-Z])/g, ' $1').toLowerCase();
-                alert(`Please fill in the ${label} field.`);
+        const isDraft = draftOverride !== null ? draftOverride : !formData.isPublic;
+
+        // Skip most validations for drafts except for basic identity fields
+        if (!isDraft) {
+            // Comprehensive Validation
+            const commonFields = ['model', 'variant', 'year', 'location', 'description', 'listingReference'];
+            if (assetType === 'Estate') commonFields.push('propertyName');
+            else if (assetType === 'Yacht') commonFields.push('yachtName', 'builder');
+            else commonFields.push('make');
+            
+            for (const field of commonFields) {
+                if (!formData[field] && formData[field] !== 0) {
+                    const label = field.replace(/([A-Z])/g, ' $1').toLowerCase();
+                    alert(`Please fill in the ${label} field.`);
+                    return;
+                }
+            }
+
+            if (!formData.price && !formData.isPriceOnRequest) {
+                alert("Please enter a price or select 'Price on Request'");
                 return;
             }
-        }
 
-        if (!formData.price && !formData.isPriceOnRequest) {
-            alert("Please enter a price or select 'Price on Request'");
-            return;
-        }
+            let specFields = [];
+            if (assetType === 'Car') {
+                specFields = ['horsepower', 'engineType', 'mileage', 'fuelType', 'transmission', 'engine', 'exteriorColor', 'interiorColor', 'condition', 'ownershipCount', 'accidentHistory', 'configuration', 'cylinderCapacity', 'interiorMaterial', 'countryOfFirstDelivery', 'bodyType', 'series', 'steering', 'driveType', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'latitude', 'longitude', 'highlight_engine_type', 'highlight_hp'];
+            } else if (assetType === 'Yacht') {
+                specFields = ['length', 'beam', 'draft', 'engineType', 'cruisingSpeed', 'topSpeed', 'usageHours', 'fuelConsumption', 'guestCapacity', 'crewCapacity', 'fuelType', 'hullMaterial', 'condition', 'interiorMaterial', 'exteriorColor', 'countryOfFirstDelivery', 'numberOfOwners', 'latitude', 'longitude', 'highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
+            } else if (assetType === 'Estate') {
+                specFields = ['propertyType', 'country', 'city', 'areaNeighborhood', 'builtUpArea', 'landArea', 'bedrooms', 'bathrooms', 'floors', 'garageCapacity', 'furnishingStatus', 'latitude', 'longitude', 'highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors', 'architectureStyle', 'configuration', 'condition', 'usageStatus', 'interiorMaterial', 'interiorColorTheme', 'exteriorFinish', 'climateControl'];
+            } else if (assetType === 'Bike') {
+                specFields = ['engineCapacity', 'maxPower', 'maxTorque', 'mileage', 'fuelType', 'transmission', 'color', 'abs', 'tractionControl', 'condition', 'ownershipCount', 'accidentHistory', 'latitude', 'longitude', 'highlight_cc', 'highlight_speed', 'highlight_fuel'];
+            }
 
-        let specFields = [];
-        if (assetType === 'Car') {
-            specFields = ['horsepower', 'engineType', 'mileage', 'fuelType', 'transmission', 'engine', 'exteriorColor', 'interiorColor', 'condition', 'ownershipCount', 'accidentHistory', 'configuration', 'cylinderCapacity', 'interiorMaterial', 'countryOfFirstDelivery', 'bodyType', 'series', 'steering', 'driveType', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'latitude', 'longitude', 'highlight_engine_type', 'highlight_hp'];
-        } else if (assetType === 'Yacht') {
-            specFields = ['length', 'beam', 'draft', 'engineType', 'cruisingSpeed', 'topSpeed', 'usageHours', 'fuelConsumption', 'guestCapacity', 'crewCapacity', 'fuelType', 'hullMaterial', 'condition', 'interiorMaterial', 'exteriorColor', 'countryOfFirstDelivery', 'numberOfOwners', 'latitude', 'longitude', 'highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
-        } else if (assetType === 'Estate') {
-            specFields = ['propertyType', 'country', 'city', 'areaNeighborhood', 'builtUpArea', 'landArea', 'bedrooms', 'bathrooms', 'floors', 'garageCapacity', 'furnishingStatus', 'latitude', 'longitude', 'highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors', 'architectureStyle', 'configuration', 'condition', 'usageStatus', 'interiorMaterial', 'interiorColorTheme', 'exteriorFinish', 'climateControl'];
-        } else if (assetType === 'Bike') {
-            specFields = ['engineCapacity', 'maxPower', 'maxTorque', 'mileage', 'fuelType', 'transmission', 'color', 'abs', 'tractionControl', 'condition', 'ownershipCount', 'accidentHistory', 'latitude', 'longitude', 'highlight_cc', 'highlight_speed', 'highlight_fuel'];
-        }
+            for (const field of specFields) {
+                if (!formData[field] && formData[field] !== 0) {
+                    const label = field.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').toLowerCase();
+                    alert(`Please fill in the ${label} field.`);
+                    return;
+                }
+            }
 
-        for (const field of specFields) {
-            if (!formData[field] && formData[field] !== 0) {
-                const label = field.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').toLowerCase();
-                alert(`Please fill in the ${label} field.`);
+            if (!editData && !coverImage && galleryImages.length === 0) {
+                alert("Please upload at least one image (Cover or Gallery).");
                 return;
             }
-        }
-
-        if (!editData && !coverImage && galleryImages.length === 0) {
-            alert("Please upload at least one image (Cover or Gallery).");
-            return;
+        } else {
+            // For drafts, we still need a few things to avoid backend crashes or bad UX
+            if (!formData.model && !editData) {
+                // If they didn't even put a model, let's at least have a placeholder for the draft title
+                formData.model = 'Draft Asset';
+            }
+            if (!formData.listingReference && !editData) {
+                handleGenerateId();
+            }
         }
 
         setLoading(true);
-        console.log(`[AddAssetModal] Starting ${editData ? 'update' : 'creation'} process for ${assetType}...`);
-        console.log(`[AddAssetModal] Initial Form Data:`, formData);
-
-        // Final size check before sending
-        const allFiles = [coverImage, ...galleryImages, ...documents].filter(Boolean);
-        const oversized = allFiles.find(f => f.size > 5 * 1024 * 1024);
-        if (oversized) {
-            alert(`File "${oversized.name}" exceeds the 5MB limit. Please upload a smaller version.`);
-            setLoading(false);
-            return;
-        }
-
+        console.log(`[AddAssetModal] Starting ${editData ? 'update' : 'creation'} process for ${assetType} (Draft: ${isDraft})...`);
+        
         const data = new FormData();
 
-        // Sync highlights to main fields to ensure backend keySpecs are populated
+        // Sync highlights to main fields
         if (assetType === 'Car') {
             if (!formData.horsepower) formData.horsepower = formData.highlight_hp;
             if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
@@ -364,7 +381,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
         }
 
-        // Construct Fixed Highlights based on Asset Type
+        // Highlights construction
         let constructedHighlights = [];
         if (assetType === 'Car') {
             constructedHighlights = [
@@ -398,15 +415,17 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             ].filter(Boolean);
         }
 
-        // Append to FormData
         Object.keys(formData).forEach(key => {
             if (key.startsWith('highlight_') || ['highlights', 'amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
                 return;
             }
-            data.append(key, formData[key]);
+            if (key === 'isPublic' && draftOverride !== null) {
+                data.append(key, !draftOverride);
+            } else {
+                data.append(key, formData[key]);
+            }
         });
 
-        // Append constructed highlights and arrays
         data.append('highlights', JSON.stringify(constructedHighlights));
         if (formData.amenities) data.append('amenities', JSON.stringify(formData.amenities));
         if (formData.smartHomeSystems) data.append('smartHomeSystems', JSON.stringify(formData.smartHomeSystems));
@@ -417,16 +436,12 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         galleryImages.forEach(img => data.append('images', img));
         documents.forEach(doc => data.append('documents', doc));
 
-        console.log(`[AddAssetModal] Prepared FormData. Images: ${galleryImages.length + (coverImage ? 1 : 0)}, Docs: ${documents.length}`);
-
         try {
             const url = editData
                 ? `/api/listings/${editData.id || editData._id}`
                 : '/api/listings/create';
 
             const method = editData ? 'PUT' : 'POST';
-
-            console.log(`[AddAssetModal] Sending ${method} request to ${url}...`);
 
             const response = await fetch(url, {
                 method: method,
@@ -436,7 +451,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
             if (response.ok) {
                 const result = await response.json();
-                console.log(`[AddAssetModal] SUCCESS:`, result);
                 setIsSuccess(true);
                 onCreated(result, !!editData);
 
@@ -446,21 +460,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 }, 1500);
             } else {
                 const errData = await response.json();
-                console.error(`[AddAssetModal] Server Error (${response.status}):`, errData);
-
-                let errorMsg = errData.error === 'FILE_TOO_LARGE'
-                    ? "One or more files exceed the 10MB limit. Please compress your images and try again."
-                    : (errData.error || errData.message || `Failed to ${editData ? 'update' : 'create'} listing`);
-
-                if (errData.error === 'LIMIT_REACHED') {
-                    errorMsg = `Limit Reached: ${errData.message}`;
-                }
-
-                alert(errorMsg);
+                alert(errData.error || errData.message || "Failed to save asset");
             }
         } catch (error) {
-            console.error(`[AddAssetModal] Network/Fatal Error:`, error);
-            alert(`Unable to connect to the server. Please check your internet connection and try again.`);
+            console.error(error);
+            alert("Connection error");
         } finally {
             setLoading(false);
         }
@@ -503,7 +507,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                             {step === 0 ? 'Select Asset Type' : `${assetType} Details`}
                         </h2>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-50 rounded-full text-gray-400 transition-colors">
+                    <button onClick={handleCloseAttempt} className="p-2 hover:bg-gray-50 rounded-full text-gray-400 transition-colors">
                         <FiX className="text-xl" />
                     </button>
                 </div>
@@ -1096,7 +1100,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 w-full md:w-auto">
-                                    <button onClick={onClose} className="px-8 py-4 bg-gray-50 text-gray-500 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gray-100 transition-all flex-1 md:flex-none">Cancel</button>
+                                    <button onClick={handleCloseAttempt} className="px-8 py-4 bg-gray-50 text-gray-500 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gray-100 transition-all flex-1 md:flex-none">Cancel</button>
                                     <button
                                         disabled={loading}
                                         onClick={handleSubmit}
@@ -1111,6 +1115,42 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                 </div>
             </div>
+
+            {/* Draft Confirmation Modal */}
+            {showDraftConfirm && (
+                <div className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mb-6 text-2xl">
+                            <FiInfo />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">Save as Draft?</h3>
+                        <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+                            You have unsaved changes. Would you like to save this asset as a draft so you can finish it later?
+                        </p>
+                        <div className="flex flex-col gap-3">
+                            <button 
+                                onClick={saveAsDraft}
+                                disabled={loading}
+                                className="w-full py-4 bg-black text-white font-bold uppercase text-xs tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50"
+                            >
+                                {loading ? 'Saving Draft...' : 'Yes, Save as Draft'}
+                            </button>
+                            <button 
+                                onClick={onClose}
+                                className="w-full py-4 bg-gray-50 text-red-500 font-bold uppercase text-xs tracking-widest rounded-xl hover:bg-red-50 transition-all border border-gray-100"
+                            >
+                                Discard Changes
+                            </button>
+                            <button 
+                                onClick={() => setShowDraftConfirm(false)}
+                                className="w-full py-4 bg-white text-gray-400 font-bold uppercase text-xs tracking-widest rounded-xl hover:text-gray-600 transition-all"
+                            >
+                                Keep Editing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style dangerouslySetInnerHTML={{
                 __html: `
