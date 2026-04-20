@@ -13,6 +13,14 @@ import SEO from '../components/SEO';
 const MyListings = () => {
     const { token, isAuthenticated, user, login } = useAuth();
     const navigate = useNavigate();
+
+    // Automatically redirect Premium/Business users to the full Inventory Dashboard
+    useEffect(() => {
+        if (isAuthenticated && (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP')) {
+            navigate('/inventory', { replace: true });
+        }
+    }, [isAuthenticated, user, navigate]);
+
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
