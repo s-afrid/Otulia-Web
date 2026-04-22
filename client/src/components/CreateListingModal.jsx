@@ -144,7 +144,6 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     };
 
     const handleRemoveFile = (index, type) => {
-
         if (type === 'images') {
             setImages(images.filter((_, i) => i !== index));
         }
@@ -154,19 +153,25 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     React.useEffect(() => {
         if (!isOpen) {
             setImages([]);
+            setExistingImages([]);
         }
         if (editData) {
-            setExistingImages(editData.images || []);
+            const images = editData.images || [];
+            setExistingImages(images);
+            setImages(images); // Pre-fill images state with URLs
+            
             const spec = editData.specification || {};
             const keySpec = editData.keySpecifications || {};
             setFormData({
                 title: editData.title || '',
+                listingReference: editData.listingReference || '',
                 price: editData.price || '',
                 isPriceOnRequest: editData.isPriceOnRequest || false,
                 category: normalizeCategory(editData),
                 type: editData.type || 'Sale',
                 location: editData.location || '',
                 description: editData.description || '',
+                videoUrl: editData.videoUrl || '',
                 isPublic: editData.status === 'Active',
                 autoGenerateId: false,
 
@@ -331,7 +336,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             });
         } else {
             setFormData({
-                title: '', price: '', isPriceOnRequest: false, category: 'Car', type: 'Sale', location: '', description: '', isPublic: true, autoGenerateId: false,
+                title: '', listingReference: '', price: '', isPriceOnRequest: false, category: 'Car', type: 'Sale', location: '', description: '', videoUrl: '', isPublic: true, autoGenerateId: false,
                 make: '', model: '', variant: '', year: new Date().getFullYear(),
                 mileage: '', fuelType: '', transmission: '', exteriorColor: '', interiorColor: '',
                 condition: '', accidentHistory: '', horsepower: '', cylinderCapacity: '', topSpeed: '',
@@ -510,7 +515,11 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         });
 
         data.append('highlights', JSON.stringify(constructedHighlights));
-        images.forEach(file => data.append('images', file));
+        images.forEach(img => {
+            if (typeof img !== 'string') {
+                data.append('images', img);
+            }
+        });
 
         try {
             const url = editData ? `/api/listings/${editData._id || editData.id}` : '/api/listings/create';
@@ -943,8 +952,8 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     {images.map((file, idx) => (
                                         <div key={idx} className="relative group aspect-video rounded-xl overflow-hidden border border-emerald-100 shadow-sm">
                                             <img 
-                                                src={URL.createObjectURL(file)} 
-                                                alt={file.name} 
+                                                src={typeof file === 'string' ? file : URL.createObjectURL(file)} 
+                                                alt={file.name || 'image'} 
                                                 className="w-full h-full object-cover"
                                             />
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 text-center">

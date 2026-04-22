@@ -118,7 +118,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             }
         }
 
-        if (type === 'cover') setCoverImage(files[0]);
+        if (type === 'cover') {
+            setCoverImage(files[0]);
+            // If we're uploading a new cover, we treat it as starting fresh for images
+            // But we keep the gallery if it was already there or being uploaded
+        }
         else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 14));
         else if (type === 'document') setDocuments(prev => [...prev, ...files].slice(0, 5));
     };
@@ -141,18 +145,26 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             const cat = editData.category || '';
 
             // Check for exact category match (e.g., 'CarAsset', 'YachtAsset', 'EstateAsset', 'BikeAsset')
-            if (cat === 'CarAsset' || model === 'CarAsset') type = 'Car';
-            else if (cat === 'YachtAsset' || model === 'YachtAsset') type = 'Yacht';
-            else if (cat === 'EstateAsset' || model === 'EstateAsset') type = 'Estate';
-            else if (cat === 'BikeAsset' || model === 'BikeAsset') type = 'Bike';
+            if (cat === 'CarAsset' || model === 'CarAsset' || cat === 'vehicles') type = 'Car';
+            else if (cat === 'YachtAsset' || model === 'YachtAsset' || cat === 'yachts') type = 'Yacht';
+            else if (cat === 'EstateAsset' || model === 'EstateAsset' || cat === 'estates') type = 'Estate';
+            else if (cat === 'BikeAsset' || model === 'BikeAsset' || cat === 'bikes') type = 'Bike';
             // Fallback to string contains check for backwards compatibility
-            else if (model.includes('Car') || cat.includes('car')) type = 'Car';
-            else if (model.includes('Bike') || cat.includes('bike')) type = 'Bike';
-            else if (model.includes('Yacht') || cat.includes('yacht')) type = 'Yacht';
-            else if (model.includes('Estate') || cat.includes('estate')) type = 'Estate';
+            else if (model.toLowerCase().includes('car') || cat.toLowerCase().includes('car')) type = 'Car';
+            else if (model.toLowerCase().includes('bike') || cat.toLowerCase().includes('bike')) type = 'Bike';
+            else if (model.toLowerCase().includes('yacht') || cat.toLowerCase().includes('yacht')) type = 'Yacht';
+            else if (model.toLowerCase().includes('estate') || cat.toLowerCase().includes('estate')) type = 'Estate';
 
             setAssetType(type);
-            setExistingImages(editData.images || []);
+            const images = editData.images || [];
+            setExistingImages(images);
+            if (images.length > 0) {
+                setCoverImage(images[0]);
+                if (images.length > 1) {
+                    setGalleryImages(images.slice(1));
+                }
+            }
+
             const spec = editData.specification || {};
             const keySpec = editData.keySpecifications || {};
 
@@ -196,9 +208,9 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 brand: editData.brand || spec.brand || '',
                 model: spec.model || '',
                 variant: spec.variant || '',
-                year: spec.year || spec.yearOfConstruction || '',
+                year: spec.yearOfConstruction || spec.year || '',
                 mileage: spec.mileage || spec.mileageKM || '',
-                fuelType: spec.fuelType || spec.fuel || '',
+                fuelType: spec.fuel || spec.fuelType || '',
                 transmission: spec.transmission || '',
                 exteriorColor: spec.exteriorColor || '',
                 interiorColor: spec.interiorColor || '',
@@ -213,20 +225,25 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 driveType: spec.drive || spec.driveType || '',
                 bodyType: spec.body || '',
                 series: spec.series || '',
+                engine: spec.engine || '',
                 interiorMaterial: spec.interiorMaterial || '',
                 manufacturerColorCode: spec.manufacturerColorCode || '',
                 matchingNumbers: spec.matchingNumbers || '',
                 accidentFree: spec.accidentFree || '',
                 countryOfFirstDelivery: spec.countryOfFirstDelivery || '',
                 ownershipCount: spec.numberOfOwners || spec.ownershipCount || '1',
+                latitude: spec.latitude || '',
+                longitude: spec.longitude || '',
 
                 // Yacht Specific
-                yachtName: spec.yachtName || editData.title || '',
-                builder: spec.builder || spec.brandBuilder || editData.builder || '',
+                yachtName: editData.title || spec.yachtName || '',
+                builder: editData.builder || spec.brandBuilder || spec.builder || '',
                 length: spec.length || '',
                 beam: spec.beam || '',
                 draft: spec.draft || '',
                 cruisingSpeed: spec.cruisingSpeed || '',
+                usageHours: spec.usageHours || '',
+                fuelConsumption: spec.fuelConsumption || '',
                 guestCapacity: spec.guestCapacity || '',
                 crewCapacity: spec.crewCapacity || '',
                 engineType: spec.engineType || '',
@@ -259,7 +276,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 viewTypes: editData.viewTypes || [],
 
                 // Bike Specific
-                engineCapacity: spec.engineCapacity || spec.engineCapacityCC || '',
+                engineCapacity: spec.engineCapacityCC || spec.engineCapacity || '',
+                maxPower: spec.maxPower || '',
+                maxTorque: spec.maxTorque || '',
+                abs: spec.abs || '',
+                tractionControl: spec.tractionControl || '',
                 color: spec.color || '',
             });
         }
@@ -1002,7 +1023,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     <div className={`border-2 border-dashed rounded-2xl p-8 cursor-pointer transition-all text-center ${coverImage ? 'border-emerald-200 bg-white' : 'border-gray-200 bg-white hover:border-[#D48D2A]'}`}>
                                                         {coverImage ? (
                                                             <div className="relative group">
-                                                                <img src={URL.createObjectURL(coverImage)} className="w-full h-40 object-cover rounded-xl" />
+                                                                <img src={typeof coverImage === 'string' ? coverImage : URL.createObjectURL(coverImage)} className="w-full h-40 object-cover rounded-xl" />
                                                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
                                                                     <p className="text-white text-xs font-bold uppercase tracking-widest">Click to Replace</p>
                                                                 </div>
@@ -1021,7 +1042,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                         <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0">
                                                             <FiCheck />
                                                         </div>
-                                                        <p className="text-xs font-bold text-gray-700 truncate flex-1">{coverImage.name}</p>
+                                                        <p className="text-xs font-bold text-gray-700 truncate flex-1">{coverImage.name || 'Cover Image'}</p>
                                                         <button type="button" onClick={() => handleRemoveFile(null, 'cover')} className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all">
                                                             <FiTrash2 />
                                                         </button>
@@ -1055,12 +1076,12 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     {galleryImages.map((file, idx) => (
                                                         <div key={idx} className="relative group aspect-video rounded-xl overflow-hidden border border-emerald-100 shadow-sm">
                                                             <img 
-                                                                src={URL.createObjectURL(file)} 
-                                                                alt={file.name} 
+                                                                src={typeof file === 'string' ? file : URL.createObjectURL(file)} 
+                                                                alt={file.name || 'Gallery image'} 
                                                                 className="w-full h-full object-cover"
                                                             />
                                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 text-center">
-                                                                <p className="text-[8px] text-white font-bold truncate w-full mb-1">{file.name}</p>
+                                                                <p className="text-[8px] text-white font-bold truncate w-full mb-1">{file.name || 'Gallery image'}</p>
                                                                 <button 
                                                                     type="button" 
                                                                     onClick={() => handleRemoveFile(idx, 'gallery')}
