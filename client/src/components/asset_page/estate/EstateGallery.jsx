@@ -5,15 +5,6 @@ const EstateGallery = ({ images, videoUrl }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollContainerRef = useRef(null);
 
-  const hasVideo = videoUrl && (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be'));
-  const totalItems = images.length + (hasVideo ? 1 : 0);
-
-  const getYouTubeId = (url) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
-
   const videoId = hasVideo ? getYouTubeId(videoUrl) : null;
   
   // Combine all media for easier indexing, prioritizing video
@@ -87,7 +78,7 @@ const EstateGallery = ({ images, videoUrl }) => {
           <div className="w-full h-full">
             <iframe
               className="w-full h-full"
-              src={`https://www.youtube.com/embed/${allMedia[activeIndex].id}?autoplay=0`}
+              src={`https://www.youtube.com/embed/${allMedia[activeIndex].id}?autoplay=1&mute=1`}
               title="YouTube video player"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

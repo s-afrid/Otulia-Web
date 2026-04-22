@@ -88,7 +88,7 @@ const BikeGallery = ({ images, videoUrl }) => {
           <div className="w-full h-full">
             <iframe
               className="w-full h-full"
-              src={`https://www.youtube.com/embed/${allMedia[activeIndex].id}?autoplay=0`}
+              src={`https://www.youtube.com/embed/${allMedia[activeIndex].id}?autoplay=1&mute=1`}
               title="YouTube video player"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
