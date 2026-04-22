@@ -80,16 +80,15 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
           >
             {allMedia[0].type === 'video' ? (
               <div className="w-full h-full flex items-center justify-center bg-black">
-                <img 
-                  src={`https://img.youtube.com/vi/${getYouTubeId(allMedia[0].url)}/maxresdefault.jpg`}
-                  className="w-full h-full object-cover opacity-70"
-                  alt="Video cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30 group-hover:scale-110 transition-transform duration-300">
-                    <div className="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-white border-b-[12px] border-b-transparent ml-2" />
-                  </div>
-                </div>
+                <iframe
+                  className="w-full h-full pointer-events-none"
+                  src={`https://www.youtube.com/embed/${getYouTubeId(allMedia[0].url)}?autoplay=1&mute=1&controls=0&loop=1&playlist=${getYouTubeId(allMedia[0].url)}&rel=0`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                ></iframe>
+                {/* Overlay to catch clicks and open lightbox */}
+                <div className="absolute inset-0 bg-transparent" />
               </div>
             ) : (
               <img 
