@@ -874,6 +874,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             {/* Render Fixed Highlights based on Asset Type */}
                                             {assetType === 'Car' && (
                                                 <>
+                                                    <InputField label="Top Speed (mph)" name="highlight_speed" value={formData.highlight_speed || ''} placeholder="e.g. 211" onChange={handleInputChange} required={false} />
                                                     <InputField label="Engine Type *" name="highlight_engine_type" value={formData.highlight_engine_type || ''} placeholder="e.g. V12" onChange={handleInputChange} required />
                                                     <InputField label="Horsepower (hp) *" name="highlight_hp" value={formData.highlight_hp || ''} placeholder="e.g. 789" onChange={handleInputChange} required />
                                                 </>
