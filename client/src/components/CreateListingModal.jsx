@@ -425,7 +425,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             // Key Highlights Validation
             let highlightFields = [];
             if (formData.category === 'Car') {
-                highlightFields = ['highlight_engine_type', 'highlight_hp'];
+                highlightFields = ['highlight_engine_type', 'highlight_hp', 'highlight_speed'];
             } else if (formData.category === 'Bike') {
                 highlightFields = ['highlight_cc', 'highlight_speed', 'highlight_fuel'];
             } else if (formData.category === 'Yacht') {
@@ -628,7 +628,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                             </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Title</label>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{formData.category === 'Estate' ? 'Title *' : 'Title'}</label>
                             <input type="text" name="title" value={formData.title} required={formData.category === 'Estate'} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
                         </div>
                     </div>
@@ -878,7 +878,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {formData.category === 'Car' && (
                                 <>
-                                    <InputField label="Top Speed (mph) (Optional)" name="highlight_speed" value={formData.highlight_speed} placeholder="e.g. 211" onChange={handleInputChange} required={false} />
+                                    <InputField label="Top Speed (mph) *" name="highlight_speed" value={formData.highlight_speed} placeholder="e.g. 211" onChange={handleInputChange} required={true} />
                                     <InputField label="Engine Type" name="highlight_engine_type" value={formData.highlight_engine_type} placeholder="e.g. V12" onChange={handleInputChange} required />
                                     <InputField label="Horsepower (hp)" name="highlight_hp" value={formData.highlight_hp} placeholder="e.g. 789" onChange={handleInputChange} required />
                                 </>

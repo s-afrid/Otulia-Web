@@ -348,7 +348,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             // Key Highlights Validation
             let highlightFields = [];
             if (assetType === 'Car') {
-                highlightFields = ['highlight_engine_type', 'highlight_hp'];
+                highlightFields = ['highlight_engine_type', 'highlight_hp', 'highlight_speed'];
             } else if (assetType === 'Yacht') {
                 highlightFields = ['highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
             } else if (assetType === 'Estate') {
@@ -593,7 +593,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     value={assetType === 'Estate' ? formData.propertyName : (assetType === 'Yacht' ? formData.yachtName : formData.make)}
                                     placeholder={assetType === 'Estate' ? "e.g., Monaco Penthouse" : "e.g., Ferrari / Azimut"}
                                     onChange={handleInputChange}
-                                    required={false} 
+                                    required={assetType === 'Car'} 
 
                                 />
                                 {assetType === 'Yacht' && (
@@ -607,17 +607,21 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                                     />
                                 )}
-                                <InputField 
-                                    label="Model *" 
-                                    name="model" 
-                                    value={formData.model} 
-                                    placeholder="e.g., SF90 / Grande 32" 
-                                    onChange={handleInputChange} 
-                                    required={false} 
+                                {assetType !== 'Estate' && (
+                                    <>
+                                        <InputField 
+                                            label="Model *" 
+                                            name="model" 
+                                            value={formData.model} 
+                                            placeholder="e.g., SF90 / Grande 32" 
+                                            onChange={handleInputChange} 
+                                            required={assetType === 'Car'} 
 
-                                />
-                                <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} required />
-                                <InputField label="Year *" name="year" type="number" value={formData.year} onChange={handleInputChange} required />
+                                        />
+                                        <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} required={false} />
+                                        <InputField label="Year *" name="year" type="number" value={formData.year} onChange={handleInputChange} required={false} />
+                                    </>
+                                )}
                                 <div className="flex flex-col gap-3">
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Price ($)</label>
                                     <input
@@ -710,7 +714,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 {assetType === 'Car' && (
                                     <>
                                         <InputField label="Horsepower" name="horsepower" value={formData.horsepower} placeholder="e.g., 789" onChange={handleInputChange} required={false} />
-                                        <InputField label="Top Speed (Optional)" name="topSpeed" value={formData.topSpeed} placeholder="e.g., 211" onChange={handleInputChange} required={false} />
+                                        <InputField label="Top Speed" name="topSpeed" value={formData.topSpeed} placeholder="e.g., 211" onChange={handleInputChange} required={false} />
                                         <InputField label="Engine Type" name="engineType" value={formData.engineType} placeholder="e.g., V12" onChange={handleInputChange} required={false} />
                                         <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} placeholder="1500" onChange={handleInputChange} required={false} />
                                         <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} required={false} />
@@ -850,7 +854,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             {/* Render Fixed Highlights based on Asset Type */}
                                             {assetType === 'Car' && (
                                                 <>
-                                                    <InputField label="Top Speed (mph) (Optional)" name="highlight_speed" value={formData.highlight_speed || ''} placeholder="e.g. 211" onChange={handleInputChange} required={false} />
+                                                    <InputField label="Top Speed (mph) *" name="highlight_speed" value={formData.highlight_speed || ''} placeholder="e.g. 211" onChange={handleInputChange} required={true} />
                                                     <InputField label="Engine Type *" name="highlight_engine_type" value={formData.highlight_engine_type || ''} placeholder="e.g. V12" onChange={handleInputChange} required />
                                                     <InputField label="Horsepower (hp) *" name="highlight_hp" value={formData.highlight_hp || ''} placeholder="e.g. 789" onChange={handleInputChange} required />
                                                 </>
