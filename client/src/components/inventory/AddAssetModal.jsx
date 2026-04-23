@@ -321,12 +321,18 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         // Skip most validations for drafts except for basic identity fields
         if (!isDraft) {
             // Comprehensive Validation
-            const commonFields = ['model', 'variant', 'year', 'location', 'description', 'listingReference'];
-            if (assetType === 'Estate') commonFields.push('propertyName');
-            else if (assetType === 'Yacht') commonFields.push('yachtName', 'builder');
-            else commonFields.push('make');
+            // Mandatory: NJM IDS, Photos, Key Highlights, Location, Title (for real estate), brand/model (for cars), Lat/Long, Price, Description
+            const requiredCommon = ['location', 'description', 'listingReference', 'latitude', 'longitude'];
             
-            for (const field of commonFields) {
+            if (assetType === 'Estate') {
+                requiredCommon.push('propertyName');
+            }
+
+            if (assetType === 'Car') {
+                requiredCommon.push('make', 'model');
+            }
+
+            for (const field of requiredCommon) {
                 if (!formData[field] && formData[field] !== 0) {
                     const label = field.replace(/([A-Z])/g, ' $1').toLowerCase();
                     alert(`Please fill in the ${label} field.`);
@@ -339,21 +345,22 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 return;
             }
 
-            let specFields = [];
+            // Key Highlights Validation
+            let highlightFields = [];
             if (assetType === 'Car') {
-                specFields = ['horsepower', 'engineType', 'mileage', 'fuelType', 'transmission', 'engine', 'exteriorColor', 'interiorColor', 'condition', 'ownershipCount', 'accidentHistory', 'configuration', 'cylinderCapacity', 'interiorMaterial', 'countryOfFirstDelivery', 'bodyType', 'series', 'steering', 'driveType', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'latitude', 'longitude', 'highlight_engine_type', 'highlight_hp'];
+                highlightFields = ['highlight_engine_type', 'highlight_hp'];
             } else if (assetType === 'Yacht') {
-                specFields = ['length', 'beam', 'draft', 'engineType', 'cruisingSpeed', 'topSpeed', 'usageHours', 'fuelConsumption', 'guestCapacity', 'crewCapacity', 'fuelType', 'hullMaterial', 'condition', 'interiorMaterial', 'exteriorColor', 'countryOfFirstDelivery', 'numberOfOwners', 'latitude', 'longitude', 'highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
+                highlightFields = ['highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
             } else if (assetType === 'Estate') {
-                specFields = ['propertyType', 'country', 'city', 'areaNeighborhood', 'builtUpArea', 'landArea', 'bedrooms', 'bathrooms', 'floors', 'garageCapacity', 'furnishingStatus', 'latitude', 'longitude', 'highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors', 'architectureStyle', 'configuration', 'condition', 'usageStatus', 'interiorMaterial', 'interiorColorTheme', 'exteriorFinish', 'climateControl'];
+                highlightFields = ['highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors'];
             } else if (assetType === 'Bike') {
-                specFields = ['engineCapacity', 'maxPower', 'maxTorque', 'mileage', 'fuelType', 'transmission', 'color', 'abs', 'tractionControl', 'condition', 'ownershipCount', 'accidentHistory', 'latitude', 'longitude', 'highlight_cc', 'highlight_speed', 'highlight_fuel'];
+                highlightFields = ['highlight_cc', 'highlight_speed', 'highlight_fuel'];
             }
 
-            for (const field of specFields) {
+            for (const field of highlightFields) {
                 if (!formData[field] && formData[field] !== 0) {
                     const label = field.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').toLowerCase();
-                    alert(`Please fill in the ${label} field.`);
+                    alert(`Please fill in the ${label} field (Key Highlight).`);
                     return;
                 }
             }
@@ -364,9 +371,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             }
         } else {
             // For drafts, we still need a few things to avoid backend crashes or bad UX
-            if (!formData.model && !editData) {
-                // If they didn't even put a model, let's at least have a placeholder for the draft title
+            if (!formData.model && !editData && assetType === 'Car') {
                 formData.model = 'Draft Asset';
+            }
+            if (!formData.propertyName && !editData && assetType === 'Estate') {
+                formData.propertyName = 'Draft Asset';
             }
             if (!formData.listingReference && !editData) {
                 handleGenerateId();
@@ -700,29 +709,29 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8 pt-8">
                                 {assetType === 'Car' && (
                                     <>
-                                        <InputField label="Horsepower" name="horsepower" value={formData.horsepower} placeholder="e.g., 789" onChange={handleInputChange} required />
+                                        <InputField label="Horsepower" name="horsepower" value={formData.horsepower} placeholder="e.g., 789" onChange={handleInputChange} required={false} />
                                         <InputField label="Top Speed (Optional)" name="topSpeed" value={formData.topSpeed} placeholder="e.g., 211" onChange={handleInputChange} required={false} />
-                                        <InputField label="Engine Type" name="engineType" value={formData.engineType} placeholder="e.g., V12" onChange={handleInputChange} required />
-                                        <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} placeholder="1500" onChange={handleInputChange} required />
-                                        <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} required />
-                                        <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} required />
-                                        <InputField label="Engine" name="engine" value={formData.engine} placeholder="e.g., 4.0L V8 Twin-Turbo" onChange={handleInputChange} required />
-                                        <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} placeholder="e.g., Rosso Corsa" onChange={handleInputChange} required />
-                                        <InputField label="Interior Color" name="interiorColor" value={formData.interiorColor} placeholder="e.g., Black Leather" onChange={handleInputChange} required />
-                                        <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic', 'Restored']} onChange={handleInputChange} required />
-                                        <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} required />
-                                        <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} required />
-                                        <InputField label="Configuration" name="configuration" value={formData.configuration} placeholder="e.g., LHD" onChange={handleInputChange} required />
-                                        <InputField label="Cylinder Capacity" name="cylinderCapacity" type="number" value={formData.cylinderCapacity} placeholder="e.g., 3990" onChange={handleInputChange} required />
-                                        <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} placeholder="e.g., Alcantara" onChange={handleInputChange} required />
-                                        <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} placeholder="e.g., Germany" onChange={handleInputChange} required />
-                                        <InputField label="Body Type" name="bodyType" value={formData.bodyType} placeholder="e.g., Coupe" onChange={handleInputChange} required />
-                                        <InputField label="Series" name="series" value={formData.series} placeholder="e.g., SF90" onChange={handleInputChange} required />
-                                        <SelectField label="Steering" name="steering" value={formData.steering} options={['Left Hand Drive', 'Right Hand Drive']} onChange={handleInputChange} required />
-                                        <SelectField label="Drive Type" name="driveType" value={formData.driveType} options={['AWD', 'RWD', 'FWD', '4WD']} onChange={handleInputChange} required />
-                                        <InputField label="Manufacturer Color Code" name="manufacturerColorCode" value={formData.manufacturerColorCode} placeholder="e.g., FER 322" onChange={handleInputChange} required />
-                                        <SelectField label="Matching Numbers" name="matchingNumbers" value={formData.matchingNumbers} options={['Yes', 'No']} onChange={handleInputChange} required />
-                                        <SelectField label="Accident Free" name="accidentFree" value={formData.accidentFree} options={['Yes', 'No']} onChange={handleInputChange} required />
+                                        <InputField label="Engine Type" name="engineType" value={formData.engineType} placeholder="e.g., V12" onChange={handleInputChange} required={false} />
+                                        <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} placeholder="1500" onChange={handleInputChange} required={false} />
+                                        <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} required={false} />
+                                        <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} required={false} />
+                                        <InputField label="Engine" name="engine" value={formData.engine} placeholder="e.g., 4.0L V8 Twin-Turbo" onChange={handleInputChange} required={false} />
+                                        <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} placeholder="e.g., Rosso Corsa" onChange={handleInputChange} required={false} />
+                                        <InputField label="Interior Color" name="interiorColor" value={formData.interiorColor} placeholder="e.g., Black Leather" onChange={handleInputChange} required={false} />
+                                        <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic', 'Restored']} onChange={handleInputChange} required={false} />
+                                        <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} required={false} />
+                                        <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} required={false} />
+                                        <InputField label="Configuration" name="configuration" value={formData.configuration} placeholder="e.g., LHD" onChange={handleInputChange} required={false} />
+                                        <InputField label="Cylinder Capacity" name="cylinderCapacity" type="number" value={formData.cylinderCapacity} placeholder="e.g., 3990" onChange={handleInputChange} required={false} />
+                                        <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} placeholder="e.g., Alcantara" onChange={handleInputChange} required={false} />
+                                        <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} placeholder="e.g., Germany" onChange={handleInputChange} required={false} />
+                                        <InputField label="Body Type" name="bodyType" value={formData.bodyType} placeholder="e.g., Coupe" onChange={handleInputChange} required={false} />
+                                        <InputField label="Series" name="series" value={formData.series} placeholder="e.g., SF90" onChange={handleInputChange} required={false} />
+                                        <SelectField label="Steering" name="steering" value={formData.steering} options={['Left Hand Drive', 'Right Hand Drive']} onChange={handleInputChange} required={false} />
+                                        <SelectField label="Drive Type" name="driveType" value={formData.driveType} options={['AWD', 'RWD', 'FWD', '4WD']} onChange={handleInputChange} required={false} />
+                                        <InputField label="Manufacturer Color Code" name="manufacturerColorCode" value={formData.manufacturerColorCode} placeholder="e.g., FER 322" onChange={handleInputChange} required={false} />
+                                        <SelectField label="Matching Numbers" name="matchingNumbers" value={formData.matchingNumbers} options={['Yes', 'No']} onChange={handleInputChange} required={false} />
+                                        <SelectField label="Accident Free" name="accidentFree" value={formData.accidentFree} options={['Yes', 'No']} onChange={handleInputChange} required={false} />
                                         <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} required />
                                         <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} required />
                                     </>

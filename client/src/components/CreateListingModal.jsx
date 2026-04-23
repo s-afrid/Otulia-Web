@@ -398,10 +398,21 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         // Skip most validations for drafts except for basic identity fields
         if (!isDraft) {
             // Comprehensive Validation
-            const requiredCommon = ['title', 'location', 'description', 'listingReference'];
+            // Mandatory: NJM IDS, Photos, Key Highlights, Location, Title (for real estate), brand/model (for cars), Lat/Long, Price, Description
+            const requiredCommon = ['location', 'description', 'listingReference', 'latitude', 'longitude'];
+            
+            if (formData.category === 'Estate') {
+                requiredCommon.push('title');
+            }
+
+            if (formData.category === 'Car') {
+                requiredCommon.push('make', 'model');
+            }
+
             for (const field of requiredCommon) {
                 if (!formData[field]) {
-                    alert(`Please fill in the ${field} field.`);
+                    const label = field.replace(/([A-Z])/g, ' $1').toLowerCase();
+                    alert(`Please fill in the ${label} field.`);
                     return;
                 }
             }
@@ -411,21 +422,22 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 return;
             }
 
-            let specFields = [];
+            // Key Highlights Validation
+            let highlightFields = [];
             if (formData.category === 'Car') {
-                specFields = ['horsepower', 'cylinderCapacity', 'fuelType', 'transmission', 'driveType', 'bodyType', 'series', 'steering', 'exteriorColor', 'interiorColor', 'interiorMaterial', 'manufacturerColorCode', 'matchingNumbers', 'accidentFree', 'accidentHistory', 'latitude', 'longitude', 'highlight_engine_type', 'highlight_hp'];
+                highlightFields = ['highlight_engine_type', 'highlight_hp'];
             } else if (formData.category === 'Bike') {
-                specFields = ['engineCapacity', 'maxPower', 'maxTorque', 'fuelType', 'transmission', 'color', 'abs', 'tractionControl', 'ownershipCount', 'accidentHistory', 'latitude', 'longitude', 'highlight_cc', 'highlight_speed', 'highlight_fuel'];
+                highlightFields = ['highlight_cc', 'highlight_speed', 'highlight_fuel'];
             } else if (formData.category === 'Yacht') {
-                specFields = ['builder', 'yachtLength', 'yachtBeam', 'yachtDraft', 'yachtEngineType', 'yachtCruisingSpeed', 'yachtTopSpeed', 'yachtUsageHours', 'yachtFuelConsumption', 'yachtGuestCapacity', 'yachtCrewCapacity', 'fuelType', 'yachtHullMaterial', 'interiorMaterial', 'yachtExteriorColor', 'yachtNumberOfOwners', 'latitude', 'longitude', 'highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
+                highlightFields = ['highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
             } else if (formData.category === 'Estate') {
-                specFields = ['propertyType', 'builtUpArea', 'landArea', 'bedrooms', 'bathrooms', 'floors', 'garageCapacity', 'furnishingStatus', 'configuration', 'architectureStyle', 'interiorMaterial', 'interiorColorTheme', 'exteriorFinish', 'climateControl', 'usageStatus', 'country', 'city', 'address', 'areaNeighborhood', 'latitude', 'longitude', 'highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors'];
+                highlightFields = ['highlight_area', 'highlight_baths', 'highlight_garage', 'highlight_built_area', 'highlight_beds', 'highlight_floors'];
             }
 
-            for (const field of specFields) {
+            for (const field of highlightFields) {
                 if (!formData[field] && formData[field] !== 0) {
                     const label = field.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').toLowerCase();
-                    alert(`Please fill in the ${label} field.`);
+                    alert(`Please fill in the ${label} field (Key Highlight).`);
                     return;
                 }
             }
@@ -617,7 +629,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         </div>
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Title</label>
-                            <input type="text" name="title" value={formData.title} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
+                            <input type="text" name="title" value={formData.title} required={formData.category === 'Estate'} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
                         </div>
                     </div>
 
@@ -716,24 +728,24 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                     <div className="pt-4 border-t border-gray-100">
                         <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4">{formData.category} Specifications</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {formData.category === 'Car' && (
+                        {formData.category === 'Car' && (
                                 <>
-                                    <InputField label="Horsepower" name="horsepower" value={formData.horsepower} onChange={handleInputChange} required />
-                                    <InputField label="Engine Capacity (L)" name="cylinderCapacity" value={formData.cylinderCapacity} onChange={handleInputChange} required />
+                                    <InputField label="Horsepower" name="horsepower" value={formData.horsepower} onChange={handleInputChange} required={false} />
+                                    <InputField label="Engine Capacity (L)" name="cylinderCapacity" value={formData.cylinderCapacity} onChange={handleInputChange} required={false} />
                                     <InputField label="Top Speed (Optional)" name="topSpeed" value={formData.topSpeed} onChange={handleInputChange} required={false} />
-                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} required />
-                                    <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} required />
-                                    <SelectField label="Drive Type" name="driveType" value={formData.driveType} options={['AWD', 'RWD', 'FWD', '4WD']} onChange={handleInputChange} required />
-                                    <InputField label="Body Type" name="bodyType" value={formData.bodyType} onChange={handleInputChange} required />
-                                    <InputField label="Series" name="series" value={formData.series} onChange={handleInputChange} required />
-                                    <SelectField label="Steering" name="steering" value={formData.steering} options={['Left Hand Drive', 'Right Hand Drive']} onChange={handleInputChange} required />
-                                    <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} required />
-                                    <InputField label="Interior Color" name="interiorColor" value={formData.interiorColor} onChange={handleInputChange} required />
-                                    <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} required />
-                                    <InputField label="Manufacturer Color Code" name="manufacturerColorCode" value={formData.manufacturerColorCode} onChange={handleInputChange} required />
-                                    <SelectField label="Matching Numbers" name="matchingNumbers" value={formData.matchingNumbers} options={['Yes', 'No']} onChange={handleInputChange} required />
-                                    <SelectField label="Accident Free" name="accidentFree" value={formData.accidentFree} options={['Yes', 'No']} onChange={handleInputChange} required />
-                                    <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} required />
+                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Drive Type" name="driveType" value={formData.driveType} options={['AWD', 'RWD', 'FWD', '4WD']} onChange={handleInputChange} required={false} />
+                                    <InputField label="Body Type" name="bodyType" value={formData.bodyType} onChange={handleInputChange} required={false} />
+                                    <InputField label="Series" name="series" value={formData.series} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Steering" name="steering" value={formData.steering} options={['Left Hand Drive', 'Right Hand Drive']} onChange={handleInputChange} required={false} />
+                                    <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} required={false} />
+                                    <InputField label="Interior Color" name="interiorColor" value={formData.interiorColor} onChange={handleInputChange} required={false} />
+                                    <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} required={false} />
+                                    <InputField label="Manufacturer Color Code" name="manufacturerColorCode" value={formData.manufacturerColorCode} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Matching Numbers" name="matchingNumbers" value={formData.matchingNumbers} options={['Yes', 'No']} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Accident Free" name="accidentFree" value={formData.accidentFree} options={['Yes', 'No']} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} required={false} />
                                     <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} required />
                                     <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} required />
                                 </>
@@ -741,16 +753,16 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
                             {formData.category === 'Bike' && (
                                 <>
-                                    <InputField label="Engine Capacity (cc)" name="engineCapacity" type="number" value={formData.engineCapacity} onChange={handleInputChange} required />
-                                    <InputField label="Max Power" name="maxPower" value={formData.maxPower} onChange={handleInputChange} required />
-                                    <InputField label="Max Torque" name="maxTorque" value={formData.maxTorque} onChange={handleInputChange} required />
-                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Petrol', 'Electric', 'Hybrid']} onChange={handleInputChange} required />
-                                    <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Manual', 'Automatic', 'Semi-Automatic']} onChange={handleInputChange} required />
-                                    <InputField label="Color" name="color" value={formData.color} onChange={handleInputChange} required />
-                                    <SelectField label="ABS" name="abs" value={formData.abs} options={['Yes', 'No']} onChange={handleInputChange} required />
-                                    <SelectField label="Traction Control" name="tractionControl" value={formData.tractionControl} options={['Yes', 'No']} onChange={handleInputChange} required />
-                                    <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} required />
-                                    <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} required />
+                                    <InputField label="Engine Capacity (cc)" name="engineCapacity" type="number" value={formData.engineCapacity} onChange={handleInputChange} required={false} />
+                                    <InputField label="Max Power" name="maxPower" value={formData.maxPower} onChange={handleInputChange} required={false} />
+                                    <InputField label="Max Torque" name="maxTorque" value={formData.maxTorque} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Petrol', 'Electric', 'Hybrid']} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Manual', 'Automatic', 'Semi-Automatic']} onChange={handleInputChange} required={false} />
+                                    <InputField label="Color" name="color" value={formData.color} onChange={handleInputChange} required={false} />
+                                    <SelectField label="ABS" name="abs" value={formData.abs} options={['Yes', 'No']} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Traction Control" name="tractionControl" value={formData.tractionControl} options={['Yes', 'No']} onChange={handleInputChange} required={false} />
+                                    <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} required={false} />
                                     <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} required />
                                     <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} required />
                                 </>
@@ -758,22 +770,22 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
                             {formData.category === 'Yacht' && (
                                 <>
-                                    <InputField label="Builder" name="builder" value={formData.builder} onChange={handleInputChange} required />
-                                    <InputField label="Length (m)" name="yachtLength" type="number" value={formData.yachtLength} onChange={handleInputChange} required />
-                                    <InputField label="Beam (m)" name="yachtBeam" type="number" value={formData.yachtBeam} onChange={handleInputChange} required />
-                                    <InputField label="Draft (m)" name="yachtDraft" type="number" value={formData.yachtDraft} onChange={handleInputChange} required />
-                                    <InputField label="Engine Type" name="yachtEngineType" value={formData.yachtEngineType} onChange={handleInputChange} required />
-                                    <InputField label="Cruising Speed (knots)" name="yachtCruisingSpeed" type="number" value={formData.yachtCruisingSpeed} onChange={handleInputChange} required />
-                                    <InputField label="Top Speed (knots)" name="yachtTopSpeed" type="number" value={formData.yachtTopSpeed} onChange={handleInputChange} required />
-                                    <InputField label="Usage Hours" name="yachtUsageHours" value={formData.yachtUsageHours} onChange={handleInputChange} required />
-                                    <InputField label="Fuel Consumption" name="yachtFuelConsumption" value={formData.yachtFuelConsumption} onChange={handleInputChange} required />
-                                    <InputField label="Guest Capacity" name="yachtGuestCapacity" type="number" value={formData.yachtGuestCapacity} onChange={handleInputChange} required />
-                                    <InputField label="Crew Capacity" name="yachtCrewCapacity" type="number" value={formData.yachtCrewCapacity} onChange={handleInputChange} required />
-                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Diesel', 'Gasoline', 'Hybrid', 'Electric']} onChange={handleInputChange} required />
-                                    <SelectField label="Hull Material" name="yachtHullMaterial" value={formData.yachtHullMaterial} options={['Fiberglass', 'Steel', 'Aluminum', 'Carbon Fiber', 'Wood']} onChange={handleInputChange} required />
-                                    <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} required />
-                                    <InputField label="Exterior Color" name="yachtExteriorColor" value={formData.yachtExteriorColor} onChange={handleInputChange} required />
-                                    <InputField label="Number of Owners" name="yachtNumberOfOwners" type="number" value={formData.yachtNumberOfOwners} onChange={handleInputChange} required />
+                                    <InputField label="Builder" name="builder" value={formData.builder} onChange={handleInputChange} required={false} />
+                                    <InputField label="Length (m)" name="yachtLength" type="number" value={formData.yachtLength} onChange={handleInputChange} required={false} />
+                                    <InputField label="Beam (m)" name="yachtBeam" type="number" value={formData.yachtBeam} onChange={handleInputChange} required={false} />
+                                    <InputField label="Draft (m)" name="yachtDraft" type="number" value={formData.yachtDraft} onChange={handleInputChange} required={false} />
+                                    <InputField label="Engine Type" name="yachtEngineType" value={formData.yachtEngineType} onChange={handleInputChange} required={false} />
+                                    <InputField label="Cruising Speed (knots)" name="yachtCruisingSpeed" type="number" value={formData.yachtCruisingSpeed} onChange={handleInputChange} required={false} />
+                                    <InputField label="Top Speed (knots)" name="yachtTopSpeed" type="number" value={formData.yachtTopSpeed} onChange={handleInputChange} required={false} />
+                                    <InputField label="Usage Hours" name="yachtUsageHours" value={formData.yachtUsageHours} onChange={handleInputChange} required={false} />
+                                    <InputField label="Fuel Consumption" name="yachtFuelConsumption" value={formData.yachtFuelConsumption} onChange={handleInputChange} required={false} />
+                                    <InputField label="Guest Capacity" name="yachtGuestCapacity" type="number" value={formData.yachtGuestCapacity} onChange={handleInputChange} required={false} />
+                                    <InputField label="Crew Capacity" name="yachtCrewCapacity" type="number" value={formData.yachtCrewCapacity} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Diesel', 'Gasoline', 'Hybrid', 'Electric']} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Hull Material" name="yachtHullMaterial" value={formData.yachtHullMaterial} options={['Fiberglass', 'Steel', 'Aluminum', 'Carbon Fiber', 'Wood']} onChange={handleInputChange} required={false} />
+                                    <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} required={false} />
+                                    <InputField label="Exterior Color" name="yachtExteriorColor" value={formData.yachtExteriorColor} onChange={handleInputChange} required={false} />
+                                    <InputField label="Number of Owners" name="yachtNumberOfOwners" type="number" value={formData.yachtNumberOfOwners} onChange={handleInputChange} required={false} />
                                     <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 34.0522" onChange={handleInputChange} required />
                                     <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., -118.2437" onChange={handleInputChange} required />
                                 </>
@@ -781,25 +793,25 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
                             {formData.category === 'Estate' && (
                                 <>
-                                    <SelectField label="Property Type" name="propertyType" value={formData.propertyType} options={['Villa', 'Penthouse', 'Apartment', 'Mansion', 'Estate']} onChange={handleInputChange} required />
-                                    <InputField label="Built-up Area (sq ft)" name="builtUpArea" type="number" value={formData.builtUpArea} onChange={handleInputChange} required />
-                                    <InputField label="Land Area (sq ft)" name="landArea" type="number" value={formData.landArea} onChange={handleInputChange} required />
-                                    <InputField label="Bedrooms" name="bedrooms" type="number" value={formData.bedrooms} onChange={handleInputChange} required />
-                                    <InputField label="Bathrooms" name="bathrooms" type="number" value={formData.bathrooms} onChange={handleInputChange} required />
-                                    <InputField label="Floors" name="floors" type="number" value={formData.floors} onChange={handleInputChange} required />
-                                    <InputField label="Garage Capacity (Cars)" name="garageCapacity" type="number" value={formData.garageCapacity} onChange={handleInputChange} required />
-                                    <SelectField label="Furnishing Status" name="furnishingStatus" value={formData.furnishingStatus} options={['Unfurnished', 'Partially Furnished', 'Fully Furnished', 'Designer Furnished']} onChange={handleInputChange} required />
-                                    <InputField label="Configuration" name="configuration" value={formData.configuration} placeholder="e.g. 5BR + Study" onChange={handleInputChange} required />
-                                    <InputField label="Architecture Style" name="architectureStyle" value={formData.architectureStyle} onChange={handleInputChange} required />
-                                    <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} required />
-                                    <InputField label="Interior Color Theme" name="interiorColorTheme" value={formData.interiorColorTheme} onChange={handleInputChange} required />
-                                    <InputField label="Exterior Finish" name="exteriorFinish" value={formData.exteriorFinish} onChange={handleInputChange} required />
-                                    <InputField label="Climate Control" name="climateControl" value={formData.climateControl} onChange={handleInputChange} required />
-                                    <SelectField label="Usage Status" name="usageStatus" value={formData.usageStatus} options={['Vacant', 'Owner Occupied', 'Tenanted']} onChange={handleInputChange} required />
-                                    <InputField label="Country" name="country" value={formData.country} onChange={handleInputChange} required />
-                                    <InputField label="City" name="city" value={formData.city} onChange={handleInputChange} required />
-                                    <InputField label="Address" name="address" value={formData.address} onChange={handleInputChange} required />
-                                    <InputField label="Area / Neighborhood" name="areaNeighborhood" value={formData.areaNeighborhood} onChange={handleInputChange} required />
+                                    <SelectField label="Property Type" name="propertyType" value={formData.propertyType} options={['Villa', 'Penthouse', 'Apartment', 'Mansion', 'Estate']} onChange={handleInputChange} required={false} />
+                                    <InputField label="Built-up Area (sq ft)" name="builtUpArea" type="number" value={formData.builtUpArea} onChange={handleInputChange} required={false} />
+                                    <InputField label="Land Area (sq ft)" name="landArea" type="number" value={formData.landArea} onChange={handleInputChange} required={false} />
+                                    <InputField label="Bedrooms" name="bedrooms" type="number" value={formData.bedrooms} onChange={handleInputChange} required={false} />
+                                    <InputField label="Bathrooms" name="bathrooms" type="number" value={formData.bathrooms} onChange={handleInputChange} required={false} />
+                                    <InputField label="Floors" name="floors" type="number" value={formData.floors} onChange={handleInputChange} required={false} />
+                                    <InputField label="Garage Capacity (Cars)" name="garageCapacity" type="number" value={formData.garageCapacity} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Furnishing Status" name="furnishingStatus" value={formData.furnishingStatus} options={['Unfurnished', 'Partially Furnished', 'Fully Furnished', 'Designer Furnished']} onChange={handleInputChange} required={false} />
+                                    <InputField label="Configuration" name="configuration" value={formData.configuration} placeholder="e.g. 5BR + Study" onChange={handleInputChange} required={false} />
+                                    <InputField label="Architecture Style" name="architectureStyle" value={formData.architectureStyle} onChange={handleInputChange} required={false} />
+                                    <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} onChange={handleInputChange} required={false} />
+                                    <InputField label="Interior Color Theme" name="interiorColorTheme" value={formData.interiorColorTheme} onChange={handleInputChange} required={false} />
+                                    <InputField label="Exterior Finish" name="exteriorFinish" value={formData.exteriorFinish} onChange={handleInputChange} required={false} />
+                                    <InputField label="Climate Control" name="climateControl" value={formData.climateControl} onChange={handleInputChange} required={false} />
+                                    <SelectField label="Usage Status" name="usageStatus" value={formData.usageStatus} options={['Vacant', 'Owner Occupied', 'Tenanted']} onChange={handleInputChange} required={false} />
+                                    <InputField label="Country" name="country" value={formData.country} onChange={handleInputChange} required={false} />
+                                    <InputField label="City" name="city" value={formData.city} onChange={handleInputChange} required={false} />
+                                    <InputField label="Address" name="address" value={formData.address} onChange={handleInputChange} required={false} />
+                                    <InputField label="Area / Neighborhood" name="areaNeighborhood" value={formData.areaNeighborhood} onChange={handleInputChange} required={false} />
                                     <InputField label="Latitude" name="latitude" value={formData.latitude} onChange={handleInputChange} required />
                                     <InputField label="Longitude" name="longitude" value={formData.longitude} onChange={handleInputChange} required />
                                 </>
