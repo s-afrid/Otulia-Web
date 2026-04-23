@@ -900,7 +900,6 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {formData.category === 'Car' && (
                                 <>
-                                    <InputField label="Top Speed (mph) *" name="highlight_speed" value={formData.highlight_speed} placeholder="e.g. 211" onChange={handleInputChange} required={true} />
                                     <InputField label="Engine Type" name="highlight_engine_type" value={formData.highlight_engine_type} placeholder="e.g. V12" onChange={handleInputChange} required />
                                     <InputField label="Horsepower (hp)" name="highlight_hp" value={formData.highlight_hp} placeholder="e.g. 789" onChange={handleInputChange} required />
                                 </>
