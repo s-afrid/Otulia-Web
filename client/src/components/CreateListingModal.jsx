@@ -738,6 +738,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <SelectField label="Drive Type" name="driveType" value={formData.driveType} options={['AWD', 'RWD', 'FWD', '4WD']} onChange={handleInputChange} required={false} />
                                     <InputField label="Body Type" name="bodyType" value={formData.bodyType} onChange={handleInputChange} required={false} />
                                     <InputField label="Series" name="series" value={formData.series} onChange={handleInputChange} required={false} />
+                                    <InputField label="Variant" name="variant" value={formData.variant} onChange={handleInputChange} required={false} />
                                     <SelectField label="Steering" name="steering" value={formData.steering} options={['Left Hand Drive', 'Right Hand Drive']} onChange={handleInputChange} required={false} />
                                     <InputField label="Exterior Color" name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} required={false} />
                                     <InputField label="Interior Color" name="interiorColor" value={formData.interiorColor} onChange={handleInputChange} required={false} />
