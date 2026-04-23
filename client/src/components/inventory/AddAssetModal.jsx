@@ -53,7 +53,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
         // Real Estate Specific
         propertyName: '', propertyType: '', country: '', city: '', address: '',
-        builtUpArea: '', landArea: '', bedrooms: '', bathrooms: '', floors: '',
+        builtUpArea: '', builtUpAreaUnit: 'Sqft', landArea: '', landAreaUnit: 'Sqft', bedrooms: '', bathrooms: '', floors: '',
         garageCapacity: '',
         furnishingStatus: '', architectureStyle: '', configuration: '',
         interiorColorTheme: '', exteriorFinish: '',
@@ -348,7 +348,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             // Key Highlights Validation
             let highlightFields = [];
             if (assetType === 'Car') {
-                highlightFields = ['highlight_engine_type', 'highlight_hp', 'highlight_speed'];
+                highlightFields = ['highlight_engine_type', 'highlight_hp'];
             } else if (assetType === 'Yacht') {
                 highlightFields = ['highlight_length', 'highlight_baths', 'highlight_fuel', 'highlight_engine_hp', 'highlight_beds', 'highlight_speed'];
             } else if (assetType === 'Estate') {
@@ -430,10 +430,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             ].filter(Boolean);
         } else if (assetType === 'Estate') {
             constructedHighlights = [
-                formData.highlight_area ? `Land Area: ${formData.highlight_area} Acres` : '',
+                formData.highlight_area ? `Land Area: ${formData.highlight_area} ${formData.landAreaUnit}` : '',
                 formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
                 formData.highlight_garage ? `Garage: ${formData.highlight_garage} Cars` : '',
-                formData.highlight_built_area ? `Built Area: ${formData.highlight_built_area} Sq Ft` : '',
+                formData.highlight_built_area ? `Built Area: ${formData.highlight_built_area} ${formData.builtUpAreaUnit}` : '',
                 formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
                 formData.highlight_floors ? `Floors: ${formData.highlight_floors}` : ''
             ].filter(Boolean);
@@ -451,6 +451,12 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             }
             if (key === 'isPublic' && draftOverride !== null) {
                 data.append(key, !draftOverride);
+            } else if (key === 'builtUpArea') {
+                data.append(key, formData.builtUpArea ? `${formData.builtUpArea} ${formData.builtUpAreaUnit}` : '');
+            } else if (key === 'landArea') {
+                data.append(key, formData.landArea ? `${formData.landArea} ${formData.landAreaUnit}` : '');
+            } else if (['builtUpAreaUnit', 'landAreaUnit'].includes(key)) {
+                return; // Skip separate unit keys
             } else {
                 data.append(key, formData[key]);
             }
@@ -770,8 +776,22 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="City" name="city" value={formData.city} placeholder="e.g., Monte Carlo" onChange={handleInputChange} required />
                                         <InputField label="Address (Optional)" name="address" value={formData.address} placeholder="e.g., Avenue Princess Grace" onChange={handleInputChange} required />
                                         <InputField label="Area / Neighborhood" name="areaNeighborhood" value={formData.areaNeighborhood} placeholder="e.g., South Beach" onChange={handleInputChange} required />
-                                        <InputField label="Built-up Area (sq ft)" name="builtUpArea" type="number" value={formData.builtUpArea} placeholder="5500" onChange={handleInputChange} required />
-                                        <InputField label="Land Area (sq ft)" name="landArea" type="number" value={formData.landArea} placeholder="8000" onChange={handleInputChange} required />
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:col-span-1">
+                                            <div className="sm:col-span-2">
+                                                <InputField label="Built-up Area" name="builtUpArea" type="number" value={formData.builtUpArea} placeholder="5500" onChange={handleInputChange} required />
+                                            </div>
+                                            <div>
+                                                <SelectField label="Unit" name="builtUpAreaUnit" value={formData.builtUpAreaUnit} options={['Sqft', 'Acres', 'hectres']} onChange={handleInputChange} required />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:col-span-1">
+                                            <div className="sm:col-span-2">
+                                                <InputField label="Land Area" name="landArea" type="number" value={formData.landArea} placeholder="8000" onChange={handleInputChange} required />
+                                            </div>
+                                            <div>
+                                                <SelectField label="Unit" name="landAreaUnit" value={formData.landAreaUnit} options={['Sqft', 'Acres', 'hectres']} onChange={handleInputChange} required />
+                                            </div>
+                                        </div>
                                         <InputField label="Bedrooms" name="bedrooms" type="number" value={formData.bedrooms} placeholder="5" onChange={handleInputChange} required />
                                         <InputField label="Bathrooms" name="bathrooms" type="number" value={formData.bathrooms} placeholder="6" onChange={handleInputChange} required />
                                         <InputField label="Floors" name="floors" type="number" value={formData.floors} placeholder="2" onChange={handleInputChange} required />
@@ -871,10 +891,24 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             )}
                                             {assetType === 'Estate' && (
                                                 <>
-                                                    <InputField label="Land Area (Acres) *" name="highlight_area" value={formData.highlight_area || ''} placeholder="e.g. 0.5" onChange={handleInputChange} required />
+                                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:col-span-1">
+                                                        <div className="sm:col-span-2">
+                                                            <InputField label="Land Area *" name="highlight_area" value={formData.highlight_area || ''} placeholder="e.g. 0.5" onChange={handleInputChange} required />
+                                                        </div>
+                                                        <div>
+                                                            <SelectField label="Unit" name="landAreaUnit" value={formData.landAreaUnit} options={['Sqft', 'Acres', 'hectres']} onChange={handleInputChange} required />
+                                                        </div>
+                                                    </div>
                                                     <InputField label="Bathrooms *" name="highlight_baths" value={formData.highlight_baths || ''} placeholder="e.g. 6" onChange={handleInputChange} required />
                                                     <InputField label="Garage (Cars) *" name="highlight_garage" value={formData.highlight_garage || ''} placeholder="e.g. 3" onChange={handleInputChange} required />
-                                                    <InputField label="Built Area (Sq Ft) *" name="highlight_built_area" value={formData.highlight_built_area || ''} placeholder="e.g. 6500" onChange={handleInputChange} required />
+                                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:col-span-1">
+                                                        <div className="sm:col-span-2">
+                                                            <InputField label="Built Area *" name="highlight_built_area" value={formData.highlight_built_area || ''} placeholder="e.g. 6500" onChange={handleInputChange} required />
+                                                        </div>
+                                                        <div>
+                                                            <SelectField label="Unit" name="builtUpAreaUnit" value={formData.builtUpAreaUnit} options={['Sqft', 'Acres', 'hectres']} onChange={handleInputChange} required />
+                                                        </div>
+                                                    </div>
                                                     <InputField label="Bedrooms *" name="highlight_beds" value={formData.highlight_beds || ''} placeholder="e.g. 5" onChange={handleInputChange} required />
                                                     <InputField label="Floors *" name="highlight_floors" value={formData.highlight_floors || ''} placeholder="e.g. 3" onChange={handleInputChange} required />
                                                 </>

@@ -552,21 +552,32 @@ router.post('/create', authMiddleware, upload.fields([
             updateData.amenities = req.body.amenities ? JSON.parse(req.body.amenities) : [];
             updateData.smartHomeSystems = req.body.smartHomeSystems ? JSON.parse(req.body.smartHomeSystems) : [];
             updateData.viewTypes = req.body.viewTypes ? JSON.parse(req.body.viewTypes) : [];
+            
+            // Check if units are already provided in the string (Sqft, Acres, hectres)
+            const hasUnit = (val) => {
+                if (!val) return false;
+                const v = val.toString().toLowerCase();
+                return v.includes('sqft') || v.includes('acres') || v.includes('hectres') || v.includes('sq ft');
+            };
+
+            const bua = hasUnit(req.body.builtUpArea) ? req.body.builtUpArea : addUnit(req.body.builtUpArea, 'sq ft');
+            const la = hasUnit(req.body.landArea) ? req.body.landArea : addUnit(req.body.landArea, 'sq ft');
+
             updateData.keySpecifications = {
                 bedrooms: req.body.bedrooms,
                 bathrooms: req.body.bathrooms,
                 floors: req.body.floors,
                 garageCapacity: req.body.garageCapacity,
-                builtUpArea: addUnit(req.body.builtUpArea, 'sq ft'),
-                landArea: addUnit(req.body.landArea, 'sq ft'),
+                builtUpArea: bua,
+                landArea: la,
                 propertyType: req.body.propertyType
             };
             updateData.specification = {
                 yearOfConstruction: req.body.year,
                 propertyType: req.body.propertyType,
                 architectureStyle: req.body.architectureStyle,
-                builtUpArea: addUnit(req.body.builtUpArea, 'sq ft'),
-                landArea: addUnit(req.body.landArea, 'sq ft'),
+                builtUpArea: bua,
+                landArea: la,
                 floors: req.body.floors,
                 bedrooms: req.body.bedrooms,
                 bathrooms: req.body.bathrooms,
@@ -975,15 +986,22 @@ router.put('/:id', authMiddleware, upload.fields([
             const spec = listing.specification || {};
             const keySpec = listing.keySpecifications || {};
 
+            // Check if units are already provided in the string (Sqft, Acres, hectres)
+            const hasUnit = (val) => {
+                if (!val) return false;
+                const v = val.toString().toLowerCase();
+                return v.includes('sqft') || v.includes('acres') || v.includes('hectres') || v.includes('sq ft');
+            };
+
             if (req.body.year) spec.yearOfConstruction = req.body.year;
             if (req.body.propertyType) { spec.propertyType = req.body.propertyType; keySpec.propertyType = req.body.propertyType; }
             if (req.body.builtUpArea) {
-                const bua = addUnit(req.body.builtUpArea, 'sq ft');
+                const bua = hasUnit(req.body.builtUpArea) ? req.body.builtUpArea : addUnit(req.body.builtUpArea, 'sq ft');
                 spec.builtUpArea = bua;
                 keySpec.builtUpArea = bua;
             }
             if (req.body.landArea) {
-                const la = addUnit(req.body.landArea, 'sq ft');
+                const la = hasUnit(req.body.landArea) ? req.body.landArea : addUnit(req.body.landArea, 'sq ft');
                 spec.landArea = la;
                 keySpec.landArea = la;
             }

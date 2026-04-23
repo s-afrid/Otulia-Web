@@ -90,7 +90,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         propertyType: editData?.keySpecifications?.propertyType || editData?.specification?.propertyType || '',
         architectureStyle: editData?.specification?.architectureStyle || '',
         builtUpArea: editData?.specification?.builtUpArea || '',
+        builtUpAreaUnit: 'Sqft',
         landArea: editData?.specification?.landArea || '',
+        landAreaUnit: 'Sqft',
         bedrooms: editData?.specification?.bedrooms || '',
         bathrooms: editData?.specification?.bathrooms || '',
         floors: editData?.specification?.floors || '',
@@ -425,7 +427,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             // Key Highlights Validation
             let highlightFields = [];
             if (formData.category === 'Car') {
-                highlightFields = ['highlight_engine_type', 'highlight_hp', 'highlight_speed'];
+                highlightFields = ['highlight_engine_type', 'highlight_hp'];
             } else if (formData.category === 'Bike') {
                 highlightFields = ['highlight_cc', 'highlight_speed', 'highlight_fuel'];
             } else if (formData.category === 'Yacht') {
@@ -479,11 +481,29 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             if (!formData.topSpeed) formData.topSpeed = formData.highlight_speed;
         }
 
-        // Construct Highlights
+        const data = new FormData();
+        Object.keys(formData).forEach(key => {
+            if (['amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
+                data.append(key, JSON.stringify(formData[key]));
+            } else if (key.startsWith('highlight_')) {
+                return;
+            } else if (key === 'isPublic' && draftOverride !== null) {
+                data.append(key, !draftOverride);
+            } else if (key === 'builtUpArea') {
+                data.append(key, formData.builtUpArea ? `${formData.builtUpArea} ${formData.builtUpAreaUnit}` : '');
+            } else if (key === 'landArea') {
+                data.append(key, formData.landArea ? `${formData.landArea} ${formData.landAreaUnit}` : '');
+            } else if (['builtUpAreaUnit', 'landAreaUnit'].includes(key)) {
+                return; // Skip separate unit keys
+            } else {
+                data.append(key, formData[key]);
+            }
+        });
+
+        // Highlights construction
         let constructedHighlights = [];
         if (formData.category === 'Car') {
             constructedHighlights = [
-                formData.highlight_speed ? `${formData.highlight_speed} mph` : '',
                 formData.highlight_engine_type ? `${formData.highlight_engine_type}` : '',
                 formData.highlight_hp ? `${formData.highlight_hp} hp` : ''
             ].filter(Boolean);
@@ -498,10 +518,10 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             ].filter(Boolean);
         } else if (formData.category === 'Estate') {
             constructedHighlights = [
-                formData.highlight_area ? `Land Area: ${formData.highlight_area} Acres` : '',
+                formData.highlight_area ? `Land Area: ${formData.highlight_area} ${formData.landAreaUnit}` : '',
                 formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
                 formData.highlight_garage ? `Garage: ${formData.highlight_garage} Cars` : '',
-                formData.highlight_built_area ? `Built Area: ${formData.highlight_built_area} Sq Ft` : '',
+                formData.highlight_built_area ? `Built Area: ${formData.highlight_built_area} ${formData.builtUpAreaUnit}` : '',
                 formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
                 formData.highlight_floors ? `Floors: ${formData.highlight_floors}` : ''
             ].filter(Boolean);
@@ -512,19 +532,6 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 formData.highlight_fuel ? `${formData.highlight_fuel} liters` : ''
             ].filter(Boolean);
         }
-
-        const data = new FormData();
-        Object.keys(formData).forEach(key => {
-            if (['amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
-                data.append(key, JSON.stringify(formData[key]));
-            } else if (key.startsWith('highlight_')) {
-                return;
-            } else if (key === 'isPublic' && draftOverride !== null) {
-                data.append(key, !draftOverride);
-            } else {
-                data.append(key, formData[key]);
-            }
-        });
 
         data.append('highlights', JSON.stringify(constructedHighlights));
         images.forEach(img => {
@@ -795,8 +802,22 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                             {formData.category === 'Estate' && (
                                 <>
                                     <SelectField label="Property Type" name="propertyType" value={formData.propertyType} options={['Villa', 'Penthouse', 'Apartment', 'Mansion', 'Estate']} onChange={handleInputChange} required={false} />
-                                    <InputField label="Built-up Area (sq ft)" name="builtUpArea" type="number" value={formData.builtUpArea} onChange={handleInputChange} required={false} />
-                                    <InputField label="Land Area (sq ft)" name="landArea" type="number" value={formData.landArea} onChange={handleInputChange} required={false} />
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:col-span-2">
+                                        <div className="sm:col-span-2">
+                                            <InputField label="Built-up Area" name="builtUpArea" type="number" value={formData.builtUpArea} onChange={handleInputChange} required={false} />
+                                        </div>
+                                        <div>
+                                            <SelectField label="Unit" name="builtUpAreaUnit" value={formData.builtUpAreaUnit} options={['Sqft', 'Acres', 'hectres']} onChange={handleInputChange} required={false} />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:col-span-2">
+                                        <div className="sm:col-span-2">
+                                            <InputField label="Land Area" name="landArea" type="number" value={formData.landArea} onChange={handleInputChange} required={false} />
+                                        </div>
+                                        <div>
+                                            <SelectField label="Unit" name="landAreaUnit" value={formData.landAreaUnit} options={['Sqft', 'Acres', 'hectres']} onChange={handleInputChange} required={false} />
+                                        </div>
+                                    </div>
                                     <InputField label="Bedrooms" name="bedrooms" type="number" value={formData.bedrooms} onChange={handleInputChange} required={false} />
                                     <InputField label="Bathrooms" name="bathrooms" type="number" value={formData.bathrooms} onChange={handleInputChange} required={false} />
                                     <InputField label="Floors" name="floors" type="number" value={formData.floors} onChange={handleInputChange} required={false} />
@@ -896,12 +917,26 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                             )}
                             {formData.category === 'Estate' && (
                                 <>
-                                    <InputField label="Land Area (Acres)" name="highlight_area" value={formData.highlight_area} placeholder="e.g. 0.5" onChange={handleInputChange} required />
-                                    <InputField label="Bathrooms" name="highlight_baths" value={formData.highlight_baths} placeholder="e.g. 6" onChange={handleInputChange} required />
-                                    <InputField label="Garage (Cars)" name="highlight_garage" value={formData.highlight_garage} placeholder="e.g. 3" onChange={handleInputChange} required />
-                                    <InputField label="Built Area (Sq Ft)" name="highlight_built_area" value={formData.highlight_built_area} placeholder="e.g. 6500" onChange={handleInputChange} required />
-                                    <InputField label="Bedrooms" name="highlight_beds" value={formData.highlight_beds} placeholder="e.g. 5" onChange={handleInputChange} required />
-                                    <InputField label="Floors" name="highlight_floors" value={formData.highlight_floors} placeholder="e.g. 3" onChange={handleInputChange} required />
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:col-span-1">
+                                        <div className="sm:col-span-2">
+                                            <InputField label="Land Area *" name="highlight_area" value={formData.highlight_area} placeholder="e.g. 0.5" onChange={handleInputChange} required />
+                                        </div>
+                                        <div>
+                                            <SelectField label="Unit" name="landAreaUnit" value={formData.landAreaUnit} options={['Sqft', 'Acres', 'hectres']} onChange={handleInputChange} required />
+                                        </div>
+                                    </div>
+                                    <InputField label="Bathrooms *" name="highlight_baths" value={formData.highlight_baths} placeholder="e.g. 6" onChange={handleInputChange} required />
+                                    <InputField label="Garage (Cars) *" name="highlight_garage" value={formData.highlight_garage} placeholder="e.g. 3" onChange={handleInputChange} required />
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:col-span-1">
+                                        <div className="sm:col-span-2">
+                                            <InputField label="Built Area *" name="highlight_built_area" value={formData.highlight_built_area} placeholder="e.g. 6500" onChange={handleInputChange} required />
+                                        </div>
+                                        <div>
+                                            <SelectField label="Unit" name="builtUpAreaUnit" value={formData.builtUpAreaUnit} options={['Sqft', 'Acres', 'hectres']} onChange={handleInputChange} required />
+                                        </div>
+                                    </div>
+                                    <InputField label="Bedrooms *" name="highlight_beds" value={formData.highlight_beds} placeholder="e.g. 5" onChange={handleInputChange} required />
+                                    <InputField label="Floors *" name="highlight_floors" value={formData.highlight_floors} placeholder="e.g. 3" onChange={handleInputChange} required />
                                 </>
                             )}
                             {formData.category === 'Bike' && (
