@@ -5,8 +5,12 @@ const leadSchema = new mongoose.Schema(
         sender: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true,
+            required: false, // Make optional for manual leads
         },
+        name: { type: String },
+        email: { type: String },
+        phone: { type: String },
+        source: { type: String, default: 'Manual' },
         agentId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
@@ -25,6 +29,13 @@ const leadSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        assetPrice: {
+            type: Number, // To cache the value instead of deeply populating every time
+            default: 0
+        },
+        assetImage: {
+            type: String, // To cache the image
+        },
         message: {
             type: String,
             required: true,
@@ -32,7 +43,7 @@ const leadSchema = new mongoose.Schema(
         status: {
             type: String,
             default: "New",
-            enum: ["New", "Contacted", "Negotiating", "Closed"],
+            enum: ["New", "Contacted", "Qualified", "Proposal Sent", "Negotiating", "Closed"],
         },
     },
     { timestamps: true }
