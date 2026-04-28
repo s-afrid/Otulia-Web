@@ -7,13 +7,16 @@ import {
     FiGlobe, FiCreditCard, FiSettings, FiBell,
     FiArrowUpRight, FiTrendingUp, FiTrendingDown, FiDownload, FiHome, FiAnchor,
     FiMail, FiPhone, FiShield, FiLock, FiKey,
-    FiBriefcase, FiCheckCircle, FiUpload, FiCalendar, FiMapPin,
+    FiBriefcase, FiCheckCircle, FiUpload, FiCalendar, FiMapPin, FiMap,
     FiSearch, FiFilter, FiPlus, FiChevronDown, FiHeart, FiEdit2, FiTrash2, FiEye,
-    FiUser, FiLogOut, FiClock, FiLoader, FiMoreVertical, FiActivity
+    FiUser, FiLogOut, FiClock, FiLoader, FiMoreVertical, FiActivity,
+    FiMessageSquare, FiPlayCircle, FiImage, FiDroplet, FiLayout, FiExternalLink, FiShare2, FiMoreHorizontal,
+    FiArrowRight, FiChevronRight, FiX, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiMonitor
 } from 'react-icons/fi';
 import { LineChart, Line, ResponsiveContainer, PieChart, Pie, Cell, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, BarChart, Bar } from 'recharts';
 import Navbar from '../components/Navbar';
 import AddAssetModal from '../components/inventory/AddAssetModal';
+import AddLeadModal from '../components/inventory/AddLeadModal';
 import ConfirmationModal from '../components/ConfirmationModal';
 import DealerVerificationModal from '../components/inventory/DealerVerificationModal';
 import ImageCropModal from '../components/ImageCropModal';
@@ -40,12 +43,15 @@ const Inventory = () => {
     const [updatingId, setUpdatingId] = useState(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
     const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const [leadStatusFilter, setLeadStatusFilter] = useState('All Status');
     const [leadCategoryFilter, setLeadCategoryFilter] = useState('All Categories');
     const [inventoryStatusFilter, setInventoryStatusFilter] = useState('All Status');
     const [inventoryCategoryFilter, setInventoryCategoryFilter] = useState('All Categories');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
     const [contactType, setContactType] = useState('Sales');
     const [isVerifiedDealer, setIsVerifiedDealer] = useState(user?.isVerified || false);
@@ -55,6 +61,9 @@ const Inventory = () => {
     const [cropSrc, setCropSrc] = useState(null);
     const [leadEmailNotifications, setLeadEmailNotifications] = useState(user?.leadEmailNotifications !== false);
 
+    const [savingPersonal, setSavingPersonal] = useState(false);
+    const [savingCompany, setSavingCompany] = useState(false);
+
     // Logic to allow editing for Premium users even after verification
     const canEditProfile = !isVerifiedDealer || (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP');
 
@@ -63,6 +72,7 @@ const Inventory = () => {
     const [listingToDelete, setListingToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
+    const [billingCycle, setBillingCycle] = useState('Monthly');
 
     const handleRemoveNotification = async (notificationId) => {
         try {
@@ -135,7 +145,9 @@ const Inventory = () => {
         fullName: user?.name || '',
         jobTitle: 'Luxury Asset Consultant',
         email: user?.email || '',
+        phoneCode: '+971',
         phone: '',
+        whatsappCode: '+971',
         whatsapp: '',
         preferredContact: 'WhatsApp',
         language: 'English',
@@ -239,6 +251,35 @@ const Inventory = () => {
         }
     };
 
+    const handleProfilePicUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('profilePicture', file);
+
+        try {
+            const response = await fetch('/api/auth/upload-profile-picture', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                setAgentInfo(prev => ({ ...prev, photo: result.user.profilePicture }));
+                alert("Profile photo updated successfully!");
+                if (refreshUser) refreshUser();
+            } else {
+                const err = await response.json();
+                alert(err.error || "Failed to upload photo");
+            }
+        } catch (error) {
+            console.error("Photo upload error:", error);
+            alert("Error uploading photo");
+        }
+    };
+
     const handleTogglePublic = async (item) => {
         if (updatingId) return; // Prevent multiple clicks
         
@@ -276,12 +317,8 @@ const Inventory = () => {
         setLeadEmailNotifications(!leadEmailNotifications);
     };
 
-    const handleSaveSettings = async () => {
-        if (isVerifiedDealer) {
-            // Only website is editable if verified
-        }
-
-        setLoading(true);
+    const handleSavePersonalDetails = async () => {
+        setSavingPersonal(true);
         try {
             const response = await fetch('/api/auth/update-profile', {
                 method: 'PUT',
@@ -290,31 +327,65 @@ const Inventory = () => {
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    phone: companyInfo.phone,
-                    leadEmailNotifications: leadEmailNotifications,
+                    name: agentInfo.fullName,
+                    phone: `${agentInfo.phoneCode} ${agentInfo.phone}`,
+                    whatsapp: `${agentInfo.whatsappCode} ${agentInfo.whatsapp}`,
+                    jobTitle: agentInfo.jobTitle,
+                    language: agentInfo.language
+                })
+            });
+
+            if (response.ok) {
+                alert("Personal details saved successfully!");
+                await fetchDashboard();
+                if (refreshUser) refreshUser();
+            } else {
+                const err = await response.json();
+                alert(err.error || "Failed to save personal details");
+            }
+        } catch (error) {
+            console.error("Save personal details error:", error);
+            alert("Error saving personal details");
+        } finally {
+            setSavingPersonal(false);
+        }
+    };
+
+    const handleSaveCompanyDetails = async () => {
+        setSavingCompany(true);
+        try {
+            const response = await fetch('/api/auth/update-profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
                     company: {
                         companyName: companyInfo.name,
                         companyLogo: companyInfo.logo,
                         address: companyInfo.address,
                         website: companyInfo.website,
-                        description: companyInfo.description
+                        description: companyInfo.description,
+                        phone: `${companyInfo.phoneCode} ${companyInfo.phone}`,
+                        email: companyInfo.email
                     }
                 })
             });
 
             if (response.ok) {
-                alert("Settings saved successfully!");
+                alert("Company details saved successfully!");
                 await fetchDashboard();
                 if (refreshUser) refreshUser();
             } else {
                 const err = await response.json();
-                alert(err.error || "Failed to save settings");
+                alert(err.error || "Failed to save company details");
             }
         } catch (error) {
-            console.error("Save settings error:", error);
-            alert("Error saving settings");
+            console.error("Save company details error:", error);
+            alert("Error saving company details");
         } finally {
-            setLoading(false);
+            setSavingCompany(false);
         }
     };
 
@@ -718,200 +789,308 @@ const Inventory = () => {
                 </header>
 
                 {/* TAB CONTENT */}
-                <main className="p-10 h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar">
+                <main className={`p-8 pt-6 h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar ${activeTab === 'dashboard' ? 'overflow-hidden' : ''}`}>
 
-                    {/* DASHBOARD TAB */}
                     {/* DASHBOARD TAB */}
                     {activeTab === 'dashboard' && (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-5 duration-700">
-                            <div>
-                                <h2 className="text-2xl font-bold text-gray-900 mb-1">Dashboard</h2>
-                                <p className="text-gray-500 font-medium text-sm">Welcome back, {user?.name?.split(' ')[0] || 'User'} 👋</p>
-                            </div>
-
-                            {/* KPI Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                                <AnalyticsCard
-                                    title="Total Views"
-                                    value={numberWithCommas(data.stats.totalViews)}
-                                    growth="+12.5%"
-                                    icon={<FiEye />}
-                                    iconBgClass="bg-[#FFF4E5] text-[#D48D2A]"
-                                    chartColor="#D48D2A"
-                                    data={[{value:10},{value:15},{value:8},{value:20},{value:25},{value:22},{value:30}]}
-                                />
-                                <AnalyticsCard
-                                    title="Total Leads"
-                                    value={numberWithCommas(data.stats.totalLeads)}
-                                    growth="+8.2%"
-                                    icon={<FiUsers />}
-                                    iconBgClass="bg-blue-50 text-blue-600"
-                                    chartColor="#3B82F6"
-                                    data={[{value:5},{value:8},{value:7},{value:15},{value:12},{value:18},{value:20}]}
-                                />
-                                <AnalyticsCard
-                                    title="Saved / Shortlisted"
-                                    value={numberWithCommas(data.stats.savedCount || 0)}
-                                    growth="+5.1%"
-                                    icon={<FiHeart />}
-                                    iconBgClass="bg-emerald-50 text-emerald-600"
-                                    chartColor="#10B981"
-                                    data={[{value:20},{value:18},{value:22},{value:25},{value:22},{value:28},{value:30}]}
-                                />
-                                <AnalyticsCard
-                                    title="Est. Lead Value"
-                                    value={`$${numberWithCommas(data.stats.estLeadValue || 0)}`}
-                                    growth="-2.4%"
-                                    icon={<FiTrendingDown />}
-                                    iconBgClass="bg-purple-50 text-purple-600"
-                                    chartColor="#8B5CF6"
-                                    data={[{value:30},{value:28},{value:25},{value:22},{value:20},{value:18},{value:15}]}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                {/* Views vs Leads Line Chart */}
-                                <div className="lg:col-span-2 bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <h4 className="text-lg font-bold text-gray-900">Views vs Leads Over Time</h4>
-                                        <select className="border border-gray-200 text-xs font-bold text-gray-600 rounded-lg px-3 py-1 outline-none">
-                                            <option>Week</option>
-                                            <option>Month</option>
-                                        </select>
-                                    </div>
-                                    <div className="h-72 w-full">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={data.analytics?.performanceTrend || []} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                                                <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9CA3AF', fontWeight: 'bold' }} dy={10} />
-                                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9CA3AF', fontWeight: 'bold' }} dx={-10} />
-                                                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', fontSize: '12px', fontWeight: 'bold' }} />
-                                                <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '10px', fontWeight: 'bold' }} />
-                                                <Line type="monotone" dataKey="views" name="Views" stroke="#D48D2A" strokeWidth={3} dot={{ r: 4, fill: '#D48D2A', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
-                                                <Line type="monotone" dataKey="leads" name="Leads" stroke="#1E3A8A" strokeWidth={3} dot={{ r: 4, fill: '#1E3A8A', strokeWidth: 2, stroke: '#fff' }} />
-                                            </LineChart>
-                                        </ResponsiveContainer>
-                                    </div>
+                        <div className="h-full flex flex-col gap-4 animate-in fade-in duration-700 pb-2">
+                            {/* Header Row */}
+                            <div className="flex justify-between items-end shrink-0 mb-0">
+                                <div>
+                                    <h2 className="text-xl font-bold text-gray-400 font-medium mb-0 leading-tight">Welcome back, <span className="text-gray-900 font-playfair font-bold">{user?.name?.split(' ')[0] || user?.name || 'Md Riyaz'}</span> 👋</h2>
                                 </div>
+                            </div>
 
-                                {/* Leads by Asset Category Donut Chart */}
-                                <div className="bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                                    <h4 className="text-lg font-bold text-gray-900 mb-2">Leads by Asset Category</h4>
-                                    <div className="h-64 w-full relative">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <PieChart>
-                                                <Pie
-                                                    data={data.analytics?.leadsByCategory || [{label:'Cars',count:1}]}
-                                                    cx="50%" cy="50%"
-                                                    innerRadius={60} outerRadius={80}
-                                                    paddingAngle={5}
-                                                    dataKey="count"
-                                                    nameKey="label"
-                                                >
-                                                    {(data.analytics?.leadsByCategory || [{label:'Cars',count:1}]).map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={['#D48D2A', '#1E3A8A', '#10B981', '#8B5CF6'][index % 4]} />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', fontSize: '12px', fontWeight: 'bold' }} />
-                                                <Legend layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ fontSize: '10px', fontWeight: 'bold', lineHeight: '24px' }} iconType="circle" />
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pr-[80px]">
-                                            <span className="text-2xl font-bold text-gray-900">{data.stats.totalLeads || 0}</span>
-                                            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-widest text-center mt-1">Total<br/>Leads</span>
+                            {/* Top 4 KPI Cards */}
+                            <div className="grid grid-cols-4 gap-5 shrink-0 h-[105px]">
+                                {/* Card 1 */}
+                                <div className="bg-white rounded-2xl p-4 px-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+                                    <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Total Views</span>
+                                            <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{numberWithCommas(data?.stats?.totalViews || 2456)}</span>
+                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 12.5% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
+                                        </div>
+                                        <div className="w-10 h-10 rounded-xl bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0"><FiEye className="text-[18px]" /></div>
+                                    </div>
+                                    <svg className="absolute bottom-0 left-0 w-full h-[35px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                        <path d="M0,15 L10,12 L20,18 L30,8 L40,14 L50,6 L60,12 L70,4 L80,10 L90,2 L100,6" fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+                                {/* Card 2 */}
+                                <div className="bg-white rounded-2xl p-4 px-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+                                    <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Total Leads</span>
+                                            <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{numberWithCommas(data?.stats?.totalLeads || 142)}</span>
+                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 8.2% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
+                                        </div>
+                                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 justify-center flex items-center shrink-0"><FiUser className="text-[18px]" /></div>
+                                    </div>
+                                    <svg className="absolute bottom-0 left-0 w-full h-[35px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                        <path d="M0,12 L10,15 L20,5 L30,10 L40,4 L50,12 L60,3 L70,8 L80,2 L90,6 L100,4" fill="none" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+                                {/* Card 3 */}
+                                <div className="bg-white rounded-2xl p-4 px-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+                                    <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Saved / Shortlisted</span>
+                                            <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{data?.stats?.savedCount || 48}</span>
+                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 5.1% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
+                                        </div>
+                                        <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 justify-center flex items-center shrink-0"><FiHeart className="text-[18px]" /></div>
+                                    </div>
+                                    <svg className="absolute bottom-0 left-0 w-full h-[35px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                        <path d="M0,18 L15,10 L30,14 L45,6 L60,16 L75,8 L90,4 L100,6" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+                                {/* Card 4 */}
+                                <div className="bg-white rounded-2xl p-4 px-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+                                    <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Est. Lead Value</span>
+                                            <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">${((data?.stats?.estLeadValue || 2450000)/1000000).toFixed(2)}M</span>
+                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 15.3% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
+                                        </div>
+                                        <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 justify-center flex items-center shrink-0"><FiTrendingUp className="text-[18px]" /></div>
+                                    </div>
+                                    <svg className="absolute bottom-0 left-0 w-full h-[35px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                        <path d="M0,15 L20,10 L40,6 L60,4 L80,2 L100,5" fill="none" stroke="#8B5CF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            {/* Middle Row (Flex-1 for expansion) */}
+                            <div className="flex flex-[1.1] gap-5 min-h-[240px]">
+                                {/* Left Line Chart */}
+                                <div className="flex-[2] bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-2 shrink-0 relative z-10">
+                                        <div className="flex flex-col gap-2">
+                                            <h4 className="text-[16px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Views vs Leads Over Time</h4>
+                                            <div className="flex gap-4">
+                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#D48D2A]"></div><span className="text-[9px] font-bold text-gray-500 capitalize">Views</span></div>
+                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#1E3B70]"></div><span className="text-[9px] font-bold text-gray-500 capitalize">Leads</span></div>
+                                            </div>
+                                        </div>
+                                        <div className="border border-gray-200 rounded-lg px-3 py-1 flex items-center gap-1 text-[11px] font-bold text-gray-600 shadow-sm cursor-pointer hover:bg-gray-50">
+                                            Week <FiChevronDown className="text-[12px]"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex-1 relative mt-[1px] min-h-0 w-full">
+                                        <div className="absolute inset-0 pb-6 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-2">
+                                            {[300, 225, 150, 75, 0].map((val, i) => (
+                                                <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
+                                                    <span className="absolute -left-[30px] text-[10px] text-gray-400 font-medium w-[24px] text-right mt-0 bg-white leading-none">{val}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="absolute inset-x-0 bottom-0 pl-10 pr-4 h-6 flex justify-between items-end text-[10px] font-medium text-gray-400 pb-1">
+                                            <span>24 Apr</span><span>27 Apr</span><span>30 Apr</span><span>03 May</span><span>06 May</span><span>09 May</span><span>12 May</span><span>15 May</span><span>21 May</span>
+                                        </div>
+                                        <div className="absolute inset-0 pb-6 pl-10 pr-4 mt-2">
+                                            <svg className="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                                <path d="M0,70 L12.5,45 L25,48 L37.5,30 L50,50 L62.5,40 L75,55 L87.5,45 L100,50" fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                {[0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100].map((cx, i) => <circle key={`o-${i}`} cx={cx} cy={[70,45,48,30,50,40,55,45,50][i]} r="2.5" fill="#D48D2A" stroke="white" strokeWidth="1"/>)}
+                                                
+                                                <path d="M0,90 L12.5,85 L25,65 L37.5,70 L50,85 L62.5,75 L75,85 L87.5,80 L100,82" fill="none" stroke="#1E3B70" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                {[0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100].map((cx, i) => <circle key={`b-${i}`} cx={cx} cy={[90,85,65,70,85,75,85,80,82][i]} r="2.5" fill="#1E3B70" stroke="white" strokeWidth="1"/>)}
+                                            </svg>
                                         </div>
                                     </div>
                                 </div>
+                                
+                                {/* Right Donut */}
+                                <div className="flex-1 bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-w-[320px]">
+                                    <h4 className="text-[16px] font-bold text-gray-900 font-playfair tracking-wide mb-3 shrink-0">Leads by Asset Category</h4>
+                                    <div className="flex-1 flex items-center justify-between min-h-0 pl-1 pr-3">
+                                        <div className="w-[140px] h-full flex items-center justify-center relative shrink-0">
+                                            <svg viewBox="0 0 100 100" className="w-[125%] transform -rotate-90">
+                                                <circle cx="50" cy="50" r="38" fill="none" stroke="#F3F4F6" strokeWidth="14" />
+                                                <circle cx="50" cy="50" r="38" fill="none" stroke="#D48D2A" strokeWidth="14" strokeDasharray="238.7" strokeDashoffset={238.7 * (1 - 0.472)} />
+                                                <circle cx="50" cy="50" r="38" fill="none" stroke="#1E3B70" strokeWidth="14" strokeDasharray="238.7" strokeDashoffset={238.7 * (1 - 0.317)} style={{strokeDashoffset: 238.7 * (1 - 0.317) + 238.7 * (1 - 0.472)}}/>
+                                                <circle cx="50" cy="50" r="38" fill="none" stroke="#10B981" strokeWidth="14" strokeDasharray="238.7" strokeDashoffset={238.7 * (1 - 0.155)} style={{strokeDashoffset: 238.7 * (1 - 0.155) + 238.7 * (1 - (0.472+0.317))}}/>
+                                                <circle cx="50" cy="50" r="38" fill="none" stroke="#9CA3AF" strokeWidth="14" strokeDasharray="238.7" strokeDashoffset={238.7 * (1 - 0.056)} style={{strokeDashoffset: 238.7 * (1 - 0.056) + 238.7 * (1 - (0.472+0.317+0.155))}}/>
+                                            </svg>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pt-1">
+                                                <span className="text-[26px] font-medium text-gray-900 leading-none">{data?.stats?.totalLeads || 142}</span>
+                                                <span className="text-[9px] capitalize text-gray-500 font-medium tracking-wide mt-1">Total Leads</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col justify-center gap-3 pl-4 flex-1">
+                                            {[ 
+                                                {n:'Cars', v: 67, p:'47.2%', c:'#D48D2A'}, 
+                                                {n:'Yachts', v: 45, p:'31.7%', c:'#1E3B70'},
+                                                {n:'Real Estate', v: 22, p:'15.5%', c:'#10B981'},
+                                                {n:'Others', v: 8, p:'5.6%', c:'#9CA3AF'}
+                                            ].map((r,i) => (
+                                                <div key={i} className="flex items-center justify-between text-[11px] font-bold text-gray-600">
+                                                    <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{backgroundColor:r.c}}></span>{r.n}</span>
+                                                    <span className="text-gray-900 truncate pl-1 flex gap-1.5"><span className="w-4 text-right">{r.v}</span> <span className="text-gray-400 font-medium w-10 text-right">({r.p})</span></span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-end pt-2 shrink-0">
+                                        <button onClick={() => setActiveTab('analytics')} className="text-[11px] font-black text-gray-500 border border-gray-200 shadow-sm px-4 py-1.5 rounded-[10px] transition-colors flex items-center gap-1.5 hover:bg-gray-50 tracking-wide hover:text-gray-900">View Full Report <FiChevronRight/></button>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-12">
-                                {/* Top Performing Assets */}
-                                <div className="bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden flex flex-col">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <h4 className="text-lg font-bold text-gray-900">Top Performing Assets</h4>
+                            {/* Third Row */}
+                            <div className="flex gap-5 flex-1 min-h-[190px]">
+                                {/* Top Assets Table */}
+                                <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h4 className="text-[15px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Top Performing Assets</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
                                     </div>
-                                    <div className="overflow-y-auto custom-scrollbar flex-1 -mx-6 px-6">
-                                        <table className="w-full text-left">
-                                            <thead>
-                                                <tr className="border-b border-gray-100">
-                                                    <th className="pb-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Asset</th>
-                                                    <th className="pb-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Views</th>
-                                                    <th className="pb-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Change</th>
+                                    <div className="flex-1 overflow-auto custom-scrollbar pr-1 -mx-2 px-2">
+                                        <table className="w-full text-left table-fixed">
+                                            <thead className="sticky top-0 bg-white z-10 w-full">
+                                                <tr>
+                                                    <th className="pb-2 pt-1 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 w-6/12">Asset</th>
+                                                    <th className="pb-2 pt-1 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-center">Views</th>
+                                                    <th className="pb-2 pt-1 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right pr-2">Change</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                {(data.topAssets || []).slice(0, 4).length > 0 ? (data.topAssets || []).slice(0, 4).map((asset, i) => (
-                                                    <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50">
-                                                        <td className="py-3">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
-                                                                    <img src={(asset.images && asset.images[0]) || '/assets/placeholder.jpg'} className="w-full h-full object-cover" alt="" />
-                                                                </div>
-                                                                <div>
-                                                                    <p className="text-xs font-bold text-gray-900 truncate max-w-[120px]">{asset.name}</p>
-                                                                    <p className="text-[9px] text-[#D48D2A] uppercase font-bold tracking-widest">{asset.category?.replace('Asset', '') || 'Cars'}</p>
-                                                                </div>
+                                            <tbody className="divide-y divide-gray-50 text-[11px] font-bold text-gray-600">
+                                                {[
+                                                    {n: 'Ferrari SF90', v: 892, c: '↗ 18.2%', im: ''},
+                                                    {n: 'Sunseeker 88 Yacht', v: 673, c: '↗ 12.8%', im: ''},
+                                                    {n: 'Dubai Marina Penthouse', v: 512, c: '↗ 9.4%', im: ''}
+                                                ].map((item, i) => (
+                                                    <tr key={i} className="hover:bg-gray-50/50">
+                                                        <td className="py-2.5 flex items-center gap-3 truncate">
+                                                            <div className="w-10 h-8 rounded-lg object-cover shadow-[0_2px_5px_rgba(0,0,0,0.1)] shrink-0 bg-gray-100 flex items-center justify-center overflow-hidden">
+                                                                <FiImage className="text-gray-300 transform scale-125"/>
                                                             </div>
+                                                            <span className="text-gray-900 truncate overflow-hidden whitespace-nowrap text-[12px] font-medium">{item.n}</span>
                                                         </td>
-                                                        <td className="py-3 text-center">
-                                                            <span className="text-xs font-bold text-gray-600">{numberWithCommas(asset.views || 0)}</span>
-                                                        </td>
-                                                        <td className="py-3 text-right">
-                                                            <span className="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md">+12%</span>
-                                                        </td>
+                                                        <td className="py-2.5 text-center text-gray-900 font-bold">{item.v}</td>
+                                                        <td className="py-2.5 text-right text-emerald-500 font-bold tracking-tight pr-2">{item.c}</td>
                                                     </tr>
-                                                )) : (
-                                                    <tr>
-                                                        <td colSpan="3" className="py-8 text-center text-xs text-gray-400 font-medium">No assets performing yet.</td>
-                                                    </tr>
-                                                )}
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-
-                                {/* Leads Source */}
-                                <div className="bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                                    <h4 className="text-lg font-bold text-gray-900 mb-6">Leads Source</h4>
-                                    <div className="h-48 w-full relative">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <PieChart>
-                                                <Pie
-                                                    data={[{name:'Website', value:45},{name:'Instagram', value:25},{name:'WhatsApp', value:20},{name:'Others', value:10}]}
-                                                    cx="50%" cy="50%" innerRadius={40} outerRadius={60}
-                                                    paddingAngle={2} dataKey="value" stroke="none"
-                                                >
-                                                    <Cell fill="#D48D2A" />
-                                                    <Cell fill="#E91E63" />
-                                                    <Cell fill="#25D366" />
-                                                    <Cell fill="#9CA3AF" />
-                                                </Pie>
-                                                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', fontSize: '12px', fontWeight: 'bold' }} />
-                                                <Legend layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ fontSize: '10px', fontWeight: 'bold', lineHeight: '24px' }} iconType="circle" />
-                                            </PieChart>
-                                        </ResponsiveContainer>
+                                
+                                {/* Leads Source Donut */}
+                                <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-0">
+                                        <h4 className="text-[15px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Leads Source</h4>
+                                        <button onClick={() => setActiveTab('analytics')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
+                                    </div>
+                                    <div className="flex-1 flex items-center justify-between z-10 px-0 mt-3 -ml-1">
+                                        <div className="w-1/2 h-full flex items-center justify-center relative pb-3 -ml-2">
+                                            <svg viewBox="0 0 100 100" className="w-[115%] transform -rotate-90">
+                                                <circle cx="50" cy="50" r="35" fill="none" stroke="#F3F4F6" strokeWidth="20" />
+                                                <circle cx="50" cy="50" r="35" fill="none" stroke="#D48D2A" strokeWidth="20" strokeDasharray="219.9" strokeDashoffset={219.9 * (1 - 0.437)} />
+                                                <circle cx="50" cy="50" r="35" fill="none" stroke="#1E3B70" strokeWidth="20" strokeDasharray="219.9" strokeDashoffset={219.9 * (1 - 0.338)} style={{strokeDashoffset: 219.9 * (1 - 0.338) + 219.9 * (1 - 0.437)}}/>
+                                                <circle cx="50" cy="50" r="35" fill="none" stroke="#10B981" strokeWidth="20" strokeDasharray="219.9" strokeDashoffset={219.9 * (1 - 0.155)} style={{strokeDashoffset: 219.9 * (1 - 0.155) + 219.9 * (1 - (0.437+0.338))}}/>
+                                                <circle cx="50" cy="50" r="35" fill="none" stroke="#8B5CF6" strokeWidth="20" strokeDasharray="219.9" strokeDashoffset={219.9 * (1 - 0.07)} style={{strokeDashoffset: 219.9 * (1 - 0.07) + 219.9 * (1 - (0.437+0.338+0.155))}}/>
+                                            </svg>
+                                        </div>
+                                        <div className="w-1/2 flex flex-col justify-center gap-2.5 pl-3 z-10 pb-2">
+                                            {[
+                                                {n:'Direct', v: 62, p:'43.7%', c:'#D48D2A'}, 
+                                                {n:'Website', v: 48, p:'33.8%', c:'#1E3B70'}, 
+                                                {n:'Public Marketplace', v: 22, p:'15.5%', c:'#10B981'}, 
+                                                {n:'Social Media', v: 10, p:'7.0%', c:'#8B5CF6'}, 
+                                                {n:'Others', v: 0, p:'0%', c:'#9CA3AF'}
+                                            ].map((r,i) => (
+                                                <div key={i} className="flex items-center justify-between text-[10px] font-bold text-gray-600 w-[140px]">
+                                                    <span className="flex items-center gap-2 truncate mr-1" title={r.n}><span className="w-2.5 h-2.5 rounded-full shrink-0" style={{backgroundColor:r.c}}></span><span className="truncate">{r.n}</span></span>
+                                                    <span className="text-gray-900 text-right flex shrink-0 whitespace-nowrap"><span className="w-[16px]">{r.v}</span> <span className="text-gray-400 font-medium w-[32px] tracking-tight text-right">({r.p})</span></span>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
-
-                                {/* Assets Overview */}
-                                <div className="bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col justify-between">
-                                    <h4 className="text-lg font-bold text-gray-900 mb-4">Assets Overview</h4>
-                                    <div className="grid grid-cols-2 gap-4 flex-1">
-                                        <div className="bg-[#FFF8F0] rounded-xl p-4 flex flex-col justify-center items-center text-center">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1.5 mb-1 tracking-widest"><div className="w-1.5 h-1.5 rounded-full bg-[#D48D2A]"></div> Total</span>
-                                            <span className="text-2xl font-bold text-gray-900">{data.stats.totalAssets || 0}</span>
+                                
+                                {/* Conversion Rate Bars */}
+                                <div className="flex-[1.2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
+                                    <div className="flex justify-between items-start mb-2 shrink-0">
+                                        <div className="flex flex-col">
+                                            <h4 className="text-[15px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Conversion Rate</h4>
+                                            <span className="text-[32px] font-medium text-gray-900 mt-2 tracking-tight leading-none">5.8%</span>
+                                            <span className="text-[10px] font-bold text-emerald-500 mt-2 flex items-center gap-1"><FiTrendingUp className="text-[11px]"/> 2.3% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
-                                        <div className="bg-emerald-50/50 rounded-xl p-4 flex flex-col justify-center items-center text-center">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1.5 mb-1 tracking-widest"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Live</span>
-                                            <span className="text-2xl font-bold text-gray-900">{data.stats.activeAssetsCount || 0}</span>
+                                        <div className="border border-gray-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1 text-[10px] font-bold text-gray-600 shadow-sm cursor-pointer hover:bg-gray-50">
+                                            Week <FiChevronDown className="text-[12px]"/>
                                         </div>
-                                        <div className="bg-gray-50/80 rounded-xl p-4 flex flex-col justify-center items-center text-center">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1.5 mb-1 tracking-widest"><div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div> Drafts</span>
-                                            <span className="text-2xl font-bold text-gray-900">0</span>
+                                    </div>
+                                    <div className="flex-1 flex items-end justify-between px-1 mt-1 relative min-h-0">
+                                        {/* Axes */}
+                                        <div className="absolute inset-y-0 left-0 flex flex-col justify-between pt-1 pb-[18px] text-[9px] text-gray-400 font-medium z-10 w-4 pr-1 text-right">
+                                            <span>9%</span><span>6%</span><span>3%</span><span>0%</span>
                                         </div>
-                                        <div className="bg-blue-50/50 rounded-xl p-4 flex flex-col justify-center items-center text-center">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1.5 mb-1 tracking-widest"><div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div> Sold</span>
-                                            <span className="text-2xl font-bold text-gray-900">0</span>
+                                        {/* Bars Container */}
+                                        <div className="flex-1 flex justify-between items-end h-full ml-6 pb-5 pt-3">
+                                            {[40, 40, 50, 48, 85, 50].map((h, i) => (
+                                                <div key={i} className="flex flex-col items-center justify-end h-full group cursor-default relative w-full px-1.5">
+                                                    {i === 4 && (
+                                                        <div className="absolute -top-6 bg-gray-900 text-white text-[9px] px-1.5 py-0.5 rounded font-bold shadow-md z-20 tooltip-arrow">5.8%</div>
+                                                    )}
+                                                    <div className={`w-3.5 rounded-t group-hover:bg-gray-800 transition-colors relative z-10 ${i === 4 ? 'bg-gray-900' : 'bg-[#D48D2A]'}`} style={{height: `${h}%`}}></div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {/* X Axis */}
+                                        <div className="absolute inset-x-0 bottom-0 flex justify-between ml-[32px] text-[9px] font-medium text-gray-400 pb-0.5 pointer-events-none pr-1">
+                                            <span>24 Apr</span><span>01 May</span><span>08 May</span><span>15 May</span><span>21 May</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Fourth Row */}
+                            <div className="flex gap-5 flex-[0.8] min-h-[140px] shrink-0">
+                                <div className="flex-[2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-1 pb-1">
+                                        <h4 className="text-[16px] font-bold text-gray-900 font-playfair tracking-wide leading-none mt-1">Recent Activity</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase tracking-widest whitespace-nowrap mt-1">View all activity</button>
+                                    </div>
+                                    <div className="space-y-[8px] flex-1 overflow-auto custom-scrollbar pr-2 mt-2">
+                                        {[
+                                            {m: 'New view on Ferrari SF90', icon: FiEye, t: '2 minutes ago'},
+                                            {m: <span>New lead from <strong>Website</strong></span>, icon: FiUser, t: '15 minutes ago'},
+                                            {m: <span>Asset <strong>Sunseeker 88 Yacht</strong> shortlisted</span>, icon: FiHeart, t: '1 hour ago'}
+                                        ].map((notif, idx) => (
+                                            <div key={idx} className="flex justify-between items-center text-[12px] group hover:bg-gray-50 -mx-2 px-2 py-1.5 rounded-lg transition-colors">
+                                                <div className="flex items-center gap-3 text-gray-600 truncate"><notif.icon className="text-[#D48D2A] shrink-0 text-[14px]"/> <span className="font-normal text-gray-800 truncate">{notif.m}</span></div>
+                                                <span className="text-gray-400 font-medium shrink-0 ml-2">{notif.t}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="flex-[1.1] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-1 pb-1 mt-1">
+                                        <h4 className="text-[16px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Assets Overview</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase whitespace-nowrap">Manage Assets</button>
+                                    </div>
+                                    <div className="flex justify-between items-start mt-4 px-1 pb-2">
+                                        <div className="flex flex-col text-left flex-1 border-r border-gray-100 pr-2">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5 whitespace-nowrap">Total Assets</span>
+                                            <span className="text-[26px] font-medium text-gray-900 leading-none">25</span>
+                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-2 tracking-tight"><FiTrendingUp className="text-[10px]" /> 3 new</span>
+                                        </div>
+                                        <div className="flex flex-col text-left flex-1 pl-4 border-r border-gray-100 pr-2">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5 whitespace-nowrap">Live Assets</span>
+                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">18</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-3.5 shadow-sm shadow-emerald-500/20"></div>
+                                        </div>
+                                        <div className="flex flex-col text-left flex-[0.8] pl-4 border-r border-gray-100 pr-2">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5">Drafts</span>
+                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">4</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[#D48D2A] mt-3.5 shadow-sm shadow-[#D48D2A]/20"></div>
+                                        </div>
+                                        <div className="flex flex-col text-left flex-[0.8] pl-4">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5">Sold</span>
+                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">3</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-3.5 border border-gray-200"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -991,19 +1170,22 @@ const Inventory = () => {
 
                             {/* Asset Cards Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {data.inventory.filter(item => {
-                                    const matchesCategory = inventoryCategoryFilter === 'All Categories' ||
-                                        ((item.category === 'CarAsset' || item.category === 'vehicles') && inventoryCategoryFilter === 'Cars') ||
-                                        ((item.category === 'YachtAsset' || item.category === 'yachts') && inventoryCategoryFilter === 'Yachts') ||
-                                        ((item.category === 'EstateAsset' || item.category === 'estates') && inventoryCategoryFilter === 'Real Estate') ||
-                                        ((item.category === 'BikeAsset' || item.category === 'bikes') && inventoryCategoryFilter === 'Bikes');
-
-                                    const matchesStatus = inventoryStatusFilter === 'All Status' ||
-                                        (inventoryStatusFilter === 'Active' && item.status === 'Active') ||
-                                        item.status === inventoryStatusFilter;
-
-                                    return matchesCategory && matchesStatus;
-                                }).map((item) => {
+                                { (() => {
+                                    const filtered = (data.inventory || []).filter(item => {
+                                        const matchesCategory = inventoryCategoryFilter === 'All Categories' ||
+                                            ((item.category === 'CarAsset' || item.category === 'vehicles') && inventoryCategoryFilter === 'Cars') ||
+                                            ((item.category === 'YachtAsset' || item.category === 'yachts') && inventoryCategoryFilter === 'Yachts') ||
+                                            ((item.category === 'EstateAsset' || item.category === 'estates') && inventoryCategoryFilter === 'Real Estate') ||
+                                            ((item.category === 'BikeAsset' || item.category === 'bikes') && inventoryCategoryFilter === 'Bikes');
+        
+                                        const matchesStatus = inventoryStatusFilter === 'All Status' ||
+                                            (inventoryStatusFilter === 'Active' && item.status === 'Active') ||
+                                            item.status === inventoryStatusFilter;
+        
+                                        return matchesCategory && matchesStatus;
+                                    });
+                                    const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+                                    return paginated.map((item) => {
                                     const categoryName = (item.category === 'CarAsset' || item.category === 'vehicles') ? 'CARS' :
                                         (item.category === 'YachtAsset' || item.category === 'yachts') ? 'YACHTS' :
                                         (item.category === 'BikeAsset' || item.category === 'bikes') ? 'BIKES' :
@@ -1028,7 +1210,7 @@ const Inventory = () => {
                                             {/* Card Body */}
                                             <div className="p-6 flex-1 flex flex-col">
                                                 <p className="text-[10px] text-[#D48D2A] uppercase font-black tracking-widest mb-1">{categoryName}</p>
-                                                <h3 className="text-xl font-bold text-gray-900 mb-2 truncate font-playfair">{item.title}</h3>
+                                                <h3 className="text-xl font-bold text-gray-900 mb-2 truncate font-playfair" title={item.propertyName || item.yachtName || item.name || item.title || `${item.make || ''} ${item.model || ''}`.trim()}>{item.propertyName || item.yachtName || item.name || item.title || `${item.make || ''} ${item.model || ''}`.trim() || 'Unnamed Asset'}</h3>
                                                 <div className="flex justify-between items-end mb-5">
                                                     <p className="text-xl font-black text-gray-900">${numberWithCommas(item.price)}</p>
                                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Est. Value</p>
@@ -1074,431 +1256,790 @@ const Inventory = () => {
                                             </div>
                                         </div>
                                     );
-                                })}
+                                }); })()}
                             </div>
 
-                            {/* Pagination (Visual Only) */}
-                            <div className="flex justify-center items-center py-8 mt-8 border-t border-gray-100">
-                                <div className="flex items-center gap-2">
-                                    <button className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-900 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)] border border-gray-200 font-bold transition-colors">1</button>
-                                    <span className="text-gray-400 font-bold px-2">...</span>
-                                    <button className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-white hover:shadow-sm border border-transparent font-bold transition-all">6</button>
-                                </div>
-                            </div>
+                            {/* Dynamic Pagination */}
+                            {(() => {
+                                const filtered = (data.inventory || []).filter(item => {
+                                    const matchesCategory = inventoryCategoryFilter === 'All Categories' ||
+                                        ((item.category === 'CarAsset' || item.category === 'vehicles') && inventoryCategoryFilter === 'Cars') ||
+                                        ((item.category === 'YachtAsset' || item.category === 'yachts') && inventoryCategoryFilter === 'Yachts') ||
+                                        ((item.category === 'EstateAsset' || item.category === 'estates') && inventoryCategoryFilter === 'Real Estate') ||
+                                        ((item.category === 'BikeAsset' || item.category === 'bikes') && inventoryCategoryFilter === 'Bikes');
+    
+                                    const matchesStatus = inventoryStatusFilter === 'All Status' ||
+                                        (inventoryStatusFilter === 'Active' && item.status === 'Active') ||
+                                        item.status === inventoryStatusFilter;
+    
+                                    return matchesCategory && matchesStatus;
+                                });
+                                const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+                                
+                                return (
+                                    <div className="flex justify-between items-center py-6 mt-4 border-t border-gray-100 relative">
+                                        <div className="w-1/3"></div>
+                                        <div className="flex items-center gap-1.5 justify-center w-1/3">
+                                            <button 
+                                                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                                disabled={currentPage === 1}
+                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                                            >
+                                                &lt;
+                                            </button>
+                                            
+                                            {Array.from({ length: totalPages }).map((_, i) => {
+                                                const p = i + 1;
+                                                if (p === 1 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1)) {
+                                                    return (
+                                                        <button 
+                                                            key={p} 
+                                                            onClick={() => setCurrentPage(p)}
+                                                            className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-colors ${currentPage === p ? 'text-[#D48D2A] bg-[#FFF8F0] border border-[#F2E8DB] shadow-sm' : 'text-gray-500 hover:text-gray-900 border border-transparent'}`}
+                                                        >
+                                                            {p}
+                                                        </button>
+                                                    );
+                                                } else if (p === currentPage - 2 || p === currentPage + 2) {
+                                                    return <span key={p} className="text-gray-300 font-bold px-1 text-xs">...</span>;
+                                                }
+                                                return null;
+                                            })}
+                                            
+                                            <button 
+                                                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                                disabled={currentPage === totalPages}
+                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                                            >
+                                                &gt;
+                                            </button>
+                                        </div>
+                                        
+                                        <div className="flex items-center justify-end w-1/3 relative z-10">
+                                            <div className="relative">
+                                                <select 
+                                                    value={itemsPerPage} 
+                                                    onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                                                    className="appearance-none bg-white border border-gray-200 rounded-xl py-2 pl-4 pr-10 text-[11px] font-bold text-gray-600 focus:outline-none hover:border-gray-300 shadow-sm cursor-pointer"
+                                                >
+                                                    <option value={10}>10 per page</option>
+                                                    <option value={20}>20 per page</option>
+                                                    <option value={50}>50 per page</option>
+                                                </select>
+                                                <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
                         </div>
                     )}
 
                     {/* LEADS TAB */}
                     {activeTab === 'leads' && (
-                        <div className="space-y-6 animate-in slide-in-from-bottom-5 duration-500">
-                            {/* Lead Control Bar */}
-                            <div className="flex justify-between items-center bg-white p-4 rounded-[1.5rem] border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] mb-6">
-                                <div className="flex gap-3">
-                                    <div className="relative">
-                                        <select
-                                            value={leadStatusFilter}
-                                            onChange={(e) => setLeadStatusFilter(e.target.value)}
-                                            className="appearance-none bg-gray-50 border border-transparent rounded-[1.25rem] py-2.5 pl-5 pr-10 text-sm font-bold text-gray-600 focus:bg-white focus:border-[#D48D2A] cursor-pointer min-w-[140px] outline-none transition-all shadow-inner"
-                                        >
-                                            <option>All Status</option>
-                                            <option>New</option>
-                                            <option>Contacted</option>
-                                            <option>Negotiating</option>
-                                            <option>Closed</option>
-                                        </select>
-                                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                                    </div>
-                                    <div className="relative">
-                                        <select
-                                            value={leadCategoryFilter}
-                                            onChange={(e) => setLeadCategoryFilter(e.target.value)}
-                                            className="appearance-none bg-gray-50 border border-transparent rounded-[1.25rem] py-2.5 pl-5 pr-10 text-sm font-bold text-gray-600 focus:bg-white focus:border-[#D48D2A] cursor-pointer min-w-[160px] outline-none transition-all shadow-inner"
-                                        >
-                                            <option>All Categories</option>
-                                            <option>Cars</option>
-                                            <option>Yachts</option>
-                                            <option>Real Estate</option>
-                                            <option>Bikes</option>
-                                        </select>
-                                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                                    </div>
+                        <div className="h-[calc(100vh-6rem-5rem)] flex flex-col gap-4 animate-in fade-in duration-700 pb-2">
+                            {/* Header Row with Date Dropdown and Buttons */}
+                            <div className="flex justify-between items-end shrink-0 mb-1">
+                                <div className="flex items-center gap-2 text-[11px] font-bold text-gray-700 bg-white border border-gray-200 rounded-xl px-4 py-2 hover:bg-gray-50 cursor-pointer shadow-sm">
+                                    <FiCalendar className="text-gray-400" /> Last 30 days <FiChevronDown className="ml-1 text-gray-400" />
                                 </div>
-
-                                <button
-                                    onClick={handleExportCSV}
-                                    className="px-6 py-2.5 rounded-[1.25rem] border border-gray-200 bg-white hover:bg-gray-50 flex items-center gap-2 text-sm font-bold shadow-sm transition-all text-gray-700"
-                                >
-                                    <FiDownload className="text-gray-400" /> Export as CSV
-                                </button>
+                                <div className="flex items-center gap-3">
+                                    <button onClick={() => setIsAddLeadModalOpen(true)} className="px-5 py-2 rounded-xl text-[11px] font-bold bg-gray-900 text-white shadow-sm flex items-center gap-2 hover:opacity-90 transition-opacity"><FiPlus className="text-white"/> Add Lead</button>
+                                    <button onClick={handleExportCSV} className="px-5 py-2 rounded-xl text-[11px] font-bold border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 flex items-center gap-2 transition-colors">Export</button>
+                                </div>
                             </div>
 
-                            <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="bg-gray-50/80 border-b border-gray-100/80">
-                                            <th className="px-10 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50/50">Buyer</th>
-                                            <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50/50">Asset</th>
-                                            <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50/50">Message</th>
-                                            <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50/50">Date</th>
-                                            <th className="px-4 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50/50 text-center">Status</th>
-                                            <th className="px-10 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-50/50 text-right">Contact</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-50">
-                                        {data.leads
-                                            .filter(lead => {
-                                                const matchesStatus = leadStatusFilter === 'All Status' || lead.status === leadStatusFilter;
-                                                const cat = lead.category?.replace('Asset', 's') || 'General';
-                                                const matchesCategory = leadCategoryFilter === 'All Categories' || cat.toLowerCase().includes(leadCategoryFilter.toLowerCase().replace(' ', ''));
-                                                return matchesStatus && matchesCategory;
-                                            })
-                                            .map((lead) => (
-                                                <tr key={lead.id} className="hover:bg-gray-50/50 transition-all group">
-                                                    <td className="px-10 py-6">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="relative">
-                                                                <img
-                                                                    src={lead.buyerPhoto || '/assets/user.png'}
-                                                                    className="w-12 h-12 rounded-full border-2 border-white shadow-sm object-cover"
-                                                                    alt="Buyer"
-                                                                    onError={(e) => e.target.src = '/assets/user.png'}
-                                                                />
-                                                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+                            {/* 4 KPI Cards */}
+                            <div className="grid grid-cols-4 gap-4 shrink-0 h-[85px]">
+                                {/* Total Leads */}
+                                <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Total Leads</span>
+                                            <span className="text-2xl font-bold text-gray-900 font-playfair leading-none mt-1">{numberWithCommas(data?.stats?.totalLeads || 0)}</span>
+                                        </div>
+                                        <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUsers className="text-sm" /></div>
+                                    </div>
+                                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-auto tracking-wide"><FiTrendingUp className="text-[10px]" /> 8.2% <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span></span>
+                                </div>
+                                {/* New Leads */}
+                                <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">New Leads</span>
+                                            <span className="text-2xl font-bold text-gray-900 font-playfair leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='New').length}</span>
+                                        </div>
+                                        <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUser className="text-sm" /></div>
+                                    </div>
+                                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-auto tracking-wide"><FiTrendingUp className="text-[10px]" /> 12.5% <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span></span>
+                                </div>
+                                {/* Qualified Leads */}
+                                <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Qualified Leads</span>
+                                            <span className="text-2xl font-bold text-gray-900 font-playfair leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='Qualified').length}</span>
+                                        </div>
+                                        <div className="w-8 h-8 rounded-lg bg-emerald-50 justify-center text-emerald-600 flex items-center shrink-0 border border-emerald-100"><FiCheckCircle className="text-sm" /></div>
+                                    </div>
+                                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-auto tracking-wide"><FiTrendingUp className="text-[10px]" /> 6.1% <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span></span>
+                                </div>
+                                {/* Conversion Rate */}
+                                <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Conversion Rate</span>
+                                            <span className="text-2xl font-bold text-gray-900 font-playfair leading-none mt-1">{data?.stats?.totalViews ? ((data?.stats?.totalLeads / data?.stats?.totalViews) * 100).toFixed(1) : '0.0'}%</span>
+                                        </div>
+                                        <div className="w-8 h-8 rounded-lg bg-purple-50 justify-center text-purple-600 flex items-center shrink-0 border border-purple-100"><FiActivity className="text-sm" /></div>
+                                    </div>
+                                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-auto tracking-wide"><FiTrendingUp className="text-[10px]" /> 3.4% <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span></span>
+                                </div>
+                            </div>
+
+                            {/* Filter Bar */}
+                            <div className="flex justify-between gap-3 shrink-0 py-2">
+                                <div className="relative flex-1">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <FiSearch className="text-gray-400 text-sm" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Search leads by name, email, phone..."
+                                        className="w-full bg-white border border-gray-200 rounded-[1rem] py-2.5 pl-9 pr-4 text-[11px] font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#D48D2A] focus:ring-1 focus:ring-[#D48D2A] transition-all shadow-sm"
+                                    />
+                                </div>
+                                <div className="flex gap-3 shrink-0">
+                                    {['All Status', 'All Source', 'All Assets'].map((f, i) => (
+                                        <div key={i} className="relative w-[130px]">
+                                            <select className="w-full appearance-none bg-white border border-gray-200 rounded-[1rem] py-2.5 pl-4 pr-8 text-[11px] font-bold text-gray-600 focus:outline-none cursor-pointer hover:border-gray-300 shadow-sm">
+                                                <option>{f}</option>
+                                            </select>
+                                            <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
+                                        </div>
+                                    ))}
+                                    <button className="px-4 py-2.5 rounded-[1rem] border border-gray-200 bg-white text-gray-700 font-bold text-[11px] shadow-sm flex items-center gap-2 hover:bg-gray-50 transition-colors">
+                                        <FiFilter className="text-gray-400"/> More Filters
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Table Area */}
+                            <div className="bg-white rounded-[1.25rem] border border-gray-100 shadow-sm overflow-hidden flex-1 flex flex-col relative">
+                                <div className="overflow-auto flex-1 custom-scrollbar">
+                                    <table className="w-full text-left table-fixed min-w-[1000px]">
+                                        <thead className="sticky top-0 bg-white z-20 border-b border-gray-50 shadow-[0_4px_10px_-4px_rgba(0,0,0,0.02)]">
+                                            <tr>
+                                                <th className="w-10 px-4 py-3"><input type="checkbox" className="rounded border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A]"/></th>
+                                                <th className="w-2/12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">LEAD</th>
+                                                <th className="w-[18%] px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">ASSET INTERESTED</th>
+                                                <th className="w-2/12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">SOURCE</th>
+                                                <th className="w-1/12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">STATUS</th>
+                                                <th className="w-1/12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">VALUE</th>
+                                                <th className="w-[12%] px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">DATE ADDED <FiChevronDown className="inline ml-0.5"/></th>
+                                                <th className="w-[18%] px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">MESSAGE</th>
+                                                <th className="w-12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest text-center">ACTIONS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-50 text-[10px] font-bold">
+                                            {(() => {
+                                                const leads = (data?.leads || []);
+                                                if (leads.length === 0) {
+                                                    return <tr><td colSpan="9" className="py-8 text-center text-xs text-gray-400">No leads found</td></tr>;
+                                                }
+                                                return leads.slice(0, 5).map((lead, i) => (
+                                                    <tr key={i} className="hover:bg-gray-50/50 group bg-white">
+                                                        <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A]"/></td>
+                                                        <td className="px-2 py-2.5">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0"><img src="/assets/placeholder.jpg" className="w-full h-full object-cover"/></div>
+                                                                <div className="flex flex-col truncate">
+                                                                    <span className="text-gray-900 font-bold truncate">{lead.name}</span>
+                                                                    <span className="text-gray-400 font-medium text-[9px] truncate">{lead.email}</span>
+                                                                    <span className="text-gray-400 font-medium text-[9px] truncate">{lead.phone}</span>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <p className="text-sm font-bold text-gray-900 mb-0.5">{lead.buyerName}</p>
-                                                                {user.plan === 'Business VIP' ? (
-                                                                    <div className="flex flex-col">
-                                                                        <span className="text-[11px] text-gray-500 font-medium">{lead.customerContact}</span>
-                                                                    </div>
-                                                                ) : (
-                                                                    <p className="text-[10px] text-gray-400 font-bold italic mt-1 bg-gray-100 inline-block px-2 py-0.5 rounded">Contact Hidden (VIP Only)</p>
-                                                                )}
+                                                        </td>
+                                                        <td className="px-2 py-2.5">
+                                                            <div className="flex items-center gap-2">
+                                                                {(() => {
+                                                                    const asset = (data?.inventory || []).find(a => a._id === lead.assetId || a.id === lead.assetId);
+                                                                    const assetName = asset ? (asset.propertyName || asset.yachtName || asset.name || asset.title || `${asset.make || ''} ${asset.model || ''}`.trim() || 'Unnamed Asset') : 'Unknown Asset';
+                                                                    const assetPrice = (lead.assetPrice || asset?.price) ? `$${numberWithCommas(lead.assetPrice || asset?.price)}` : 'Price on request';
+                                                                    const assetImage = lead.assetImage || asset?.images?.[0];
+                                                                    return (
+                                                                        <>
+                                                                            <div className="w-8 h-8 rounded shrink-0 bg-gray-100 border border-gray-200/50 overflow-hidden shadow-sm flex items-center justify-center">
+                                                                                {assetImage ? <img src={assetImage} className="w-full h-full object-cover"/> : <img src="/assets/placeholder.jpg" className="w-full h-full object-cover opacity-50"/>}
+                                                                            </div>
+                                                                            <div className="flex flex-col truncate">
+                                                                                <span className="text-gray-900 truncate font-bold">{assetName}</span>
+                                                                                <span className="text-gray-400 font-medium text-[9px] truncate">{assetPrice}</span>
+                                                                            </div>
+                                                                        </>
+                                                                    );
+                                                                })()}
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-6">
-                                                        <p className="text-sm font-bold text-gray-900 mb-2 truncate max-w-[200px] font-playfair">{lead.assetName}</p>
-                                                        <span className="px-3 py-1 bg-[#FFF8F0] text-[#D48D2A] rounded border border-[#D48D2A]/20 text-[10px] font-black uppercase tracking-widest inline-flex items-center gap-1.5">
-                                                            <div className="w-1.5 h-1.5 rounded-full bg-[#D48D2A]"></div>
-                                                            {lead.category === 'CarAsset' ? 'CARS' : lead.category === 'YachtAsset' ? 'YACHTS' : lead.category === 'EstateAsset' ? 'REAL ESTATE' : lead.category?.replace('Asset', 'S')?.toUpperCase() || 'GENERAL'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-6">
-                                                        <p className="text-sm font-bold text-gray-500 line-clamp-2 max-w-[250px] leading-relaxed">{lead.message}</p>
-                                                    </td>
-                                                    <td className="px-6 py-6 text-sm text-gray-500 font-bold shrink-0 font-mono tracking-tight">
-                                                        {new Date(lead.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
-                                                    </td>
-                                                    <td className="px-4 py-6 text-center">
-                                                        <div className="relative inline-block">
-                                                            <select
-                                                                value={lead.status || 'New'}
-                                                                onChange={(e) => handleStatusChange(lead.id, e.target.value, lead.isActivity)}
-                                                                className={`appearance-none pl-4 pr-8 py-2 rounded-full text-[10px] font-black uppercase tracking-widest cursor-pointer outline-none border transition-all ${lead.status === 'New' ? 'bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100' :
-                                                                    lead.status === 'Contacted' ? 'bg-[#FFF8F0] text-[#D48D2A] border-[#D48D2A]/20 hover:bg-[#FFF0E0]' :
-                                                                        lead.status === 'Negotiating' ? 'bg-purple-50 text-purple-600 border-purple-100 hover:bg-purple-100' :
-                                                                            lead.status === 'Closed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100' :
-                                                                                'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'
-                                                                    }`}
-                                                            >
-                                                                <option value="New">NEW</option>
-                                                                <option value="Contacted">CONTACTED</option>
-                                                                <option value="Negotiating">NEGOTIATING</option>
-                                                                <option value="Closed">CLOSED</option>
-                                                            </select>
-                                                            <FiChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs ${lead.status === 'New' ? 'text-blue-400' : lead.status === 'Contacted' ? 'text-[#D48D2A]/60' : lead.status === 'Negotiating' ? 'text-purple-400' : lead.status === 'Closed' ? 'text-emerald-400' : 'text-gray-400'}`} />
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-10 py-6 text-right">
-                                                        <div className="flex items-center justify-end gap-2">
-                                                            {user.plan === 'Business VIP' ? (
-                                                                <>
-                                                                    <a
-                                                                        href={`mailto:${lead.customerContact}`}
-                                                                        className="px-4 py-2 bg-gray-900 text-white hover:bg-black rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-[0_2px_10px_rgba(0,0,0,0.1)]"
-                                                                        title="Reply via Email"
-                                                                    >
-                                                                        <FiMail className="text-sm" /> Reply
-                                                                    </a>
-                                                                    <button className="w-8 h-8 rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200 ml-1">
-                                                                        <FiMoreVertical />
-                                                                    </button>
-                                                                </>
-                                                            ) : (
-                                                                <button
-                                                                    disabled
-                                                                    className="px-4 py-2 bg-gray-100 text-gray-400 rounded-xl text-xs font-bold flex items-center gap-2 cursor-not-allowed border border-gray-200"
-                                                                    title="Upgrade to Business VIP to Contact"
-                                                                >
-                                                                    <FiLock className="text-sm" /> Unlock
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                    </tbody>
-                                </table>
+                                                        </td>
+                                                        <td className="px-2 py-2.5">
+                                                            <div className="flex flex-col gap-1">
+                                                                <span className="flex items-center gap-1.5 text-gray-700 capitalize font-medium"><FiGlobe className="text-[10px]"/> {lead.source || 'Website'}</span>
+                                                                <span className="flex items-center gap-1.5 text-emerald-500 font-medium"><FiMessageSquare className="text-[10px]"/> WhatsApp</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-2 py-2.5">
+                                                            <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${lead.status === 'New' ? 'bg-emerald-50' : lead.status === 'Contacted' ? 'bg-blue-50' : lead.status === 'Qualified' ? 'bg-[#FFF8F0]' : 'bg-purple-50'}`}>
+                                                                <div className={`w-1.5 h-1.5 rounded-full ${lead.status === 'New' ? 'bg-emerald-500' : lead.status === 'Contacted' ? 'bg-blue-500' : lead.status === 'Qualified' ? 'bg-[#D48D2A]' : 'bg-purple-500'}`}></div>
+                                                                <span className={`text-[10px] font-bold ${lead.status === 'New' ? 'text-emerald-600' : lead.status === 'Contacted' ? 'text-blue-600' : lead.status === 'Qualified' ? 'text-[#D48D2A]' : 'text-purple-600'}`}>{lead.status}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-2 py-2.5 text-gray-900 font-black">
+                                                            {(lead.assetPrice) ? `$${(lead.assetPrice / 1000000).toFixed(1)}M` : '$6.6M'}
+                                                        </td>
+                                                        <td className="px-2 py-2.5">
+                                                            <div className="flex flex-col text-gray-600">
+                                                                <span>{new Date(lead.createdAt).toLocaleDateString()}</span>
+                                                                <span className="text-[9px] text-gray-400 font-medium">{new Date(lead.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-2 py-2.5">
+                                                            <p className="text-[9px] text-gray-500 font-medium line-clamp-2 leading-snug w-full whitespace-normal">
+                                                                {lead.message || "I'm interested in this asset. Is it available?"}
+                                                            </p>
+                                                        </td>
+                                                        <td className="px-2 py-2.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <div className="flex items-center justify-center gap-2">
+                                                                <button className="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:text-[#D48D2A] hover:bg-[#FFF8F0] transition-colors shadow-sm bg-white"><FiEye className="text-[10px]"/></button>
+                                                                <button className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-900"><FiMoreVertical/></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ));
+                                            })()}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {/* Pagination Base */}
+                                <div className="h-10 border-t border-gray-100 flex justify-between items-center px-4 shrink-0 bg-white">
+                                    <span className="text-[10px] font-bold text-gray-400">Showing 1 to 5 of {(data?.leads || []).length} leads</span>
+                                    <div className="flex items-center gap-1.5 justify-center">
+                                        <button className="w-6 h-6 rounded flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors">&lt;</button>
+                                        <button className="w-6 h-6 rounded flex items-center justify-center font-bold text-[10px] text-[#D48D2A] bg-[#FFF8F0] border border-[#F2E8DB] shadow-sm">1</button>
+                                        <button className="w-6 h-6 rounded flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 border border-transparent">2</button>
+                                        <button className="w-6 h-6 rounded flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 border border-transparent">3</button>
+                                        <span className="text-gray-300 font-bold px-1 text-[10px]">...</span>
+                                        <button className="w-6 h-6 rounded flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 border border-transparent">29</button>
+                                        <button className="w-6 h-6 rounded flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors">&gt;</button>
+                                    </div>
+                                    <div className="relative">
+                                        <select className="appearance-none bg-white border border-gray-200 rounded-lg py-1 pl-3 pr-8 text-[10px] font-bold text-gray-600 focus:outline-none hover:border-gray-300 shadow-sm cursor-pointer">
+                                            <option>10 per page</option>
+                                            <option>20 per page</option>
+                                            <option>50 per page</option>
+                                        </select>
+                                        <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[9px]" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}
 
                     {/* ANALYTICS TAB */}
                     {activeTab === 'analytics' && (
-                        <div className="space-y-10 animate-in fade-in duration-700">
-
-                            {/* Analytics KPI Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                                <AnalyticsCard title="Total Views" value={numberWithCommas(data.stats.totalViews)} growth="+18.2%" icon={<FiEye />} />
-                                <AnalyticsCard title="Total Leads" value={data.stats.totalLeads} growth="+12.5%" icon={<FiUsers />} />
-                                <AnalyticsCard title="Conversion Rate" value={`${data.stats.avgConversion}%`} growth="+0.3%" icon={<FiTrendingUp />} />
-                                <AnalyticsCard title="Avg Lead Value" value="$12,426" growth="+5.8%" icon={<FiCreditCard />} />
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                {/* Performance Trend Line Chart */}
-                                <div className="lg:col-span-2 bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                                    <h4 className="text-xl font-bold text-gray-900 mb-10 font-playfair">Performance Trend</h4>
-                                    <div className="h-64 relative border-b border-l border-gray-100 mb-8 pt-4">
-                                        {/* Grid Lines */}
-                                        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                                            {[16000, 12000, 8000, 4000, 0].map(val => (
-                                                <div key={val} className="w-full border-t border-gray-50 flex items-center">
-                                                    <span className="text-[10px] text-gray-300 font-bold -ml-10 w-8 text-right">{val}</span>
-                                                </div>
+                        <div className="h-full max-h-[calc(100vh-9.5rem)] flex flex-col gap-4 animate-in fade-in duration-700">
+                            
+                            {/* Toolbar */}
+                            <div className="flex justify-between items-center shrink-0">
+                                <div>
+                                    <p className="text-gray-500 font-medium text-xs">Track performance and get actionable insights</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="flex items-center border border-gray-200 bg-white rounded-[10px] shadow-sm overflow-hidden h-[34px] mr-2">
+                                        <div className="flex items-center px-4 border-r border-gray-100 h-full text-[11px] font-bold text-gray-700 cursor-pointer hover:bg-gray-50"><FiCalendar className="mr-2 text-gray-400"/> 24 Apr - 24 May 2026 <FiChevronDown className="ml-2 text-gray-400"/></div>
+                                        <div className="flex h-full">
+                                            {['7D', '30D', '90D', '1Y'].map(d => (
+                                                <button key={d} className={`px-3 text-[10px] font-bold border-r border-gray-100 ${d==='30D'?'bg-[#FFF8F0] text-[#D48D2A]':'bg-white text-gray-500 hover:bg-gray-50'}`}>{d}</button>
                                             ))}
+                                            <button className="px-3 text-[10px] font-bold bg-white text-gray-500 flex items-center hover:bg-gray-50">Custom <FiChevronDown className="ml-1"/></button>
                                         </div>
-
-                                        {/* SVG Chart */}
-                                        {/* SVG Chart */}
-                                        <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                            {(() => {
-                                                const trend = data.analytics?.performanceTrend || [];
-                                                const maxVal = Math.max(...trend.map(t => Math.max(t.views, t.leads)), 100);
-
-                                                // Calculate points
-                                                const getPoints = (key) => trend.map((t, i) => {
-                                                    const x = i * 33.33;
-                                                    const y = 100 - ((t[key] / maxVal) * 80); // Leave some headroom
-                                                    return `${x},${y}`;
-                                                });
-
-                                                const viewsPoints = getPoints('views');
-                                                const leadsPoints = getPoints('leads');
-                                                const viewsPath = `M${viewsPoints.join(' L')}`;
-                                                const leadsPath = `M${leadsPoints.join(' L')}`;
-
-                                                return (
-                                                    <>
-                                                        {/* Views Line (Orange) */}
-                                                        <path d={viewsPath} fill="none" stroke="#D48D2A" strokeWidth="2" strokeLinecap="round" />
-                                                        {viewsPoints.map((p, i) => {
-                                                            const [cx, cy] = p.split(',');
-                                                            return <circle key={`v-${i}`} cx={cx} cy={cy} r="1.5" fill="#D48D2A" />;
-                                                        })}
-
-                                                        {/* Leads Line (Blue) */}
-                                                        <path d={leadsPath} fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" />
-                                                        {leadsPoints.map((p, i) => {
-                                                            const [cx, cy] = p.split(',');
-                                                            return <circle key={`l-${i}`} cx={cx} cy={cy} r="1.5" fill="#3B82F6" />;
-                                                        })}
-                                                    </>
-                                                );
-                                            })()}
-                                        </svg>
                                     </div>
-                                    <div className="flex justify-between px-2 text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-10">
-                                        <span>Week 1</span>
-                                        <span>Week 2</span>
-                                        <span>Week 3</span>
-                                        <span>Week 4</span>
-                                    </div>
-                                    <div className="flex justify-center gap-10">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="w-2.5 h-2.5 rounded-full border-2 border-[#D48D2A] bg-white"></div>
-                                            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">views</span>
+                                    <button className="h-[34px] px-4 border border-gray-200 rounded-[10px] text-[11px] font-bold text-gray-700 bg-white hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors"><FiFilter className="text-gray-400"/> Filters</button>
+                                    <button className="h-[34px] px-4 border border-[#F2E8DB] rounded-[10px] text-[11px] font-bold text-[#D48D2A] bg-[#FFF8F0] hover:bg-[#faeedd] flex items-center gap-2 shadow-sm transition-colors"><FiDownload /> Export Report</button>
+                                </div>
+                            </div>
+                            
+                            {/* KPI Row */}
+                            <div className="flex gap-4 shrink-0 h-[100px]">
+                                {[
+                                    {label: 'TOTAL VIEWS', val: '24,856', chg: '+18.2%', icon: FiEye, col: '#D48D2A', bg: '#FFF8F0'},
+                                    {label: 'TOTAL LEADS', val: '1,248', chg: '+12.5%', icon: FiUsers, col: '#3B82F6', bg: '#EFF6FF'},
+                                    {label: 'CONVERSION RATE', val: '5.48%', chg: '+0.3%', icon: FiTrendingUp, col: '#10B981', bg: '#ECFDF5'},
+                                    {label: 'AVG LEAD VALUE', val: '$12,426', chg: '+5.8%', icon: FiCreditCard, col: '#8B5CF6', bg: '#F5F3FF'}
+                                ].map((kpi, idx) => (
+                                    <div key={idx} className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col justify-between relative overflow-hidden group">
+                                        <div className="flex justify-between items-start z-10 relative">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">{kpi.label}</span>
+                                                <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{kpi.val}</span>
+                                            </div>
+                                            <div className="w-[34px] h-[34px] rounded-[10px] justify-center flex items-center shrink-0 border border-gray-100 shadow-sm" style={{backgroundColor: kpi.bg, color: kpi.col}}>
+                                                <kpi.icon className="text-[15px]" />
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="w-2.5 h-2.5 rounded-full border-2 border-blue-500 bg-white"></div>
-                                            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">leads</span>
+                                        <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 z-10 relative mt-auto tracking-wide"><FiTrendingUp className="text-[11px]" /> {kpi.chg} <span className="text-gray-400 font-medium whitespace-nowrap normal-case text-[9px]">from last 30 days</span></span>
+                                        <div className="absolute bottom-0 left-0 right-0 h-1/2 opacity-20 pointer-events-none transition-opacity duration-300 group-hover:opacity-30">
+                                            <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full fill-current" style={{color: kpi.col}}><path d={idx%2===0?"M0,30 L0,20 Q15,10 30,25 T60,15 T85,25 T100,5 L100,30 Z":"M0,30 L0,15 Q10,25 20,10 T40,15 T60,5 T80,20 T100,10 L100,30 Z"}/></svg>
+                                            <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full absolute bottom-0 left-0 outline-none"><path d={idx%2===0?"M0,20 Q15,10 30,25 T60,15 T85,25 T100,5":"M0,15 Q10,25 20,10 T40,15 T60,5 T80,20 T100,10"} fill="none" stroke={kpi.col} strokeWidth="1"/></svg>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            {/* Middle Row (Trend + Map) */}
+                            <div className="flex flex-1 gap-4 min-h-0">
+                                {/* Performance Trend */}
+                                <div className="flex-[1.5] bg-white rounded-[1.25rem] p-5 pb-3 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-1 z-10 shrink-0">
+                                        <h3 className="text-[16px] font-bold text-gray-900 font-playfair">Performance Trend</h3>
+                                        <div className="flex items-center gap-8">
+                                            <div className="flex items-center gap-5 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                                                <div className="flex items-center gap-1.5"><div className="w-[12px] h-[3px] rounded-full bg-[#D48D2A]"></div>VIEWS</div>
+                                                <div className="flex items-center gap-1.5"><div className="w-[12px] h-[3px] rounded-full bg-blue-500"></div>LEADS</div>
+                                                <div className="flex items-center gap-1.5"><div className="w-[12px] h-[3px] rounded-full bg-emerald-500"></div>CONVERSIONS</div>
+                                            </div>
+                                            <div className="relative">
+                                                <select className="appearance-none bg-white border border-gray-200 rounded-[8px] py-1 pl-3 pr-8 text-[11px] font-bold text-gray-700 shadow-sm cursor-pointer hover:border-gray-300">
+                                                    <option>Daily</option>
+                                                    <option>Weekly</option>
+                                                </select>
+                                                <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex-1 min-h-0 relative -ml-2 z-10 pt-1 shrink-0 w-full">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={[
+                                                { name: '24 Apr', views: 5000, leads: 2000, conv: 500 },
+                                                { name: '28 Apr', views: 10000, leads: 3000, conv: 800 },
+                                                { name: '02 May', views: 15000, leads: 2800, conv: 1000 },
+                                                { name: '06 May', views: 11000, leads: 3200, conv: 1200 },
+                                                { name: '10 May', views: 16000, leads: 2900, conv: 1100 },
+                                                { name: '14 May', views: 12000, leads: 3500, conv: 900 },
+                                                { name: '18 May', views: 18000, leads: 3800, conv: 1400 },
+                                                { name: '22 May', views: 14000, leads: 3100, conv: 1200 },
+                                                { name: '24 May', views: 9000, leads: 2500, conv: 800 },
+                                            ]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 700 }} dy={5} />
+                                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 700 }} tickFormatter={val => val>=1000 ? `${val/1000}K` : val} />
+                                                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', fontSize: '11px', fontWeight: 'bold' }} />
+                                                <Area type="monotone" dataKey="views" fill="#FFF8F0" stroke="none" activeDot={false} />
+                                                <Line type="monotone" dataKey="views" stroke="#D48D2A" strokeWidth={2} dot={{ r: 3, strokeWidth: 1, fill: "#fff" }} activeDot={{ r: 5, strokeWidth: 0 }} />
+                                                <Line type="monotone" dataKey="leads" stroke="#3B82F6" strokeWidth={2} dot={{ r: 3, strokeWidth: 1, fill: "#fff" }} activeDot={{ r: 5, strokeWidth: 0 }} />
+                                                <Line type="monotone" dataKey="conv" stroke="#10B981" strokeWidth={2} dot={{ r: 3, strokeWidth: 1, fill: "#fff" }} activeDot={{ r: 5, strokeWidth: 0 }} />
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                    
+                                    <div className="flex gap-16 mt-1 pt-3 shrink-0">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Views</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[16px] font-medium text-gray-900 leading-none tracking-tight">24,856</span>
+                                                <span className="text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 18.2%</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Leads</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[16px] font-medium text-gray-900 leading-none tracking-tight">1,248</span>
+                                                <span className="text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 12.5%</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Conversions</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[16px] font-medium text-gray-900 leading-none tracking-tight">68</span>
+                                                <span className="text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 8.6%</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Conversion Rate</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[15px] font-bold text-gray-900 leading-none">5.48%</span>
+                                                <span className="text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 0.3%</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Leads by Location Horizontal Bars */}
-                                <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                                    <h4 className="text-xl font-bold text-gray-900 mb-10 font-playfair">Leads by Location</h4>
-                                    <div className="space-y-8">
-                                        {(data.analytics?.leadsByLocation || [
-                                            { country: 'United States', count: 0 },
-                                            { country: 'United Kingdom', count: 0 },
-                                            { country: 'UAE', count: 0 },
-                                            { country: 'France', count: 0 },
-                                            { country: 'Germany', count: 0 }
-                                        ]).map((loc) => {
-                                            const maxLocCount = Math.max(10, ...(data.analytics?.leadsByLocation || []).map(l => l.count));
-                                            return (
-                                                <div key={loc.country} className="flex flex-col gap-2">
-                                                    <div className="flex justify-between items-center">
-                                                        <span className="text-xs font-bold text-gray-500 uppercase tracking-tight">{loc.country}</span>
-                                                        <span className="text-xs font-black text-gray-900">{loc.count || 0}</span>
-                                                    </div>
-                                                    <div className="w-full h-10 bg-gray-50/50 rounded-lg overflow-hidden flex items-center pr-2">
-                                                        <div
-                                                            className="h-full bg-[#D48D2A] rounded-lg transition-all duration-1000 ease-out"
-                                                            style={{ width: `${maxLocCount > 0 ? (loc.count / maxLocCount) * 100 : 0}%` }}
-                                                        ></div>
+                                
+                                {/* Leads by Location */}
+                                <div className="flex-1 bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[380px]">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h3 className="text-[16px] font-bold text-gray-900 font-playfair">Leads by Location</h3>
+                                        <button className="px-3 py-1.5 text-[10px] rounded-lg border border-gray-200 bg-white flex items-center gap-2 font-bold text-gray-600 hover:bg-gray-50 shadow-sm"><FiMap className="text-gray-400"/> View Map</button>
+                                    </div>
+                                    
+                                    <div className="flex flex-1 overflow-hidden relative gap-6">
+                                        {/* Left List */}
+                                        <div className="w-[45%] flex flex-col z-10 shrink-0">
+                                            <div className="flex justify-between mb-3 text-[9px] font-black uppercase text-gray-400 tracking-widest">
+                                                <span>LOCATION</span>
+                                                <div className="flex gap-4 pr-1">
+                                                    <span className="w-8 text-right">LEADS</span>
+                                                    <span className="w-[4.5rem] text-right">PERCENTAGE</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col flex-1 gap-2.5 font-bold text-[11px] overflow-y-auto custom-scrollbar">
+                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">United States</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">482</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '38.6%'}}></div></div><span className="text-gray-400 text-[10px] w-8">38.6%</span></div></div>
+                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">United Kingdom</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">286</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '22.9%'}}></div></div><span className="text-gray-400 text-[10px] w-8">22.9%</span></div></div>
+                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">UAE</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">214</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '17.1%'}}></div></div><span className="text-gray-400 text-[10px] w-8">17.1%</span></div></div>
+                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">Canada</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">132</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '10.6%'}}></div></div><span className="text-gray-400 text-[10px] w-8">10.6%</span></div></div>
+                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">Australia</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">76</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '6.1%'}}></div></div><span className="text-gray-400 text-[10px] w-8">6.1%</span></div></div>
+                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">Others</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">58</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '4.7%'}}></div></div><span className="text-gray-400 text-[10px] w-8">4.7%</span></div></div>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Right Map Image (Placeholder Map) */}
+                                        <div className="flex-1 flex flex-col justify-center items-center relative pl-4 opacity-90">
+                                            <svg viewBox="0 0 400 200" fill="none" className="w-full h-auto">
+                                                <path d="M70,30 Q90,10 110,40 T150,50 T180,20 T220,10 T250,50 T280,30 T320,80 T370,100 T360,150 T280,180 T200,160 T140,180 T60,150 T30,100 Z" fill="#e5e7eb" opacity="0.6" />
+                                                <path d="M70,30 Q90,10 110,40 T150,50 T180,20" fill="#F2E8DB" />
+                                                <circle cx="100" cy="50" r="5" fill="#D48D2A" />
+                                                <circle cx="200" cy="80" r="4" fill="#D48D2A" opacity="0.6"/>
+                                                <circle cx="280" cy="60" r="3" fill="#D48D2A" opacity="0.4"/>
+                                            </svg>
+                                            
+                                            <div className="absolute bottom-1 right-2 flex items-center gap-3">
+                                                 <div className="flex flex-col text-right">
+                                                    <span className="text-[8px] font-black uppercase tracking-widest text-gray-400">Top Country</span>
+                                                    <span className="text-[13px] font-bold text-gray-900 leading-tight">United States</span>
+                                                    <div className="flex items-center text-[10px] font-bold gap-1 mt-0.5 justify-end">
+                                                        <span className="text-gray-900 text-[12px]">482</span> <span className="text-gray-400">Leads • 38.6% of total</span>
                                                     </div>
                                                 </div>
-                                            );
-                                        })}
+                                                <div className="text-[28px] opacity-90 border border-gray-100 rounded shadow-sm leading-none bg-white">🇺🇸</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="flex justify-between mt-6 px-1 opacity-20 text-[9px] font-black text-gray-400">
-                                        <span>0</span>
-                                        <span>25%</span>
-                                        <span>50%</span>
-                                        <span>75%</span>
-                                        <span>100%</span>
+                                    
+                                    <div className="mt-1 shrink-0">
+                                        <button className="text-[#D48D2A] text-[11px] font-bold hover:underline flex items-center gap-1">View All Locations <FiChevronRight/></button>
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Asset Performance Table */}
-                            <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
-                                <div className="px-10 py-8 border-b border-gray-50">
-                                    <h4 className="text-xl font-bold text-gray-900 font-playfair">Asset Performance</h4>
+                            
+                            {/* Bottom Row */}
+                            <div className="flex gap-4 flex-1 min-h-0 pb-1 shrink-0">
+                                {/* Leads by Source */}
+                                <div className="flex-[1] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[260px]">
+                                    <h3 className="text-[16px] font-bold text-gray-900 font-playfair mb-3 leading-none">Leads by Source</h3>
+                                    <div className="flex flex-col flex-1 relative items-center justify-center">
+                                        <div className="w-full flex-1 relative flex items-center justify-center -mt-2">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <PieChart>
+                                                    <Pie data={[
+                                                        { name: 'WhatsApp', value: 458, color: '#10B981' },
+                                                        { name: 'Website', value: 324, color: '#3B82F6' },
+                                                        { name: 'Instagram', value: 246, color: '#D946EF' },
+                                                        { name: 'Facebook', value: 142, color: '#0EA5E9' },
+                                                        { name: 'Others', value: 78, color: '#6B7280' }
+                                                    ]} innerRadius="70%" outerRadius="90%" dataKey="value" stroke="none" isAnimationActive={false}>
+                                                        {[
+                                                            { color: '#10B981' }, { color: '#3B82F6' }, { color: '#D946EF' }, { color: '#0EA5E9' }, { color: '#9ca3af' }
+                                                        ].map((entry, index) => (
+                                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                                        ))}
+                                                    </Pie>
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                <span className="text-[22px] font-bold text-gray-900 font-playfair leading-none">1,248</span>
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 mt-1">Total Leads</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="w-full flex flex-col gap-2 font-bold text-[11px] mt-2 shrink-0 px-2">
+                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#10B981]"></div><span className="text-gray-700">WhatsApp</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">458</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(36.7%)</span></div></div>
+                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></div><span className="text-gray-700">Website</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">324</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(25.9%)</span></div></div>
+                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#D946EF]"></div><span className="text-gray-700">Instagram</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">246</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(19.7%)</span></div></div>
+                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#0EA5E9]"></div><span className="text-gray-700">Facebook</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">142</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(11.4%)</span></div></div>
+                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-gray-400"></div><span className="text-gray-700">Others</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">78</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(6.3%)</span></div></div>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-center mt-3 shrink-0">
+                                        <button className="text-[#D48D2A] text-[10px] font-black uppercase tracking-widest hover:underline flex items-center gap-1">View Full Report <FiChevronRight/></button>
+                                    </div>
                                 </div>
-                                <table className="w-full text-left">
-                                    <thead>
-                                        <tr className="bg-gray-50/30">
-                                            <th className="px-10 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Asset Name</th>
-                                            <th className="px-4 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Views</th>
-                                            <th className="px-4 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Leads</th>
-                                            <th className="px-10 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Trend</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-50">
-                                        {(data.topAssets || []).map((asset, i) => (
-                                            <tr key={i} className="hover:bg-gray-50/30 transition-colors">
-                                                <td className="px-10 py-6 text-sm font-bold text-gray-800">{asset.name}</td>
-                                                <td className="px-4 py-6 text-sm font-medium text-gray-600">{numberWithCommas(asset.views)}</td>
-                                                <td className="px-4 py-6 text-sm font-medium text-gray-600">{asset.leads}</td>
-                                                <td className={`px-10 py-6 text-xs font-bold ${asset.color || 'text-gray-400'} flex items-center gap-1.5`}>
-                                                    {asset.trend === 'Up' ? '↑ Up' : asset.trend === 'Down' ? '↓ Down' : '— Stable'}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                
+                                {/* Top Performing Assets */}
+                                <div className="flex-[1.5] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col overflow-hidden min-w-[340px]">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h3 className="text-[16px] font-bold text-gray-900 font-playfair">Top Performing Assets</h3>
+                                        <button className="px-3 py-1 text-[10px] rounded-lg border border-gray-200 bg-white font-bold text-gray-600 hover:bg-gray-50 shadow-sm transition-colors">View All</button>
+                                    </div>
+                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
+                                        <table className="w-full text-left table-fixed">
+                                            <thead>
+                                                <tr className="border-b border-gray-100">
+                                                    <th className="pb-3 pt-1 text-[9px] font-black uppercase tracking-widest text-gray-400">ASSET</th>
+                                                    <th className="pb-3 pt-1 text-[9px] font-black uppercase tracking-widest text-gray-400 w-14 text-right">VIEWS</th>
+                                                    <th className="pb-3 pt-1 text-[9px] font-black uppercase tracking-widest text-gray-400 w-14 text-right">LEADS</th>
+                                                    <th className="pb-3 pt-1 text-[9px] font-black uppercase tracking-widest text-gray-400 w-[5rem] text-right">CONV RATE</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-50">
+                                                {[
+                                                    {name: 'Ferrari SF90', img: data?.inventory?.[0]?.images?.[0] || "/assets/placeholder.jpg", v: '6,428', l: 265, r: '4.12%'},
+                                                    {name: 'Sunseeker 88 Yacht', img: data?.inventory?.[1]?.images?.[0] || "/assets/placeholder.jpg", v: '4,256', l: 198, r: '4.65%'},
+                                                    {name: 'Dubai Marina Penthouse', img: data?.inventory?.[2]?.images?.[0] || "/assets/placeholder.jpg", v: '3,842', l: 156, r: '4.06%'},
+                                                    {name: 'Rolex Daytona', img: data?.inventory?.[3]?.images?.[0] || "/assets/placeholder.jpg", v: '2,985', l: 112, r: '3.75%'}
+                                                ].map((a,i) => (
+                                                <tr key={i} className="hover:bg-gray-50/50 group transition-colors">
+                                                    <td className="py-2.5 flex items-center gap-3 pr-2">
+                                                        <div className="w-[42px] h-[30px] rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200/50"><img src={a.img} className="w-full h-full object-cover group-hover:scale-105 transition-transform"/></div>
+                                                        <span className="text-[12px] font-bold text-gray-900 truncate max-w-[120px]" title={a.name}>{a.name}</span>
+                                                    </td>
+                                                    <td className="py-2.5 text-[12px] font-bold text-gray-700 text-right">{a.v}</td>
+                                                    <td className="py-2.5 text-[12px] font-bold text-gray-700 text-right">{a.l}</td>
+                                                    <td className="py-2.5 text-[12px] font-bold text-emerald-500 text-right">{a.r}</td>
+                                                </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className="text-[10px] text-gray-400 font-medium italic text-center mt-3 border-t border-gray-50 pt-2 shrink-0">
+                                        All times are in (GMT +04:00) Dubai, UAE
+                                    </div>
+                                </div>
+                                
+                                {/* Lead Funnel */}
+                                <div className="flex-[1.5] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col relative overflow-hidden min-w-[340px]">
+                                    <div className="flex justify-between items-center mb-4 shrink-0 z-10">
+                                        <h3 className="text-[16px] font-bold text-gray-900 font-playfair leading-none">Lead Funnel</h3>
+                                        <button className="px-3 py-1 text-[10px] rounded-lg border border-gray-200 bg-white font-bold text-gray-600 hover:bg-gray-50 shadow-sm transition-colors">View Funnel</button>
+                                    </div>
+                                    <div className="flex-1 flex min-h-0 relative z-10 items-center justify-between">
+                                        {/* Funnel SVG Graphic */}
+                                        <div className="w-[40%] flex flex-col items-center justify-between h-[100%] shrink-0 relative mr-6 pt-2 pb-2">
+                                            <div className="w-full h-[20%] bg-[#10B981] shadow-sm transform perspective-100" style={{clipPath: 'polygon(0% 0, 100% 0, 85% 100%, 15% 100%)'}}></div>
+                                            <div className="w-[70%] h-[20%] bg-[#3B82F6] shadow-sm mt-[2%]" style={{clipPath: 'polygon(0% 0, 100% 0, 80% 100%, 20% 100%)'}}></div>
+                                            <div className="w-[50%] h-[20%] bg-[#D946EF] shadow-sm mt-[2%]" style={{clipPath: 'polygon(0% 0, 100% 0, 75% 100%, 25% 100%)'}}></div>
+                                            <div className="w-[35%] h-[20%] bg-[#D48D2A] shadow-sm mt-[2%]" style={{clipPath: 'polygon(0% 0, 100% 0, 95% 100%, 5% 100%)'}}></div>
+                                        </div>
+                                        <div className="flex-1 flex flex-col justify-around py-1 h-[100%] text-[10px] font-bold text-gray-500">
+                                            <div className="flex justify-between items-center border-b border-gray-50 pb-2">
+                                                <span>Total Views</span><span className="text-gray-900 font-black text-[12px]">24,856</span>
+                                            </div>
+                                            <div className="flex justify-between items-center border-b border-gray-50 pb-2">
+                                                <span>Leads Captured</span><span className="text-gray-900 font-black flex gap-1.5 text-[12px] items-center">1,248 <span className="text-gray-400 font-medium text-[9px]">(5.02%)</span></span>
+                                            </div>
+                                            <div className="flex justify-between items-center border-b border-gray-50 pb-2">
+                                                <span>Qualified Leads</span><span className="text-gray-900 font-black flex gap-1.5 text-[12px] items-center">342 <span className="text-gray-400 font-medium text-[9px]">(27.4%)</span></span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <span>Converted Leads</span><span className="text-gray-900 font-black flex gap-1.5 text-[12px] items-center">68 <span className="text-gray-400 font-medium text-[9px]">(5.48%)</span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t border-gray-50 text-center text-[12px] font-bold text-gray-500 shrink-0 z-10 w-full flex justify-center gap-2">
+                                        Overall Conversion Rate: <span className="text-emerald-500 font-black">5.48%</span>
+                                    </div>
+                                </div>
                             </div>
-
-
-
                         </div>
                     )}
 
                     {/* PUBLIC MARKETPLACE TAB */}
                     {activeTab === 'marketplace' && (
-                        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-5 duration-700">
-
-                            {/* Visibility Controls */}
-                            <section>
-                                <div className="mb-8">
-                                    <h3 className="text-xl font-bold text-gray-900 font-playfair mb-2">Visibility Controls</h3>
-                                    <p className="text-sm text-gray-400">Manage which assets appear on your public marketplace profile.</p>
-                                </div>
-                                <div className="space-y-4">
-                                    {data.inventory.map((item) => (
-                                        <div key={item.id} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center justify-between group hover:border-[#D48D2A] transition-all duration-300">
-                                            <div className="flex items-center gap-6">
-                                                <div className="w-16 h-16 rounded-[1.25rem] bg-gray-50 overflow-hidden shrink-0 border border-gray-100">
-                                                    <img src={item.images?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                                </div>
-                                                <div>
-                                                    <h4 className="text-base font-bold text-gray-900 mb-1">{item.title}</h4>
-                                                    <div className="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-tight">
-                                                        <span className="flex items-center gap-1.5">
-                                                            {item.category === 'EstateAsset' ? <FiHome /> : item.category === 'YachtAsset' ? <FiAnchor /> : <FiPackage />}
-                                                            {item.category === 'CarAsset' ? 'Cars' : item.category === 'YachtAsset' ? 'Yachts' : item.category === 'EstateAsset' ? 'Real Estate' : item.category?.replace('Asset', 's')}
-                                                        </span>
-                                                        <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                                                        <span>${numberWithCommas(item.price)}</span>
+                        <div className="h-[calc(100vh-6rem)] overflow-hidden flex flex-col p-2 gap-4 animate-in fade-in duration-700">
+                            
+                            {/* Top Row: Visibility & Performance */}
+                            <div className="flex gap-4 shrink-0 h-[38%] min-h-[220px]">
+                                {/* Visibility Controls */}
+                                <div className="flex-[3] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-h-0 relative">
+                                    <div className="flex justify-between items-start mb-4 shrink-0">
+                                        <div>
+                                            <h3 className="text-[15px] font-bold text-gray-900 mb-1 font-playfair">Visibility Controls</h3>
+                                            <p className="text-[10px] text-gray-400 font-medium border-l-[3px] border-[#D48D2A] pl-2 -ml-[3px]">Manage profile visibility.</p>
+                                        </div>
+                                        <button className="px-4 py-1.5 border border-gray-200 rounded-[8px] text-[9px] font-bold text-gray-700 bg-white hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors uppercase tracking-widest"><FiLayout className="text-gray-400"/> Manage Listings</button>
+                                    </div>
+                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-3 pb-2 relative">
+                                        {(data?.inventory || []).map(item => {
+                                            const assetName = item.propertyName || item.yachtName || item.name || item.title || `${item.make || ''} ${item.model || ''}`.trim() || 'Unnamed Asset';
+                                            const cat = item.category?.replace('Asset', 's')?.toUpperCase() || 'ASSET';
+                                            return (
+                                                <div key={item.id} className="flex gap-4 items-center p-3 rounded-[1rem] border border-gray-100/50 bg-gray-50/50 hover:bg-white hover:border-[#D48D2A]/30 transition-colors">
+                                                    <div className="w-[80px] h-[60px] rounded-lg overflow-hidden shrink-0 bg-white border border-gray-200/50 shadow-sm">
+                                                        {item.images?.[0] ? <img src={item.images[0]} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><FiImage className="text-gray-300 text-lg"/></div>}
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-6">
-                                                <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${item.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-400'}`}>
-                                                    {item.status === 'Active' ? 'Public' : 'Private'}
-                                                </span>
-                                                <div
-                                                    onClick={() => handleTogglePublic(item)}
-                                                    className={`w-12 h-6 rounded-full relative cursor-pointer transition-all duration-300 ${updatingId === item.id ? 'opacity-50 cursor-not-allowed' : ''} ${item.status === 'Active' ? 'bg-[#D48D2A]' : 'bg-gray-200'}`}
-                                                >
-                                                    {updatingId === item.id ? (
-                                                        <div className="absolute inset-0 flex items-center justify-center">
-                                                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                    
+                                                    <div className="flex-1 flex justify-between items-center pr-2">
+                                                        <div className="flex flex-col">
+                                                            <h4 className="text-[13px] font-bold text-gray-900 font-playfair leading-none mb-1.5">{assetName}</h4>
+                                                            <div className="flex items-center gap-2 text-[8px] font-black text-gray-500 uppercase tracking-widest">
+                                                                <FiPackage/> {cat} <span className="text-gray-300 mx-0.5">•</span> ${numberWithCommas(item.price || 0)}
+                                                            </div>
                                                         </div>
-                                                    ) : (
-                                                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${item.status === 'Active' ? 'left-7' : 'left-1'}`}></div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-
-                            {/* Public Preview */}
-                            <section className="pt-8 border-t border-gray-100">
-                                <div className="mb-10">
-                                    <h3 className="text-xl font-bold text-gray-900 font-playfair mb-2">Public Preview</h3>
-                                    <p className="text-sm text-gray-400">This is how your listings appear to potential buyers on the marketplace.</p>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                                    {data.inventory.filter(i => i.status === 'Active').map((item) => (
-                                        <div key={item.id} className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-500">
-                                            {/* Preview Image Area */}
-                                            <div className="h-64 bg-gray-50 relative overflow-hidden">
-                                                <div className="absolute top-6 left-6 z-10">
-                                                    <span className="bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-full text-[10px] font-black text-gray-900 uppercase tracking-tighter shadow-sm">
-                                                        {item.category === 'CarAsset' ? 'Cars' : item.category === 'YachtAsset' ? 'Yachts' : item.category === 'EstateAsset' ? 'Real Estate' : item.category?.replace('Asset', 's')}
-                                                    </span>
-                                                </div>
-                                                <img src={item.images?.[0]} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={item.title} />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                            </div>
-                                            {/* Preview Content Area */}
-                                            <div className="p-8">
-                                                <h4 className="text-base font-bold text-gray-900 mb-3 truncate group-hover:text-[#D48D2A] transition-colors font-playfair">{item.title}</h4>
-                                                <p className="text-2xl font-black text-[#D48D2A] mb-8 italic">${numberWithCommas(item.price)}</p>
-                                                <div className="flex justify-between items-center">
-                                                    <div className="flex items-center gap-2 text-gray-400">
-                                                        <FiEye className="text-sm" />
-                                                        <span className="text-[11px] font-bold">{numberWithCommas(item.views || 0)}</span>
+                                                        <div className="flex gap-4 items-center pl-4 ml-2">
+                                                            <div className="flex items-center gap-2 border-r border-gray-200 pr-4">
+                                                                <span className={`text-[8px] font-black uppercase tracking-widest ${item.status === 'Active' ? 'text-emerald-500' : 'text-gray-400'}`}>
+                                                                    {item.status === 'Active' ? 'Public' : 'Hidden'}
+                                                                </span>
+                                                                <div 
+                                                                    onClick={() => handleTogglePublic(item)}
+                                                                    className={`w-9 h-5 rounded-full relative cursor-pointer transition-colors duration-300 ${item.status === 'Active' ? 'bg-[#D48D2A]' : 'bg-gray-200'}`}
+                                                                >
+                                                                    <div className={`absolute top-[2px] w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-300 ${item.status === 'Active' ? 'left-[18px]' : 'left-[2px]'}`}></div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <button className="px-3 py-1.5 rounded-[8px] text-[9px] font-bold border border-gray-200 bg-white text-gray-700 hover:border-[#D48D2A] flex items-center gap-1.5 transition-colors uppercase tracking-widest shadow-sm"><FiEye className="text-[#D48D2A] text-[11px]"/> Preview Listing</button>
+                                                                <button className="w-[28px] h-[28px] rounded-[8px] border border-gray-200 flex items-center justify-center bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-sm text-gray-400">
+                                                                    <FiMoreHorizontal />
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <span className="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter">
-                                                        Available
-                                                    </span>
+                                                </div>
+                                            )
+                                        })}
+                                        {(!data?.inventory || data.inventory.length === 0) && (
+                                            <div className="text-center py-6 text-[10px] font-medium text-gray-400 italic">No assets available.</div>
+                                        )}
+                                    </div>
+                                    <div className="absolute top-[85%] bottom-0 left-0 right-0 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-[1.5rem]"></div>
+                                </div>
+                                
+                                {/* Marketplace Performance Mini */}
+                                <div className="flex-[1.5] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col relative overflow-hidden">
+                                     <div className="flex justify-between items-start mb-4 shrink-0">
+                                         <div>
+                                            <h3 className="text-[15px] font-bold text-gray-900 mb-1 font-playfair">Performance</h3>
+                                            <p className="text-[10px] text-gray-400 font-medium border-l-[3px] border-[#8B5CF6] pl-2 -ml-[3px]">Public listing insights.</p>
+                                         </div>
+                                     </div>
+                                     <div className="grid grid-cols-2 gap-3 flex-1">
+                                         {[
+                                            {label: 'Total Views', value: numberWithCommas(data?.stats?.totalViews || 0), change: '+18.2%', icon: FiEye, color: 'text-gray-400'},
+                                            {label: 'Total Inquiries', value: numberWithCommas(data?.stats?.totalLeads || 0), change: '+12.5%', icon: FiMessageSquare, color: 'text-gray-400'},
+                                            {label: 'Saves', value: data?.stats?.savedCount || 0, change: '+9.8%', icon: FiHeart, color: 'text-gray-400'},
+                                            {label: 'Conversion', value: data?.stats?.totalViews ? ((data?.stats?.totalLeads / data?.stats?.totalViews) * 100).toFixed(1)+'%' : '0.0%', change: '+7.4%', icon: FiTrendingUp, color: 'text-gray-400'}
+                                         ].map((stat, i) => (
+                                            <div key={i} className="bg-gray-50/70 rounded-xl p-3 border border-gray-100/80 flex flex-col justify-center relative group hover:border-[#D48D2A]/30 transition-colors">
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <span className="text-[8px] font-black uppercase text-gray-400 tracking-widest">{stat.label}</span>
+                                                    <stat.icon className="text-[12px] text-gray-300 group-hover:text-[#D48D2A] transition-colors" />
+                                                </div>
+                                                <span className="text-[18px] font-playfair font-bold text-gray-900 leading-none my-1">{stat.value}</span>
+                                                <span className="text-[8px] font-black flex items-center gap-0.5 tracking-widest mt-1 text-emerald-500 uppercase">
+                                                    <FiTrendingUp className="text-[9px]"/> {stat.change}
+                                                </span>
+                                            </div>
+                                         ))}
+                                     </div>
+                                </div>
+                            </div>
+                            
+                            {/* Bottom Row: Public Preview */}
+                            <div className="flex-1 bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-h-0 relative">
+                                <div className="flex justify-between items-start mb-4 shrink-0 px-1">
+                                    <div>
+                                        <h3 className="text-[16px] font-bold text-gray-900 mb-1 font-playfair">Public Preview</h3>
+                                        <p className="text-[10px] text-gray-400 font-medium border-l-[3px] border-[#10B981] pl-2 -ml-[3px]">This is how your listings appear to potential buyers on the marketplace.</p>
+                                    </div>
+                                    <button className="px-4 py-1.5 border border-gray-200 rounded-[8px] text-[9px] font-bold text-gray-700 bg-white hover:bg-gray-50 flex items-center gap-1.5 shadow-sm transition-colors uppercase tracking-widest">View Public Profile <FiExternalLink className="text-[11px] text-gray-400"/></button>
+                                </div>
+                                
+                                <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4 pb-4">
+                                    {(data?.inventory || []).filter(i => i.status === 'Active').map((item, idx) => {
+                                        const assetName = item.propertyName || item.yachtName || item.name || item.title || `${item.make || ''} ${item.model || ''}`.trim() || 'Unnamed Asset';
+                                        const cat = item.category?.replace('Asset', 's')?.toUpperCase() || 'ASSET';
+                                        return (
+                                            <div key={idx} className="bg-white rounded-2xl border border-gray-100 shadow-sm flex overflow-hidden p-3 gap-6 relative group hover:border-[#D48D2A]/30 transition-colors w-full mx-auto">
+                                                <div className="w-[35%] min-w-[280px] h-[220px] rounded-xl bg-gray-100 overflow-hidden relative shrink-0 shadow-inner">
+                                                    {item.images?.[0] ? <img src={item.images[0]} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/> : <div className="w-full h-full flex items-center justify-center"><FiImage className="text-gray-300 text-3xl"/></div>}
+                                                    <div className="absolute top-4 left-4">
+                                                        <span className="bg-white/95 backdrop-blur text-gray-900 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest shadow-sm border border-gray-200/50">{cat}</span>
+                                                    </div>
+                                                    <div className="absolute bottom-4 left-0 w-full flex justify-center gap-3">
+                                                        <button className="bg-white/95 backdrop-blur text-gray-900 px-4 py-1.5 rounded-lg text-[9px] font-bold flex items-center gap-1.5 shadow-sm hover:bg-white transition-colors uppercase tracking-widest"><FiImage className="text-[#D48D2A]"/> {item.images?.length || 0} Photos</button>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="flex-1 py-1 pr-1 flex">
+                                                    <div className="flex-[2] flex flex-col border-r border-gray-100 pr-6">
+                                                        <h2 className="text-[20px] font-bold text-gray-900 font-playfair leading-tight mb-1 truncate" title={assetName}>{assetName}</h2>
+                                                        <p className="text-[18px] font-black text-[#D48D2A] tracking-wider mb-4 leading-none">${numberWithCommas(item.price || 0)}</p>
+                                                        
+                                                        <div className="flex gap-4 mb-4">
+                                                            <div className="flex gap-2 items-center pr-4 border-r border-gray-50">
+                                                                <FiCalendar className="text-gray-400 text-[14px]"/>
+                                                                <div className="flex flex-col mt-0.5">
+                                                                    <span className="text-[11px] font-bold text-gray-900 leading-none">{item.year || '2023'}</span>
+                                                                    <span className="text-[9px] text-gray-400 mt-0.5">Year</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex gap-2 items-center pr-4 border-r border-gray-50">
+                                                                <FiClock className="text-gray-400 text-[14px]"/>
+                                                                <div className="flex flex-col mt-0.5">
+                                                                    <span className="text-[11px] font-bold text-gray-900 leading-none">{numberWithCommas(item.mileage || 2500)} {cat==='VEHICLES'?'km':'hrs'}</span>
+                                                                    <span className="text-[9px] text-gray-400 mt-0.5">{cat==='VEHICLES'?'Mileage':'Usage'}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex gap-2 items-center pr-4 border-r border-gray-50">
+                                                                <FiDroplet className="text-gray-400 text-[14px]"/>
+                                                                <div className="flex flex-col mt-0.5">
+                                                                    <span className="text-[11px] font-bold text-gray-900 leading-none">{item.fuelType || 'Petrol'}</span>
+                                                                    <span className="text-[9px] text-gray-400 mt-0.5">Fuel Type</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex gap-2 items-center">
+                                                                <FiSettings className="text-gray-400 text-[14px]"/>
+                                                                <div className="flex flex-col mt-0.5">
+                                                                    <span className="text-[11px] font-bold text-gray-900 leading-none">{item.transmission || 'Auto'}</span>
+                                                                    <span className="text-[9px] text-gray-400 mt-0.5">Transmission</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <p className="text-[11px] text-gray-500 mb-4 leading-relaxed line-clamp-2">
+                                                            {item.description || `Experience the perfect blend of power, innovation, and design. The ${assetName} delivers unmatched performance and luxury across all aspects of ownership.`}
+                                                        </p>
+                                                        
+                                                        <div className="flex flex-wrap gap-2 mt-auto">
+                                                            {(item.tags || ['Hybrid', '4.0L V8', '2 Seater', 'AWD']).map((tag, tIdx) => (
+                                                                <span key={tIdx} className="bg-[#FFF8F0] text-[#D48D2A] px-3 py-1 rounded-[6px] text-[9px] font-bold border border-[#F2E8DB]">{tag}</span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className="flex-1 pl-6 flex flex-col justify-center">
+                                                        <h4 className="text-[13px] font-bold text-gray-900 font-playfair mb-0.5">Interested in this asset?</h4>
+                                                        <p className="text-[9px] text-gray-400 font-medium mb-3 border-b border-gray-50 pb-3">Contact the seller directly.</p>
+                                                        
+                                                        <div className="space-y-2.5">
+                                                            <button className="w-full py-2.5 bg-[#D48D2A] hover:bg-[#b5751c] text-white rounded-[0.75rem] font-bold text-[9px] uppercase tracking-widest shadow-[0_4px_15px_rgba(212,141,42,0.3)] transition-colors flex items-center justify-center gap-2"><FiMessageSquare className="text-sm"/> Send Inquiry</button>
+                                                            <button className="w-full py-2.5 bg-white border border-gray-200 text-gray-700 hover:border-[#D48D2A] hover:text-[#D48D2A] rounded-[0.75rem] font-bold text-[9px] uppercase tracking-widest shadow-sm transition-colors flex items-center justify-center gap-2"><FiHeart className="text-[12px] text-gray-400"/> Save Asset</button>
+                                                            <button className="w-full py-2.5 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-[0.75rem] font-bold text-[9px] uppercase tracking-widest shadow-sm transition-colors flex items-center justify-center gap-2"><FiShare2 className="text-[12px] text-gray-400"/> Share</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
+                                    {(!data?.inventory || data.inventory.filter(i => i.status === 'Active').length === 0) && (
+                                        <div className="text-center py-6 text-[11px] font-medium text-gray-400 bg-gray-50/50 border border-gray-100 rounded-3xl p-4 shadow-sm italic">No active public assets available. Set assets to Public to preview them here.</div>
+                                    )}
                                 </div>
-                            </section>
-
+                            </div>
                         </div>
                     )}
-                                {/* SETTINGS TAB */}
-                    {activeTab === 'settings' && (
-                        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
-                            
-                            <div className="mb-4">
-                                <h2 className="text-2xl font-bold text-gray-900 font-playfair">Agent Settings</h2>
-                                <p className="text-sm text-gray-500 mt-1">Complete your personal and business details to build trust and attract more leads.</p>
-                            </div>
 
+<<<<<<< HEAD
                             {/* Alert Banner */}
                             {!isVerifiedDealer && (
                                 <div className="bg-[#FFF8F0] border border-[#F2E8DB] rounded-[1.5rem] p-6 flex items-start gap-4">
@@ -1859,188 +2400,705 @@ const Inventory = () => {
                             </div>
                         )
                     }
+=======
+>>>>>>> e9de1fd9074d8549588088bd53236d0941af5259
                     {/* SUBSCRIPTION TAB */}
-                    {
-                        activeTab === 'subscription' && (
-                            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
+                    {activeTab === 'subscription' && (
+                        <div className="h-[calc(100vh-6rem)] overflow-hidden flex flex-col p-4 animate-in fade-in duration-700">
+                            
+                            {/* Current Plan Block */}
+                            <div className="bg-[#FFF8F0] rounded-[1.5rem] border border-[#F2E8DB] shadow-[0_2px_15px_rgba(0,0,0,0.02)] p-4 mb-2 shrink-0 flex justify-between relative overflow-hidden">
+                                <div className="absolute top-0 right-0 h-full w-1/3 pointer-events-none opacity-40 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxwYXRoIGQ9Ik0wIDEwMDBDMzAwIDEwMDAgMzAwIDAgMTAwMCAwIiBzdHJva2U9IiNENDhEMkEiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==')] bg-cover bg-right bg-no-repeat w-1/2"></div>
+                                <div className="flex gap-6 items-start relative z-10 w-full max-w-4xl">
+                                    <div className="w-14 h-14 bg-[#D48D2A] rounded-[1rem] flex items-center justify-center shrink-0 shadow-lg shadow-[#D48D2A]/20">
+                                        <FiSettings className="text-white text-2xl" />
+                                    </div>
+                                    <div className="flex flex-col flex-1">
+                                        <h3 className="text-[12px] font-bold text-gray-500 uppercase tracking-widest mb-1">Current Plan</h3>
+                                        <div className="flex items-center gap-3 mb-1.5">
+                                            <h4 className="text-[26px] font-bold text-gray-900 font-playfair leading-none">{user?.plan || 'Premium Basic'}</h4>
+                                            <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[9px] font-black uppercase tracking-widest border border-emerald-100">ACTIVE</span>
+                                        </div>
+                                        <p className="text-[11px] text-gray-500 font-medium mb-6">You're on the {user?.plan || 'Premium Basic'} plan.</p>
+                                        
+                                        <div className="flex gap-8">
+                                            <div className="flex gap-3 items-center">
+                                                <FiPackage className="text-gray-400 text-lg shrink-0"/>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[9px] uppercase font-bold text-gray-400 tracking-widest leading-none">Active Listings</span>
+                                                    <span className="text-[12px] font-bold text-gray-900 mt-1">{(data?.inventory || []).length || 1} of {user?.plan === 'Business VIP' ? 50 : user?.plan === 'Enterprise Elite' ? 'Unlimited' : 25}</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-3 items-center">
+                                                <FiActivity className="text-gray-400 text-lg shrink-0"/>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[9px] uppercase font-bold text-gray-400 tracking-widest leading-none">Analytics Level</span>
+                                                    <span className="text-[12px] font-bold text-gray-900 mt-1">{user?.plan === 'Business VIP' ? 'Full Suite' : user?.plan === 'Enterprise Elite' ? 'Insights & Reports' : 'Advanced'}</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-3 items-center">
+                                                <FiMessageSquare className="text-gray-400 text-lg shrink-0"/>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[9px] uppercase font-bold text-gray-400 tracking-widest leading-none">Support</span>
+                                                    <span className="text-[12px] font-bold text-gray-900 mt-1">{user?.plan === 'Business VIP' ? 'Priority Phone & Email' : user?.plan === 'Enterprise Elite' ? '24/7 Phone & Email' : 'Priority Email'}</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-3 items-center border-l border-gray-200 pl-8 ml-2">
+                                                <FiCalendar className="text-gray-400 text-lg shrink-0"/>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[9px] uppercase font-bold text-gray-400 tracking-widest leading-none">Next Renewal</span>
+                                                    <span className="text-[12px] font-bold text-gray-900 mt-1">{companyInfo?.planExpiresAt ? new Date(companyInfo.planExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'May 24, 2026'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-end justify-start relative z-10 pl-8 ml-8">
+                                    <span className="text-[11px] font-bold text-gray-500 mb-1">Renewal Date</span>
+                                    <span className="text-[18px] font-bold text-gray-900 mb-4">{companyInfo?.planExpiresAt ? new Date(companyInfo.planExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'May 24, 2026'}</span>
+                                    <button className="px-6 py-2.5 rounded-[0.75rem] border-2 border-[#D48D2A] bg-[#D48D2A] hover:bg-[#b5751c] text-white text-[11px] font-bold shadow-sm transition-colors flex items-center gap-2 tracking-wide"><FiCreditCard/> Manage Billing</button>
+                                </div>
+                            </div>
+                            
+                            {/* Nav Bar */}
+                            <div className="flex gap-2 items-center text-xs font-bold pt-1 pb-2 border-b border-gray-100 shrink-0 mb-2">
+                                <button className="px-5 py-2 text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2 uppercase tracking-widest"><FiClock className="text-[14px]"/> Billing History</button>
+                                <button className="px-5 py-2 text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2 uppercase tracking-widest"><FiPackage className="text-[14px]"/> Invoices</button>
+                                <button className="px-5 py-2 text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2 uppercase tracking-widest"><FiCreditCard className="text-[14px]"/> Payment Methods</button>
+                                <button className="px-5 py-2 text-gray-900 border-b-2 border-gray-900 transition-colors flex items-center gap-2 uppercase tracking-widest"><FiSettings className="text-[14px]"/> Update Plan</button>
+                                <div className="flex-1"></div>
+                                <button className="px-5 py-2 text-gray-500 hover:text-red-500 transition-colors flex items-center gap-2 uppercase tracking-widest"><FiX className="text-[14px]"/> Cancel Subscription</button>
+                            </div>
+                            
+                            {/* Available Plans Section */}
+                            <div className="flex-1 min-h-0 flex gap-4">
+                                {/* Left Side: Plans Grid */}
+                                <div className="flex-[3] flex flex-col min-h-0 relative">
+                                    <div className="flex justify-between items-center mb-2 shrink-0 px-2 mt-1">
+                                        <div className="flex flex-col gap-0.5">
+                                            <h3 className="text-[18px] font-bold text-gray-900 font-playfair">Available Plans</h3>
+                                            <div className="text-[11px] text-gray-500 font-medium">Choose the best plan to grow your business.</div>
+                                        </div>
+                                        <div className="bg-white border border-gray-200 p-1 rounded-xl flex shadow-sm opacity-90 scale-90 origin-right transition-colors">
+                                            <button 
+                                                onClick={() => setBillingCycle('Monthly')}
+                                                className={`px-5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors shadow-sm min-w-[90px] ${billingCycle === 'Monthly' ? 'bg-[#FFF8F0] text-[#D48D2A]' : 'text-gray-500 hover:text-gray-900'}`}
+                                            >
+                                                Monthly
+                                            </button>
+                                            <button 
+                                                onClick={() => setBillingCycle('Yearly')}
+                                                className={`px-5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-2 min-w-[130px] ${billingCycle === 'Yearly' ? 'bg-[#FFF8F0] text-[#D48D2A]' : 'text-gray-500 hover:text-gray-900'}`}
+                                            >
+                                                Yearly <span className={`${billingCycle === 'Yearly' ? 'text-[#D48D2A]/80' : 'text-gray-400'} font-medium normal-case tracking-normal`}>(Save 20%)</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex-1 overflow-visible flex gap-3 pr-1 pb-2 pt-3 items-stretch h-full">
+                                        {/* Premium Basic Plan */}
+                                        <div className={`flex-1 min-w-0 p-4 rounded-[1.5rem] border-[1.5px] flex flex-col transition-all ${(user?.plan || 'Premium Basic') === 'Premium Basic' ? 'bg-[#FFF8F0]/30 border-[#D48D2A]/40 shadow-[0_4px_20px_rgba(212,141,42,0.06)] relative' : 'bg-white border-gray-100 hover:border-[#D48D2A]/30'}`}>
+                                            {(user?.plan || 'Premium Basic') === 'Premium Basic' && (
+                                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                                                    <span className="px-3 py-1 bg-[#D48D2A] text-white text-[8px] font-black uppercase tracking-widest rounded-full shadow-sm">Current Plan</span>
+                                                </div>
+                                            )}
+                                            <div className="flex justify-center mb-2 text-gray-400 mt-1 shrink-0">
+                                                <div className="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center shadow-sm">
+                                                    <FiPackage className="text-sm" />
+                                                </div>
+                                            </div>
+                                            <h4 className="text-[15px] font-bold text-gray-900 text-center font-playfair mb-0.5 shrink-0">Premium Basic</h4>
+                                            <div className="flex justify-center items-end gap-0.5 py-0.5 shrink-0">
+                                                <span className="text-[26px] font-black text-gray-900 leading-none tracking-tight">${billingCycle === 'Monthly' ? '99' : '79'}</span>
+                                                <span className="text-[9px] font-bold text-gray-400 mb-1.5">/month</span>
+                                            </div>
+                                            <ul className="space-y-1.5 mb-2 flex-1 mt-2 overflow-hidden">
+                                                {['25 Active Listings', 'Advanced Analytics', 'Priority Email Support', 'Enhanced Visibility', 'Lead Management'].map((f, i) => (
+                                                    <li key={i} className="flex items-start gap-2 text-[10px] font-bold text-gray-600">
+                                                        <FiCheckCircle className="shrink-0 mt-[1px] text-emerald-500 text-[12px]" /> <span className="leading-tight">{f}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <button 
+                                                className={`w-full py-2.5 rounded-xl font-bold text-[9px] uppercase tracking-widest shadow-sm transition-colors shrink-0 truncate ${(user?.plan || 'Premium Basic') === 'Premium Basic' ? 'bg-[#FFF8F0] border border-[#F2E8DB] text-[#D48D2A]' : 'bg-white border border-[#D48D2A] text-[#D48D2A] opacity-40 cursor-not-allowed'}`}
+                                                disabled={true}
+                                            >
+                                                {(user?.plan || 'Premium Basic') === 'Premium Basic' ? 'Current Plan' : 'Downgrade'}
+                                            </button>
+                                        </div>
+                                        
+                                        {/* Business VIP Plan */}
+                                        <div className={`flex-1 min-w-0 p-4 rounded-[1.5rem] border-[1.5px] flex flex-col transition-all ${(user?.plan || 'Premium Basic') === 'Business VIP' ? 'bg-purple-50/30 border-purple-400/40 shadow-[0_4px_20px_rgba(168,85,247,0.06)] relative' : 'bg-white border-gray-100 hover:border-[#D48D2A]/30'}`}>
+                                            {(user?.plan || 'Premium Basic') === 'Business VIP' && (
+                                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                                                    <span className="px-3 py-1 bg-[#D48D2A] text-white text-[8px] font-black uppercase tracking-widest rounded-full shadow-sm">Current Plan</span>
+                                                </div>
+                                            )}
+                                            <div className="flex justify-center mb-2 text-purple-500 mt-1 shrink-0">
+                                                <div className="w-8 h-8 rounded-lg bg-purple-50 border border-purple-100 flex items-center justify-center shadow-sm">
+                                                    <FiBriefcase className="text-sm" />
+                                                </div>
+                                            </div>
+                                            <h4 className="text-[15px] font-bold text-gray-900 text-center font-playfair mb-0.5 shrink-0">Business VIP</h4>
+                                            <div className="flex justify-center items-end gap-0.5 py-0.5 shrink-0">
+                                                <span className="text-[26px] font-black text-gray-900 leading-none tracking-tight">${billingCycle === 'Monthly' ? '299' : '239'}</span>
+                                                <span className="text-[9px] font-bold text-gray-400 mb-1.5">/month</span>
+                                            </div>
+                                            <ul className="space-y-1.5 mb-3 flex-1 mt-2 overflow-auto custom-scrollbar">
+                                                {['50 Active Listings', 'Full Analytics Suite', 'Priority Phone & Email Support', 'Premium Visibility', 'Lead Scoring', 'Dedicated Account Manager', 'API Access'].map((f, i) => (
+                                                    <li key={i} className="flex items-start gap-2 text-[10px] font-bold text-gray-600">
+                                                        <FiCheckCircle className="shrink-0 mt-[1px] text-emerald-500 text-[12px]" /> <span className="leading-tight">{f}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <button 
+                                                className={`w-full py-2.5 rounded-xl font-bold text-[9px] uppercase tracking-widest shadow-sm transition-colors shrink-0 truncate ${(user?.plan || 'Premium Basic') === 'Business VIP' ? 'bg-[#FFF8F0] border border-[#F2E8DB] text-[#D48D2A]' : ((user?.plan || 'Premium Basic') === 'Enterprise Elite' ? 'bg-white border border-[#D48D2A] text-[#D48D2A] opacity-40 cursor-not-allowed' : 'bg-white border border-[#D48D2A] text-[#D48D2A] hover:bg-[#FFF8F0]')}`}
+                                                disabled={(user?.plan || 'Premium Basic') === 'Business VIP' || (user?.plan || 'Premium Basic') === 'Enterprise Elite'}
+                                            >
+                                                {(user?.plan || 'Premium Basic') === 'Business VIP' ? 'Current Plan' : ((user?.plan || 'Premium Basic') === 'Enterprise Elite' ? 'Downgrade' : 'Upgrade')}
+                                            </button>
+                                        </div>
+                                        
+                                        {/* Enterprise Elite Plan */}
+                                        <div className={`flex-1 min-w-0 p-4 rounded-[1.5rem] border-[1.5px] flex flex-col transition-all ${(user?.plan || 'Premium Basic') === 'Enterprise Elite' ? 'bg-blue-50/30 border-blue-400/40 shadow-[0_4px_20px_rgba(59,130,246,0.06)] relative' : 'bg-white border-gray-100 hover:border-[#D48D2A]/30'}`}>
+                                            {(user?.plan || 'Premium Basic') === 'Enterprise Elite' && (
+                                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                                                    <span className="px-3 py-1 bg-[#D48D2A] text-white text-[8px] font-black uppercase tracking-widest rounded-full shadow-sm">Current Plan</span>
+                                                </div>
+                                            )}
+                                            <div className="flex justify-center mb-2 text-blue-500 mt-1 shrink-0">
+                                                <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shadow-sm">
+                                                    <FiGlobe className="text-sm" />
+                                                </div>
+                                            </div>
+                                            <h4 className="text-[15px] font-bold text-gray-900 text-center font-playfair mb-0.5 shrink-0">Enterprise Elite</h4>
+                                            <div className="flex justify-center items-end gap-0.5 py-0.5 shrink-0">
+                                                <span className="text-[26px] font-black text-gray-900 leading-none tracking-tight">${billingCycle === 'Monthly' ? '599' : '479'}</span>
+                                                <span className="text-[9px] font-bold text-gray-400 mb-1.5">/month</span>
+                                            </div>
+                                            <ul className="space-y-1.5 mb-3 flex-1 mt-2 overflow-auto custom-scrollbar">
+                                                {['Unlimited Active Listings', 'Advanced Insights & Reports', '24/7 Phone & Email Support', 'Top Tier Visibility', 'Lead Scoring & CRM', 'Dedicated Success Manager', 'API Access & Integrations', 'Custom Solutions'].map((f, i) => (
+                                                    <li key={i} className="flex items-start gap-2 text-[10px] font-bold text-gray-600">
+                                                        <FiCheckCircle className="shrink-0 mt-[1px] text-emerald-500 text-[12px]" /> <span className="leading-tight">{f}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <button 
+                                                onClick={() => {
+                                                    setContactType('Sales');
+                                                    setIsContactModalOpen(true);
+                                                }}
+                                                className={`w-full py-2.5 bg-white border border-[#D48D2A] text-[#D48D2A] hover:bg-[#FFF8F0] rounded-xl font-bold text-[9px] uppercase tracking-widest shadow-sm transition-colors shrink-0 truncate ${(user?.plan || 'Premium Basic') === 'Enterprise Elite' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                            >
+                                                {(user?.plan || 'Premium Basic') === 'Enterprise Elite' ? 'Current Plan' : 'Contact Sales'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                                 
-                                <div className="mb-4 flex items-end justify-between">
-                                    <div>
-                                        <h2 className="text-2xl font-bold text-gray-900 font-playfair">Subscription & Billing</h2>
-                                        <p className="text-sm text-gray-500 mt-1">Manage your plan, billing details, and view payment history.</p>
+                                {/* Right Side: Upgrades & Footer Information */}
+                                <div className="flex-[1.2] flex flex-col gap-3 min-w-0">
+                                     {/* Why Upgrade Block */}
+                                     <div className="bg-white rounded-[1.5rem] p-5 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-100 flex-1 overflow-hidden flex flex-col">
+                                         <h4 className="text-[15px] font-bold text-gray-900 font-playfair mb-4 shrink-0">Why Upgrade?</h4>
+                                         <div className="flex flex-col gap-3.5 flex-1 overflow-hidden justify-center">
+                                             <div className="flex gap-3">
+                                                <div className="w-7 h-7 rounded-lg bg-[#FFF8F0] shrink-0 flex justify-center items-center shadow-sm border border-[#F2E8DB]"><FiTrendingUp className="text-[12px] text-[#D48D2A]"/></div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[11px] font-bold text-gray-900 leading-none mb-1">Increase Visibility</span>
+                                                    <span className="text-[9px] text-gray-500 tracking-tight leading-tight">Get more exposure for your assets.</span>
+                                                </div>
+                                             </div>
+                                             <div className="flex gap-3">
+                                                <div className="w-7 h-7 rounded-lg bg-teal-50 shrink-0 flex justify-center items-center shadow-sm border border-teal-100"><FiUsers className="text-[12px] text-teal-600"/></div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[11px] font-bold text-gray-900 leading-none mb-1">Generate More Leads</span>
+                                                    <span className="text-[9px] text-gray-500 tracking-tight leading-tight">Advanced tools to capture quality leads.</span>
+                                                </div>
+                                             </div>
+                                             <div className="flex gap-3">
+                                                <div className="w-7 h-7 rounded-lg bg-blue-50 shrink-0 flex justify-center items-center shadow-sm border border-blue-100"><FiActivity className="text-[12px] text-blue-500"/></div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[11px] font-bold text-gray-900 leading-none mb-1">Powerful Analytics</span>
+                                                    <span className="text-[9px] text-gray-500 tracking-tight leading-tight">Actionable insights to grow faster.</span>
+                                                </div>
+                                             </div>
+                                             <div className="flex gap-3">
+                                                <div className="w-7 h-7 rounded-lg bg-emerald-50 shrink-0 flex justify-center items-center shadow-sm border border-emerald-100"><FiBell className="text-[12px] text-emerald-500"/></div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[11px] font-bold text-gray-900 leading-none mb-1">Priority Support</span>
+                                                    <span className="text-[9px] text-gray-500 tracking-tight leading-tight">Get help when you need it most.</span>
+                                                </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                     
+                                     {/* Need Help Choosing Block */}
+                                     <div className="bg-white rounded-[1.5rem] p-5 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-100 shrink-0">
+                                         <h4 className="text-[14px] font-bold text-gray-900 font-playfair mb-1">Need help choosing?</h4>
+                                         <p className="text-[10px] text-gray-500 mb-3 leading-relaxed">Our team is here to help you find the perfect plan.</p>
+                                         <button 
+                                            onClick={() => {
+                                                setContactType('Support');
+                                                setIsContactModalOpen(true);
+                                            }}
+                                            className="w-full py-2.5 rounded-xl border border-[#D48D2A] text-[#D48D2A] hover:bg-[#FFF8F0] font-bold text-[9px] uppercase tracking-widest shadow-sm transition-colors flex justify-center items-center gap-2"
+                                         >
+                                            <FiMessageSquare className="text-[12px]"/> Contact Support
+                                         </button>
+                                     </div>
+                                </div>
+                            </div>
+                            
+                            {/* Static Bottom Footer */}
+                            <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between items-center shrink-0">
+                                <div className="flex gap-10">
+                                    <div className="flex items-center gap-3">
+                                        <FiShield className="text-gray-400 text-[18px]" />
+                                        <div className="flex flex-col">
+                                            <span className="text-[11px] font-bold text-gray-900">Secure Payments</span>
+                                            <span className="text-[9px] text-gray-400">Your payments are safe with us</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3 border-l border-gray-200 pl-8">
+                                        <FiLock className="text-gray-400 text-[18px]" />
+                                        <div className="flex flex-col">
+                                            <span className="text-[11px] font-bold text-gray-900">Cancel Anytime</span>
+                                            <span className="text-[9px] text-gray-400">No long-term commitments</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3 border-l border-gray-200 pl-8">
+                                        <FiActivity className="text-gray-400 text-[18px]" />
+                                        <div className="flex flex-col">
+                                            <span className="text-[11px] font-bold text-gray-900">Instant Upgrade</span>
+                                            <span className="text-[9px] text-gray-400">Get access immediately</span>
+                                        </div>
                                     </div>
                                 </div>
-
-                                {/* Nested Navigation */}
-                                <div className="flex border-b border-gray-100 mb-6 w-full overflow-x-auto custom-scrollbar">
-                                    <button className="pb-4 px-4 whitespace-nowrap border-b-2 font-bold text-sm border-[#D48D2A] text-[#D48D2A]">Subscription Details</button>
-                                    <button onClick={() => alert('Redirecting to secure billing portal...')} className="pb-4 px-4 whitespace-nowrap border-b-2 font-medium text-sm border-transparent text-gray-400 hover:text-gray-600 transition-colors">Manage Billing</button>
-                                    <button onClick={() => alert('Billing history is available in the billing portal.')} className="pb-4 px-4 whitespace-nowrap border-b-2 font-medium text-sm border-transparent text-gray-400 hover:text-gray-600 transition-colors">Billing History</button>
-                                    <button onClick={() => alert('Payment methods are securely managed in the billing portal.')} className="pb-4 px-4 whitespace-nowrap border-b-2 font-medium text-sm border-transparent text-gray-400 hover:text-gray-600 transition-colors">Payment Methods</button>
+                                <div className="flex items-center gap-3 opacity-80">
+                                    <span className="text-[14px] font-black italic text-blue-900">VISA</span>
+                                    <div className="flex items-center -space-x-1.5"><div className="w-3.5 h-3.5 rounded-full bg-red-500 opacity-90"></div><div className="w-3.5 h-3.5 rounded-full bg-orange-400 opacity-90"></div></div>
+                                    <div className="px-1.5 py-0.5 bg-blue-100 text-blue-600 rounded text-[9px] font-black">AMEX</div>
+                                    <span className="text-[12px] font-bold flex items-center gap-0.5"><FiLayout/> Pay</span>
                                 </div>
+                            </div>
+                        </div>
+                    )}
 
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                    {/* Current Plan Section */}
-                                    <div className="lg:col-span-1 border border-gray-100 bg-white rounded-[2.5rem] p-10 shadow-[0_2px_15px_rgba(0,0,0,0.03)] h-fit">
-                                        <h3 className="text-xl font-bold text-gray-900 font-playfair mb-6">Current Plan</h3>
-                                        
-                                        <div className="bg-gradient-to-br from-[#D48D2A] to-[#B5751C] rounded-[2rem] p-8 text-white mb-6 relative overflow-hidden shadow-xl shadow-[#D48D2A]/20 hover:scale-[1.02] transition-transform">
-                                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                                            <div className="flex items-center justify-between mb-4 relative z-10">
-                                                <h3 className="text-2xl font-bold font-playfair">{user?.plan || 'Business VIP'}</h3>
-                                                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 shadow-sm">Active</span>
+                    {/* SETTINGS TAB */}
+                    {activeTab === 'settings' && (
+                        <div className="h-[calc(100vh-6rem)] flex flex-col gap-3 animate-in fade-in duration-700 p-4">
+                            {/* Verification Banner */}
+                            <div className="bg-[#FFF8F0] border border-[#F2E8DB] rounded-2xl p-3 flex items-start justify-start gap-3 shrink-0 shadow-sm">
+                                <div className="w-5 h-5 rounded-full border border-[#D48D2A] text-[#D48D2A] flex items-center justify-center shrink-0 mt-0.5"><span className="text-xs font-bold font-serif">i</span></div>
+                                <div className="flex flex-col">
+                                    <span className="text-[12px] font-bold text-gray-900 leading-tight">Complete both sections to get verified and start receiving high-quality leads.</span>
+                                    <span className="text-[10px] text-gray-500 font-medium">Verified profiles get 3x more visibility and priority in lead distribution.</span>
+                                </div>
+                            </div>
+                            
+                            {/* 2 Main Columns */}
+                            <div className="flex flex-1 gap-4 min-h-0">
+                                {/* Personal Details */}
+                                <div className="flex-1 bg-white border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] rounded-[1.2rem] p-4 flex flex-col relative h-full">
+                                    {/* Header */}
+                                    <div className="flex justify-between items-start mb-4 shrink-0">
+                                        <div className="flex gap-3 items-center">
+                                            <div className="w-7 h-7 rounded-full bg-purple-50 text-purple-600 font-bold flex items-center justify-center text-[12px] shrink-0">1</div>
+                                            <div className="flex flex-col">
+                                                <h3 className="text-[13px] font-bold text-gray-900 leading-tight">Your Personal (Agent) Details</h3>
+                                                <p className="text-[9px] text-gray-400 font-medium leading-tight mt-0.5">This information will be visible to clients and used for communication.</p>
                                             </div>
-
-                                            <div className="space-y-5 relative z-10">
+                                        </div>
+                                        <div className="bg-emerald-50 text-emerald-600 px-2 py-1 flex items-center gap-1 rounded-full text-[9px] font-bold shrink-0">
+                                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Verified
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Form Fields container */}
+                                    <div className="flex-1 overflow-auto custom-scrollbar pr-2 flex flex-col gap-3">
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex flex-col gap-1.5 w-[30%]">
+                                                <label className="text-[9px] font-bold text-gray-700 capitalize tracking-wide">Profile Photo</label>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden shrink-0"><img src={agentInfo.photo || user?.profilePicture || "/assets/placeholder.jpg"} className="w-full h-full object-cover"/></div>
+                                                    <div className="flex flex-col justify-center">
+                                                        <label className="px-3 py-1.5 cursor-pointer bg-white border border-gray-200 rounded-lg text-[9px] font-bold text-gray-700 flex items-center gap-1 whitespace-nowrap hover:bg-gray-50 shadow-sm">
+                                                            <FiUpload/> Upload Photo
+                                                            <input type="file" className="hidden" accept="image/*" onChange={handleProfilePicUpload} />
+                                                        </label>
+                                                        <span className="text-[8px] text-gray-400 mt-1 font-medium">JPG, PNG up to 5MB</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex-1 flex gap-3">
+                                                <div className="flex-1">
+                                                    <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Full Name</label>
+                                                <input type="text" value={agentInfo.fullName} onChange={e => setAgentInfo(p => ({...p, fullName: e.target.value}))} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Job Title / Role</label>
+                                                <input type="text" value={agentInfo.jobTitle} onChange={e => setAgentInfo(p => ({...p, jobTitle: e.target.value}))} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Email Address</label>
+                                            <input type="email" value={agentInfo.email} onChange={e => setAgentInfo(p => ({...p, email: e.target.value}))} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Phone Number</label>
+                                            <div className="flex border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
+                                                <div className="flex items-center bg-gray-50 border-r border-gray-200 text-[10px] relative">
+                                                    <select 
+                                                        className="appearance-none bg-transparent pl-2 pr-6 py-1.5 outline-none font-medium cursor-pointer"
+                                                        value={agentInfo.phoneCode}
+                                                        onChange={e => setAgentInfo(p => ({...p, phoneCode: e.target.value}))}
+                                                    >
+                                                        <option value="+1">🇺🇸 +1</option>
+                                                        <option value="+44">🇬🇧 +44</option>
+                                                        <option value="+971">🇦🇪 +971</option>
+                                                        <option value="+61">🇦🇺 +61</option>
+                                                        <option value="+91">🇮🇳 +91</option>
+                                                        <option value="+49">🇩🇪 +49</option>
+                                                        <option value="+33">🇫🇷 +33</option>
+                                                        <option value="+39">🇮🇹 +39</option>
+                                                        <option value="+81">🇯🇵 +81</option>
+                                                        <option value="+86">🇨🇳 +86</option>
+                                                    </select>
+                                                    <FiChevronDown className="absolute right-1.5 text-[8px] text-gray-500 pointer-events-none"/>
+                                                </div>
+                                                <input type="text" value={agentInfo.phone} onChange={e => setAgentInfo(p => ({...p, phone: e.target.value}))} className="w-full bg-transparent px-3 py-1.5 text-[10px] font-medium focus:outline-none" placeholder="50 123 4567" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">WhatsApp Number</label>
+                                            <div className="flex border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
+                                                <div className="flex items-center bg-gray-50 border-r border-gray-200 text-[10px] relative">
+                                                    <select 
+                                                        className="appearance-none bg-transparent pl-2 pr-6 py-1.5 outline-none font-medium cursor-pointer"
+                                                        value={agentInfo.whatsappCode}
+                                                        onChange={e => setAgentInfo(p => ({...p, whatsappCode: e.target.value}))}
+                                                    >
+                                                        <option value="+1">🇺🇸 +1</option>
+                                                        <option value="+44">🇬🇧 +44</option>
+                                                        <option value="+971">🇦🇪 +971</option>
+                                                        <option value="+61">🇦🇺 +61</option>
+                                                        <option value="+91">🇮🇳 +91</option>
+                                                        <option value="+49">🇩🇪 +49</option>
+                                                        <option value="+33">🇫🇷 +33</option>
+                                                        <option value="+39">🇮🇹 +39</option>
+                                                        <option value="+81">🇯🇵 +81</option>
+                                                        <option value="+86">🇨🇳 +86</option>
+                                                    </select>
+                                                    <FiChevronDown className="absolute right-1.5 text-[8px] text-gray-500 pointer-events-none"/>
+                                                </div>
+                                                <input type="text" value={agentInfo.whatsapp} onChange={e => setAgentInfo(p => ({...p, whatsapp: e.target.value}))} className="w-full bg-transparent px-3 py-1.5 text-[10px] font-medium focus:outline-none" placeholder="50 123 4567" />
+                                            </div>
+                                        </div>
+                                            <div>
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Preferred Contact Method</label>
+                                                <div className="relative w-full">
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-emerald-500 pointer-events-none text-xs"><FiMessageSquare/></div>
+                                                    <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-8 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm">
+                                                        <option>WhatsApp</option>
+                                                    </select>
+                                                    <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"/>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Language</label>
+                                                <div className="relative w-full">
+                                                    <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm">
+                                                        <option>English</option>
+                                                    </select>
+                                                    <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"/>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Time Zone</label>
+                                                <div className="relative w-full">
+                                                    <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm">
+                                                        <option>(GMT+4) Dubai, UAE</option>
+                                                    </select>
+                                                    <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <div className="flex justify-between items-end mb-1.5">
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide">Agent Description</label>
+                                            </div>
+                                            <div className="relative">
+                                                <textarea className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none" rows="3" defaultValue="Luxury asset consultant with 8+ years of experience in high-end cars and investment properties. Passionate about delivering a personalized, transparent, and premium experience to every client."></textarea>
+                                                <span className="absolute bottom-1.5 right-2 text-[8px] text-gray-400 font-bold bg-white">158 / 1000</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Social Profiles <span className="text-gray-400 font-medium normal-case">(Optional)</span></label>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="relative w-full">
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-pink-500 pointer-events-none text-[10px]"><FiInstagram/></div>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="instagram.com/mdriyaz" />
+                                                </div>
+                                                <div className="relative w-full">
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-600 pointer-events-none text-[10px]"><FiLinkedin/></div>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="linkedin.com/in/mdriyaz" />
+                                                </div>
+                                                <div className="relative w-full">
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-gray-800 pointer-events-none text-[10px] font-serif font-black">X</div>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="x.com/mdriyaz" />
+                                                </div>
+                                                <div className="relative w-full">
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-500 pointer-events-none text-[10px]"><FiFacebook/></div>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="facebook.com/mdriyaz" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="pt-3 mt-auto shrink-0 border-t border-gray-50 flex">
+                                        <button 
+                                            onClick={handleSavePersonalDetails}
+                                            disabled={savingPersonal}
+                                            className={`px-5 py-2 ${savingPersonal ? 'bg-gray-400' : 'bg-gray-900 hover:bg-gray-800'} border border-transparent shadow-sm text-white rounded-[10px] text-[10px] font-bold transition-colors flex items-center gap-2`}
+                                        >
+                                            {savingPersonal && <FiRefreshCw className="animate-spin" />}
+                                            {savingPersonal ? 'Saving...' : 'Save Personal Details'}
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                {/* Company Details */}
+                                <div className="flex-1 bg-white border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] rounded-[1.2rem] p-4 flex flex-col relative h-full">
+                                    {/* Header */}
+                                    <div className="flex justify-between items-start mb-4 shrink-0">
+                                        <div className="flex gap-3 items-center">
+                                            <div className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-[12px] shrink-0">2</div>
+                                            <div className="flex flex-col">
+                                                <h3 className="text-[13px] font-bold text-gray-900 leading-tight">Your Dealer / Company Details</h3>
+                                                <p className="text-[9px] text-gray-400 font-medium leading-tight mt-0.5">This information represents your business and will be visible to clients.</p>
+                                            </div>
+                                        </div>
+                                        <div className="bg-emerald-50 text-emerald-600 px-2 py-1 flex items-center gap-1 rounded-full text-[9px] font-bold shrink-0">
+                                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Verified
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Form Fields container */}
+                                    <div className="flex-1 overflow-auto custom-scrollbar pr-2 flex flex-col gap-3">
+                                        <div className="flex justify-between gap-4">
+                                            <div className="flex-1 flex flex-col gap-3">
                                                 <div>
-                                                    <div className="flex justify-between items-center mb-2">
-                                                        <p className="text-xs font-bold text-white/80 uppercase tracking-widest">Listing Usage</p>
-                                                        <p className="text-sm font-black tracking-wide">
-                                                            {data?.inventory?.length || 0} / {user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5}
-                                                        </p>
-                                                    </div>
-                                                    <div className="w-full h-2 bg-black/20 rounded-full overflow-hidden backdrop-blur-sm shadow-inner">
-                                                        <div
-                                                            className="h-full bg-white rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(255,255,255,0.5)]"
-                                                            style={{ width: `${Math.min(((data?.inventory?.length || 0) / (user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5)) * 100, 100)}%` }}
-                                                        ></div>
-                                                    </div>
+                                                    <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Company / Dealership Name</label>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="Visual Business Express" />
                                                 </div>
-
-                                                <div className="pt-4 border-t border-white/20 flex justify-between items-center">
-                                                    <div>
-                                                        <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold mb-0.5">Renewal Date</p>
-                                                        <p className="text-sm font-bold">{companyInfo.planExpiresAt ? new Date(companyInfo.planExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Apr 28, 2026'}</p>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold mb-0.5">Amount</p>
-                                                        <p className="text-sm font-bold">${user?.plan === 'Business VIP' ? '299.00' : user?.plan === 'Premium Basic' ? '99.00' : '0.00'}</p>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div className="col-span-2">
+                                                        <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Website</label>
+                                                        <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="https://vbexpress.com" />
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <button className="w-full py-4 text-sm font-bold text-[#D48D2A] bg-[#FDF8F0] border border-[#F2E8DB] rounded-xl hover:bg-[#F2E8DB] transition-all">Cancel Subscription</button>
-                                    </div>
-
-                                    {/* Available Plans Section */}
-                                    <div className="lg:col-span-2">
-                                        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.03)] p-10">
-                                            <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
-                                                <h3 className="text-xl font-bold text-gray-900 font-playfair flex items-center gap-2">
-                                                    Available Plans 
-                                                </h3>
-                                                
-                                                {/* Billing Toggle */}
-                                                <div className="bg-gray-50 border border-gray-100 p-1.5 rounded-full flex items-center shadow-sm">
-                                                    <button className="px-6 py-2 rounded-full text-xs font-bold bg-white text-gray-900 shadow-sm border border-gray-100 transition-all">Monthly</button>
-                                                    <button className="px-6 py-2 rounded-full text-xs font-bold text-gray-500 hover:text-gray-900 transition-all flex items-center gap-2">Annually <span className="text-[9px] font-black uppercase tracking-widest text-[#D48D2A] bg-[#FDF8F0]/80 px-2 py-0.5 rounded-full">Save 20%</span></button>
-                                                </div>
-                                            </div>
-
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                {/* Premium Basic Plan */}
-                                                <div className={`rounded-[2rem] border-2 p-8 transition-all flex flex-col ${user?.plan === 'Premium Basic' ? 'border-[#D48D2A] bg-[#FDF8F0]/30 shadow-sm relative' : 'border-gray-100 bg-white hover:border-[#D48D2A] hover:shadow-xl hover:-translate-y-1 duration-300 group'}`}>
-                                                    {user?.plan === 'Premium Basic' && (
-                                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                                                            <span className="px-4 py-1 bg-[#D48D2A] text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-md">Current Plan</span>
-                                                        </div>
-                                                    )}
-                                                    
-                                                    <div className="mb-6">
-                                                        <div className="w-12 h-12 rounded-[1rem] bg-gray-50 border border-gray-100 flex items-center justify-center mb-5 text-gray-400 group-hover:text-[#D48D2A] group-hover:border-[#D48D2A]/30 transition-all shadow-sm">
-                                                            <FiPackage className="text-xl" />
-                                                        </div>
-                                                        <h4 className="text-xl font-bold text-gray-900 font-playfair mb-1">Premium Basic</h4>
-                                                        <p className="text-xs text-gray-500 font-medium mb-4 min-h-[40px]">Perfect for boutique dealerships starting to scale their digital presence.</p>
-                                                        <div className="flex items-baseline gap-1 py-4 border-y border-gray-100">
-                                                            <span className="text-4xl font-black text-gray-900 tracking-tight">$99</span>
-                                                            <span className="text-xs font-bold text-gray-400">/mo</span>
-                                                        </div>
+                                            <div className="flex flex-col gap-1.5 min-w-[140px]">
+                                                <label className="text-[9px] font-bold text-gray-700 capitalize tracking-wide">Company Logo</label>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center border border-gray-200 shadow-sm overflow-hidden shrink-0">
+                                                        {companyInfo.logo ? (
+                                                            <img src={companyInfo.logo} className="w-full h-full object-contain" alt="Company Logo" />
+                                                        ) : (
+                                                            <div className="text-[20px] font-black text-gray-300">V</div>
+                                                        )}
                                                     </div>
-
-                                                    <ul className="space-y-4 mb-8 flex-1">
-                                                        {['25 Active Listings', 'Advanced Analytics', 'Priority Email Support', 'Enhanced Visibility', 'Lead Management'].map((feature, idx) => (
-                                                            <li key={idx} className="flex items-start gap-3 text-sm">
-                                                                <div className="mt-0.5 w-4 h-4 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100/50"><FiCheckCircle className="text-emerald-500 text-[10px]" /></div>
-                                                                <span className="text-gray-600 font-medium">{feature}</span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-
-                                                    {user?.plan === 'Premium Basic' ? (
-                                                        <button disabled className="w-full py-4 bg-gray-100 text-gray-400 rounded-xl font-bold text-sm cursor-not-allowed uppercase tracking-widest">Current Plan</button>
-                                                    ) : user?.plan === 'Business VIP' ? (
-                                                        <button disabled className="w-full py-4 bg-gray-50 text-gray-300 rounded-xl font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed uppercase tracking-widest"><FiChevronDown /> Downgrade</button>
-                                                    ) : (
-                                                        <button onClick={() => handlePlanChange('Premium Basic')} className="w-full py-4 bg-white border border-gray-200 text-gray-900 rounded-xl font-bold text-sm hover:border-[#D48D2A] hover:text-[#D48D2A] transition-all flex items-center justify-center gap-2 group-hover:bg-[#D48D2A] group-hover:border-[#D48D2A] group-hover:text-white shadow-sm">Upgrade Plan <FiChevronRight /></button>
-                                                    )}
-                                                </div>
-
-                                                {/* Business VIP Plan */}
-                                                <div className={`rounded-[2rem] border-2 p-8 transition-all flex flex-col ${user?.plan === 'Business VIP' ? 'border-[#D48D2A] bg-[#FDF8F0]/30 shadow-sm relative' : 'border-gray-100 bg-white hover:border-[#D48D2A] hover:shadow-xl hover:-translate-y-1 duration-300 group'}`}>
-                                                    {user?.plan === 'Business VIP' && (
-                                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                                                            <span className="px-4 py-1 bg-[#D48D2A] text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-md">Current Plan</span>
-                                                        </div>
-                                                    )}
-
-                                                    <div className="mb-6">
-                                                        <div className="w-12 h-12 rounded-[1rem] bg-gradient-to-br from-[#D48D2A] to-[#B5751C] shadow-lg shadow-[#D48D2A]/20 flex items-center justify-center mb-5 text-white group-hover:scale-105 transition-all">
-                                                            <FiBriefcase className="text-xl" />
-                                                        </div>
-                                                        <h4 className="text-xl font-bold text-gray-900 font-playfair mb-1">Business VIP</h4>
-                                                        <p className="text-xs text-gray-500 font-medium mb-4 min-h-[40px]">The ultimate plan for established dealerships needing maximum reach.</p>
-                                                        <div className="flex items-baseline gap-1 py-4 border-y border-gray-100">
-                                                            <span className="text-4xl font-black text-gray-900 tracking-tight">$299</span>
-                                                            <span className="text-xs font-bold text-gray-400">/mo</span>
-                                                        </div>
+                                                    <div className="flex flex-col justify-center">
+                                                        <label className={`px-2 py-1.5 bg-white border border-gray-200 rounded-lg text-[9px] font-bold ${logoLoading ? 'text-gray-400' : 'text-gray-700 hover:bg-gray-50 cursor-pointer'} flex items-center gap-1 whitespace-nowrap shadow-sm`}>
+                                                            {logoLoading ? <span className="animate-spin text-[10px]" /> : <FiUpload/>} 
+                                                            {logoLoading ? 'Uploading...' : 'Upload Logo'}
+                                                            <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} disabled={logoLoading} />
+                                                        </label>
+                                                        <span className="text-[8px] text-gray-400 mt-1 font-medium">JPG, PNG up to 5MB</span>
                                                     </div>
-
-                                                    <ul className="space-y-4 mb-8 flex-1">
-                                                        {['50 Active Listings', 'Full Analytics Suite', 'Priority Phone & Email Support', 'Premium Visibility', 'Lead Scoring', 'Dedicated Account Manager'].map((feature, idx) => (
-                                                            <li key={idx} className="flex items-start gap-3 text-sm">
-                                                                <div className="mt-0.5 w-4 h-4 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100/50"><FiCheckCircle className="text-emerald-500 text-[10px]" /></div>
-                                                                <span className="text-gray-600 font-medium">{feature}</span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-
-                                                    {user?.plan === 'Business VIP' ? (
-                                                        <button disabled className="w-full py-4 bg-gray-100 text-gray-400 rounded-xl font-bold text-sm cursor-not-allowed uppercase tracking-widest">Current Plan</button>
-                                                    ) : (
-                                                        <button onClick={() => handlePlanChange('Business VIP')} className="w-full py-4 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-black transition-all flex items-center justify-center gap-2 shadow-xl shadow-gray-900/20">Upgrade Plan <FiChevronRight className="text-gray-400" /></button>
-                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                         
-                                        {/* Custom Solution Section */}
-                                        <div className="mt-8 bg-gradient-to-r from-gray-900 to-gray-800 rounded-[2.5rem] p-10 text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl relative overflow-hidden">
-                                            <div className="absolute right-0 top-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
-                                            <div className="relative z-10 flex-1">
-                                                <h3 className="text-2xl font-bold font-playfair mb-2">Need a Custom Solution?</h3>
-                                                <p className="text-gray-400 text-sm max-w-lg leading-relaxed font-medium">For large dealerships or enterprises with specific requirements, we offer tailored solutions with dedicated support and custom API integrations.</p>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="col-span-2">
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Company Email</label>
+                                                <input type="email" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="hello@vbexpress.com" />
                                             </div>
-                                            <div className="relative z-10 shrink-0">
-                                                <button onClick={() => { setContactType('Sales'); setIsContactModalOpen(true); }} className="px-8 py-4 bg-white text-gray-900 rounded-xl font-bold text-sm hover:bg-gray-100 transition-all shadow-xl shadow-white/10">Contact Sales</button>
+                                            <div>
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Business Type</label>
+                                                <div className="relative w-full">
+                                                    <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm">
+                                                        <option>Luxury Cars & Supercars Dealer</option>
+                                                    </select>
+                                                    <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"/>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Established Year</label>
+                                                <div className="relative w-full">
+                                                    <div className="absolute right-2.5 inset-y-0 flex items-center text-gray-400 pointer-events-none text-[10px]"><FiCalendar/></div>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pr-8 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="2019" />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Office Address</label>
+                                                <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="5930, Amarilloor, Spain" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Phone Number</label>
+                                                <div className="flex border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
+                                                    <div className="flex items-center px-2 bg-gray-50 border-r border-gray-200 text-[10px]"><span className="mr-1">🇦🇪</span> <FiChevronDown className="text-[8px] text-gray-500"/></div>
+                                                    <input type="text" className="w-full bg-transparent px-3 py-1.5 text-[10px] font-medium focus:outline-none" defaultValue="+44 123 456 7890" />
+                                                </div>
                                             </div>
                                         </div>
-
-                                        {/* Support Section */}
-                                        <div className="mt-8 bg-white border border-gray-100 rounded-[2.5rem] p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
-                                            <div className="relative z-10 flex-1">
-                                                <h3 className="text-2xl font-bold font-playfair text-gray-900 mb-2">Need Help?</h3>
-                                                <p className="text-gray-500 text-sm max-w-lg leading-relaxed font-medium">Get in touch with our dedicated concierge support team for any questions or assistance with your account.</p>
+                                        
+                                        <div>
+                                            <div className="flex justify-between items-end mb-1.5">
+                                                <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide">Dealer / Agent Description</label>
                                             </div>
-                                            <div className="relative z-10 shrink-0">
-                                                <button onClick={() => { setContactType('Support'); setIsContactModalOpen(true); }} className="px-8 py-4 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl font-bold text-sm hover:bg-gray-100 transition-all">Contact Support</button>
+                                            <div className="relative">
+                                                <textarea className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none" rows="3" defaultValue="Specialists in luxury cars & supercars trading, serving customers high-quality & exclusive properties on the Costa Tropical. With 10+ years of local market expertise, we ensure exceptional service and transparent deals."></textarea>
+                                                <span className="absolute bottom-1.5 right-2 text-[8px] text-gray-400 font-bold bg-white">176 / 1000</span>
                                             </div>
                                         </div>
+                                        
+                                        <div>
+                                            <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Company Social Media <span className="text-gray-400 font-medium normal-case">(Optional)</span></label>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="relative w-full">
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-pink-500 pointer-events-none text-[10px]"><FiInstagram/></div>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="instagram.com/vbexpress" />
+                                                </div>
+                                                <div className="relative w-full">
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-600 pointer-events-none text-[10px]"><FiLinkedin/></div>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="linkedin.com/company/vbexpress" />
+                                                </div>
+                                                <div className="relative w-full">
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-500 pointer-events-none text-[10px]"><FiFacebook/></div>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="facebook.com/vbexpress" />
+                                                </div>
+                                                <div className="relative w-full">
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-red-600 pointer-events-none text-[10px]"><FiYoutube/></div>
+                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="youtube.com/@vbexpress" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="pt-3 mt-auto shrink-0 border-t border-gray-50 flex">
+                                        <button 
+                                            onClick={handleSaveCompanyDetails}
+                                            disabled={savingCompany}
+                                            className={`px-5 py-2 ${savingCompany ? 'bg-gray-400' : 'bg-gray-900 hover:bg-gray-800'} border border-transparent shadow-sm text-white rounded-[10px] text-[10px] font-bold transition-colors flex items-center gap-2`}
+                                        >
+                                            {savingCompany && <FiRefreshCw className="animate-spin" />}
+                                            {savingCompany ? 'Saving...' : 'Save Company Details'}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        )
-                    }
+                            
+                            {/* 3 Bottom Cards */}
+                            <div className="grid grid-cols-3 gap-4 shrink-0 mt-2">
+                                {/* Card 1: Verification Status */}
+                                <div className="bg-white border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] rounded-[1.2rem] flex flex-col justify-between overflow-hidden">
+                                    <div className="p-3 pb-1 flex gap-2">
+                                        <div className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0 border border-emerald-100"><FiShield className="text-[10px]"/></div>
+                                        <div className="flex flex-col">
+                                            <h4 className="text-[11px] font-bold text-gray-900 leading-tight">Verification Status</h4>
+                                            <p className="text-[9px] text-gray-400 font-medium">Get verified to increase trust and lead priority.</p>
+                                        </div>
+                                    </div>
+                                    <div className="px-3 flex justify-between items-center bg-white flex-1">
+                                        <div className="flex flex-col gap-1 w-full mt-1">
+                                            {['Identity Verification', 'Business Verification', 'Phone Verification'].map(v => (
+                                                <div key={v} className="flex justify-between items-center text-[9px]">
+                                                    <span className="flex items-center gap-1.5 text-gray-600 font-medium"><FiCheckCircle className="text-gray-400 text-[9px]"/> {v}</span>
+                                                    <span className="text-emerald-500 font-bold flex items-center gap-1"><div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Verified</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="bg-gray-50 py-1.5 border-t border-gray-100 text-center">
+                                        <button className="text-[9px] font-bold text-gray-600 hover:text-[#D48D2A] transition-colors w-full" onClick={() => setIsVerificationModalOpen(true)}>View Verification Details</button>
+                                    </div>
+                                </div>
+                                
+                                {/* Card 2: Lead Preferences */}
+                                <div className="bg-white border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] rounded-[1.2rem] flex flex-col justify-between overflow-hidden">
+                                    <div className="p-3 pb-1 flex gap-2">
+                                        <div className="w-6 h-6 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center shrink-0 border border-purple-100"><FiFilter className="text-[10px]"/></div>
+                                        <div className="flex flex-col">
+                                            <h4 className="text-[11px] font-bold text-gray-900 leading-tight">Lead Preferences</h4>
+                                            <p className="text-[9px] text-gray-400 font-medium">Control how and when you receive leads.</p>
+                                        </div>
+                                    </div>
+                                    <div className="px-3 flex gap-4 bg-white flex-1 pt-1.5">
+                                        <div className="flex-1 flex flex-col justify-center gap-1.5">
+                                            {['Lead Notifications', 'Email Notifications', 'WhatsApp Notifications'].map(n => (
+                                                <div key={n} className="flex justify-between items-center text-[9px] font-medium text-gray-600">
+                                                    <span>{n}</span>
+                                                    <div className="w-6 h-3 bg-orange-400 rounded-full flex items-center p-0.5"><div className="w-2.5 h-2.5 bg-white rounded-full ml-auto shadow-sm"></div></div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="flex-1 flex flex-col justify-center gap-1.5">
+                                            <div>
+                                                <span className="text-[8px] text-gray-400 font-bold mb-0.5 block">Preferred Lead Types</span>
+                                                <div className="border border-gray-200 rounded flex justify-between items-center px-1.5 py-0.5">
+                                                    <span className="text-[9px] text-gray-600 font-medium">All Categories</span><FiChevronDown className="text-gray-400 text-[8px]"/>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <span className="text-[8px] text-gray-400 font-bold mb-0.5 block">Preferred Locations</span>
+                                                <div className="border border-gray-200 rounded flex justify-between items-center px-1.5 py-0.5">
+                                                    <span className="text-[9px] text-gray-600 font-medium">All Locations</span><FiChevronDown className="text-gray-400 text-[8px]"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-gray-50 py-1.5 border-t border-gray-100 text-center">
+                                        <button className="text-[9px] font-bold text-gray-600 hover:text-[#D48D2A] transition-colors w-full">Manage Lead Preferences</button>
+                                    </div>
+                                </div>
+                                
+                                {/* Card 3: Account & Security */}
+                                <div className="bg-white border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] rounded-[1.2rem] flex flex-col justify-between overflow-hidden">
+                                    <div className="p-3 pb-1 flex gap-2">
+                                        <div className="w-6 h-6 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 border border-blue-100"><FiLock className="text-[10px]"/></div>
+                                        <div className="flex flex-col">
+                                            <h4 className="text-[11px] font-bold text-gray-900 leading-tight">Account & Security</h4>
+                                            <p className="text-[9px] text-gray-400 font-medium">Manage your account security and access.</p>
+                                        </div>
+                                    </div>
+                                    <div className="px-3 flex flex-col gap-1.5 bg-white flex-1 justify-center relative -top-0.5">
+                                        <div className="flex justify-between items-center text-[9px] font-medium text-gray-600">
+                                            <span className="flex items-center gap-1.5 text-gray-700"><FiShield className="text-[10px] text-gray-400"/> Change Password</span>
+                                            <FiChevronRight className="text-gray-400"/>
+                                        </div>
+                                        <div className="flex justify-between items-center text-[9px] font-medium text-gray-600">
+                                            <span className="flex items-center gap-1.5 text-gray-700"><FiCheckCircle className="text-[10px] text-gray-400"/> Two-Factor Authentication</span>
+                                            <span className="text-emerald-500 font-bold">Enabled</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-[9px] font-medium text-gray-600">
+                                            <span className="flex items-center gap-1.5 text-gray-700"><FiMonitor className="text-[10px] text-gray-400"/> Active Sessions</span>
+                                            <span className="bg-gray-100 text-gray-600 px-1.5 rounded font-bold border border-gray-200">2</span>
+                                        </div>
+                                    </div>
+                                    <div className="bg-gray-50 py-1.5 border-t border-gray-100 text-center">
+                                        <button className="text-[9px] font-bold text-gray-600 hover:text-[#D48D2A] transition-colors w-full">Manage Security</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                 </main >
             </div >
@@ -2064,6 +3122,14 @@ const Inventory = () => {
                     setIsAddModalOpen(false);
                     setEditingItem(null);
                 }}
+            />
+
+            <AddLeadModal
+                isOpen={isAddLeadModalOpen}
+                onClose={() => setIsAddLeadModalOpen(false)}
+                onCreated={() => fetchDashboard()}
+                token={token}
+                inventory={data?.inventory || []}
             />
 
             <ConfirmationModal

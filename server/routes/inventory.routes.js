@@ -100,16 +100,16 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         const leadsTable = [
             ...newLeads.map(l => ({
                 id: l._id,
-                buyerName: l.sender?.name || 'Anonymous Client',
+                buyerName: l.sender?.name || l.name || 'Anonymous Client',
                 buyerPhoto: l.sender?.profilePicture,
-                buyerPhone: l.sender?.phone || 'No Phone Provided',
+                buyerPhone: l.sender?.phone || l.phone || 'No Phone Provided',
                 assetName: l.assetTitle || 'Untitled Asset',
                 category: l.assetModel || 'General',
                 date: l.createdAt,
                 status: l.status || 'New',
                 message: l.message,
                 isActivity: false,
-                customerContact: user.plan === 'Business VIP' ? l.sender?.email : 'Upgrade to VIP to view contact'
+                customerContact: user.plan === 'Business VIP' || user.plan === 'Enterprise Elite' ? (l.sender?.email || l.email) : 'Upgrade to VIP to view contact'
             })),
             ...activities.map(act => ({
                 id: act._id,
@@ -122,7 +122,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 status: act.status || 'New',
                 message: 'Activity: ' + act.activityType,
                 isActivity: true,
-                customerContact: user.plan === 'Business VIP' ? act.userId?.email : 'Upgrade to VIP to view contact'
+                customerContact: user.plan === 'Business VIP' || user.plan === 'Enterprise Elite' ? act.userId?.email : 'Upgrade to VIP to view contact'
             }))
         ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
