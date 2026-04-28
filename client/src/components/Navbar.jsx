@@ -83,10 +83,10 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
         <div className="flex-1 flex items-center justify-end gap-2 md:gap-4 lg:gap-6">
           <NavLink 
             to="/listings" 
-            className={`hidden lg:block px-5 py-2 rounded-full border text-[10px] tracking-[0.1em] font-normal montserrat transition-all duration-300 whitespace-nowrap ${
+            className={`hidden lg:block px-6 py-2.5 rounded-full border text-[10px] tracking-[0.2em] font-medium montserrat transition-all duration-500 whitespace-nowrap backdrop-blur-md shadow-lg active:scale-95 ${
               isDarkText 
-              ? 'border-black text-black hover:bg-black hover:text-white' 
-              : 'border-white/50 text-white hover:bg-white hover:text-black'
+              ? 'border-black/10 bg-black/5 text-black hover:bg-black hover:text-white hover:border-black hover:shadow-black/10' 
+              : 'border-white/20 bg-white/10 text-white hover:bg-white hover:text-black hover:border-white hover:shadow-white/20'
             }`}
           >
             SELL WITH US

@@ -14,7 +14,16 @@ const Hero = () => {
   const imageModules = import.meta.glob('../../assets/hero_banners/home_hero/*.{jpeg,jpg,png,webp,svg}', { eager: true });
   
   const images = useMemo(() => {
-    return Object.values(imageModules).map((mod) => mod.default);
+    // Get entries, sort them numerically by filename, then map to the default export
+    return Object.entries(imageModules)
+      .sort(([pathA], [pathB]) => {
+        const getNum = (path) => {
+          const match = path.match(/\/(\d+)\./);
+          return match ? parseInt(match[1], 10) : Infinity;
+        };
+        return getNum(pathA) - getNum(pathB);
+      })
+      .map(([_, mod]) => mod.default);
   }, [imageModules]);
 
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -148,7 +157,7 @@ const Hero = () => {
               CURATED GLOBALLY · EST. 2025
             </p>
             
-            <h1 className='text-white text-[clamp(1.5rem,7vw,4.5rem)] md:text-[clamp(2.5rem,6.5vw,5rem)] lg:text-7xl playfair-display mb-6 md:mb-8 leading-tight font-normal whitespace-nowrap'>
+            <h1 className='text-white text-[clamp(1.5rem,6vw,3.5rem)] md:text-[clamp(2rem,5.5vw,4.5rem)] lg:text-6xl playfair-display mb-6 md:mb-8 leading-tight font-normal whitespace-nowrap'>
               Discover Exceptional Assets
             </h1>
             
