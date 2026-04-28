@@ -242,18 +242,24 @@ const Cars_Section = () => {
           <FilterBar onFilter={handleFilter} key={filterBarKey} priceRanges={priceRanges} filterOptions={carFilterOptions} hideLocation={true} />
         </section>
 
-        <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white">
-          <h2 className="text-3xl md:text-4xl playfair-display text-black mb-7 text-center flex justify-between">
-            <span>Featured List</span>
-            <span>
-              <SortDropdown onSortChange={handleSortChange} currentSort={currentSort} />
-            </span>
-          </h2>
+        <section ref={featuredListRef} className="w-full bg-[#f9f9f9] py-16 mt-4">
+          <div className="max-w-[1400px] mx-auto px-4 md:px-16">
+            
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+              <div>
+                <h2 className="text-3xl md:text-5xl font-normal playfair-display text-black mb-2">
+                  Featured Cars
+                </h2>
+                <p className="text-sm md:text-base text-gray-500 font-sans">
+                  Browse our exclusive collection of luxury vehicles.
+                </p>
+              </div>
+              <div className="bg-white rounded-md shadow-sm border border-gray-100 px-2 py-1 flex items-center">
+                <SortDropdown onSortChange={handleSortChange} currentSort={currentSort} />
+              </div>
+            </div>
 
-          <div className="w-[92%] md:w-[95%] h-px bg-gray-300 border-0 justify-self-center"></div>
-
-          <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-7">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {list.length > 0 ? (
                 list.map((item, idx) => (
                   <div key={item._id}>

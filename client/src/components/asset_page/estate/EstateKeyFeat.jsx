@@ -11,10 +11,10 @@ const EstateKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
   
   const specItems = [
-    { label: 'Land Area', value: kSpecs.landArea, icon: land },
+    { label: 'Bedrooms', value: kSpecs.bedrooms, icon: bedRoom },
     { label: 'Bathrooms', value: kSpecs.bathrooms, icon: bathRoom },
     { label: 'Built Area', value: kSpecs.builtUpArea, icon: sqrtFt },
-    { label: 'Bedrooms', value: kSpecs.bedrooms, icon: bedRoom },
+    { label: 'Land Area', value: kSpecs.landArea, icon: land },
     { label: 'Floors', value: kSpecs.floors, icon: floor },
     { label: 'Garage', value: kSpecs.garageCapacity, icon: garage }
   ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
@@ -23,39 +23,42 @@ const EstateKeyFeatures = ({ item }) => {
 
   // Helper Component for a Feature Card
  const FeatureCard = ({ icon, label, value }) => (
-    <div className="flex items-center gap-4 border border-gray-200 rounded-lg px-4 py-3 bg-white shadow-sm hover:border-[#006d77] transition-colors cursor-default montserrat">
+    <div className="flex items-center gap-6 border border-gray-100 rounded-lg px-6 py-4 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md transition-shadow cursor-default montserrat">
       {/* Icon Container */}
-      <div className="text-[#006d77]">
+      <div className="w-8 h-8 flex justify-center items-center opacity-80 shrink-0">
         {icon}
       </div>
       {/* Text Content */}
-      <div className="flex gap-1 items-baseline">
-         {label && <span className="text-lg font-bold montserrat text-black">{label}:</span>}
-         <span className="text-lg font-bold montserrat text-black">{value}</span>
+      <div className="flex flex-col gap-0.5">
+         <span className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em]">{label}</span>
+         <span className="text-lg font-medium font-serif text-black">{value}</span>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full px-6 md:px-10 py-8 bg-white font-sans">
+    <div className="w-full px-6 md:px-10 py-10 bg-white font-sans max-w-7xl mx-auto">
       
-      {/* Header Box - Centered with Gold Border */}
-      <div className="flex justify-center mb-10">
-        <div className="border border-[#B8860B] rounded-lg px-8 py-3 inline-block">
-          <h2 className="text-2xl md:text-3xl font-bold playfair-display text-[#8B7355] text-center">
-            Key Features of Property
+      {/* Header Box - Line with Centered Text */}
+      <div className="relative flex items-center justify-center mb-12">
+        <span className="absolute left-0 text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em] bg-white z-10 pr-4">HIGHLIGHTS</span>
+        <div className="w-full h-px border-t border-gray-200"></div>
+        <div className="absolute bg-white px-6 flex flex-col items-center">
+          <h2 className="text-2xl md:text-3xl font-normal playfair-display text-black">
+            Key Features
           </h2>
+          <span className="text-[#B58252] text-[10px] mt-1">♦</span>
         </div>
       </div>
 
       {/* 3-Column Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 w-full">
         {specItems.map((spec, index) => (
           <FeatureCard 
             key={index}
             label={spec.label}
             value={spec.value}
-            icon={<img className='w-15 h-15 object-contain' src={spec.icon} alt={spec.label} />}
+            icon={<img className='w-full h-full object-contain' style={{ filter: 'grayscale(100%) opacity(80%)' }} src={spec.icon} alt={spec.label} />}
           />
         ))}
       </div>

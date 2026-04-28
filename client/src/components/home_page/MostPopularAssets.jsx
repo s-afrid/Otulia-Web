@@ -37,57 +37,61 @@ const MostPopularAssets = () => {
         datafetch()
     }, []);
 
-    return (
-        <section className="relative md:w-[95%] md:justify-self-center px-3 md:px-16 py-6 bg-white group">
-            <h2 className="text-4xl playfair-display font-normal text-black mb-12">Most Popular Assets</h2>
+  return (
+    <section className="relative px-4 md:px-16 py-16 bg-[#f9f9f9] group w-full">
+      <div className="max-w-[1400px] mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+          <div>
+            <h2 className="text-3xl md:text-5xl font-normal playfair-display text-black mb-2">
+              Most Popular Assets
+            </h2>
+            <p className="text-sm md:text-base text-gray-500 font-sans">
+              Discover premium assets that are highly sought after right now.
+            </p>
+          </div>
 
-            {/* Container for Buttons + List */}
-            <div className="relative">
+          {/* Top Right Arrows */}
+          <div className="flex items-center gap-3 hidden md:flex">
+            <button
+              onClick={() => scroll("left")}
+              className="bg-white text-black p-3.5 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] hover:bg-gray-50 transition-colors focus:outline-none cursor-pointer border border-gray-100"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="bg-white text-black p-3.5 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] hover:bg-gray-50 transition-colors focus:outline-none cursor-pointer border border-gray-100"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </div>
+        </div>
 
-                {/* LEFT BUTTON */}
-                <button
-                    onClick={() => scroll('left')}
-                    className="absolute cursor-pointer -left-10 top-1/2 -translate-y-1/2 -ml-4 md:-ml-8 z-10 bg-white text-black p-3 rounded-full shadow-lg hover:scale-110 transition-transform focus:outline-none hidden md:block border border-gray-100"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                    </svg>
-                </button>
+        {/* Slider Container */}
+        <div className="relative">
+          {/* SCROLLABLE LIST */}
+          <div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth pb-8 pt-2"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            <style>{`.scroll-smooth::-webkit-scrollbar { display: none; }`}</style>
 
-                {/* SCROLLABLE CONTAINER */}
-                {/* flex + overflow-x-auto creates the slider */}
-                {/* scrollbar-hide (requires plugin) or inline style helps aesthetics */}
-                <div
-                    ref={scrollRef}
-                    className="flex gap-8 overflow-x-auto scroll-smooth pb-4 px-1"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} // Hide scrollbar for Firefox/IE
-                >
-                    {/* Hide scrollbar for Chrome/Safari */}
-                    <style>{`
-                        .scroll-smooth::-webkit-scrollbar { display: none; }
-                    `}</style>
-
-                    {list.map((item, idx) => (
-                        // min-w ensures cards don't shrink. Adjust width as needed.
-                        <div key={item._id} className="min-w-[300px] md:min-w-[350px]">
-                            <AssetCard item={item} idx={idx} />
-                        </div>
-                    ))}
-                </div>
-
-                {/* RIGHT BUTTON */}
-                <button
-                    onClick={() => scroll('right')}
-                    className="absolute cursor-pointer -right-10 top-1/2 -translate-y-1/2 -mr-4 md:-mr-8 z-10 bg-white text-black p-3 rounded-full shadow-lg hover:scale-110 transition-transform focus:outline-none hidden md:block border border-gray-100"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </button>
-
-            </div>
-        </section>
-    )
+            {list.map((item, idx) => (
+              <div key={item._id} className="w-[85vw] sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 bg-white group-hover:opacity-100">
+                <AssetCard item={item} idx={idx} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 export default MostPopularAssets

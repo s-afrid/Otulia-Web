@@ -61,9 +61,7 @@ const AssetCard = ({ item }) => {
   let displayDetails = item.details ? item.details.replace(/\s\|\s/g, ' \u00B7 ') : null;
 
   // Set category based on explicit field or infer from specs
-  // Also determine exact Model for API
   let exactModel = item.itemModel || 'Listing';
-
   if (item.category) {
     const cat = item.category.toLowerCase();
     if (cat === 'vehicles' || cat === 'car' || cat === 'carasset') category = 'car';
@@ -79,22 +77,29 @@ const AssetCard = ({ item }) => {
     else if (model.includes('yacht')) category = 'yacht';
   }
 
-  if (category === '.' && item.keySpecifications) {
+  // Smart extract from keySpecifications if displayDetails is empty or generic
+  if (item.keySpecifications) {
     const specs = item.keySpecifications;
-
-    if (specs.power || specs.mileage || specs.topSpeed) {
-      const p1 = specs.topSpeed ? (specs.topSpeed.toLowerCase().includes('mph') || specs.topSpeed.toLowerCase().includes('km') ? specs.topSpeed : `${specs.topSpeed} mph`) : specs.mileage; // Top Speed > Mileage
-      const p2 = specs.engineType || specs.cylinderCapacity; // Engine Type > CC
-      const p3 = specs.power ? (specs.power.toLowerCase().includes('hp') ? specs.power : `${specs.power} hp`) : null;
-
-      displayDetails = [p1, p2, p3].filter(Boolean).join(' \u00B7 ');
-      category = 'car';
-    } else {
+    if (category === 'car' || category === 'bike') {
+      const seats = specs.seatingCapacity ? `${specs.seatingCapacity} Seats` : null;
+      const trans = specs.transmission;
+      const eng = specs.engineCapacity || specs.engineType;
+      const year = specs.year;
+      const mil = specs.mileage ? (specs.mileage.toLowerCase().includes('km') || specs.mileage.toLowerCase().includes('mi') ? specs.mileage : `${specs.mileage} Km`) : null;
+      const combined = [seats, trans, eng, year, mil].filter(Boolean).join(' \u00B7 ');
+      if (combined) displayDetails = combined;
+    } else if (category === 'estate') {
       const beds = specs.bedrooms ? `${specs.bedrooms} Beds` : null;
       const baths = specs.bathrooms ? `${specs.bathrooms} Baths` : null;
       const area = specs.builtUpArea || specs.landArea;
-      displayDetails = [beds, baths, area].filter(Boolean).join(' \u00B7 ');
-      category = 'estate';
+      const combined = [beds, baths, area].filter(Boolean).join(' \u00B7 ');
+      if (combined) displayDetails = combined;
+    } else if (category === 'yacht') {
+      const len = specs.length;
+      const guests = specs.guests ? `${specs.guests} Guests` : null;
+      const cabins = specs.cabins ? `${specs.cabins} Cabins` : null;
+       const combined = [len, guests, cabins].filter(Boolean).join(' \u00B7 ');
+      if (combined) displayDetails = combined;
     }
   }
 
@@ -145,69 +150,26 @@ const AssetCard = ({ item }) => {
     }
   };
 
-  const handleDotClick = (e, index) => {
-    e.stopPropagation();
-    setActiveImageIndex(index);
-  };
+  const titleFont = '"Times New Roman", Times, serif';
 
   return (
     <div
       onClick={() => navigate(`/asset/${category}/${item._id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="relative border border-gray-100 shadow-sm transition-all duration-300 bg-white cursor-pointer flex flex-col hover:shadow-lg h-full"
+      className={`relative transition-all duration-300 bg-white cursor-pointer flex flex-col h-full ${homepage ? 'border-none' : 'border border-gray-100 shadow-sm rounded-[1.5rem] overflow-hidden hover:shadow-lg hover:-translate-y-1'}`}
     >
-      {/* Image Container (Mask) */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+      {/* Image Container */}
+      <div className={`relative overflow-hidden bg-gray-100 ${homepage ? 'aspect-square rounded-none' : 'aspect-[16/10]'}`}>
 
-        {/* SLIDER TRACK: DISABLED */}
-        {/* 
-        <div
-          className="flex h-full w-full transition-transform duration-700 ease-in-out"
-          style={{ transform: `translateX(-${activeImageIndex * 100}%)` }}
-        >
-          {validImages.map((imgSrc, idx) => (
-            <img
-              key={idx}
-              src={imgSrc}
-              alt={item.title}
-              // Each image takes up 100% of the card width (min-w-full)
-              // The scale effect works independently of the slide
-              className={`min-w-full h-full object-cover transition-transform duration-1000 ease-in-out ${isHovered ? "scale-110" : "scale-100"
-                }`}
-            />
-          ))}
-        </div>
-        */}
-
-        {/* SINGLE IMAGE DISPLAY */}
         <img
-          src={optimizeCloudinaryUrl(validImages[0], 800)} // Force to max 800px for better quality on retina displays
+          src={optimizeCloudinaryUrl(validImages[0], 800)}
           alt={item.title}
           loading="lazy"
-          className={`w-full h-full object-cover transition-transform duration-1000 ease-in-out ${isHovered ? "scale-110" : "scale-100"}`}
+          className={`w-full h-full object-cover transition-transform duration-1000 ease-in-out ${isHovered ? "scale-105" : "scale-100"}`}
         />
 
-        {/* Pagination Dots: DISABLED */}
-        {/*
-        {validImages.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
-            {validImages.map((_, index) => (
-              <div
-                key={index}
-                onClick={(e) => handleDotClick(e, index)}
-                className={`w-2 h-2 rounded-full cursor-pointer transition-all duration-300 shadow-sm border border-black/10 
-                  ${activeImageIndex === index
-                    ? "bg-white scale-125"
-                    : "bg-white/50 hover:bg-white/80"
-                  }`}
-              ></div>
-            ))}
-          </div>
-        )}
-        */}
-
-        {/* Badges Container */}
+        {/* Video / Rent Badges (Top Left) */}
         <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
           {item.videoUrl && (
             <div className="bg-white/90 backdrop-blur-sm text-black px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded shadow-sm border border-gray-100 flex items-center gap-1">
@@ -218,16 +180,15 @@ const AssetCard = ({ item }) => {
             </div>
           )}
           {item.type === 'Rent' && (
-            <div className="bg-black/80 backdrop-blur-md text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded shadow-lg">
-              For Rent
+            <div className="bg-black/80 backdrop-blur-md text-white px-2 py-1 text-[9px] font-bold uppercase tracking-widest rounded shadow-lg">
+              FOR RENT
             </div>
           )}
         </div>
 
-        {/* Heart Button */}
+        {/* Heart Button (Top Right) */}
         <button
-          className={`absolute top-3 right-3 z-20 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-all duration-300 group/heart ${isHovered ? "scale-110" : "scale-100"
-            }`}
+          className={`absolute top-3 right-3 z-20 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-all duration-300 group/heart ${isHovered ? "scale-110" : "scale-100"}`}
           onClick={handleHeartClick}
         >
           <svg
@@ -246,89 +207,127 @@ const AssetCard = ({ item }) => {
           </svg>
         </button>
 
-        {/* Image Count */}
-        <div className="absolute bottom-3 right-3 z-20 bg-black/40 backdrop-blur-sm text-white px-2 py-0.5 text-[8px] font-medium rounded-sm">
-          {activeImageIndex + 1}/{item.images?.length || 1}
-        </div>
+        {/* Category Label (Bottom Right) */}
+        {homepage && (
+          <div className="absolute bottom-3 right-3 z-20">
+            <div className="bg-black/60 backdrop-blur-md text-white px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest rounded shadow-md">
+              {item.specification?.propertyType || category}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Content Section */}
-      <div className="p-5 flex flex-col grow">
+      <div className={`flex flex-col grow ${homepage ? 'pt-4' : 'p-5'}`}>
         <div className="flex-1">
-          {/* PRICE */}
-          <div className="flex justify-between items-baseline mb-1">
-            <p className="text-xl md:text-2xl font-semibold text-black font-sans tracking-tight">
-              {item.isPriceOnRequest ? 'Price on Demand' : (typeof item.price === 'number' ? `$ ${numberWithCommas(item.price)}` : item.price)}
-              {!item.isPriceOnRequest && item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal"> / day</span>}
-            </p>
-          </div>
+          {homepage ? (
+            <>
+              {/* Homepage Layout */}
+              <div className="mb-2">
+                <p className="text-lg md:text-xl font-medium text-black font-serif tracking-tight" style={{ fontFamily: titleFont }}>
+                  {item.isPriceOnRequest ? 'Price on Demand' : (typeof item.price === 'number' ? `$${numberWithCommas(item.price)}` : item.price)}
+                  {!item.isPriceOnRequest && item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal"> / day</span>}
+                </p>
+              </div>
 
-          {/* DETAILS / SPECS */}
-          <p className="text-[10px] md:text-[11px] text-gray-500 font-medium mb-3 uppercase tracking-wider">
-            {displayDetails || "View Details"}
-          </p>
+              <div className="mb-3">
+                <span className="text-[8px] md:text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em] transition-colors flex items-center gap-1 w-fit montserrat">
+                  VIEW DETAILS <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg>
+                </span>
+              </div>
 
-          {/* TITLE */}
-          <div className="mb-1">
-            <h3 className={`text-black leading-tight break-words playfair-display mb-1 ${item.title.length > 40
-              ? 'text-sm md:text-base'
-              : 'text-base md:text-lg lg:text-xl'
-              }`}>
-              {item.title}
-            </h3>
-          </div>
+              <div className="mb-3">
+                <h3 className={`text-black leading-snug break-words ${item.title.length > 40 ? 'text-sm' : 'text-base'}`} style={{ fontFamily: titleFont }}>
+                  {item.title}
+                </h3>
+              </div>
 
-          {/* LOCATION */}
-          <p className="text-[10px] md:text-[11px] text-gray-400 mb-4 font-normal uppercase tracking-widest truncate">
-            {item.location}
-          </p>
+              <div className="flex items-start gap-1.5 text-[10px] text-gray-500 font-medium tracking-wide mt-auto montserrat">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 shrink-0"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                <span className="truncate">{item.location}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Default Layout (Marketplace etc.) */}
+              {category === 'estate' ? (
+                <>
+                  <div className="flex justify-between items-baseline mb-1">
+                    <p className="text-xl md:text-2xl font-normal text-black tracking-tight" style={{ fontFamily: titleFont }}>
+                      {item.isPriceOnRequest ? 'Price on Demand' : (typeof item.price === 'number' ? `$${numberWithCommas(item.price)}` : item.price)}
+                      {!item.isPriceOnRequest && item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal montserrat"> / day</span>}
+                    </p>
+                  </div>
+                  <p className="text-[10px] md:text-xs text-gray-500 font-medium mb-3 tracking-wide montserrat">
+                    {displayDetails || "View Details"}
+                  </p>
+                  <div className="mb-2">
+                    <h3 className={`text-black leading-snug break-words ${item.title.length > 40 ? 'text-sm md:text-base' : 'text-base md:text-lg'}`} style={{ fontFamily: titleFont }}>
+                      {item.title}
+                    </h3>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="mb-1">
+                    <h3 className={`text-black leading-snug break-words ${item.title.length > 40 ? 'text-base' : 'text-lg md:text-xl'}`} style={{ fontFamily: titleFont }}>
+                      {item.title}
+                    </h3>
+                  </div>
+                  <div className="flex justify-between items-baseline mb-2">
+                    <p className="text-lg md:text-xl font-normal text-black tracking-tight" style={{ fontFamily: titleFont }}>
+                      {item.isPriceOnRequest ? 'Price on Demand' : (typeof item.price === 'number' ? `$${numberWithCommas(item.price)}` : item.price)}
+                      {!item.isPriceOnRequest && item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal montserrat"> / day</span>}
+                    </p>
+                  </div>
+                  <p className="text-[10px] md:text-xs text-gray-500 font-medium mb-3 tracking-wide montserrat">
+                    {displayDetails || "View Details"}
+                  </p>
+                </>
+              )}
 
-          {isMyListings && (
-            <div className="flex items-center gap-1.5 mb-3 -mt-2 bg-gray-50 w-fit px-2 py-0.5 rounded-full border border-gray-100">
-              <HiOutlineEye className="text-sm text-gray-500" />
-              <span className="text-[10px] font-bold text-gray-600 montserrat">
-                {formatNumber(item.views || 0)} views
-              </span>
-            </div>
+              <div className="flex items-start gap-1.5 text-[10px] text-gray-500 font-medium tracking-wide mt-auto mb-4 montserrat w-fit">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5 shrink-0"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                <span className="truncate">{item.location}</span>
+              </div>
+            </>
           )}
         </div>
 
-        <div>
-          {/* DIVIDER */}
-          <div className="w-full h-px bg-gray-100 my-4"></div>
-
-          {/* FOOTER: COMPANY & AGENT */}
-          <div className="flex items-center justify-between min-h-[40px] gap-3">
-            {/* COMPANY LOGO */}
-            <div className="flex-1 min-w-0">
-              {item.agent?.companyLogo && item.agent.companyLogo !== item.agent?.photo ? (
-                <img
-                  src={optimizeCloudinaryUrl(item.agent.companyLogo, 300)}
-                  alt={item.agent.company}
-                  className="h-8 max-w-[140px] object-contain object-left"
-                />
-              ) : item.agent?.company ? (
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest truncate block">
-                  {item.agent.company}
+        {!homepage && (
+          <div>
+            <div className="w-full h-px bg-gray-100 my-4"></div>
+            <div className="flex items-center justify-between min-h-[30px] gap-3">
+              {/* Left Side: Company / Dealer Logo and Name */}
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {item.agent?.companyLogo && (
+                  <img
+                    src={optimizeCloudinaryUrl(item.agent.companyLogo, 100, 100)}
+                    alt={item.agent.company || 'Company'}
+                    className="w-6 h-6 rounded-full object-cover border border-gray-100 shrink-0"
+                  />
+                )}
+                <span className="text-[11px] text-gray-600 font-medium tracking-wide truncate montserrat">
+                  {item.agent?.company || 'Verified Dealer'}
                 </span>
-              ) : null}
-            </div>
-
-            {/* AGENT INFO */}
-            {item.agent && (
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <p className="text-[10px] text-gray-500 font-medium uppercase tracking-widest hidden xl:block">
-                  {item.agent.name}
-                </p>
-                <img
-                  className="w-8 h-8 lg:w-9 lg:h-9 rounded-full object-cover border border-gray-200 shadow-sm hover:border-gray-400 transition-colors"
-                  src={optimizeCloudinaryUrl(item.agent.photo, 100, 100)}
-                  alt={item.agent.name}
-                />
               </div>
-            )}
+
+              {/* Right Side: Listed by Agent */}
+              {item.agent && (
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <p className="text-[10px] text-gray-400 font-medium tracking-wide montserrat hidden sm:block">
+                    Listed by {item.agent.name.split(' ')[0]} {/* Show first name to save space */}
+                  </p>
+                  <img
+                    className="w-6 h-6 rounded-full object-cover border border-gray-100 shadow-sm shrink-0"
+                    src={optimizeCloudinaryUrl(item.agent.photo, 100, 100)}
+                    alt={item.agent.name}
+                  />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

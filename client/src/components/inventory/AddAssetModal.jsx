@@ -12,6 +12,11 @@ import bikeIcon from '../../assets/icons/bike_icon.png'
 import yachtIcon from '../../assets/icons/yacht_icon.png'
 import otherassetIcon from '../../assets/icons/other_asset_icon.png'
 
+const ESTATE_LIFESTYLE_AMENITIES = ["Swimming Pool", "Infinity Pool", "Gym / Fitness Center", "Spa & Wellness Center", "Sauna / Steam Room", "Jacuzzi", "Clubhouse", "Private Theater", "Game Room", "Bar / Lounge", "BBQ Area", "Outdoor Dining Area", "Kids Play Area", "Pet Friendly", "Jogging Track", "Garden / Lawn", "Landscaped Gardens", "Elevator", "Private Parking", "EV Charging", "Laundry Room", "Storage Room", "Servant Quarters", "Smart Entry", "High-Speed WiFi"];
+const ESTATE_VIEWS_OUTDOOR = ["Sea View", "Oceanfront", "Lake View", "River View", "Mountain View", "Forest View", "Garden View", "Park View", "City Skyline View", "Panoramic View", "Sunset View", "Sunrise View", "Pool View", "Golf Course View", "Marina View", "Private Beach Access", "Waterfront Property", "Rooftop Terrace", "Balcony with View", "Outdoor Lounge", "Fire Pit Area", "Outdoor Entertainment Area"];
+const ESTATE_SMART_SECURITY = ["Smart Door Lock", "Video Doorbell", "Face Recognition Entry", "Motion Sensors", "Smart Surveillance", "24/7 Security", "Gated Community Access", "Voice Control", "Smart Lighting", "Automated Curtains", "Smart Thermostat", "Climate Control", "Central Control Panel", "Mobile App Control", "Smart Switches", "AI Assistant Integration", "High-Speed Internet Ready", "Fiber Connection", "Smart Intercom"];
+const ESTATE_ULTRA_LUXURY = ["Private Island", "Private Beach Access", "Waterfront Estate", "Gated Estate", "Helipad", "Private Dock / Yacht Berth", "Vineyard / Orchard", "Equestrian Facilities", "Multi-Car Garage (10+)", "Car Showroom Garage", "Underground Garage", "Car Lift System", "Private Car Gallery", "EV Fleet Charging", "Private Cinema", "Bowling Alley", "Casino Room", "Wine Cellar", "Cigar Lounge", "Private Bar", "Ballroom / Event Hall", "Private Library", "Private Spa Suite", "Ice Bath", "Indoor Lap Pool", "Meditation Room", "Yoga Pavilion", "Massage Room", "Double-Height Ceilings", "Grand Staircase", "Floating Staircase", "Floor-to-Ceiling Glass", "Sky Bridge", "Smart Glass"];
+
 const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const { token, user } = useAuth();
 
@@ -269,8 +274,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 city: spec.city || '',
                 address: spec.address || '',
                 areaNeighborhood: spec.areaNeighborhood || '',
-                latitude: spec.latitude || '',
-                longitude: spec.longitude || '',
                 amenities: editData.amenities || [],
                 smartHomeSystems: editData.smartHomeSystems || [],
                 viewTypes: editData.viewTypes || [],
@@ -821,19 +824,42 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 )}
                             </div>
 
-                            {/* Section for Estate Amenities - stays original flow */}
+                            {/* Section for Estate Amenities Layout Update */}
                             {assetType === 'Estate' && (
                                 <div className="space-y-6">
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amenities</label>
-                                    <div className="flex flex-wrap gap-3">
-                                        {['Pool', 'Garden', 'Parking', 'Security', 'Smart Home', 'Gym', 'Wine Cellar', 'Home Theater'].map(amenity => (
-                                            <button
-                                                key={amenity}
-                                                onClick={() => handleCheckboxToggle('amenities', amenity)}
-                                                className={`px-6 py-3 rounded-xl border text-sm font-medium transition-all ${formData.amenities.includes(amenity) ? 'bg-[#D48D2A] border-[#D48D2A] text-white' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-white hover:border-[#D48D2A]'}`}
-                                            >
-                                                {amenity}
-                                            </button>
+                                    <div className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-100">
+                                        <h4 className="text-xl font-bold text-gray-900 font-playfair mb-2">Amenities & Details</h4>
+                                        <p className="text-sm text-gray-400 mb-8">Select all luxurious additions found within the property</p>
+                                        
+                                        {[
+                                            { title: "Lifestyle & Amenities", desc: "Select all amenities that apply to this property.", items: ESTATE_LIFESTYLE_AMENITIES, num: 1 },
+                                            { title: "Views & Outdoor Experience", desc: "Select all views and outdoor experiences that apply to this property.", items: ESTATE_VIEWS_OUTDOOR, num: 2 },
+                                            { title: "Smart, Security & Technology", desc: "Select all smart, security and technology features that apply to this property.", items: ESTATE_SMART_SECURITY, num: 3 },
+                                            { title: "Ultra Luxury Features", desc: "Select all ultra luxury features that apply to this property.", items: ESTATE_ULTRA_LUXURY, num: 4 }
+                                        ].map((section) => (
+                                            <div key={section.num} className="bg-white p-8 rounded-3xl mb-8 border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <span className="text-lg font-bold font-serif text-[#D48D2A]">{section.num}.</span>
+                                                    <h3 className="text-lg font-bold text-gray-900">{section.title}</h3>
+                                                    {section.num === 4 && <span className="ml-2 bg-[#fef3c7] text-[#d97706] px-2 py-0.5 rounded text-[10px] uppercase tracking-wider font-bold">Premium</span>}
+                                                </div>
+                                                <p className="text-xs text-gray-500 mb-6">{section.desc}</p>
+                                                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                                    {section.items.map(amenity => (
+                                                        <button
+                                                            key={amenity}
+                                                            type="button"
+                                                            onClick={() => handleCheckboxToggle('amenities', amenity)}
+                                                            className={`flex items-center justify-start gap-3 px-4 py-3 rounded-xl border text-[11px] md:text-xs font-medium transition-all ${formData.amenities.includes(amenity) ? 'bg-[#fef9f3] border-[#D48D2A] text-[#D48D2A]' : 'bg-white border-gray-100 text-gray-600 hover:border-gray-300'}`}
+                                                        >
+                                                            <div className={`w-4 h-4 rounded-[4px] border ${formData.amenities.includes(amenity) ? 'bg-[#D48D2A] border-[#D48D2A]' : 'bg-white border-gray-300'} flex items-center justify-center shrink-0`}>
+                                                                {formData.amenities.includes(amenity) && <FiCheck className="w-3 h-3 text-white" />}
+                                                            </div>
+                                                            <span className="text-left leading-tight">{amenity}</span>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
                                         ))}
                                     </div>
                                 </div>

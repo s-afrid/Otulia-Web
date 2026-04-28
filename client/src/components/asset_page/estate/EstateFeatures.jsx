@@ -1,8 +1,26 @@
 import React, { useState } from 'react';
-import { FiX } from 'react-icons/fi';
+import { FiX, FiCheck, FiWifi, FiWind, FiSun, FiMonitor, FiMap, FiVideo, FiShield, FiCoffee, FiStar, FiHome } from 'react-icons/fi';
+
+const getFeatureIcon = (name) => {
+  const lower = name.toLowerCase();
+  if (lower.includes('wifi') || lower.includes('internet')) return <FiWifi />;
+  if (lower.includes('climate') || lower.includes('ac') || lower.includes('sauna') || lower.includes('steam')) return <FiWind />;
+  if (lower.includes('sun') || lower.includes('view')) return <FiSun />;
+  if (lower.includes('smart') || lower.includes('cinema') || lower.includes('theater')) return <FiMonitor />;
+  if (lower.includes('garden') || lower.includes('lawn') || lower.includes('park')) return <FiMap />;
+  if (lower.includes('cctv') || lower.includes('video') || lower.includes('surveillance')) return <FiVideo />;
+  if (lower.includes('security') || lower.includes('gate') || lower.includes('lock')) return <FiShield />;
+  if (lower.includes('bar') || lower.includes('lounge') || lower.includes('kitchen') || lower.includes('dining')) return <FiCoffee />;
+  if (lower.includes('luxury') || lower.includes('premium')) return <FiStar />;
+  if (lower.includes('pool') || lower.includes('jacuzzi') || lower.includes('bath')) return <span className="text-[10px] leading-none text-current">〰️</span>;
+  if (lower.includes('car') || lower.includes('garage') || lower.includes('parking')) return <span className="text-[10px] leading-none text-current">🚗</span>;
+  if (lower.includes('gym') || lower.includes('fitness')) return <span className="text-[10px] leading-none text-current">🏋️</span>;
+  return <FiHome />;
+};
 
 const EstateFeatures = ({ item }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFeaturesModalOpen, setIsFeaturesModalOpen] = useState(false);
 
   // 1. Safe access to nested objects
   const specs = item?.specification || {};
@@ -138,6 +156,60 @@ const EstateFeatures = ({ item }) => {
           </div>
         </div>
       )}
+
+      {/* AMENITIES / FEATURES VISUAL GRID */}
+      {item?.amenities && item.amenities.length > 0 && (
+        <div className="mt-16 w-full max-w-[1400px] mx-auto border-t border-gray-100 pt-16 mb-8">
+          <h2 className="text-3xl font-bold font-playfair flex items-center gap-2 mb-2">
+            Features ✨
+          </h2>
+          <p className="text-gray-500 mb-8 montserrat text-sm">Discover the finest amenities and luxury features this property has to offer.</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {item.amenities.slice(0, 20).map((amenity, idx) => (
+              <div key={idx} className="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-[#D48D2A] transition-all">
+                <span className="text-[#D48D2A] text-lg shrink-0 flex items-center justify-center">{getFeatureIcon(amenity)}</span>
+                <span className="text-xs md:text-sm font-medium text-gray-800 montserrat truncate">{amenity}</span>
+              </div>
+            ))}
+          </div>
+          {item.amenities.length > 20 && (
+            <div className="mt-6">
+               <button onClick={() => setIsFeaturesModalOpen(true)} className="underline font-bold text-gray-800 hover:text-[#D48D2A] transition-colors montserrat text-sm border-b-2 border-black inline-block pb-1">
+                 View all {item.amenities.length} features
+               </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* VIEW ALL FEATURES MODAL */}
+      {isFeaturesModalOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+              <div>
+                <h2 className="text-2xl font-bold playfair-display mb-1 flex items-center gap-2">Features ✨</h2>
+                <span className="text-xs text-gray-500 uppercase tracking-widest montserrat font-bold">{item?.amenities?.length || 0} Amenities</span>
+              </div>
+              <button onClick={() => setIsFeaturesModalOpen(false)} className="p-3 hover:bg-gray-100 rounded-full transition-colors">
+                <FiX className="text-2xl text-gray-700" />
+              </button>
+            </div>
+
+            <div className="p-6 md:p-8 overflow-y-auto bg-[#fafafa]">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {item?.amenities?.map((amenity, idx) => (
+                  <div key={idx} className="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-sm hover:border-[#D48D2A] transition-all hover:-translate-y-0.5">
+                    <span className="text-[#D48D2A] text-lg shrink-0 flex items-center justify-center opacity-80">{getFeatureIcon(amenity)}</span>
+                    <span className="text-xs md:text-sm font-bold text-gray-800 montserrat">{amenity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
