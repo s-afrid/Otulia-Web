@@ -172,7 +172,8 @@ const Inventory = () => {
                     }
 
                     const comp = resData.userProfile.company || {};
-                    setCompanyInfo({
+                    setCompanyInfo(prev => ({
+                        ...prev,
                         name: comp.companyName || '',
                         email: resData.userProfile.email || '',
                         phone: resData.userProfile.phone || '',
@@ -180,7 +181,7 @@ const Inventory = () => {
                         website: comp.website || '',
                         logo: comp.companyLogo || null,
                         description: comp.description || ''
-                    });
+                    }));
                     setLeadEmailNotifications(resData.userProfile.leadEmailNotifications !== false);
                 }
             }
@@ -1605,25 +1606,25 @@ const Inventory = () => {
                                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E1306C] text-lg rounded p-1 flex items-center justify-center">
                                                         <FiHeart className="text-[1rem]" />
                                                     </div>
-                                                    <input type="text" value={agentInfo.social.instagram || "instagram.com/mdriyaz"} onChange={(e) => setAgentInfo({ ...agentInfo, social: { ...agentInfo.social, instagram: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
+                                                    <input type="text" value={agentInfo.social?.instagram || "instagram.com/mdriyaz"} onChange={(e) => setAgentInfo({ ...agentInfo, social: { ...(agentInfo.social || {}), instagram: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
                                                 </div>
                                                 <div className="relative">
                                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0A66C2] text-lg rounded p-1 font-bold flex items-center justify-center">
                                                         <span className="text-sm font-black italic">in</span>
                                                     </div>
-                                                    <input type="text" value={agentInfo.social.linkedin || "linkedin.com/in/mdriyaz"} onChange={(e) => setAgentInfo({ ...agentInfo, social: { ...agentInfo.social, linkedin: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
+                                                    <input type="text" value={agentInfo.social?.linkedin || "linkedin.com/in/mdriyaz"} onChange={(e) => setAgentInfo({ ...agentInfo, social: { ...(agentInfo.social || {}), linkedin: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
                                                 </div>
                                                 <div className="relative">
                                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg font-black rounded p-1 flex items-center justify-center">
                                                         <span className="text-sm font-black italic">X</span>
                                                     </div>
-                                                    <input type="text" value={agentInfo.social.x || "x.com/mdriyaz"} onChange={(e) => setAgentInfo({ ...agentInfo, social: { ...agentInfo.social, x: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
+                                                    <input type="text" value={agentInfo.social?.x || "x.com/mdriyaz"} onChange={(e) => setAgentInfo({ ...agentInfo, social: { ...(agentInfo.social || {}), x: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
                                                 </div>
                                                 <div className="relative">
                                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1877F2] text-lg rounded p-1 font-bold flex items-center justify-center">
                                                         <span className="text-[1.1rem] font-black italic shadow-blue-500/20 text-blue-600 px-1">f</span>
                                                     </div>
-                                                    <input type="text" value={agentInfo.social.facebook || "facebook.com/mdriyaz"} onChange={(e) => setAgentInfo({ ...agentInfo, social: { ...agentInfo.social, facebook: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
+                                                    <input type="text" value={agentInfo.social?.facebook || "facebook.com/mdriyaz"} onChange={(e) => setAgentInfo({ ...agentInfo, social: { ...(agentInfo.social || {}), facebook: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
                                                 </div>
                                             </div>
                                         </div>
@@ -1717,25 +1718,25 @@ const Inventory = () => {
                                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#E1306C] text-lg rounded p-1 flex items-center justify-center">
                                                         <FiHeart className="text-[1rem]" />
                                                     </div>
-                                                    <input type="text" value={companyInfo.social.instagram || "instagram.com/vbexpress"} onChange={(e) => setCompanyInfo({ ...companyInfo, social: { ...companyInfo.social, instagram: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
+                                                    <input type="text" value={companyInfo.social?.instagram || "instagram.com/vbexpress"} onChange={(e) => setCompanyInfo({ ...companyInfo, social: { ...(companyInfo.social || {}), instagram: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
                                                 </div>
                                                 <div className="relative">
                                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#0A66C2] text-lg rounded p-1 font-bold flex items-center justify-center">
                                                         <span className="text-sm font-black italic">in</span>
                                                     </div>
-                                                    <input type="text" value={companyInfo.social.linkedin || "linkedin.com/company/vbexpress"} onChange={(e) => setCompanyInfo({ ...companyInfo, social: { ...companyInfo.social, linkedin: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
+                                                    <input type="text" value={companyInfo.social?.linkedin || "linkedin.com/company/vbexpress"} onChange={(e) => setCompanyInfo({ ...companyInfo, social: { ...(companyInfo.social || {}), linkedin: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
                                                 </div>
                                                 <div className="relative">
                                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#1877F2] text-lg rounded p-1 font-bold flex items-center justify-center">
                                                         <span className="text-[1.1rem] font-black italic shadow-blue-500/20 text-blue-600 px-1">f</span>
                                                     </div>
-                                                    <input type="text" value={companyInfo.social.facebook || "facebook.com/vbexpress"} onChange={(e) => setCompanyInfo({ ...companyInfo, social: { ...companyInfo.social, facebook: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
+                                                    <input type="text" value={companyInfo.social?.facebook || "facebook.com/vbexpress"} onChange={(e) => setCompanyInfo({ ...companyInfo, social: { ...(companyInfo.social || {}), facebook: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
                                                 </div>
                                                 <div className="relative">
                                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-red-600 text-lg rounded p-1 font-bold flex items-center justify-center">
-                                                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" class="text-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"></path></svg>
+                                                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" className="text-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"></path></svg>
                                                     </div>
-                                                    <input type="text" value={companyInfo.social.youtube || "youtube.com/@vbexpress"} onChange={(e) => setCompanyInfo({ ...companyInfo, social: { ...companyInfo.social, youtube: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
+                                                    <input type="text" value={companyInfo.social?.youtube || "youtube.com/@vbexpress"} onChange={(e) => setCompanyInfo({ ...companyInfo, social: { ...(companyInfo.social || {}), youtube: e.target.value } })} className="w-full pl-12 pr-4 py-3 bg-white shadow-sm border border-gray-100 text-sm font-bold text-gray-900 rounded-[1rem] outline-none hover:border-gray-200 focus:border-[#D48D2A] transition-all" />
                                                 </div>
                                             </div>
                                         </div>
