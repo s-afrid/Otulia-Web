@@ -1,41 +1,34 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../../contexts/CartContext'
+import { FiShoppingBag } from 'react-icons/fi'
 
-const Cart = ({text}) => {
+const Cart = ({ text }) => {
   const { cart } = useCart();
   const navigate = useNavigate();
+  const count = cart.length;
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => navigate('/cart')}
-        className={`relative flex items-center justify-center transition-colors duration-300 focus:outline-none cursor-pointer ${text}`}
-        aria-label="View Shopping Bag"
-      >
-        {/* Shopping Bag Icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.0"
-          stroke="currentColor"
-          className="w-10 h-10"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-          />
-        </svg>
+    <button
+      type="button"
+      onClick={() => navigate('/cart')}
+      className={`relative flex items-center justify-center transition-all duration-300 focus:outline-none cursor-pointer hover:opacity-70 ${text}`}
+      aria-label="View Shopping Bag"
+    >
+      {/* Shopping Bag Icon */}
+      <FiShoppingBag className="w-6 h-6 stroke-[1.5]" />
 
-        {/* Number Badge (Centered Inside) */}
-        <span className="absolute mt-2 text-[15px] font-bold pt-1.5">
-          {cart.length}
+      {/* Number Badge (Top Right) - Only show if count >= 1 */}
+      {count >= 1 && (
+        <span className={`absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold shadow-sm transition-all animate-fade-in ${
+          text.includes('text-white') 
+          ? 'bg-white text-black' 
+          : 'bg-black text-white'
+        }`}>
+          {count}
         </span>
-      </button>
-    </>
+      )}
+    </button>
   )
 }
 

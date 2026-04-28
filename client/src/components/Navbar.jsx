@@ -32,7 +32,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
   // Override if forceTransparent is on
   const isDarkText = (!isHeroPage || isScrolled) && !forceTransparent;
 
-  const navClasses = `fixed top-0 left-0 h-[40px] md:h-[80px] w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${forceTransparent
+  const navClasses = `fixed top-6 left-0 h-[40px] md:h-[80px] w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${forceTransparent
       ? "bg-transparent text-white"
       : !isHeroPage
         ? "bg-white text-black"
@@ -46,28 +46,31 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
   const logoSrc = (isScrolled || !isHeroPage)?"/logos/logo_inverted.png":"/logos/logo.png";
 
   return (
-    <nav className={`${navClasses} px-[5%] md:px-[8%]`}>
+    <nav className={`${navClasses} px-[2%]`}>
       {/* 1. Logo */}
-      <NavLink to={"/"} className="flex items-center">
-        <span className={`text-2xl md:text-3xl tracking-[0.2em] font-medium playfair-display ${isDarkText ? 'text-black' : 'text-white'}`}>
-          OTULIA
-        </span>
+      <NavLink to={"/"}>
+        <img
+          className="w-[120px] md:w-[160px] h-[45px] md:h-[65px] object-contain"
+          alt="logo"
+          src={logoSrc}
+          title="Otulia"
+        />
       </NavLink>
 
       {/* 2. DESKTOP MENU - CENTERED */}
       <ul className="hidden md:flex items-center justify-center gap-12 absolute left-1/2 -translate-x-1/2">
         <li>
-          <NavLink to="/shop" className={({ isActive }) => `text-[11px] tracking-[0.2em] font-bold montserrat transition-colors ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
+          <NavLink to="/shop" className={({ isActive }) => `text-[11px] tracking-[0.2em] font-normal montserrat transition-colors ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
             SHOP ALL
           </NavLink>
         </li>
         <li>
-          <NavLink to="/rent" className={({ isActive }) => `text-[11px] tracking-[0.2em] font-bold montserrat transition-colors ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
+          <NavLink to="/rent" className={({ isActive }) => `text-[11px] tracking-[0.2em] font-normal montserrat transition-colors ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
             RENT
           </NavLink>
         </li>
         <li>
-          <NavLink to="/pricing" className={({ isActive }) => `text-[11px] tracking-[0.2em] font-bold montserrat transition-colors ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
+          <NavLink to="/pricing" className={({ isActive }) => `text-[11px] tracking-[0.2em] font-normal montserrat transition-colors ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
             PLAN & PRICE
           </NavLink>
         </li>
@@ -77,7 +80,7 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
       <div className="hidden md:flex items-center gap-6">
         <NavLink 
           to="/listings" 
-          className={`px-6 py-2 rounded-full border text-[10px] tracking-[0.1em] font-bold montserrat transition-all duration-300 ${
+          className={`px-6 py-2 rounded-full border text-[10px] tracking-[0.1em] font-normal montserrat transition-all duration-300 ${
             isDarkText 
             ? 'border-black text-black hover:bg-black hover:text-white' 
             : 'border-white/50 text-white hover:bg-white hover:text-black'

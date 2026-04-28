@@ -37,12 +37,17 @@ const ProfileDropdown = ({text}) => {
                 className={`flex items-center gap-3 cursor-pointer group p-1.5 rounded-full transition-all duration-300 ${text} hover:bg-gray-400/50`}
             >
                 <div className="relative">
-                    <img
-                        src={optimizeCloudinaryUrl(user.profilePicture || UserURL, 100, 100)}
-                        alt="user"
-                        className="w-9 h-9 rounded-full object-cover border border-gray-200"
-                    />
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                    {user.profilePicture ? (
+                        <img
+                            src={optimizeCloudinaryUrl(user.profilePicture, 100, 100)}
+                            alt="user"
+                            className="w-10 h-10 rounded-full object-cover border border-white/20"
+                        />
+                    ) : (
+                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm border border-white/30">
+                            {user.name.charAt(0).toUpperCase()}
+                        </div>
+                    )}
                 </div>
                 <div className="flex flex-col items-start leading-none hidden md:flex pr-2">
                     <span className="text-sm font-bold uppercase tracking-tight truncate max-w-[100px]">
