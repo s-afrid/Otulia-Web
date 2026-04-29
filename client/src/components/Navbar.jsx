@@ -97,41 +97,52 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
         </div>
       </div>
 
-      {/* 4. DESKTOP MENU */}
-      <ul className="hidden md:flex items-center justify-center gap-8">
+      {/* 4. CENTER MENU */}
+      <ul className={`hidden md:flex items-center justify-center gap-14 absolute left-1/2 -translate-x-1/2 text-[9px] md:text-[10px] font-bold tracking-[0.25em] uppercase ${isDarkText?"text-black":"text-white/90"}`}>
+         <li className="hover:text-[#D48D2A] cursor-pointer transition-colors"><NavLink to="/shop">Shop All</NavLink></li>
+         <li className="hover:text-[#D48D2A] cursor-pointer transition-colors"><NavLink to="/rent">Rent</NavLink></li>
+         <li className="hover:text-[#D48D2A] cursor-pointer transition-colors"><NavLink to="/pricing">Plan & Price</NavLink></li>
+      </ul>
+
+      {/* 5. RIGHT MENU */}
+      <ul className="hidden md:flex items-center justify-end gap-6 text-[9px] md:text-[10px] font-bold tracking-[0.15em] uppercase">
+        <li className={`cursor-pointer mr-2`}>
+          <NavLink 
+            to="/listings" 
+            className={`px-6 py-2.5 rounded-full border border-white/30 text-white/90 hover:bg-white hover:text-black transition-all duration-300 font-bold tracking-[0.1em] text-[10px]`}
+            style={isDarkText ? { borderColor: '#e5e7eb', color: '#1a1a1a' } : {}}
+          >
+            Sell With Us
+          </NavLink>
+        </li>
+
         {!hideSearch && (
           <li>
             <Search text={isDarkText?"text-black":"text-white"} border={isDarkText?"border-black":"border-white"} placeholder={isDarkText?"placeholder-[#2C2C2C]":"placeholder-[#dadce0]"} cross={isDarkText ? "[&::-webkit-search-cancel-button]:grayscale" : "[&::-webkit-search-cancel-button]:invert"}/>
           </li>
         )}
 
-        {/* 5. AUTH STATE HANDLING */}
+        {/* AUTH STATE HANDLING */}
         {loading ? (
-          // Show a placeholder or nothing while checking token
-          // This prevents the "flash" of the Login button or crashes
           <li className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></li>
         ) : (
           <>
             {!isAuthenticated && !hideLogin && (
               <li>
-                <LoginButton />
+                <LoginButton isDark={isDarkText} />
               </li>
             )}
             {isAuthenticated && (
-              // Added text-inherit to ensure it follows the navbar color logic
-              <li className="flex gap-3 items-center justify-center text-inherit">
-                <ProfileDropdown text={isDarkText?"text-black":"text-white"} />
-                <Cart text={isDarkText?"text-black":"text-white"} />
+              <li className="flex gap-4 items-center justify-center">
+                <ProfileDropdown isDark={isDarkText} />
+                <Cart isDark={isDarkText} />
               </li>
             )}
           </>
-        )
-        }
-      </ul >
+        )}
+      </ul>
 
-      {((isHeroPage || isProductPage) && !isScrolled) && (
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[96%] h-[1px] bg-white"></div>
-      )}
+      {/* White line removed as per user request */}
     </nav >
   );
 };

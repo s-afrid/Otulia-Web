@@ -15,7 +15,7 @@ const Home = () => {
         title="Home" 
         description="The premier destination for buying and selling editorial-grade luxury cars, yachts, estates, and bikes." 
       />
-      <Navbar />
+      <Navbar hideSearch={true} />
       <Hero />
 
       {/* Main Sections Flow */}

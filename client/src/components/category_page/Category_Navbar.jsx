@@ -12,7 +12,6 @@ const Category_Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
-    // 1. Get Loading State
     const { isAuthenticated, loading } = useAuth(); 
     
     const toggleMenu = () => {
@@ -34,78 +33,84 @@ const Category_Navbar = () => {
         { to: "/category/bikes", text: "Bikes" }
     ];
     
-    const navClasses = `fixed left-0 z-50 h-15 transition-all duration-200 flex items-center justify-between p-4 ${
+    const navClasses = `fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 flex items-center justify-between px-6 md:px-12 ${
         isScrolled 
-            ? "bg-white text-black w-screen" // NOTE: I changed text-black to text-white for visibility on dark bg
-            : "bg-white/40 m-6 text-white w-[calc(100vw-48px)] rounded-xl"
+            ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100" 
+            : "bg-transparent"
     }`;
+    
+    const textColor = isScrolled ? 'text-black' : 'text-white';
     
     return (
         <div>
             <nav className={navClasses}>
-                <NavLink to={'/'}>
-                    <img
-                        className="w-[100px] md:w-[120px] h-[40px] md:h-[50px] object-contain"
-                        alt="logo"
-                        src={isScrolled? `/logos/logo_inverted.png`:`/logos/logo.png`}
-                        title="Otulia"
-                    />
-                </NavLink>
+                {/* Left Section: Logo */}
+                <div className="flex-1 flex items-center justify-start">
+                    <NavLink to={'/'}>
+                        <img
+                            className="w-[100px] md:w-[120px] h-[40px] md:h-[50px] object-contain"
+                            alt="logo"
+                            src={isScrolled ? `/logos/logo_inverted.png` : `/logos/logo.png`}
+                            title="Otulia"
+                        />
+                    </NavLink>
+                </div>
                 
-                <div className='hidden lg:flex items-center justify-center gap-5 md:gap-17'>
+                {/* Center Section: Navigation Links */}
+                <div className='hidden lg:flex flex-[2] items-center justify-center gap-8 md:gap-14'>
                     {navLinks.map(link => (
                         <NavLink 
                             key={link.to}
                             to={link.to} 
-                            className={({ isActive }) => isActive ? 'bg-black text-white rounded-2xl py-2 px-3 montserrat' : `py-2 px-3 montserrat ${isScrolled?'text-black':'text-white'}`}
+                            className={({ isActive }) => `
+                                relative py-2 text-[12px] font-medium tracking-[0.2em] uppercase montserrat transition-all duration-300
+                                ${isActive ? (isScrolled ? 'text-black after:w-full' : 'text-white after:w-full') : (isScrolled ? 'text-gray-400 hover:text-black after:w-0' : 'text-white/60 hover:text-white after:w-0')}
+                                after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:bg-current after:transition-all after:duration-300
+                            `}
                         >
                             {link.text}
                         </NavLink>
                     ))}
                 </div>
 
-                {/* 2. AUTH SECTION WITH LOADING STATE */}
-                {/* Removed 'text-white' class here so it inherits from navClasses */}
-                <div className='hidden lg:flex items-center justify-center gap-3 mr-3'>
+                {/* Right Section: Auth & Cart */}
+                <div className='hidden lg:flex flex-1 items-center justify-end gap-6'>
                     {loading ? (
-                        // Placeholder skeleton while loading
                         <div className="w-8 h-8 bg-white/20 rounded-full animate-pulse"></div>
                     ) : (
                         <>
                             {isAuthenticated ? (
-                                <>
-                                    <Profile_dropdown text={isScrolled?'text-black':'text-white'} />
-                                    {/* Removed 'text-white' wrapper so Cart takes nav color */}
-                                    <div className='text-inherit'> 
-                                        <Cart text={isScrolled?'text-black':'text-white'}/>
-                                    </div>
-                                </>
+                                <div className="flex items-center gap-4">
+                                    <Profile_dropdown isDark={isScrolled} />
+                                    <Cart isDark={isScrolled} />
+                                </div>
                             ) : (
-                                <LoginButton />
+                                <LoginButton isDark={isScrolled} />
                             )}
                         </>
                     )}
                 </div>
 
                 <div className='lg:hidden flex items-center'>
-                    <button onClick={toggleMenu} className='text-2xl text-inherit'>
+                    <button onClick={toggleMenu} className={`text-2xl ${textColor}`}>
                         <IoMdMenu />
                     </button>
                 </div>
             </nav>
 
+            {/* Mobile menu logic remains same */}
             <div
-                className={`fixed top-0 right-0 h-screen w-[80vw] bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-in-out ${
+                className={`fixed top-0 right-0 h-screen w-[85vw] bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-in-out ${
                     isMenuOpen ? "translate-x-0" : "translate-x-full"
                 }`}
             >
                 <button
                     onClick={toggleMenu}
-                    className="absolute top-6 right-6 text-[#2C2C2C] focus:outline-none"
+                    className="absolute top-6 right-6 text-black focus:outline-none"
                 >
                     <IoClose className="w-8 h-8" />
                 </button>
-                <div className="pt-20">
+                <div className="pt-24 px-8">
                     <Category_Navbar_Mobile navLinks={navLinks} />
                 </div>
             </div>

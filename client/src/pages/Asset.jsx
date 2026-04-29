@@ -7,7 +7,7 @@ const Asset = () => {
   
   return (
     <div className='pt-24'>
-      <Navbar />
+      <Navbar hideSearch={true} />
       <main>
         <Asset_Section />
       </main>
