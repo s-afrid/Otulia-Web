@@ -157,10 +157,10 @@ const AssetCard = ({ item }) => {
       onClick={() => navigate(`/asset/${category}/${item._id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative transition-all duration-300 bg-white cursor-pointer flex flex-col h-full ${homepage ? 'border-none' : 'border border-gray-100 shadow-sm rounded-[1.5rem] overflow-hidden hover:shadow-lg hover:-translate-y-1'}`}
+      className={`relative transition-all duration-300 bg-white cursor-pointer flex flex-col h-full rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 ${homepage ? 'border-none' : 'border border-gray-100'}`}
     >
       {/* Image Container */}
-      <div className={`relative overflow-hidden bg-gray-100 ${homepage ? 'aspect-square rounded-none' : 'aspect-[16/10]'}`}>
+      <div className={`relative overflow-hidden bg-gray-100 ${homepage ? 'aspect-square' : 'aspect-[16/10]'}`}>
 
         <img
           src={optimizeCloudinaryUrl(validImages[0], 800)}
@@ -218,7 +218,7 @@ const AssetCard = ({ item }) => {
       </div>
 
       {/* Content Section */}
-      <div className={`flex flex-col grow ${homepage ? 'pt-4' : 'p-5'}`}>
+      <div className={`flex flex-col grow ${homepage ? 'p-6' : 'p-5'}`}>
         <div className="flex-1">
           {homepage ? (
             <>

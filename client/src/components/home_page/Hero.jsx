@@ -161,7 +161,7 @@ const Hero = () => {
               Discover Exceptional Assets
             </h1>
             
-            <p className='text-white/90 montserrat text-sm md:text-xl max-w-2xl mb-10 md:mb-16 font-medium leading-relaxed'>
+            <p className='text-white/90 montserrat text-sm md:text-xl max-w-2xl mb-10 md:mb-16 leading-relaxed'>
               Cars, estates, yachts, and rare assets — curated globally for those who deal in the considered.
             </p>
 
