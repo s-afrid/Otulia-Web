@@ -165,7 +165,7 @@ const FilterBar = ({
   return (
     <div className="w-full flex justify-center p-4">
       <form onSubmit={handleSearch} className={`
-        w-full ${hideLocation ? 'max-w-[1000px]' : 'max-w-[1400px]'}
+        w-full
         bg-white border border-gray-200 
         rounded-2xl xl:rounded-full 
         p-4 xl:p-2 xl:pl-8

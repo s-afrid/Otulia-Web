@@ -114,7 +114,7 @@ const FilterBar = ({
 
       {/* MAIN CONTAINER */}
       <div className="
-        w-full max-w-[1400px]
+        w-full
         bg-white border border-gray-300 
         rounded-2xl xl:rounded-full 
         p-4 xl:p-2 xl:pl-8
