@@ -13,6 +13,7 @@ import {
     FiMessageSquare, FiPlayCircle, FiImage, FiDroplet, FiLayout, FiExternalLink, FiShare2, FiMoreHorizontal,
     FiArrowRight, FiChevronRight, FiX, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiMonitor
 } from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
 import { LineChart, Line, ResponsiveContainer, PieChart, Pie, Cell, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, BarChart, Bar } from 'recharts';
 import Navbar from '../components/Navbar';
 import AddAssetModal from '../components/inventory/AddAssetModal';
@@ -47,7 +48,9 @@ const Inventory = () => {
     const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const [leadStatusFilter, setLeadStatusFilter] = useState('All Status');
-    const [leadCategoryFilter, setLeadCategoryFilter] = useState('All Categories');
+    const [leadSourceFilter, setLeadSourceFilter] = useState('All Source');
+    const [leadAssetFilter, setLeadAssetFilter] = useState('All Assets');
+    const [leadSearchQuery, setLeadSearchQuery] = useState('');
     const [inventoryStatusFilter, setInventoryStatusFilter] = useState('All Status');
     const [inventoryCategoryFilter, setInventoryCategoryFilter] = useState('All Categories');
     const [currentPage, setCurrentPage] = useState(1);
@@ -60,6 +63,10 @@ const Inventory = () => {
     const [showCropModal, setShowCropModal] = useState(false);
     const [cropSrc, setCropSrc] = useState(null);
     const [leadEmailNotifications, setLeadEmailNotifications] = useState(user?.leadEmailNotifications !== false);
+    
+    // Actions Dropdown & Lead View Modal States
+    const [activeLeadDropdown, setActiveLeadDropdown] = useState(null);
+    const [viewLead, setViewLead] = useState(null);
 
     const [savingPersonal, setSavingPersonal] = useState(false);
     const [savingCompany, setSavingCompany] = useState(false);
@@ -184,6 +191,44 @@ const Inventory = () => {
                     }
 
                     const comp = resData.userProfile.company || {};
+                    
+                    let pCode = '+971';
+                    let pNum = '';
+                    if (resData.userProfile.phone) {
+                        const parts = resData.userProfile.phone.split(' ');
+                        if (parts.length > 1) {
+                            pCode = parts[0];
+                            pNum = parts.slice(1).join(' ');
+                        } else {
+                            pNum = resData.userProfile.phone;
+                        }
+                    }
+
+                    let wCode = '+971';
+                    let wNum = '';
+                    if (resData.userProfile.whatsapp) {
+                        const parts = resData.userProfile.whatsapp.split(' ');
+                        if (parts.length > 1) {
+                            wCode = parts[0];
+                            wNum = parts.slice(1).join(' ');
+                        } else {
+                            wNum = resData.userProfile.whatsapp;
+                        }
+                    }
+
+                    setAgentInfo(prev => ({
+                        ...prev,
+                        photo: resData.userProfile.profilePicture || prev.photo,
+                        fullName: resData.userProfile.name || prev.fullName,
+                        email: resData.userProfile.email || prev.email,
+                        phoneCode: pCode,
+                        phone: pNum,
+                        whatsappCode: wCode,
+                        whatsapp: wNum,
+                        jobTitle: resData.userProfile.jobTitle || prev.jobTitle,
+                        language: resData.userProfile.language || prev.language
+                    }));
+
                     setCompanyInfo(prev => ({
                         ...prev,
                         name: comp.companyName || '',
@@ -192,10 +237,8 @@ const Inventory = () => {
                         address: comp.address || '',
                         website: comp.website || '',
                         logo: comp.companyLogo || null,
-                        description: comp.description || ''
                     }));
                     setLeadEmailNotifications(resData.userProfile.leadEmailNotifications !== false);
-                }
             }
         } catch (error) {
             console.error("Fetch Error:", error);
@@ -367,7 +410,9 @@ const Inventory = () => {
                         address: companyInfo.address,
                         website: companyInfo.website,
                         description: companyInfo.description,
-                        phone: `${companyInfo.phoneCode} ${companyInfo.phone}`,
+                        businessType: companyInfo.businessType,
+                        establishedYear: companyInfo.establishedYear,
+                        phone: `${companyInfo.phoneCode || ''} ${companyInfo.phone || ''}`.trim(),
                         email: companyInfo.email
                     }
                 })
@@ -1405,19 +1450,47 @@ const Inventory = () => {
                                     </div>
                                     <input
                                         type="text"
+                                        value={leadSearchQuery}
+                                        onChange={e => setLeadSearchQuery(e.target.value)}
                                         placeholder="Search leads by name, email, phone..."
                                         className="w-full bg-white border border-gray-200 rounded-[1rem] py-2.5 pl-9 pr-4 text-[11px] font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#D48D2A] focus:ring-1 focus:ring-[#D48D2A] transition-all shadow-sm"
                                     />
                                 </div>
                                 <div className="flex gap-3 shrink-0">
-                                    {['All Status', 'All Source', 'All Assets'].map((f, i) => (
-                                        <div key={i} className="relative w-[130px]">
-                                            <select className="w-full appearance-none bg-white border border-gray-200 rounded-[1rem] py-2.5 pl-4 pr-8 text-[11px] font-bold text-gray-600 focus:outline-none cursor-pointer hover:border-gray-300 shadow-sm">
-                                                <option>{f}</option>
-                                            </select>
-                                            <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
-                                        </div>
-                                    ))}
+                                    <div className="relative w-[130px]">
+                                        <select value={leadStatusFilter} onChange={e => setLeadStatusFilter(e.target.value)} className="w-full appearance-none bg-white border border-gray-200 rounded-[1rem] py-2.5 pl-4 pr-8 text-[11px] font-bold text-gray-600 focus:outline-none cursor-pointer hover:border-gray-300 shadow-sm">
+                                            <option value="All Status">All Status</option>
+                                            <option value="New">New</option>
+                                            <option value="Contacted">Contacted</option>
+                                            <option value="Qualified">Qualified</option>
+                                            <option value="Proposal Sent">Proposal Sent</option>
+                                            <option value="Negotiating">Negotiating</option>
+                                            <option value="Closed">Closed</option>
+                                        </select>
+                                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
+                                    </div>
+                                    <div className="relative w-[130px]">
+                                        <select value={leadSourceFilter} onChange={e => setLeadSourceFilter(e.target.value)} className="w-full appearance-none bg-white border border-gray-200 rounded-[1rem] py-2.5 pl-4 pr-8 text-[11px] font-bold text-gray-600 focus:outline-none cursor-pointer hover:border-gray-300 shadow-sm">
+                                            <option value="All Source">All Source</option>
+                                            <option value="Website">Website</option>
+                                            <option value="WhatsApp">WhatsApp</option>
+                                            <option value="Instagram">Instagram</option>
+                                            <option value="Facebook">Facebook</option>
+                                            <option value="Email">Email</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
+                                    </div>
+                                    <div className="relative w-[130px]">
+                                        <select value={leadAssetFilter} onChange={e => setLeadAssetFilter(e.target.value)} className="w-full appearance-none bg-white border border-gray-200 rounded-[1rem] py-2.5 pl-4 pr-8 text-[11px] font-bold text-gray-600 focus:outline-none cursor-pointer hover:border-gray-300 shadow-sm">
+                                            <option value="All Assets">All Assets</option>
+                                            <option value="CarAsset">Cars</option>
+                                            <option value="EstateAsset">Real Estate</option>
+                                            <option value="YachtAsset">Yachts</option>
+                                            <option value="BikeAsset">Bikes</option>
+                                        </select>
+                                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
+                                    </div>
                                     <button className="px-4 py-2.5 rounded-[1rem] border border-gray-200 bg-white text-gray-700 font-bold text-[11px] shadow-sm flex items-center gap-2 hover:bg-gray-50 transition-colors">
                                         <FiFilter className="text-gray-400"/> More Filters
                                     </button>
@@ -1438,16 +1511,32 @@ const Inventory = () => {
                                                 <th className="w-1/12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">VALUE</th>
                                                 <th className="w-[12%] px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">DATE ADDED <FiChevronDown className="inline ml-0.5"/></th>
                                                 <th className="w-[18%] px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">MESSAGE</th>
-                                                <th className="w-12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest text-center">ACTIONS</th>
+                                                <th className="w-20 px-4 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest text-right">ACTIONS</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-50 text-[10px] font-bold">
                                             {(() => {
-                                                const leads = (data?.leads || []);
+                                                let leads = (data?.leads || []);
+                                                if (leadStatusFilter !== 'All Status') leads = leads.filter(l => l.status === leadStatusFilter);
+                                                if (leadSourceFilter !== 'All Source') {
+                                                    // Since some have missing sources, check matching string (ignoring case for safety)
+                                                    leads = leads.filter(l => {
+                                                        const source = l.source || 'Website';
+                                                        return source.toLowerCase().includes(leadSourceFilter.toLowerCase());
+                                                    });
+                                                }
+                                                if (leadAssetFilter !== 'All Assets') {
+                                                    leads = leads.filter(l => l.category === leadAssetFilter);
+                                                }
+                                                if (leadSearchQuery) {
+                                                    const q = leadSearchQuery.toLowerCase();
+                                                    leads = leads.filter(l => (l.buyerName && l.buyerName.toLowerCase().includes(q)) || (l.buyerPhone && l.buyerPhone.toLowerCase().includes(q)) || (l.customerContact && l.customerContact.toLowerCase().includes(q)));
+                                                }
+
                                                 if (leads.length === 0) {
                                                     return <tr><td colSpan="9" className="py-8 text-center text-xs text-gray-400">No leads found</td></tr>;
                                                 }
-                                                return leads.slice(0, 5).map((lead, i) => (
+                                                return leads.slice(0, 10).map((lead, i) => (
                                                     <tr key={i} className="hover:bg-gray-50/50 group bg-white">
                                                         <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A]"/></td>
                                                         <td className="px-2 py-2.5">
@@ -1498,8 +1587,8 @@ const Inventory = () => {
                                                         </td>
                                                         <td className="px-2 py-2.5">
                                                             <div className="flex flex-col text-gray-600">
-                                                                <span>{new Date(lead.createdAt).toLocaleDateString()}</span>
-                                                                <span className="text-[9px] text-gray-400 font-medium">{new Date(lead.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                                                <span>{lead.date ? new Date(lead.date).toLocaleDateString() : 'Unknown Date'}</span>
+                                                                <span className="text-[9px] text-gray-400 font-medium">{lead.date ? new Date(lead.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
                                                             </div>
                                                         </td>
                                                         <td className="px-2 py-2.5">
@@ -1507,10 +1596,19 @@ const Inventory = () => {
                                                                 {lead.message || "I'm interested in this asset. Is it available?"}
                                                             </p>
                                                         </td>
-                                                        <td className="px-2 py-2.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <div className="flex items-center justify-center gap-2">
-                                                                <button className="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:text-[#D48D2A] hover:bg-[#FFF8F0] transition-colors shadow-sm bg-white"><FiEye className="text-[10px]"/></button>
-                                                                <button className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-900"><FiMoreVertical/></button>
+                                                        <td className="px-4 py-2.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <div className="flex items-center justify-end gap-2 relative">
+                                                                <button onClick={() => setViewLead(lead)} className="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:text-[#D48D2A] hover:bg-[#FFF8F0] transition-colors shadow-sm bg-white"><FiEye className="text-[10px]"/></button>
+                                                                <div className="relative">
+                                                                    <button onClick={() => setActiveLeadDropdown(activeLeadDropdown === lead.id ? null : lead.id)} className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${activeLeadDropdown === lead.id ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-900'}`}><FiMoreVertical/></button>
+                                                                    {activeLeadDropdown === lead.id && (
+                                                                        <div className="absolute right-0 mt-1 w-32 bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-gray-100 py-1 z-[100]">
+                                                                            {['New', 'Contacted', 'Qualified', 'Proposal Sent', 'Negotiating', 'Closed'].map(s => (
+                                                                                <button key={s} onClick={() => { handleStatusChange(lead.id, s, lead.isActivity); setActiveLeadDropdown(null); }} className={`w-full text-left px-4 py-1.5 text-[10px] font-bold ${lead.status === s ? 'text-[#D48D2A] bg-[#FFF8F0]' : 'text-gray-600 hover:bg-gray-50'}`}>{s}</button>
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -1572,10 +1670,10 @@ const Inventory = () => {
                             {/* KPI Row */}
                             <div className="flex gap-4 shrink-0 h-[100px]">
                                 {[
-                                    {label: 'TOTAL VIEWS', val: '24,856', chg: '+18.2%', icon: FiEye, col: '#D48D2A', bg: '#FFF8F0'},
-                                    {label: 'TOTAL LEADS', val: '1,248', chg: '+12.5%', icon: FiUsers, col: '#3B82F6', bg: '#EFF6FF'},
-                                    {label: 'CONVERSION RATE', val: '5.48%', chg: '+0.3%', icon: FiTrendingUp, col: '#10B981', bg: '#ECFDF5'},
-                                    {label: 'AVG LEAD VALUE', val: '$12,426', chg: '+5.8%', icon: FiCreditCard, col: '#8B5CF6', bg: '#F5F3FF'}
+                                    {label: 'TOTAL VIEWS', val: data?.stats?.totalViews ? numberWithCommas(data.stats.totalViews) : '0', chg: '+0.0%', icon: FiEye, col: '#D48D2A', bg: '#FFF8F0'},
+                                    {label: 'TOTAL LEADS', val: data?.stats?.totalLeads ? numberWithCommas(data.stats.totalLeads) : '0', chg: '+0.0%', icon: FiUsers, col: '#3B82F6', bg: '#EFF6FF'},
+                                    {label: 'CONVERSION RATE', val: data?.stats?.avgConversion ? `${Number(data.stats.avgConversion).toFixed(2)}%` : '0.00%', chg: '+0.0%', icon: FiTrendingUp, col: '#10B981', bg: '#ECFDF5'},
+                                    {label: 'AVG LEAD VALUE', val: data?.stats?.estLeadValue ? `$${numberWithCommas(data.stats.estLeadValue)}` : '$0', chg: '+0.0%', icon: FiCreditCard, col: '#8B5CF6', bg: '#F5F3FF'}
                                 ].map((kpi, idx) => (
                                     <div key={idx} className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col justify-between relative overflow-hidden group">
                                         <div className="flex justify-between items-start z-10 relative">
@@ -1588,9 +1686,9 @@ const Inventory = () => {
                                             </div>
                                         </div>
                                         <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 z-10 relative mt-auto tracking-wide"><FiTrendingUp className="text-[11px]" /> {kpi.chg} <span className="text-gray-400 font-medium whitespace-nowrap normal-case text-[9px]">from last 30 days</span></span>
-                                        <div className="absolute bottom-0 left-0 right-0 h-1/2 opacity-20 pointer-events-none transition-opacity duration-300 group-hover:opacity-30">
+                                        <div className="absolute bottom-0 left-0 right-0 h-[35%] opacity-20 pointer-events-none transition-opacity duration-300 group-hover:opacity-30">
                                             <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full fill-current" style={{color: kpi.col}}><path d={idx%2===0?"M0,30 L0,20 Q15,10 30,25 T60,15 T85,25 T100,5 L100,30 Z":"M0,30 L0,15 Q10,25 20,10 T40,15 T60,5 T80,20 T100,10 L100,30 Z"}/></svg>
-                                            <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full absolute bottom-0 left-0 outline-none"><path d={idx%2===0?"M0,20 Q15,10 30,25 T60,15 T85,25 T100,5":"M0,15 Q10,25 20,10 T40,15 T60,5 T80,20 T100,10"} fill="none" stroke={kpi.col} strokeWidth="1"/></svg>
+                                            <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full absolute bottom-0 left-0 outline-none"><path d={idx%2===0?"M0,20 Q15,10 30,25 T60,15 T85,25 T100,5":"M0,15 Q10,25 20,10 T40,15 T60,5 T80,20 T100,10"} fill="none" stroke={kpi.col} strokeWidth="1.5"/></svg>
                                         </div>
                                     </div>
                                 ))}
@@ -1693,12 +1791,30 @@ const Inventory = () => {
                                                 </div>
                                             </div>
                                             <div className="flex flex-col flex-1 gap-2.5 font-bold text-[11px] overflow-y-auto custom-scrollbar">
-                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">United States</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">482</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '38.6%'}}></div></div><span className="text-gray-400 text-[10px] w-8">38.6%</span></div></div>
-                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">United Kingdom</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">286</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '22.9%'}}></div></div><span className="text-gray-400 text-[10px] w-8">22.9%</span></div></div>
-                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">UAE</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">214</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '17.1%'}}></div></div><span className="text-gray-400 text-[10px] w-8">17.1%</span></div></div>
-                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">Canada</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">132</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '10.6%'}}></div></div><span className="text-gray-400 text-[10px] w-8">10.6%</span></div></div>
-                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">Australia</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">76</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '6.1%'}}></div></div><span className="text-gray-400 text-[10px] w-8">6.1%</span></div></div>
-                                                <div className="flex justify-between items-center"><span className="text-gray-800 truncate pr-2">Others</span><div className="flex items-center justify-end gap-3 text-right"><span className="text-gray-900 w-8">58</span><div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0"><div className="h-full bg-[#D48D2A] rounded-full" style={{width: '4.7%'}}></div></div><span className="text-gray-400 text-[10px] w-8">4.7%</span></div></div>
+                                                {(() => {
+                                                    const locations = data?.analytics?.leadsByLocation || [];
+                                                    const total = locations.reduce((sum, loc) => sum + loc.count, 0) || 1;
+                                                    
+                                                    if (locations.length === 0) {
+                                                        return <div className="text-gray-400 text-xs font-medium py-4">No location data available</div>;
+                                                    }
+                                                    
+                                                    return locations.map((loc, i) => {
+                                                        const pct = ((loc.count / total) * 100).toFixed(1);
+                                                        return (
+                                                            <div key={i} className="flex justify-between items-center">
+                                                                <span className="text-gray-800 truncate pr-2">{loc.country}</span>
+                                                                <div className="flex items-center justify-end gap-3 text-right">
+                                                                    <span className="text-gray-900 w-8">{loc.count}</span>
+                                                                    <div className="w-12 h-[5px] bg-gray-100 rounded-full overflow-hidden flex items-center shrink-0">
+                                                                        <div className="h-full bg-[#D48D2A] rounded-full" style={{width: `${pct}%`}}></div>
+                                                                    </div>
+                                                                    <span className="text-gray-400 text-[10px] w-8">{pct}%</span>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    });
+                                                })()}
                                             </div>
                                         </div>
                                         
@@ -1712,16 +1828,31 @@ const Inventory = () => {
                                                 <circle cx="280" cy="60" r="3" fill="#D48D2A" opacity="0.4"/>
                                             </svg>
                                             
-                                            <div className="absolute bottom-1 right-2 flex items-center gap-3">
-                                                 <div className="flex flex-col text-right">
-                                                    <span className="text-[8px] font-black uppercase tracking-widest text-gray-400">Top Country</span>
-                                                    <span className="text-[13px] font-bold text-gray-900 leading-tight">United States</span>
-                                                    <div className="flex items-center text-[10px] font-bold gap-1 mt-0.5 justify-end">
-                                                        <span className="text-gray-900 text-[12px]">482</span> <span className="text-gray-400">Leads • 38.6% of total</span>
+                                            {(() => {
+                                                const locations = data?.analytics?.leadsByLocation || [];
+                                                const topLocation = locations[0] || { country: 'Unknown', count: 0 };
+                                                const total = locations.reduce((sum, loc) => sum + loc.count, 0) || 1;
+                                                const pct = topLocation.count ? ((topLocation.count / total) * 100).toFixed(1) : 0;
+                                                
+                                                // Quick flag map
+                                                const getFlag = (country) => {
+                                                    const m = { 'United States': '🇺🇸', 'United Kingdom': '🇬🇧', 'UAE': '🇦🇪', 'Canada': '🇨🇦', 'Australia': '🇦🇺', 'India': '🇮🇳' };
+                                                    return m[country] || '🌐';
+                                                };
+
+                                                return (
+                                                    <div className="absolute bottom-1 right-2 flex items-center gap-3 bg-white/80 p-2 rounded-xl backdrop-blur-sm border border-white/40 shadow-sm">
+                                                         <div className="flex flex-col text-right">
+                                                            <span className="text-[8px] font-black uppercase tracking-widest text-gray-400">Top Country</span>
+                                                            <span className="text-[13px] font-bold text-gray-900 leading-tight">{topLocation.country}</span>
+                                                            <div className="flex items-center text-[10px] font-bold gap-1 mt-0.5 justify-end">
+                                                                <span className="text-gray-900 text-[12px]">{numberWithCommas(topLocation.count)}</span> <span className="text-gray-400">Leads • {pct}% of total</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-[28px] opacity-90 rounded shadow-sm leading-none bg-white w-9 h-9 flex items-center justify-center overflow-hidden">{getFlag(topLocation.country)}</div>
                                                     </div>
-                                                </div>
-                                                <div className="text-[28px] opacity-90 border border-gray-100 rounded shadow-sm leading-none bg-white">🇺🇸</div>
-                                            </div>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                     
@@ -1734,21 +1865,28 @@ const Inventory = () => {
                             {/* Bottom Row */}
                             <div className="flex gap-4 flex-1 min-h-0 pb-1 shrink-0">
                                 {/* Leads by Source */}
+<<<<<<< HEAD
                                 <div className="flex-[1] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[260px]">
                                     <h3 className="text-[16px] font-bold text-gray-900 canela mb-3 leading-none">Leads by Source</h3>
                                     <div className="flex flex-col flex-1 relative items-center justify-center">
                                         <div className="w-full flex-1 relative flex items-center justify-center -mt-2">
+=======
+                                <div className="flex-[1] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[320px]">
+                                    <h3 className="text-[17px] font-bold text-[#1a1f2c] mb-6 leading-none tracking-tight">Leads by Source</h3>
+                                    <div className="flex flex-1 items-center px-1">
+                                        <div className="w-[140px] h-[140px] relative shrink-0">
+>>>>>>> 0d9c5fa943a1123d31b38d2c81014f3015f2fdc7
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <PieChart>
                                                     <Pie data={[
-                                                        { name: 'WhatsApp', value: 458, color: '#10B981' },
-                                                        { name: 'Website', value: 324, color: '#3B82F6' },
-                                                        { name: 'Instagram', value: 246, color: '#D946EF' },
-                                                        { name: 'Facebook', value: 142, color: '#0EA5E9' },
-                                                        { name: 'Others', value: 78, color: '#6B7280' }
-                                                    ]} innerRadius="70%" outerRadius="90%" dataKey="value" stroke="none" isAnimationActive={false}>
+                                                        { name: 'WhatsApp', value: 458, color: '#68D391' },
+                                                        { name: 'Website', value: 324, color: '#2B6CB0' },
+                                                        { name: 'Instagram', value: 246, color: '#9F7AEA' },
+                                                        { name: 'Facebook', value: 142, color: '#F6AD55' },
+                                                        { name: 'Others', value: 78, color: '#CBD5E0' }
+                                                    ]} innerRadius="65%" outerRadius="100%" dataKey="value" stroke="#fff" strokeWidth={2} isAnimationActive={false}>
                                                         {[
-                                                            { color: '#10B981' }, { color: '#3B82F6' }, { color: '#D946EF' }, { color: '#0EA5E9' }, { color: '#9ca3af' }
+                                                            { color: '#68D391' }, { color: '#2B6CB0' }, { color: '#9F7AEA' }, { color: '#F6AD55' }, { color: '#CBD5E0' }
                                                         ].map((entry, index) => (
                                                             <Cell key={`cell-${index}`} fill={entry.color} />
                                                         ))}
@@ -1756,21 +1894,78 @@ const Inventory = () => {
                                                 </PieChart>
                                             </ResponsiveContainer>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
+<<<<<<< HEAD
                                                 <span className="text-[22px] font-bold text-gray-900 canela leading-none">1,248</span>
                                                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 mt-1">Total Leads</span>
+=======
+                                                <span className="text-[20px] font-bold text-gray-900 leading-none">1,248</span>
+                                                <span className="text-[9px] font-medium text-gray-500 mt-1">Total Leads</span>
+>>>>>>> 0d9c5fa943a1123d31b38d2c81014f3015f2fdc7
                                             </div>
                                         </div>
                                         
-                                        <div className="w-full flex flex-col gap-2 font-bold text-[11px] mt-2 shrink-0 px-2">
-                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#10B981]"></div><span className="text-gray-700">WhatsApp</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">458</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(36.7%)</span></div></div>
-                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></div><span className="text-gray-700">Website</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">324</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(25.9%)</span></div></div>
-                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#D946EF]"></div><span className="text-gray-700">Instagram</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">246</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(19.7%)</span></div></div>
-                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#0EA5E9]"></div><span className="text-gray-700">Facebook</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">142</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(11.4%)</span></div></div>
-                                            <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-gray-400"></div><span className="text-gray-700">Others</span></div><div className="flex gap-2.5"><span className="text-gray-900 w-8 text-right">78</span><span className="text-gray-400 w-10 text-right text-[10px] mt-0.5">(6.3%)</span></div></div>
+                                        <div className="flex-1 flex flex-col gap-3.5 font-bold text-[11px] ml-4 shrink-0">
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-[#68D391]"></div>
+                                                    <FaWhatsapp className="text-[#25D366] text-[13px]"/>
+                                                    <span className="text-gray-700 font-medium">WhatsApp</span>
+                                                </div>
+                                                <div className="flex justify-end pr-2 pl-3">
+                                                    <span className="text-gray-900 w-6 text-right font-bold mr-1">458</span>
+                                                    <span className="text-gray-400 w-11 text-right font-medium">(36.7%)</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-[#2B6CB0]"></div>
+                                                    <FiGlobe className="text-[#2B6CB0] text-[13px]"/>
+                                                    <span className="text-gray-700 font-medium">Website</span>
+                                                </div>
+                                                <div className="flex justify-end pr-2 pl-3">
+                                                    <span className="text-gray-900 w-6 text-right font-bold mr-1">324</span>
+                                                    <span className="text-gray-400 w-11 text-right font-medium">(25.9%)</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-[#9F7AEA]"></div>
+                                                    <FiInstagram className="text-[#E1306C] text-[13px]"/>
+                                                    <span className="text-gray-700 font-medium">Instagram</span>
+                                                </div>
+                                                <div className="flex justify-end pr-2 pl-3">
+                                                    <span className="text-gray-900 w-6 text-right font-bold mr-1">246</span>
+                                                    <span className="text-gray-400 w-11 text-right font-medium">(19.7%)</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-[#F6AD55]"></div>
+                                                    <FiFacebook className="text-[#1877F2] text-[13px]"/>
+                                                    <span className="text-gray-700 font-medium">Facebook</span>
+                                                </div>
+                                                <div className="flex justify-end pr-2 pl-3">
+                                                    <span className="text-gray-900 w-6 text-right font-bold mr-1">142</span>
+                                                    <span className="text-gray-400 w-11 text-right font-medium">(11.4%)</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-[#CBD5E0]"></div>
+                                                    <FiMoreHorizontal className="text-gray-400 text-[13px]"/>
+                                                    <span className="text-gray-700 font-medium">Others</span>
+                                                </div>
+                                                <div className="flex justify-end pr-2 pl-3">
+                                                    <span className="text-gray-900 w-6 text-right font-bold mr-1">78</span>
+                                                    <span className="text-gray-400 w-11 text-right font-medium">(6.3%)</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="flex justify-center mt-3 shrink-0">
-                                        <button className="text-[#D48D2A] text-[10px] font-black uppercase tracking-widest hover:underline flex items-center gap-1">View Full Report <FiChevronRight/></button>
+                                    <div className="flex justify-end mt-4">
+                                        <button className="px-4 py-1.5 border border-gray-100/80 rounded-lg text-[#D48D2A] text-[11px] font-medium hover:bg-gray-50 flex items-center gap-1 transition-colors shadow-sm">
+                                            View Full Report <FiChevronRight className="text-[10px] mt-px"/>
+                                        </button>
                                     </div>
                                 </div>
                                 
@@ -2327,13 +2522,15 @@ const Inventory = () => {
                     {activeTab === 'settings' && (
                         <div className="h-[calc(100vh-6rem)] flex flex-col gap-3 animate-in fade-in duration-700 p-4">
                             {/* Verification Banner */}
-                            <div className="bg-[#FFF8F0] border border-[#F2E8DB] rounded-2xl p-3 flex items-start justify-start gap-3 shrink-0 shadow-sm">
-                                <div className="w-5 h-5 rounded-full border border-[#D48D2A] text-[#D48D2A] flex items-center justify-center shrink-0 mt-0.5"><span className="text-xs font-bold font-serif">i</span></div>
-                                <div className="flex flex-col">
-                                    <span className="text-[12px] font-bold text-gray-900 leading-tight">Complete both sections to get verified and start receiving high-quality leads.</span>
-                                    <span className="text-[10px] text-gray-500 font-medium">Verified profiles get 3x more visibility and priority in lead distribution.</span>
+                            {!Boolean(agentInfo.fullName && agentInfo.phone && agentInfo.email && companyInfo.name && companyInfo.address) && !user?.isVerified && (
+                                <div className="bg-[#FFF8F0] border border-[#F2E8DB] rounded-2xl p-3 flex items-start justify-start gap-3 shrink-0 shadow-sm">
+                                    <div className="w-5 h-5 rounded-full border border-[#D48D2A] text-[#D48D2A] flex items-center justify-center shrink-0 mt-0.5"><span className="text-xs font-bold font-serif">i</span></div>
+                                    <div className="flex flex-col">
+                                        <span className="text-[12px] font-bold text-gray-900 leading-tight">Complete both sections to get verified and start receiving high-quality leads.</span>
+                                        <span className="text-[10px] text-gray-500 font-medium">Verified profiles get 3x more visibility and priority in lead distribution.</span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                             
                             {/* 2 Main Columns */}
                             <div className="flex flex-1 gap-4 min-h-0">
@@ -2877,6 +3074,46 @@ const Inventory = () => {
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 20px; }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
             `}} />
+
+            {/* View Lead Modal */}
+            {viewLead && (
+                <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[100] flex justify-center items-center p-4 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl flex flex-col p-6 animate-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-[16px] font-bold text-gray-900 font-playfair">Lead Details</h2>
+                            <button onClick={() => setViewLead(null)} className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"><FiX /></button>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                            <div className="flex flex-col">
+                                <span className="text-[9px] uppercase tracking-widest text-gray-400 font-black mb-1">Contact Info</span>
+                                <span className="text-[13px] font-bold text-gray-900">{viewLead.name}</span>
+                                <span className="text-[11px] font-medium text-gray-500">{viewLead.email} • {viewLead.phone}</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[9px] uppercase tracking-widest text-gray-400 font-black mb-1">Source & Status</span>
+                                <div className="flex gap-2">
+                                    <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{viewLead.source || 'Website'}</span>
+                                    <span className="text-[11px] font-bold text-[#D48D2A] bg-[#FFF8F0] px-2 py-0.5 rounded">{viewLead.status}</span>
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[9px] uppercase tracking-widest text-gray-400 font-black mb-1">Date Received</span>
+                                <span className="text-[12px] font-bold text-gray-700">{viewLead.date ? new Date(viewLead.date).toLocaleString() : 'Unknown'}</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[9px] uppercase tracking-widest text-gray-400 font-black mb-1">Message Provided</span>
+                                <div className="bg-gray-50 rounded-xl p-4 text-[12px] font-medium text-gray-700 border border-gray-100 whitespace-pre-wrap">
+                                    {viewLead.message || "No specific message provided."}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-8 flex justify-end">
+                            <button onClick={() => setViewLead(null)} className="px-5 py-2 text-[11px] font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Close View</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div >
     );
 };

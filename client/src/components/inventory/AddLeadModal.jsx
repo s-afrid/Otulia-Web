@@ -31,7 +31,7 @@ const AddLeadModal = ({ isOpen, onClose, onCreated, token, inventory }) => {
 
             const payload = {
                 ...formData,
-                assetModel: selectedAsset?.type || 'EstateAsset',
+                assetModel: selectedAsset?.itemModel || 'EstateAsset',
                 assetTitle: selectedAsset ? (selectedAsset.propertyName || selectedAsset.yachtName || selectedAsset.name || selectedAsset.title || `${selectedAsset.make || ''} ${selectedAsset.model || ''}`.trim() || 'Unnamed Asset') : 'Unknown Asset',
                 assetPrice: selectedAsset?.price || 0,
                 assetImage: selectedAsset?.images?.[0] || ''

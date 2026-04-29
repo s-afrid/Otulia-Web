@@ -28,6 +28,13 @@ const Hero = () => {
 
   const [currentIdx, setCurrentIdx] = useState(0);
 
+  // Search & Suggestions State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const suggestionRef = useRef(null);
+
   useEffect(() => {
     if (images.length === 0) return;
 

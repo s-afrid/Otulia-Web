@@ -1,18 +1,29 @@
 import React from 'react'
-import heroUrl from '../../../../assets/hero_banners/hero_cars.webp'
+import heroUrl from '../../../../assets/hero_banners/hero_cars_new.jpeg'
 import Cars_Search from './Cars_Search'
 
 const Cars_Hero = () => {
   return (
-    <div>
-      <div className='relative flex flex-col hero-banner h-[500px] md:h-[700px] w-full pt-24'>
-        <img className='absolute top-0 left-0 -z-10 h-full w-full object-cover' src={heroUrl} alt='hero_car' />
-        <div className='relative flex flex-col items-center justify-center h-full p-3 gap-3 z-10'>
-          <h1 className='text-white canela text-3xl md:text-5xl text-center drop-shadow-lg'>Discover Your Dream Cars With Us</h1>
-          <p className='text-white/90 montserrat italic text-md md:text-2xl text-center drop-shadow-md'>The world’s finest cars — curated.</p>
-          <div className='md:mt-12 w-full flex flex-col items-center'>
-            <Cars_Search />
-          </div>
+    <div className='relative flex flex-col hero-banner h-screen w-full overflow-hidden'>
+      {/* Background Image */}
+      <img className='absolute top-0 left-0 -z-10 h-full w-full object-cover' src={heroUrl} alt='hero_car' />
+      
+      {/* Clearer Overlay */}
+      <div className='absolute inset-0 bg-black/10 -z-5' />
+
+      <div className='relative h-full w-full flex flex-col justify-center px-[6%] md:px-[8%] z-10 pt-20'>
+        <div className='max-w-2xl flex flex-col gap-6 mb-16'>
+          <h1 className='text-white playfair-display text-4xl md:text-[5rem] leading-[1.05] drop-shadow-sm'>
+            Discover Your Dream <br /> Cars With Us
+          </h1>
+          <div className='w-24 h-[2px] bg-[#D48D2A]'></div>
+          <p className='text-white/90 montserrat text-lg md:text-xl font-normal tracking-wide'>
+            The world's finest cars — curated.
+          </p>
+        </div>
+
+        <div className='w-full max-w-4xl'>
+          <Cars_Search />
         </div>
       </div>
     </div>

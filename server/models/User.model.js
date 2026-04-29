@@ -45,12 +45,18 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
+    whatsapp: String,
+    jobTitle: String,
+    language: String,
+
     company: {
       companyName: String,
       companyLogo: String,
       address: String,
       website: String,
       description: String,
+      businessType: String,
+      establishedYear: String,
     },
 
     isVerified: {

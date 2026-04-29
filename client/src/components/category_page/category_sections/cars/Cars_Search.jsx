@@ -1,182 +1,91 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FiMapPin, FiChevronDown, FiSearch } from 'react-icons/fi';
 
 const Cars_Search = () => {
-  const [activeType, setActiveType] = useState('Buy'); // State for Buy/Rent toggle
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const [activeSuggestion, setActiveSuggestion] = useState(-1);
+  
   const navigate = useNavigate();
   const searchContainerRef = useRef(null);
 
   useEffect(() => {
     const handler = setTimeout(async () => {
-      if (query.length > 0) {
+      if (query.length > 1) {
         try {
-          const response = await fetch(`/api/assets/location-suggestions?q=${query}`);
+          const response = await fetch(`/api/assets/combined?q=${query}&limit=5`);
           const data = await response.json();
-          // Assuming data is an array of strings (locations)
-          setSuggestions(data);
+          const locations = [...new Set(data.data.map(item => item.location))];
+          setSuggestions(locations);
         } catch (error) {
           console.error("Failed to fetch location suggestions", error);
         }
       } else {
         setSuggestions([]);
       }
-    }, 300); // 300ms debounce
+    }, 300);
 
     return () => clearTimeout(handler);
   }, [query]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
-        setSuggestions([]);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleSearch = (e) => {
-    e.preventDefault(); // Prevent default form submission if this is called from a form
-    let searchLocation = query;
-    if (activeSuggestion > -1 && suggestions[activeSuggestion]) {
-      searchLocation = suggestions[activeSuggestion];
-    }
-
-    if (searchLocation.trim()) {
-      const acquisition = activeType.toLowerCase();
-      navigate(`/category/cars?location=${searchLocation.trim()}&acquisition=${acquisition}`);
-      setSuggestions([]); // Clear suggestions after search
-      setQuery(searchLocation.trim()); // Update query to the selected suggestion
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'ArrowDown') {
-      setActiveSuggestion(prev => (prev < suggestions.length - 1 ? prev + 1 : prev));
-      e.preventDefault(); // Prevent cursor movement in input
-    } else if (e.key === 'ArrowUp') {
-      setActiveSuggestion(prev => (prev > 0 ? prev - 1 : 0));
-      e.preventDefault(); // Prevent cursor movement in input
-    } else if (e.key === 'Enter') {
-      handleSearch(e); // Trigger search
-    }
+  const handleSearch = () => {
+    navigate(`/category/cars?location=${encodeURIComponent(query)}`);
   };
 
   return (
-    <div className="w-full flex justify-center p-4">
-
-      {/* MAIN CONTAINER */}
-      <div className="
-        w-full max-w-[900px]
-        bg-white 
-        border border-black /* Gold Border */
-        rounded-2xl md:rounded-full 
-        flex flex-col md:flex-row items-center 
-        shadow-sm p-2 md:h-14
-      " ref={searchContainerRef}>
-
-        {/* 1. INPUT SECTION */}
-        <div className="w-full md:flex-1 relative">
+    <div className="w-full max-w-4xl relative" ref={searchContainerRef}>
+      <div className="bg-[#D9D9D9]/90 backdrop-blur-md p-1.5 rounded-full flex items-center shadow-2xl">
+        
+        {/* 1. Location Section */}
+        <div className="flex-[2] flex items-center px-8 gap-4 border-r border-black/10">
+          <FiMapPin className="text-gray-600 text-xl shrink-0" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onBlur={() => setActiveSuggestion(-1)}
-            placeholder="Search By Location"
-            className="
-              w-full h-13 md:h-10 
-              px-6 
-              text-gray-700 placeholder-gray-400 
-              montserrat text-sm md:text-base 
-              focus:outline-none
-              bg-transparent
-            "
+            placeholder="Search by location"
+            className="bg-transparent border-none outline-none text-gray-800 text-sm font-medium placeholder-gray-500 w-full focus:ring-0 p-0 h-10"
           />
-          {suggestions.length > 0 && query.length > 0 && (
-            <ul className="absolute z-10 w-full bg-[#F8F8F8] border border-gray-300 rounded-b-md shadow-lg text-black top-full left-0">
-              {suggestions.map((suggestion, index) => (
-                <li
-                  key={index}
-                  className={`p-2 cursor-pointer hover:bg-gray-200 ${index === activeSuggestion ? 'bg-gray-200' : ''}`}
-                  onMouseDown={(e) => { // Use onMouseDown to prevent onBlur from firing before onClick
-                    e.preventDefault();
-                    setQuery(suggestion);
-                    setSuggestions([]);
-                    navigate(`/category/cars?location=${suggestion}&acquisition=${activeType.toLowerCase()}`);
-                  }}
-                >
-                  {suggestion}
-                </li>
-              ))}
-            </ul>
-          )}
-          {suggestions.length === 0 && query.length > 0 && (
-            <ul className="absolute z-10 w-full bg-[#F8F8F8] border border-gray-300 rounded-b-md shadow-lg text-black top-full left-0">
-              <li className="p-2 text-gray-500">No location found</li>
-            </ul>
-          )}
         </div>
 
-        {/* DIVIDER (Desktop Only) */}
-        <div className="hidden md:block h-6 w-px bg-gray-500 opacity-50"></div>
-
-        {/* 2. TOGGLE SECTION (Buy / Rent) */}
-        <div className="
-          w-full md:w-auto 
-          flex items-center justify-center gap-1 
-          p-2 md:px-4
-        ">
-          {/* BUY BUTTON */}
-          <button
-            onClick={() => setActiveType('Buy')}
-            className={`
-              px-6 py-2 rounded-md montserrat font-medium transition-colors duration-300
-              ${activeType === 'Buy'
-                ? 'bg-black text-white'
-                : 'bg-white text-black hover:bg-gray-50'
-              }
-            `}
-          >
-            Buy
-          </button>
-
-          {/* RENT BUTTON */}
-          <button
-            onClick={() => setActiveType('Rent')}
-            className={`
-              px-6 py-2 rounded-md montserrat font-medium transition-colors duration-300
-              ${activeType === 'Rent'
-                ? 'bg-black text-white'
-                : 'bg-white text-black hover:bg-gray-50'
-              }
-            `}
-          >
-            Rent
-          </button>
+        {/* 2. Buy Dropdown */}
+        <div className="flex-1 flex items-center justify-between px-8 cursor-pointer border-r border-black/10 hover:bg-black/5 transition-colors h-10">
+          <span className="text-sm font-medium text-gray-700">Buy</span>
+          <FiChevronDown className="text-gray-500" />
         </div>
 
-        {/* 3. SEARCH BUTTON */}
-        <button
+        {/* 3. Rent Dropdown */}
+        <div className="flex-1 flex items-center justify-between px-8 cursor-pointer hover:bg-black/5 transition-colors h-10 mr-2">
+          <span className="text-sm font-medium text-gray-700">Rent</span>
+          <FiChevronDown className="text-gray-500" />
+        </div>
+
+        {/* 4. Circular Button */}
+        <button 
           onClick={handleSearch}
-          className="
-          w-full md:w-auto 
-          h-13 md:h-10 
-          px-10 md:px-12 
-          bg-[#2C2C2C] hover:bg-black /* Darker Gold/Brown */
-          text-white 
-          montserrat text-md md:text-xl 
-          flex items-center justify-center
-          transition-colors duration-300
-          rounded-full
-        ">
-          Search
+          className="w-12 h-12 bg-[#2C2C2C] rounded-full flex items-center justify-center text-white hover:bg-black transition-all shadow-lg active:scale-95 shrink-0"
+        >
+          <FiSearch className="text-xl" />
         </button>
-
       </div>
+
+      {/* Suggestions */}
+      {suggestions.length > 0 && (
+        <div className="absolute mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-fade-in left-6">
+          {suggestions.map((loc, idx) => (
+            <div 
+              key={idx}
+              onClick={() => {
+                setQuery(loc);
+                setSuggestions([]);
+              }}
+              className="px-6 py-2 hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-700 transition-colors"
+            >
+              {loc}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
