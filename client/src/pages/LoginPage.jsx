@@ -7,17 +7,16 @@ import SEO from "../components/SEO";
 
 // ✅ Add or remove paths to match your files in public/images/login/
 const images = [
-  "/images/login/1.png",
-  "/images/login/2.png",
-  "/images/login/3.png",
-  "/images/login/4.png",
-  "/images/login/5.png",
-  "/images/login/6.png",
-  "/images/login/7.png",
-  "/images/login/8.png",
-  "/images/login/9.png",
-  "/images/login/10.png",
-  "/images/login/11.png",
+  "/images/login/1.webp",
+  "/images/login/2.webp",
+  "/images/login/3.webp",
+  "/images/login/4.webp",
+  "/images/login/5.webp",
+  "/images/login/6.webp",
+  "/images/login/7.webp",
+  "/images/login/8.webp",
+  "/images/login/9.webp",
+  "/images/login/10.webp",
 ];
 
 const LoginPage = () => {
