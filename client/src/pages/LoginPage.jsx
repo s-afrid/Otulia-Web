@@ -1,64 +1,85 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import Navbar from '../components/Navbar'
-import { GoogleLogin } from '@react-oauth/google';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import SEO from '../components/SEO';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import { FaEye, FaEyeSlash, FaEnvelope, FaApple } from "react-icons/fa";
+import SEO from "../components/SEO";
+
+// ✅ Add or remove paths to match your files in public/images/login/
+const images = [
+    "/images/login/1.webp",
+    "/images/login/2.webp",
+    "/images/login/3.webp",
+    "/images/login/4.webp",
+    "/images/login/5.webp",
+    "/images/login/6.webp",
+    "/images/login/7.webp",
+    "/images/login/8.webp",
+    "/images/login/9.webp",
+    "/images/login/10.webp",
+];
 
 const LoginPage = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
+    const [step, setStep] = useState("email");
+    const [error, setError] = useState("");
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const { login, googleLogin } = useAuth();
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentImageIndex((prev) => (prev + 1) % images.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleContinue = (e) => {
+        e.preventDefault();
+        if (step === "email") {
+            if (!email) return;
+            setStep("password");
+        } else {
+            handleSubmit(e);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setError("");
         const { success, error } = await login(email, password);
         if (success) {
-            navigate('/');
+            navigate("/");
         } else {
-            setError(error || 'Failed to login');
+            setError(error || "Failed to login");
         }
     };
 
     const handleGoogleSuccess = async (credentialResponse) => {
         const { success, error } = await googleLogin(credentialResponse.credential);
         if (success) {
-            navigate('/');
+            navigate("/");
         } else {
-            setError(error || 'Google login failed');
+            setError(error || "Google login failed");
         }
     };
 
     const handleGoogleError = () => {
-        setError('Google login failed. Please try again.');
+        setError("Google login failed. Please try again.");
     };
 
     return (
-        <div className="relative min-h-screen flex items-center justify-center bg-black font-sans overflow-hidden space-y-10">
-            <SEO 
+        <div className="min-h-screen flex font-sans">
+            <SEO
                 title="Login"
                 description="Access your personal sanctuary on Otulia. Log in to manage your luxury listings and favorites."
             />
-            {/* Full Screen Background */}
-            <div className="absolute inset-0 z-0">
-                
-                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/90"></div>
-            </div>
 
-            {/* Navbar Overlay - It will handle its own transparency */}
-            <div className="absolute top-0 left-0 w-full z-50">
-                <Navbar hideSearch={true} hideLogin={true} forceTransparent={true} customLogo="/logos/otulia_logo_white.png" />
-            </div>
-
-            {/* Centered Glass Card */}
-            <div className="relative z-10 w-full max-w-xl p-1 px-4 animate-in zoom-in-95 duration-700">
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-[2rem] shadow-2xl p-8 md:p-12 overflow-hidden">
-
+            {/* ── LEFT PANEL ── */}
+            <div className="relative w-full md:w-[450px] lg:w-[500px] flex-shrink-0 bg-black flex flex-col justify-center px-10 md:px-14 z-10 border-r border-white/5 overflow-y-auto">
+                <div className="py-12">
                     {/* Decorative Top Line */}
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-[#D48D2A]/80 rounded-b-full shadow-[0_0_15px_rgba(212,141,42,0.5)]"></div>
 
@@ -115,7 +136,7 @@ const LoginPage = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        className="w-full px-5 py-4 bg-black/20 border border-white/10 text-white rounded-xl focus:outline-none focus:border-[#D48D2A] focus:bg-black/40 transition-all text-sm font-medium placeholder-white/20 hover:border-white/20 pr-12" // Added pr-12 for icon spacing
+                                        className="w-full px-5 py-4 bg-black/20 border border-white/10 text-white rounded-xl focus:outline-none focus:border-[#D48D2A] focus:bg-black/40 transition-all text-sm font-medium placeholder-white/20 hover:border-white/20 pr-12"
                                         placeholder="Enter your password"
                                     />
                                     <button
@@ -152,9 +173,71 @@ const LoginPage = () => {
                 </div>
 
                 {/* Footer Note */}
-                <p className="text-center text-white/20 text-[10px] mt-6 uppercase tracking-[0.3em]">
+                <p className="text-center text-white/20 text-[10px] mt-6 uppercase tracking-[0.3em] pb-8">
                     Otulia &copy; 2026
                 </p>
+            </div>
+
+            {/* ── RIGHT PANEL — Slideshow ── */}
+            <div className="hidden md:block relative flex-1 overflow-hidden bg-black">
+                {images.map((src, i) => (
+                    <div
+                        key={src}
+                        className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+                        style={{
+                            backgroundImage: `url('${src}')`,
+                            opacity: i === currentImageIndex ? 1 : 0,
+                        }}
+                    >
+                        {/* Image overlay to ensure readability */}
+                        <div className="absolute inset-0 bg-black/40"></div>
+                    </div>
+                ))}
+
+                {/* Content Overlay */}
+                <div className="absolute inset-0 flex flex-col justify-between p-16 z-10">
+                    <div className="flex justify-between items-start">
+                        <div className="flex flex-col">
+                            <span className="text-white/60 text-[10px] tracking-[0.4em] uppercase font-bold mb-2">Established 2025</span>
+                            <div className="w-12 h-0.5 bg-[#D48D2A]"></div>
+                        </div>
+                        <div className="flex gap-4">
+                            {images.map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setCurrentImageIndex(i)}
+                                    className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${i === currentImageIndex ? 'bg-[#D48D2A] w-6' : 'bg-white/30'}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="max-w-xl">
+                        <h2 className="text-white text-6xl lg:text-7xl font-bold leading-tight mb-6 canela">
+                            Extraordinary<br />
+                            <span className="text-[#D48D2A] italic">Lives</span> Begin Here
+                        </h2>
+                        <p className="text-white/80 text-lg montserrat font-light leading-relaxed max-w-md">
+                            Experience the pinnacle of luxury with our curated collection of iconic assets and exclusive estates.
+                        </p>
+                    </div>
+
+                    <div className="flex justify-between items-end">
+                        <div className="flex gap-10">
+                            <div className="flex flex-col">
+                                <span className="text-[#D48D2A] text-2xl font-bold canela mb-1">500+</span>
+                                <span className="text-white/40 text-[9px] uppercase tracking-widest font-bold">Curated Assets</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[#D48D2A] text-2xl font-bold canela mb-1">24/7</span>
+                                <span className="text-white/40 text-[9px] uppercase tracking-widest font-bold">VIP Concierge</span>
+                            </div>
+                        </div>
+                        <span className="text-white/30 text-[10px] font-mono tracking-widest uppercase">
+                            Slide {currentImageIndex + 1} / {images.length}
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     );
