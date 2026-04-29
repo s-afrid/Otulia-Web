@@ -239,6 +239,7 @@ const Inventory = () => {
                         logo: comp.companyLogo || null,
                     }));
                     setLeadEmailNotifications(resData.userProfile.leadEmailNotifications !== false);
+                }
             }
         } catch (error) {
             console.error("Fetch Error:", error);
@@ -1865,17 +1866,10 @@ const Inventory = () => {
                             {/* Bottom Row */}
                             <div className="flex gap-4 flex-1 min-h-0 pb-1 shrink-0">
                                 {/* Leads by Source */}
-<<<<<<< HEAD
                                 <div className="flex-[1] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[260px]">
                                     <h3 className="text-[16px] font-bold text-gray-900 canela mb-3 leading-none">Leads by Source</h3>
                                     <div className="flex flex-col flex-1 relative items-center justify-center">
                                         <div className="w-full flex-1 relative flex items-center justify-center -mt-2">
-=======
-                                <div className="flex-[1] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[320px]">
-                                    <h3 className="text-[17px] font-bold text-[#1a1f2c] mb-6 leading-none tracking-tight">Leads by Source</h3>
-                                    <div className="flex flex-1 items-center px-1">
-                                        <div className="w-[140px] h-[140px] relative shrink-0">
->>>>>>> 0d9c5fa943a1123d31b38d2c81014f3015f2fdc7
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <PieChart>
                                                     <Pie data={[
@@ -1894,13 +1888,8 @@ const Inventory = () => {
                                                 </PieChart>
                                             </ResponsiveContainer>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-<<<<<<< HEAD
                                                 <span className="text-[22px] font-bold text-gray-900 canela leading-none">1,248</span>
                                                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 mt-1">Total Leads</span>
-=======
-                                                <span className="text-[20px] font-bold text-gray-900 leading-none">1,248</span>
-                                                <span className="text-[9px] font-medium text-gray-500 mt-1">Total Leads</span>
->>>>>>> 0d9c5fa943a1123d31b38d2c81014f3015f2fdc7
                                             </div>
                                         </div>
                                         
@@ -3080,7 +3069,7 @@ const Inventory = () => {
                 <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[100] flex justify-center items-center p-4 animate-in fade-in duration-200">
                     <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl flex flex-col p-6 animate-in zoom-in-95 duration-200">
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-[16px] font-bold text-gray-900 font-playfair">Lead Details</h2>
+                            <h2 className="text-[16px] font-bold text-gray-900 canela">Lead Details</h2>
                             <button onClick={() => setViewLead(null)} className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"><FiX /></button>
                         </div>
                         <div className="flex flex-col gap-4">

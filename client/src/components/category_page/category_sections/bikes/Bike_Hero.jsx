@@ -13,7 +13,7 @@ const Bike_Hero = () => {
 
       <div className='relative h-full w-full flex flex-col justify-center px-[6%] md:px-[8%] z-10 pt-20'>
         <div className='max-w-2xl flex flex-col gap-6 mb-16'>
-          <h1 className='text-white playfair-display text-4xl md:text-[5rem] leading-[1.05] drop-shadow-sm'>
+          <h1 className='text-white canela text-4xl md:text-[5rem] leading-[1.05] drop-shadow-sm'>
             Discover Your Dream <br /> Bikes With Us
           </h1>
           <div className='w-24 h-[2px] bg-[#D48D2A]'></div>
