@@ -223,7 +223,7 @@ const AdminDashboard = () => {
             <div className="flex justify-between items-start mb-6 z-10 relative">
                 <div>
                     <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">{title}</p>
-                    <h3 className="text-2xl font-black text-gray-900 font-playfair">{value}</h3>
+                    <h3 className="text-2xl font-black text-gray-900 canela">{value}</h3>
                 </div>
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${iconColorClass}`}>
                     <Icon className="text-xl" />
@@ -304,7 +304,7 @@ const AdminDashboard = () => {
                         <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900 lg:hidden">
                             <FiGrid className="h-6 w-6" />
                         </button>
-                        <h2 className="text-lg sm:text-xl font-bold text-gray-900 font-playfair">
+                        <h2 className="text-lg sm:text-xl font-bold text-gray-900 canela">
                             {activeTab === 'overview' ? 'Dashboard Overview' :
                                 activeTab === 'partners' ? 'Partner Verification' :
                                     activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
@@ -421,7 +421,7 @@ const AdminDashboard = () => {
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                 <div className="lg:col-span-2 bg-white p-4 sm:p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-6 font-playfair">Revenue Analytics</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-6 canela">Revenue Analytics</h3>
                                     <div className="h-64 mt-4">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <AreaChart data={analyticsData?.monthlyRevenue || []}>
@@ -462,7 +462,7 @@ const AdminDashboard = () => {
                                     </div>
                                 </div>
                                 <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-8 self-start font-playfair">Platform Wallet</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-8 self-start canela">Platform Wallet</h3>
                                     <div className="bg-gray-900 p-6 rounded-[2rem] mb-6 shadow-xl shadow-gray-200">
                                         <div className="w-32 h-32 bg-white rounded-xl flex items-center justify-center p-2">
                                             {/* QR Placeholder */}
@@ -482,7 +482,7 @@ const AdminDashboard = () => {
                         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
                             <div className="p-4 sm:p-8 border-b border-gray-100 flex-col sm:flex-row flex justify-between items-start sm:items-end">
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">Partners Management</h3>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-1 canela">Partners Management</h3>
                                     <p className="text-sm text-gray-400 font-medium">Manage and verify dealer accounts</p>
                                 </div>
                                 <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
@@ -589,7 +589,7 @@ const AdminDashboard = () => {
                         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
                             <div className="p-4 sm:p-8 border-b border-gray-100 flex-col sm:flex-row flex justify-between items-start sm:items-end">
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">User Management</h3>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-1 canela">User Management</h3>
                                     <p className="text-sm text-gray-400 font-medium">View and manage all registered platform users</p>
                                 </div>
                                 <div className="flex gap-2 mt-4 sm:mt-0">
@@ -649,7 +649,7 @@ const AdminDashboard = () => {
                         <div className="space-y-8 animate-in fade-in duration-500">
                             {/* Sessions Over Time */}
                             <div className="bg-white p-4 sm:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                                <h3 className="text-xl font-bold text-gray-900 mb-2 font-playfair">Traffic Overview</h3>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2 canela">Traffic Overview</h3>
                                 <p className="text-gray-400 text-sm mb-10">Daily sessions over the last 30 days (GA4)</p>
 
                                 <div className="h-80">
@@ -692,7 +692,7 @@ const AdminDashboard = () => {
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 {/* Device Distribution */}
                                 <div className="bg-white p-4 sm:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2 font-playfair">Devices</h3>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2 canela">Devices</h3>
                                     <p className="text-gray-400 text-sm mb-8">Sessions by device category</p>
                                     <div className="h-64">
                                         <ResponsiveContainer width="100%" height="100%">
@@ -717,7 +717,7 @@ const AdminDashboard = () => {
 
                                 {/* Top Countries */}
                                 <div className="bg-white p-4 sm:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2 font-playfair">Top Countries</h3>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-2 canela">Top Countries</h3>
                                     <p className="text-gray-400 text-sm mb-8">Most active regions</p>
                                     <div className="space-y-4">
                                         {analyticsData?.topCountries?.length > 0 ? (
@@ -746,7 +746,7 @@ const AdminDashboard = () => {
                     {activeTab === 'payouts' && (
                         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
                             <div className="p-4 sm:p-8 border-b border-gray-100">
-                                <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">Payout Management</h3>
+                                <h3 className="text-xl font-bold text-gray-900 mb-1 canela">Payout Management</h3>
                                 <p className="text-sm text-gray-400 font-medium">Manage partner withdrawals and payments</p>
                             </div>
                             <div className="overflow-x-auto">
@@ -793,7 +793,7 @@ const AdminDashboard = () => {
                         <div className="animate-in fade-in duration-500">
                             <div className="flex justify-between items-center mb-8">
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">Coupon Management</h3>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-1 canela">Coupon Management</h3>
                                     <p className="text-sm text-gray-400 font-medium">Create and manage promotional discount codes</p>
                                 </div>
                                 <button
@@ -902,7 +902,7 @@ const AdminDashboard = () => {
 
                     {activeTab === 'settings' && (
                         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-4 sm:p-10 animate-in fade-in duration-500">
-                            <h3 className="text-xl font-bold text-gray-900 mb-8 font-playfair">Admin Settings</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-8 canela">Admin Settings</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <div className="space-y-6">
                                     <div>
@@ -947,7 +947,7 @@ const AdminDashboard = () => {
                     <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl relative z-10 overflow-hidden animate-in zoom-in-95">
                         <div className="p-8 border-b border-gray-100 flex justify-between items-center">
                             <div>
-                                <h3 className="text-xl font-bold text-gray-900 font-playfair">{selectedPartnerDocs.name}'s Documents</h3>
+                                <h3 className="text-xl font-bold text-gray-900 canela">{selectedPartnerDocs.name}'s Documents</h3>
                                 <p className="text-sm text-gray-400">Review submitted verification files</p>
                             </div>
                             <button onClick={closeDocsModal} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-gray-100">
@@ -1082,7 +1082,7 @@ const AdminDashboard = () => {
                     <form onSubmit={handleCouponAction} className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md relative z-10 overflow-hidden animate-in zoom-in-95">
                         <div className="p-8 border-b border-gray-100 flex justify-between items-center">
                             <div>
-                                <h3 className="text-xl font-bold text-gray-900 font-playfair">{editingCoupon ? 'Edit' : 'Create'} Coupon</h3>
+                                <h3 className="text-xl font-bold text-gray-900 canela">{editingCoupon ? 'Edit' : 'Create'} Coupon</h3>
                                 <p className="text-sm text-gray-400">Configure your discount code</p>
                             </div>
                             <button type="button" onClick={() => setIsCouponModalOpen(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-gray-100">

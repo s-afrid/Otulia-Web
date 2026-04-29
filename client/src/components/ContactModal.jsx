@@ -61,12 +61,12 @@ const ContactModal = ({ isOpen, onClose, type = 'Sales', token }) => {
                 {success ? (
                     <div className="text-center py-12">
                         <div className="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">✓</div>
-                        <h3 className="text-2xl font-bold playfair-display mb-2">Message Sent</h3>
+                        <h3 className="text-2xl font-bold canela mb-2">Message Sent</h3>
                         <p className="text-gray-500">Our {type} team will get back to you shortly.</p>
                     </div>
                 ) : (
                     <>
-                        <h2 className="text-2xl font-bold playfair-display mb-2">Contact {type}</h2>
+                        <h2 className="text-2xl font-bold canela mb-2">Contact {type}</h2>
                         <p className="text-gray-500 text-sm mb-6">Fill out the form below and we'll be in touch.</p>
 
                         <form onSubmit={handleSubmit} className="space-y-4">

@@ -173,7 +173,7 @@ const FilterBar = ({
         shadow-md transition-all duration-300
       `}>
         <div className="w-full xl:w-auto flex items-center gap-2 border-b xl:border-r xl:border-b-0 border-gray-100 pb-2 xl:pb-0 pr-6">
-          <span className="font-playfair text-xl text-black whitespace-nowrap font-bold">
+          <span className="canela text-xl text-black whitespace-nowrap font-bold">
             Filter :
           </span>
         </div>

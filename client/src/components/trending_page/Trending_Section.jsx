@@ -75,7 +75,7 @@ const Trending_Section = ({ type }) => {
       <Trending_Hero type={type} />
       <section className="w-full px-3 md:px-16 py-6 bg-white">
         <div className="flex items-center justify-between mb-12">
-          <h2 className="text-5xl md:text-6xl playfair-display text-black">
+          <h2 className="text-5xl md:text-6xl canela text-black">
             {type}
           </h2>
         </div>

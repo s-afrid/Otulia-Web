@@ -63,7 +63,7 @@ const LoginPage = () => {
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-[#D48D2A]/80 rounded-b-full shadow-[0_0_15px_rgba(212,141,42,0.5)]"></div>
 
                     <div className="text-center mb-10 mt-2">
-                        <h2 className="text-3xl md:text-4xl font-bold playfair-display text-white mb-3">Welcome Back</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold canela text-white mb-3">Welcome Back</h2>
                         <p className="text-gray-300 text-xs md:text-sm montserrat uppercase tracking-[0.2em] font-light">Access your personal sanctuary</p>
                     </div>
 

@@ -89,7 +89,7 @@ const CartPage = () => {
             <SEO title="My Cart" description="Review your selected luxury assets before completing your transaction." />
             <Navbar />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                <h1 className="text-3xl font-bold font-playfair mb-8">Your Cart</h1>
+                <h1 className="text-3xl font-bold canela mb-8">Your Cart</h1>
 
                 {cart.length === 0 ? (
                     <div className="text-center py-20">
@@ -154,7 +154,7 @@ const CartPage = () => {
                         {/* Summary */}
                         <div className="w-full lg:w-96 shrink-0">
                             <div className="bg-gray-50 p-6 rounded-lg sticky top-24">
-                                <h2 className="text-xl font-bold mb-6 font-playfair">Order Summary</h2>
+                                <h2 className="text-xl font-bold mb-6 canela">Order Summary</h2>
                                 <div className="flex justify-between mb-4">
                                     <span className="text-gray-600">Subtotal</span>
                                     <span className="font-medium">$ {numberWithCommas(cartTotal)}</span>
@@ -181,7 +181,7 @@ const CartPage = () => {
                         {/* Header */}
                         <div className="bg-gray-50 p-6 border-b border-gray-100 flex justify-between items-center">
                             <div>
-                                <h3 className="text-lg font-bold font-playfair text-gray-800">Checkout</h3>
+                                <h3 className="text-lg font-bold canela text-gray-800">Checkout</h3>
                                 <p className="text-sm text-gray-500">Secure Payment</p>
                             </div>
                             <button

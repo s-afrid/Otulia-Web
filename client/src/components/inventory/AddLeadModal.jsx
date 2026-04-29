@@ -67,7 +67,7 @@ const AddLeadModal = ({ isOpen, onClose, onCreated, token, inventory }) => {
                     <FiX className="text-xl text-gray-500" />
                 </button>
 
-                <h2 className="text-2xl font-bold font-playfair mb-2 text-gray-900">Add Lead manually</h2>
+                <h2 className="text-2xl font-bold canela mb-2 text-gray-900">Add Lead manually</h2>
                 <p className="text-gray-500 text-xs mb-6 font-medium">Input lead details manually to your leads record.</p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">

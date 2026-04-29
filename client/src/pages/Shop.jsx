@@ -132,7 +132,7 @@ const Shop = () => {
       <Navbar hideSearch={true} />
       {/* Simple Hero */}
       <div className="bg-white text-black py-16 px-4 text-center border-b border-gray-100">
-        <h1 className="text-4xl md:text-5xl font-playfair mb-4 font-serif">
+        <h1 className="text-4xl md:text-5xl canela mb-4 font-serif">
           {query ? `Search Results for "${query}"` : 'Luxury Collection'}
         </h1>
         <p className="text-gray-500 max-w-2xl mx-auto font-sans">

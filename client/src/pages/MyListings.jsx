@@ -256,7 +256,7 @@ const MyListings = () => {
                 <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 border-b border-gray-200 pb-6">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <h1 className="text-3xl font-bold text-gray-900 playfair-display">My Assets</h1>
+                            <h1 className="text-3xl font-bold text-gray-900 canela">My Assets</h1>
                             {(user?.plan === 'Premium Basic' || user?.plan === 'Business VIP') && (
                                 <Link to="/inventory" className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold uppercase tracking-widest hover:bg-blue-100 transition-colors">
                                     Open Dashboard
@@ -359,7 +359,7 @@ const MyListings = () => {
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-600/10 rounded-full -ml-32 -mb-32 blur-3xl"></div>
 
                         <div className="relative z-10">
-                            <h2 className="text-2xl md:text-3xl font-bold mb-10 playfair-display">Why upgrade to a Premium Plan?</h2>
+                            <h2 className="text-2xl md:text-3xl font-bold mb-10 canela">Why upgrade to a Premium Plan?</h2>
                             
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                                 <div className="flex flex-col gap-4">

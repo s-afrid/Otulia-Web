@@ -93,7 +93,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
                         <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(34,197,94,0.4)]">
                             <FiCheck className="text-5xl" />
                         </div>
-                        <h2 className="text-4xl font-bold playfair-display mb-2">Welcome to {successPlan}!</h2>
+                        <h2 className="text-4xl font-bold canela mb-2">Welcome to {successPlan}!</h2>
                         <p className="text-gray-400">Your profile has been elevated. Unlocking your new limits...</p>
                     </div>
                 )}
@@ -106,7 +106,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
 
                     <div className="relative z-10">
                         <img src="/logos/logo_inverted.png" alt="Otulia" className="w-32 mb-12 opacity-80" />
-                        <h2 className="text-4xl md:text-5xl font-bold playfair-display mb-6 leading-tight">
+                        <h2 className="text-4xl md:text-5xl font-bold canela mb-6 leading-tight">
                             The Inner <span className="italic text-gray-400">Circle</span>
                         </h2>
                         <p className="text-gray-400 text-sm font-light leading-relaxed mb-8">
@@ -136,7 +136,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
                     <div className="flex justify-between items-start mb-10">
                         <div>
                             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D90416] mb-2 block">Available Tiers</span>
-                            <h3 className="text-3xl font-bold text-gray-900 playfair-display">Refine your membership</h3>
+                            <h3 className="text-3xl font-bold text-gray-900 canela">Refine your membership</h3>
                         </div>
                         <button onClick={onClose} className="p-3 bg-gray-50 hover:bg-black hover:text-white rounded-full transition-all">
                             <FiX className="text-xl" />

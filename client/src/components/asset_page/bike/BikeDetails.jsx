@@ -203,7 +203,7 @@ Reference ID: #${refId}
           <div className="flex items-center gap-4 mb-4">
             <h1 
               className="text-2xl md:text-3xl font-normal text-black leading-snug"
-              style={{ fontFamily: '"Playfair Display", "Times New Roman", Times, serif' }}
+              style={{ fontFamily: 'Canela, "Times New Roman", Times, serif' }}
             >
               {title}
             </h1>
@@ -266,7 +266,7 @@ Reference ID: #${refId}
             <span className="text-[10px] font-bold text-[#B58252] uppercase tracking-widest mb-1 w-fit">PRICE</span>
             <h2 
               className="text-3xl md:text-4xl font-bold text-black"
-              style={{ fontFamily: '"Playfair Display", "Times New Roman", Times, serif' }}
+              style={{ fontFamily: 'Canela, "Times New Roman", Times, serif' }}
             >
               {item.isPriceOnRequest ? 'Price on Demand' : `$ ${numberWithCommas(price)}`}
             </h2>
@@ -283,7 +283,7 @@ Reference ID: #${refId}
           {/* RENTAL BOOKING BOX */}
           {type === 'Rent' && (
             <div className="border border-gray-200 rounded-lg shadow-sm p-5 bg-white mt-2">
-              <h3 className="text-lg font-bold playfair-display mb-3">Book Dates</h3>
+              <h3 className="text-lg font-bold canela mb-3">Book Dates</h3>
               <div className="flex flex-col gap-3 mb-4">
                 <div className="flex-1">
                   <label className="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-400">Start Date</label>

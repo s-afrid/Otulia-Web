@@ -115,7 +115,7 @@ const DealerVerificationModal = ({ isOpen, onClose, onSubmit, user }) => {
                 {/* Header */}
                 <div className="px-10 py-8 border-b border-gray-100 flex items-center justify-between">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 font-playfair mb-1">Dealer Verification</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 canela mb-1">Dealer Verification</h2>
                         <p className="text-sm text-gray-400 font-medium">Upload required documents to verify your dealership</p>
                     </div>
                     <button

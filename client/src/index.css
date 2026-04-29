@@ -1,6 +1,89 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Thin-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-ThinItalic-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Light-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-LightItalic-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Regular-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-RegularItalic-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Medium-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-MediumItalic-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Bold-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Black-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-BlackItalic-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+}
 
 :root {
   font-family: 'Inter', sans-serif;
@@ -43,9 +126,8 @@ html {
   scrollbar-width: none;  /* Firefox */
 }
 
-.playfair-display {
-  font-family: "Playfair", serif;
-  
+.canela {
+  font-family: "Canela", serif;
 }
 
 .montserrat {

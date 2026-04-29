@@ -200,7 +200,7 @@ Reference ID: #${refId}
           <div className="flex items-center gap-4 mb-4">
             <h1 
               className="text-2xl md:text-3xl font-normal text-black leading-snug"
-              style={{ fontFamily: '"Playfair Display", "Times New Roman", Times, serif' }}
+              style={{ fontFamily: 'Canela, "Times New Roman", Times, serif' }}
             >
               {title}
             </h1>
@@ -263,7 +263,7 @@ Reference ID: #${refId}
             <span className="text-[10px] font-bold text-[#B58252] uppercase tracking-widest mb-1 w-fit">PRICE</span>
             <h2 
               className="text-3xl md:text-4xl font-bold text-black"
-              style={{ fontFamily: '"Playfair Display", "Times New Roman", Times, serif' }}
+              style={{ fontFamily: 'Canela, "Times New Roman", Times, serif' }}
             >
               {item.isPriceOnRequest ? 'Price on Demand' : `AED ${numberWithCommas(price)}`}
             </h2>

@@ -523,7 +523,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                     <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
                         <FiCheckCircle />
                     </div>
-                    <h2 className="text-3xl font-bold playfair-display text-gray-900 mb-2">Success!</h2>
+                    <h2 className="text-3xl font-bold canela text-gray-900 mb-2">Success!</h2>
                     <p className="text-gray-500">Your luxury listing has been {editData ? 'updated' : 'created'} successfully.</p>
                 </div>
             </div>
@@ -542,7 +542,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 <FiArrowLeft className="text-xl" />
                             </button>
                         )}
-                        <h2 className="text-2xl font-bold playfair-display text-gray-900">
+                        <h2 className="text-2xl font-bold canela text-gray-900">
                             {step === 0 ? 'Select Asset Type' : `${assetType} Details`}
                         </h2>
                     </div>
@@ -568,7 +568,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     <div className="flex-1 w-full flex justify-center items-center grayscale group-hover:grayscale-0 transition-all transform group-hover:scale-110 duration-500">
                                         <img className="max-w-[140px] max-h-[100px] object-contain" src={type.icon} alt="icon" title={type.label} />
                                     </div>
-                                    <span className="text-xl font-bold text-gray-900 font-playfair mt-6">{type.label}</span>
+                                    <span className="text-xl font-bold text-gray-900 canela mt-6">{type.label}</span>
                                 </button>
                             ))}
                         </div>
@@ -585,7 +585,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <img className='w-fit object-contain' src={assetType === 'Car' ? carIcon : assetType === 'Yacht' ? yachtIcon : assetType === 'Estate' ? estateIcon : assetType === 'Bike' ? bikeIcon : otherassetIcon} alt={assetType} />
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-gray-900 font-playfair">{assetType} Details</h3>
+                                        <h3 className="text-2xl font-bold text-gray-900 canela">{assetType} Details</h3>
                                         <p className="text-sm text-gray-400">Fill in the details for your luxury listing</p>
                                     </div>
                                 </div>
@@ -828,7 +828,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                             {assetType === 'Estate' && (
                                 <div className="space-y-6">
                                     <div className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-100">
-                                        <h4 className="text-xl font-bold text-gray-900 font-playfair mb-2">Amenities & Details</h4>
+                                        <h4 className="text-xl font-bold text-gray-900 canela mb-2">Amenities & Details</h4>
                                         <p className="text-sm text-gray-400 mb-8">Select all luxurious additions found within the property</p>
                                         
                                         {[
@@ -869,7 +869,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                             <section className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-100">
                                 <div className="max-w-4xl mx-auto space-y-10">
                                     <div>
-                                        <h4 className="text-xl font-bold text-gray-900 font-playfair mb-2">Description</h4>
+                                        <h4 className="text-xl font-bold text-gray-900 canela mb-2">Description</h4>
                                         <p className="text-sm text-gray-400 mb-6">Main asset description for the listing page</p>
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Description *</label>
                                         <textarea
@@ -891,7 +891,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <div className="flex items-center gap-2 mb-6">
 
                                             <div>
-                                                <h4 className="text-lg font-bold text-gray-900 font-playfair">Key Highlights</h4>
+                                                <h4 className="text-lg font-bold text-gray-900 canela">Key Highlights</h4>
                                                 <p className="text-xs text-gray-400 italic">These specific details will be highlighted on your listing</p>
                                             </div>
                                         </div>
@@ -953,7 +953,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     {assetType === 'Bike' && (
                                         <div className="space-y-12">
                                             <div className="pt-10 border-t border-gray-100">
-                                                <h4 className="text-lg font-bold text-gray-900 font-playfair mb-8">Specifications</h4>
+                                                <h4 className="text-lg font-bold text-gray-900 canela mb-8">Specifications</h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                                     <InputField label="Engine Capacity (cc)" name="engineCapacity" type="number" value={formData.engineCapacity} placeholder="e.g., 1000" onChange={handleInputChange} required />
                                                     <InputField label="Mileage (km)" name="mileage" type="number" value={formData.mileage} placeholder="e.g., 5000" onChange={handleInputChange} required />
@@ -964,7 +964,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             </div>
 
                                             <div className="pt-10 border-t border-gray-100">
-                                                <h4 className="text-lg font-bold text-gray-900 font-playfair mb-8">Condition</h4>
+                                                <h4 className="text-lg font-bold text-gray-900 canela mb-8">Condition</h4>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                                     <SelectField label="New / Used" name="condition" value={formData.condition} options={['New', 'Used', 'Pre-Owned', 'Classic']} onChange={handleInputChange} required />
                                                     <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} placeholder="e.g., 1" onChange={handleInputChange} required />
@@ -988,7 +988,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             <div className="pt-10 border-t border-gray-100">
                                                 <div className="flex items-center gap-2 mb-8">
                                                     <FiInfo className="text-[#D48D2A] text-xl" />
-                                                    <h4 className="text-lg font-bold text-gray-900 font-playfair">Property Specifications</h4>
+                                                    <h4 className="text-lg font-bold text-gray-900 canela">Property Specifications</h4>
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                                     <InputField label="Year of Construction" name="year" type="number" value={formData.year} placeholder="e.g., 2020" onChange={handleInputChange} required />
@@ -1016,7 +1016,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             <div className="pt-10 border-t border-gray-100">
                                                 <div className="flex items-center gap-2 mb-8">
                                                     <FiCheckCircle className="text-[#D48D2A] text-xl" />
-                                                    <h4 className="text-lg font-bold text-gray-900 font-playfair">Materials & Finish</h4>
+                                                    <h4 className="text-lg font-bold text-gray-900 canela">Materials & Finish</h4>
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                                     <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} placeholder="e.g., Italian Marble, Hardwood" onChange={handleInputChange} required />
@@ -1028,7 +1028,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             <div className="pt-10 border-t border-gray-100">
                                                 <div className="flex items-center gap-2 mb-8">
                                                     <FiVideo className="text-[#D48D2A] text-xl" />
-                                                    <h4 className="text-lg font-bold text-gray-900 font-playfair">Comfort & Tech</h4>
+                                                    <h4 className="text-lg font-bold text-gray-900 canela">Comfort & Tech</h4>
                                                 </div>
                                                 <div className="grid grid-cols-1 gap-8">
                                                     <InputField label="Climate Control" name="climateControl" value={formData.climateControl} placeholder="e.g., Central AC with Zoned Control" onChange={handleInputChange} required />
@@ -1055,7 +1055,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                                     {/* Media Section - Common to all */}
                                     <div className="pt-10 border-t border-gray-100 space-y-10">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-8 font-playfair">Media</h3>
+                                        <h3 className="text-xl font-bold text-gray-900 mb-8 canela">Media</h3>
 
                                         {/* Show existing images if editing */}
                                         {editData && existingImages.length > 0 && (

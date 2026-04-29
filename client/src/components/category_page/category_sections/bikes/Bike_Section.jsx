@@ -172,7 +172,7 @@ const Bike_Section = () => {
             <div className="bg-white">
                 <section className="w-full px-3 md:px-16 py-12 bg-white">
                     <div className="flex flex-col items-center justify-center mb-10">
-                        <h2 className="text-3xl md:text-4xl playfair-display text-black mb-12 text-center">
+                        <h2 className="text-3xl md:text-4xl canela text-black mb-12 text-center">
                             Popular Brands
                         </h2>
 
@@ -202,7 +202,7 @@ const Bike_Section = () => {
                         
                         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                             <div>
-                                <h2 className="text-3xl md:text-5xl font-normal playfair-display text-black mb-2">
+                                <h2 className="text-3xl md:text-5xl font-normal canela text-black mb-2">
                                     Featured Bikes
                                 </h2>
                                 <p className="text-sm md:text-base text-gray-500 font-sans">
@@ -223,7 +223,7 @@ const Bike_Section = () => {
                                 ))
                             ) : (
                                 <div className="col-span-full py-40 text-center">
-                                    <p className="text-2xl text-gray-300 playfair-display italic font-light">No bikes found matching your criteria. Try adjusting your search!</p>
+                                    <p className="text-2xl text-gray-300 canela italic font-light">No bikes found matching your criteria. Try adjusting your search!</p>
                                 </div>
                             )}
                         </div>

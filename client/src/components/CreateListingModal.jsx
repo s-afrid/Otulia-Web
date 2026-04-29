@@ -577,7 +577,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                     <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
                         <FiCheckCircle />
                     </div>
-                    <h2 className="text-3xl font-bold playfair-display text-gray-900 mb-2">Success!</h2>
+                    <h2 className="text-3xl font-bold canela text-gray-900 mb-2">Success!</h2>
                     <p className="text-gray-500">Your luxury listing has been {editData ? 'updated' : 'created'} successfully.</p>
                 </div>
             </div>
@@ -599,7 +599,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
                 <div className="flex justify-between items-center p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-bold playfair-display">{editData ? 'Edit Listing' : 'Create New Listing'}</h2>
+                    <h2 className="text-xl font-bold canela">{editData ? 'Edit Listing' : 'Create New Listing'}</h2>
                     <button onClick={handleCloseAttempt} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <FiX className="text-xl" />
                     </button>

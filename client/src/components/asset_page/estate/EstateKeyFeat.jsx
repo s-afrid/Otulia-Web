@@ -44,7 +44,7 @@ const EstateKeyFeatures = ({ item }) => {
         <span className="absolute left-0 text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em] bg-white z-10 pr-4">HIGHLIGHTS</span>
         <div className="w-full h-px border-t border-gray-200"></div>
         <div className="absolute bg-white px-6 flex flex-col items-center">
-          <h2 className="text-2xl md:text-3xl font-normal playfair-display text-black">
+          <h2 className="text-2xl md:text-3xl font-normal canela text-black">
             Key Features
           </h2>
           <span className="text-[#B58252] text-[10px] mt-1">♦</span>

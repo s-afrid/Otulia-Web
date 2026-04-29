@@ -191,7 +191,7 @@ const Profile = () => {
           </div>
           <div className="pt-16 pb-8 px-8 md:px-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 playfair-display mb-1">{user.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 canela mb-1">{user.name}</h1>
               <p className="text-gray-500 text-sm font-medium montserrat">Member since {new Date(user.createdAt || Date.now()).getFullYear()}</p>
             </div>
             <button onClick={handleLogout} className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all text-sm font-bold">
@@ -316,7 +316,7 @@ const Profile = () => {
 
                   <div className="flex flex-col md:flex-row gap-6 items-center">
                     <div className="flex-1">
-                      <h4 className="text-xl font-bold text-gray-900 mb-2 font-playfair">
+                      <h4 className="text-xl font-bold text-gray-900 mb-2 canela">
                         {user.verificationStatus === 'Verified' ? 'You are a Certified Partner' : 'Become a Certified Partner'}
                       </h4>
                       <p className="text-gray-500 text-sm leading-relaxed">
@@ -412,7 +412,7 @@ const Profile = () => {
                             </div>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="font-bold text-black text-xl font-playfair">$ {order.price?.toLocaleString()}</span>
+                            <span className="font-bold text-black text-xl canela">$ {order.price?.toLocaleString()}</span>
                             <span className="text-[10px] text-green-600 font-bold uppercase tracking-widest mt-1">Confirmed</span>
                           </div>
                         </div>

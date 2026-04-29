@@ -17,7 +17,7 @@ const AssetSlider = ({ title, items }) => {
   return (
     <section className="relative w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white group">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold playfair-display text-black">
+        <h2 className="text-2xl md:text-3xl font-bold canela text-black">
           {title}
         </h2>
       </div>

@@ -11,19 +11,19 @@ const CookiePolicy = () => {
             />
             <Navbar />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 className="text-4xl font-playfair font-bold text-gray-900 mb-8 text-center">Cookie Policy</h1>
+                <h1 className="text-4xl canela font-bold text-gray-900 mb-8 text-center">Cookie Policy</h1>
 
                 <div className="prose prose-lg max-w-none text-gray-600">
                     <p>
                         Otulia uses cookies and similar technologies to provide you with a personalized and premium user experience. This policy explains what cookies are, how we use them, and your choices regarding their use.
                     </p>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">What Are Cookies?</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">What Are Cookies?</h2>
                     <p>
                         Cookies are small text files that are stored on your device when you visit a website. They help us remember your preferences, understand how you interact with our platform, and enhance your browsing experience.
                     </p>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">How We Use Cookies</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">How We Use Cookies</h2>
                     <p>
                         We use cookies for the following purposes:
                     </p>
@@ -34,7 +34,7 @@ const CookiePolicy = () => {
                         <li><strong>Marketing Cookies:</strong> Used to deliver relevant advertisements and offers tailored to your interests in luxury assets.</li>
                     </ul>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">Managing Cookies</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">Managing Cookies</h2>
                     <p>
                         You can control and manage cookies through your browser settings. Please note that disabling certain cookies may impact the functionality of the Otulia platform and limit your access to specific features.
                     </p>

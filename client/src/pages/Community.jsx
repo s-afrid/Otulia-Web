@@ -89,7 +89,7 @@ const Community = () => {
           <span className="inline-block px-4 py-1 border border-white/30 rounded-full text-[10px] font-bold uppercase tracking-[0.3em] mb-6 shadow-sm">
             The Inner Circle
           </span>
-          <h1 className="text-5xl md:text-7xl font-bold playfair-display mb-6 leading-tight">
+          <h1 className="text-5xl md:text-7xl font-bold canela mb-6 leading-tight">
             Experience Luxury <br /> <span className="text-[#D90416]">Beyond Ownership</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
@@ -110,7 +110,7 @@ const Community = () => {
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-20">
           <h2 className="text-xs font-bold text-[#D90416] uppercase tracking-[0.4em] mb-4">Values</h2>
-          <h3 className="text-3xl md:text-5xl font-bold playfair-display text-gray-900">Built on Trust and Excellence</h3>
+          <h3 className="text-3xl md:text-5xl font-bold canela text-gray-900">Built on Trust and Excellence</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -132,7 +132,7 @@ const Community = () => {
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div>
               <h2 className="text-xs font-bold text-[#D90416] uppercase tracking-[0.4em] mb-4">Calendar</h2>
-              <h3 className="text-3xl md:text-5xl font-bold playfair-display text-gray-900">Upcoming Gatherings</h3>
+              <h3 className="text-3xl md:text-5xl font-bold canela text-gray-900">Upcoming Gatherings</h3>
             </div>
             <button className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-[#D90416] transition-colors">
               View Full Schedule <FiArrowRight />
@@ -166,7 +166,7 @@ const Community = () => {
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-20">
           <h2 className="text-xs font-bold text-[#D90416] uppercase tracking-[0.4em] mb-4">Insights</h2>
-          <h3 className="text-3xl md:text-5xl font-bold playfair-display text-gray-900">Curated Wisdom</h3>
+          <h3 className="text-3xl md:text-5xl font-bold canela text-gray-900">Curated Wisdom</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -198,7 +198,7 @@ const Community = () => {
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] -ml-32 -mb-32"></div>
 
           <div className="relative z-10">
-            <h3 className="text-3xl md:text-6xl font-bold playfair-display mb-8">Join the Conversation</h3>
+            <h3 className="text-3xl md:text-6xl font-bold canela mb-8">Join the Conversation</h3>
             <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
               Apply now for exclusive access to our community portal, discussion forums, and member-only events.
             </p>

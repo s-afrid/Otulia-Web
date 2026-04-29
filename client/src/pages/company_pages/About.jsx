@@ -11,19 +11,19 @@ const About = () => {
             />
             <Navbar />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 className="text-4xl font-playfair font-bold text-gray-900 mb-8 text-center">About Otulia</h1>
+                <h1 className="text-4xl canela font-bold text-gray-900 mb-8 text-center">About Otulia</h1>
 
                 <div className="prose prose-lg max-w-none text-gray-600">
                     <p className="mb-6">
                         Otulia is the premier digital marketplace for the world's most exclusive assets. We bridge the gap between discerning collectors and verified sellers of luxury vehicles, premium estates, superyachts, and rare collectibles.
                     </p>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">Our Mission</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">Our Mission</h2>
                     <p>
                         To create a seamless, trusted, and sophisticated ecosystem for high-value asset transactions. We believe that acquiring luxury should be as exceptional as the asset itself—transparent, secure, and effortless.
                     </p>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">What We Offer</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">What We Offer</h2>
                     <p>
                         From the roar of a V12 engine to the silence of a private island, Otulia curates a diverse portfolio of excellence. Our platform hosts verified listings for:
                     </p>
@@ -34,12 +34,12 @@ const About = () => {
                         <li><strong>Premium Motorcycles:</strong> High-performance bikes for the enthusiast.</li>
                     </ul>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">Trust & Verification</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">Trust & Verification</h2>
                     <p>
                         Integrity is the cornerstone of our community. We employ rigorous verification processes for both sellers and assets to ensure that every listing on Otulia meets our high standards of authenticity and quality.
                     </p>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">Join Our Community</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">Join Our Community</h2>
                     <p>
                         Whether you are looking to acquire your next masterpiece or list an asset for a global audience, Otulia provides the tools and network to make it happen.
                     </p>

@@ -33,7 +33,7 @@ const DescriptionSidebar = ({ isOpen, onClose, description }) => {
         className={`fixed top-0 right-0 h-full w-full md:w-[450px] bg-white shadow-2xl z-[101] transform transition-transform duration-300 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold playfair-display text-black">Description</h2>
+          <h2 className="text-xl font-bold canela text-black">Description</h2>
           <button
             aria-label="Close description"
             onClick={onClose}

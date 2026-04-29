@@ -157,7 +157,7 @@ const Hero = () => {
               CURATED GLOBALLY · EST. 2025
             </p>
             
-            <h1 className='text-white text-[clamp(1.5rem,6vw,3.5rem)] md:text-[clamp(2rem,5.5vw,4.5rem)] lg:text-6xl playfair-display mb-6 md:mb-8 leading-tight font-normal whitespace-nowrap'>
+            <h1 className='text-white text-[clamp(1.5rem,6vw,3.5rem)] md:text-[clamp(2rem,5.5vw,4.5rem)] lg:text-6xl canela mb-6 md:mb-8 leading-tight font-normal whitespace-nowrap'>
               Discover Exceptional Assets
             </h1>
             

@@ -797,7 +797,7 @@ const Inventory = () => {
                             {/* Header Row */}
                             <div className="flex justify-between items-end shrink-0 mb-0">
                                 <div>
-                                    <h2 className="text-xl font-bold text-gray-400 font-medium mb-0 leading-tight">Welcome back, <span className="text-gray-900 font-playfair font-bold">{user?.name?.split(' ')[0] || user?.name || 'Md Riyaz'}</span> 👋</h2>
+                                    <h2 className="text-xl font-bold text-gray-400 font-medium mb-0 leading-tight">Welcome back, <span className="text-gray-900 canela font-bold">{user?.name?.split(' ')[0] || user?.name || 'Md Riyaz'}</span> 👋</h2>
                                 </div>
                             </div>
 
@@ -867,7 +867,7 @@ const Inventory = () => {
                                 <div className="flex-[2] bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-2 shrink-0 relative z-10">
                                         <div className="flex flex-col gap-2">
-                                            <h4 className="text-[16px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Views vs Leads Over Time</h4>
+                                            <h4 className="text-[16px] font-bold text-gray-900 canela tracking-wide leading-none">Views vs Leads Over Time</h4>
                                             <div className="flex gap-4">
                                                 <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#D48D2A]"></div><span className="text-[9px] font-bold text-gray-500 capitalize">Views</span></div>
                                                 <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#1E3B70]"></div><span className="text-[9px] font-bold text-gray-500 capitalize">Leads</span></div>
@@ -903,7 +903,7 @@ const Inventory = () => {
                                 
                                 {/* Right Donut */}
                                 <div className="flex-1 bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-w-[320px]">
-                                    <h4 className="text-[16px] font-bold text-gray-900 font-playfair tracking-wide mb-3 shrink-0">Leads by Asset Category</h4>
+                                    <h4 className="text-[16px] font-bold text-gray-900 canela tracking-wide mb-3 shrink-0">Leads by Asset Category</h4>
                                     <div className="flex-1 flex items-center justify-between min-h-0 pl-1 pr-3">
                                         <div className="w-[140px] h-full flex items-center justify-center relative shrink-0">
                                             <svg viewBox="0 0 100 100" className="w-[125%] transform -rotate-90">
@@ -943,7 +943,7 @@ const Inventory = () => {
                                 {/* Top Assets Table */}
                                 <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-3">
-                                        <h4 className="text-[15px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Top Performing Assets</h4>
+                                        <h4 className="text-[15px] font-bold text-gray-900 canela tracking-wide leading-none">Top Performing Assets</h4>
                                         <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
                                     </div>
                                     <div className="flex-1 overflow-auto custom-scrollbar pr-1 -mx-2 px-2">
@@ -980,7 +980,7 @@ const Inventory = () => {
                                 {/* Leads Source Donut */}
                                 <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-0">
-                                        <h4 className="text-[15px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Leads Source</h4>
+                                        <h4 className="text-[15px] font-bold text-gray-900 canela tracking-wide leading-none">Leads Source</h4>
                                         <button onClick={() => setActiveTab('analytics')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
                                     </div>
                                     <div className="flex-1 flex items-center justify-between z-10 px-0 mt-3 -ml-1">
@@ -1014,7 +1014,7 @@ const Inventory = () => {
                                 <div className="flex-[1.2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
                                     <div className="flex justify-between items-start mb-2 shrink-0">
                                         <div className="flex flex-col">
-                                            <h4 className="text-[15px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Conversion Rate</h4>
+                                            <h4 className="text-[15px] font-bold text-gray-900 canela tracking-wide leading-none">Conversion Rate</h4>
                                             <span className="text-[32px] font-medium text-gray-900 mt-2 tracking-tight leading-none">5.8%</span>
                                             <span className="text-[10px] font-bold text-emerald-500 mt-2 flex items-center gap-1"><FiTrendingUp className="text-[11px]"/> 2.3% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
@@ -1050,7 +1050,7 @@ const Inventory = () => {
                             <div className="flex gap-5 flex-[0.8] min-h-[140px] shrink-0">
                                 <div className="flex-[2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 pb-1">
-                                        <h4 className="text-[16px] font-bold text-gray-900 font-playfair tracking-wide leading-none mt-1">Recent Activity</h4>
+                                        <h4 className="text-[16px] font-bold text-gray-900 canela tracking-wide leading-none mt-1">Recent Activity</h4>
                                         <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase tracking-widest whitespace-nowrap mt-1">View all activity</button>
                                     </div>
                                     <div className="space-y-[8px] flex-1 overflow-auto custom-scrollbar pr-2 mt-2">
@@ -1068,7 +1068,7 @@ const Inventory = () => {
                                 </div>
                                 <div className="flex-[1.1] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 pb-1 mt-1">
-                                        <h4 className="text-[16px] font-bold text-gray-900 font-playfair tracking-wide leading-none">Assets Overview</h4>
+                                        <h4 className="text-[16px] font-bold text-gray-900 canela tracking-wide leading-none">Assets Overview</h4>
                                         <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase whitespace-nowrap">Manage Assets</button>
                                     </div>
                                     <div className="flex justify-between items-start mt-4 px-1 pb-2">
@@ -1210,7 +1210,7 @@ const Inventory = () => {
                                             {/* Card Body */}
                                             <div className="p-6 flex-1 flex flex-col">
                                                 <p className="text-[10px] text-[#D48D2A] uppercase font-black tracking-widest mb-1">{categoryName}</p>
-                                                <h3 className="text-xl font-bold text-gray-900 mb-2 truncate font-playfair" title={item.propertyName || item.yachtName || item.name || item.title || `${item.make || ''} ${item.model || ''}`.trim()}>{item.propertyName || item.yachtName || item.name || item.title || `${item.make || ''} ${item.model || ''}`.trim() || 'Unnamed Asset'}</h3>
+                                                <h3 className="text-xl font-bold text-gray-900 mb-2 truncate canela" title={item.propertyName || item.yachtName || item.name || item.title || `${item.make || ''} ${item.model || ''}`.trim()}>{item.propertyName || item.yachtName || item.name || item.title || `${item.make || ''} ${item.model || ''}`.trim() || 'Unnamed Asset'}</h3>
                                                 <div className="flex justify-between items-end mb-5">
                                                     <p className="text-xl font-black text-gray-900">${numberWithCommas(item.price)}</p>
                                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Est. Value</p>
@@ -1356,7 +1356,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
                                             <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Total Leads</span>
-                                            <span className="text-2xl font-bold text-gray-900 font-playfair leading-none mt-1">{numberWithCommas(data?.stats?.totalLeads || 0)}</span>
+                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{numberWithCommas(data?.stats?.totalLeads || 0)}</span>
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUsers className="text-sm" /></div>
                                     </div>
@@ -1367,7 +1367,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
                                             <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">New Leads</span>
-                                            <span className="text-2xl font-bold text-gray-900 font-playfair leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='New').length}</span>
+                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='New').length}</span>
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUser className="text-sm" /></div>
                                     </div>
@@ -1378,7 +1378,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
                                             <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Qualified Leads</span>
-                                            <span className="text-2xl font-bold text-gray-900 font-playfair leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='Qualified').length}</span>
+                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='Qualified').length}</span>
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-emerald-50 justify-center text-emerald-600 flex items-center shrink-0 border border-emerald-100"><FiCheckCircle className="text-sm" /></div>
                                     </div>
@@ -1389,7 +1389,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
                                             <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Conversion Rate</span>
-                                            <span className="text-2xl font-bold text-gray-900 font-playfair leading-none mt-1">{data?.stats?.totalViews ? ((data?.stats?.totalLeads / data?.stats?.totalViews) * 100).toFixed(1) : '0.0'}%</span>
+                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{data?.stats?.totalViews ? ((data?.stats?.totalLeads / data?.stats?.totalViews) * 100).toFixed(1) : '0.0'}%</span>
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-purple-50 justify-center text-purple-600 flex items-center shrink-0 border border-purple-100"><FiActivity className="text-sm" /></div>
                                     </div>
@@ -1601,7 +1601,7 @@ const Inventory = () => {
                                 {/* Performance Trend */}
                                 <div className="flex-[1.5] bg-white rounded-[1.25rem] p-5 pb-3 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 z-10 shrink-0">
-                                        <h3 className="text-[16px] font-bold text-gray-900 font-playfair">Performance Trend</h3>
+                                        <h3 className="text-[16px] font-bold text-gray-900 canela">Performance Trend</h3>
                                         <div className="flex items-center gap-8">
                                             <div className="flex items-center gap-5 text-[10px] font-black uppercase tracking-widest text-gray-500">
                                                 <div className="flex items-center gap-1.5"><div className="w-[12px] h-[3px] rounded-full bg-[#D48D2A]"></div>VIEWS</div>
@@ -1678,7 +1678,7 @@ const Inventory = () => {
                                 {/* Leads by Location */}
                                 <div className="flex-1 bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[380px]">
                                     <div className="flex justify-between items-center mb-3">
-                                        <h3 className="text-[16px] font-bold text-gray-900 font-playfair">Leads by Location</h3>
+                                        <h3 className="text-[16px] font-bold text-gray-900 canela">Leads by Location</h3>
                                         <button className="px-3 py-1.5 text-[10px] rounded-lg border border-gray-200 bg-white flex items-center gap-2 font-bold text-gray-600 hover:bg-gray-50 shadow-sm"><FiMap className="text-gray-400"/> View Map</button>
                                     </div>
                                     
@@ -1735,7 +1735,7 @@ const Inventory = () => {
                             <div className="flex gap-4 flex-1 min-h-0 pb-1 shrink-0">
                                 {/* Leads by Source */}
                                 <div className="flex-[1] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[260px]">
-                                    <h3 className="text-[16px] font-bold text-gray-900 font-playfair mb-3 leading-none">Leads by Source</h3>
+                                    <h3 className="text-[16px] font-bold text-gray-900 canela mb-3 leading-none">Leads by Source</h3>
                                     <div className="flex flex-col flex-1 relative items-center justify-center">
                                         <div className="w-full flex-1 relative flex items-center justify-center -mt-2">
                                             <ResponsiveContainer width="100%" height="100%">
@@ -1756,7 +1756,7 @@ const Inventory = () => {
                                                 </PieChart>
                                             </ResponsiveContainer>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                <span className="text-[22px] font-bold text-gray-900 font-playfair leading-none">1,248</span>
+                                                <span className="text-[22px] font-bold text-gray-900 canela leading-none">1,248</span>
                                                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 mt-1">Total Leads</span>
                                             </div>
                                         </div>
@@ -1777,7 +1777,7 @@ const Inventory = () => {
                                 {/* Top Performing Assets */}
                                 <div className="flex-[1.5] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col overflow-hidden min-w-[340px]">
                                     <div className="flex justify-between items-center mb-3">
-                                        <h3 className="text-[16px] font-bold text-gray-900 font-playfair">Top Performing Assets</h3>
+                                        <h3 className="text-[16px] font-bold text-gray-900 canela">Top Performing Assets</h3>
                                         <button className="px-3 py-1 text-[10px] rounded-lg border border-gray-200 bg-white font-bold text-gray-600 hover:bg-gray-50 shadow-sm transition-colors">View All</button>
                                     </div>
                                     <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
@@ -1818,7 +1818,7 @@ const Inventory = () => {
                                 {/* Lead Funnel */}
                                 <div className="flex-[1.5] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col relative overflow-hidden min-w-[340px]">
                                     <div className="flex justify-between items-center mb-4 shrink-0 z-10">
-                                        <h3 className="text-[16px] font-bold text-gray-900 font-playfair leading-none">Lead Funnel</h3>
+                                        <h3 className="text-[16px] font-bold text-gray-900 canela leading-none">Lead Funnel</h3>
                                         <button className="px-3 py-1 text-[10px] rounded-lg border border-gray-200 bg-white font-bold text-gray-600 hover:bg-gray-50 shadow-sm transition-colors">View Funnel</button>
                                     </div>
                                     <div className="flex-1 flex min-h-0 relative z-10 items-center justify-between">
@@ -1862,7 +1862,7 @@ const Inventory = () => {
                                 <div className="flex-[3] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-h-0 relative">
                                     <div className="flex justify-between items-start mb-4 shrink-0">
                                         <div>
-                                            <h3 className="text-[15px] font-bold text-gray-900 mb-1 font-playfair">Visibility Controls</h3>
+                                            <h3 className="text-[15px] font-bold text-gray-900 mb-1 canela">Visibility Controls</h3>
                                             <p className="text-[10px] text-gray-400 font-medium border-l-[3px] border-[#D48D2A] pl-2 -ml-[3px]">Manage profile visibility.</p>
                                         </div>
                                         <button className="px-4 py-1.5 border border-gray-200 rounded-[8px] text-[9px] font-bold text-gray-700 bg-white hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors uppercase tracking-widest"><FiLayout className="text-gray-400"/> Manage Listings</button>
@@ -1879,7 +1879,7 @@ const Inventory = () => {
                                                     
                                                     <div className="flex-1 flex justify-between items-center pr-2">
                                                         <div className="flex flex-col">
-                                                            <h4 className="text-[13px] font-bold text-gray-900 font-playfair leading-none mb-1.5">{assetName}</h4>
+                                                            <h4 className="text-[13px] font-bold text-gray-900 canela leading-none mb-1.5">{assetName}</h4>
                                                             <div className="flex items-center gap-2 text-[8px] font-black text-gray-500 uppercase tracking-widest">
                                                                 <FiPackage/> {cat} <span className="text-gray-300 mx-0.5">•</span> ${numberWithCommas(item.price || 0)}
                                                             </div>
@@ -1918,7 +1918,7 @@ const Inventory = () => {
                                 <div className="flex-[1.5] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col relative overflow-hidden">
                                      <div className="flex justify-between items-start mb-4 shrink-0">
                                          <div>
-                                            <h3 className="text-[15px] font-bold text-gray-900 mb-1 font-playfair">Performance</h3>
+                                            <h3 className="text-[15px] font-bold text-gray-900 mb-1 canela">Performance</h3>
                                             <p className="text-[10px] text-gray-400 font-medium border-l-[3px] border-[#8B5CF6] pl-2 -ml-[3px]">Public listing insights.</p>
                                          </div>
                                      </div>
@@ -1934,7 +1934,7 @@ const Inventory = () => {
                                                     <span className="text-[8px] font-black uppercase text-gray-400 tracking-widest">{stat.label}</span>
                                                     <stat.icon className="text-[12px] text-gray-300 group-hover:text-[#D48D2A] transition-colors" />
                                                 </div>
-                                                <span className="text-[18px] font-playfair font-bold text-gray-900 leading-none my-1">{stat.value}</span>
+                                                <span className="text-[18px] canela font-bold text-gray-900 leading-none my-1">{stat.value}</span>
                                                 <span className="text-[8px] font-black flex items-center gap-0.5 tracking-widest mt-1 text-emerald-500 uppercase">
                                                     <FiTrendingUp className="text-[9px]"/> {stat.change}
                                                 </span>
@@ -1948,7 +1948,7 @@ const Inventory = () => {
                             <div className="flex-1 bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-h-0 relative">
                                 <div className="flex justify-between items-start mb-4 shrink-0 px-1">
                                     <div>
-                                        <h3 className="text-[16px] font-bold text-gray-900 mb-1 font-playfair">Public Preview</h3>
+                                        <h3 className="text-[16px] font-bold text-gray-900 mb-1 canela">Public Preview</h3>
                                         <p className="text-[10px] text-gray-400 font-medium border-l-[3px] border-[#10B981] pl-2 -ml-[3px]">This is how your listings appear to potential buyers on the marketplace.</p>
                                     </div>
                                     <button className="px-4 py-1.5 border border-gray-200 rounded-[8px] text-[9px] font-bold text-gray-700 bg-white hover:bg-gray-50 flex items-center gap-1.5 shadow-sm transition-colors uppercase tracking-widest">View Public Profile <FiExternalLink className="text-[11px] text-gray-400"/></button>
@@ -1972,7 +1972,7 @@ const Inventory = () => {
                                                 
                                                 <div className="flex-1 py-1 pr-1 flex">
                                                     <div className="flex-[2] flex flex-col border-r border-gray-100 pr-6">
-                                                        <h2 className="text-[20px] font-bold text-gray-900 font-playfair leading-tight mb-1 truncate" title={assetName}>{assetName}</h2>
+                                                        <h2 className="text-[20px] font-bold text-gray-900 canela leading-tight mb-1 truncate" title={assetName}>{assetName}</h2>
                                                         <p className="text-[18px] font-black text-[#D48D2A] tracking-wider mb-4 leading-none">${numberWithCommas(item.price || 0)}</p>
                                                         
                                                         <div className="flex gap-4 mb-4">
@@ -2018,7 +2018,7 @@ const Inventory = () => {
                                                     </div>
                                                     
                                                     <div className="flex-1 pl-6 flex flex-col justify-center">
-                                                        <h4 className="text-[13px] font-bold text-gray-900 font-playfair mb-0.5">Interested in this asset?</h4>
+                                                        <h4 className="text-[13px] font-bold text-gray-900 canela mb-0.5">Interested in this asset?</h4>
                                                         <p className="text-[9px] text-gray-400 font-medium mb-3 border-b border-gray-50 pb-3">Contact the seller directly.</p>
                                                         
                                                         <div className="space-y-2.5">
@@ -2053,7 +2053,7 @@ const Inventory = () => {
                                     <div className="flex flex-col flex-1">
                                         <h3 className="text-[12px] font-bold text-gray-500 uppercase tracking-widest mb-1">Current Plan</h3>
                                         <div className="flex items-center gap-3 mb-1.5">
-                                            <h4 className="text-[26px] font-bold text-gray-900 font-playfair leading-none">{user?.plan || 'Premium Basic'}</h4>
+                                            <h4 className="text-[26px] font-bold text-gray-900 canela leading-none">{user?.plan || 'Premium Basic'}</h4>
                                             <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[9px] font-black uppercase tracking-widest border border-emerald-100">ACTIVE</span>
                                         </div>
                                         <p className="text-[11px] text-gray-500 font-medium mb-6">You're on the {user?.plan || 'Premium Basic'} plan.</p>
@@ -2113,7 +2113,7 @@ const Inventory = () => {
                                 <div className="flex-[3] flex flex-col min-h-0 relative">
                                     <div className="flex justify-between items-center mb-2 shrink-0 px-2 mt-1">
                                         <div className="flex flex-col gap-0.5">
-                                            <h3 className="text-[18px] font-bold text-gray-900 font-playfair">Available Plans</h3>
+                                            <h3 className="text-[18px] font-bold text-gray-900 canela">Available Plans</h3>
                                             <div className="text-[11px] text-gray-500 font-medium">Choose the best plan to grow your business.</div>
                                         </div>
                                         <div className="bg-white border border-gray-200 p-1 rounded-xl flex shadow-sm opacity-90 scale-90 origin-right transition-colors">
@@ -2145,7 +2145,7 @@ const Inventory = () => {
                                                     <FiPackage className="text-sm" />
                                                 </div>
                                             </div>
-                                            <h4 className="text-[15px] font-bold text-gray-900 text-center font-playfair mb-0.5 shrink-0">Premium Basic</h4>
+                                            <h4 className="text-[15px] font-bold text-gray-900 text-center canela mb-0.5 shrink-0">Premium Basic</h4>
                                             <div className="flex justify-center items-end gap-0.5 py-0.5 shrink-0">
                                                 <span className="text-[26px] font-black text-gray-900 leading-none tracking-tight">${billingCycle === 'Monthly' ? '99' : '79'}</span>
                                                 <span className="text-[9px] font-bold text-gray-400 mb-1.5">/month</span>
@@ -2177,7 +2177,7 @@ const Inventory = () => {
                                                     <FiBriefcase className="text-sm" />
                                                 </div>
                                             </div>
-                                            <h4 className="text-[15px] font-bold text-gray-900 text-center font-playfair mb-0.5 shrink-0">Business VIP</h4>
+                                            <h4 className="text-[15px] font-bold text-gray-900 text-center canela mb-0.5 shrink-0">Business VIP</h4>
                                             <div className="flex justify-center items-end gap-0.5 py-0.5 shrink-0">
                                                 <span className="text-[26px] font-black text-gray-900 leading-none tracking-tight">${billingCycle === 'Monthly' ? '299' : '239'}</span>
                                                 <span className="text-[9px] font-bold text-gray-400 mb-1.5">/month</span>
@@ -2209,7 +2209,7 @@ const Inventory = () => {
                                                     <FiGlobe className="text-sm" />
                                                 </div>
                                             </div>
-                                            <h4 className="text-[15px] font-bold text-gray-900 text-center font-playfair mb-0.5 shrink-0">Enterprise Elite</h4>
+                                            <h4 className="text-[15px] font-bold text-gray-900 text-center canela mb-0.5 shrink-0">Enterprise Elite</h4>
                                             <div className="flex justify-center items-end gap-0.5 py-0.5 shrink-0">
                                                 <span className="text-[26px] font-black text-gray-900 leading-none tracking-tight">${billingCycle === 'Monthly' ? '599' : '479'}</span>
                                                 <span className="text-[9px] font-bold text-gray-400 mb-1.5">/month</span>
@@ -2238,7 +2238,7 @@ const Inventory = () => {
                                 <div className="flex-[1.2] flex flex-col gap-3 min-w-0">
                                      {/* Why Upgrade Block */}
                                      <div className="bg-white rounded-[1.5rem] p-5 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-100 flex-1 overflow-hidden flex flex-col">
-                                         <h4 className="text-[15px] font-bold text-gray-900 font-playfair mb-4 shrink-0">Why Upgrade?</h4>
+                                         <h4 className="text-[15px] font-bold text-gray-900 canela mb-4 shrink-0">Why Upgrade?</h4>
                                          <div className="flex flex-col gap-3.5 flex-1 overflow-hidden justify-center">
                                              <div className="flex gap-3">
                                                 <div className="w-7 h-7 rounded-lg bg-[#FFF8F0] shrink-0 flex justify-center items-center shadow-sm border border-[#F2E8DB]"><FiTrendingUp className="text-[12px] text-[#D48D2A]"/></div>
@@ -2273,7 +2273,7 @@ const Inventory = () => {
                                      
                                      {/* Need Help Choosing Block */}
                                      <div className="bg-white rounded-[1.5rem] p-5 shadow-[0_2px_15px_rgba(0,0,0,0.02)] border border-gray-100 shrink-0">
-                                         <h4 className="text-[14px] font-bold text-gray-900 font-playfair mb-1">Need help choosing?</h4>
+                                         <h4 className="text-[14px] font-bold text-gray-900 canela mb-1">Need help choosing?</h4>
                                          <p className="text-[10px] text-gray-500 mb-3 leading-relaxed">Our team is here to help you find the perfect plan.</p>
                                          <button 
                                             onClick={() => {
@@ -2808,7 +2808,7 @@ const Inventory = () => {
                             <div className="w-16 h-16 rounded-2xl bg-[#FDF8F0] border border-[#F2E8DB] flex items-center justify-center mx-auto mb-4 text-[#D48D2A]">
                                 <FiCreditCard className="text-3xl" />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 font-playfair mb-1">Upgrade to {upgradePlan}</h3>
+                            <h3 className="text-xl font-bold text-gray-900 canela mb-1">Upgrade to {upgradePlan}</h3>
                             <p className="text-gray-400 text-sm">
                                 {upgradePlan === 'Business VIP' ? '$299.00 / month' : '$99.00 / month'}
                             </p>

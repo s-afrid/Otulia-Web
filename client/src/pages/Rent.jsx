@@ -123,7 +123,7 @@ const Rent = () => {
       <Navbar hideSearch={true} />
       {/* Simple Hero */}
       <div className="bg-black text-white py-16 px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-playfair mb-4 font-serif">Rent Exclusive Assets</h1>
+        <h1 className="text-4xl md:text-5xl canela mb-4 font-serif">Rent Exclusive Assets</h1>
         <p className="text-gray-300 max-w-2xl mx-auto font-sans">Experience luxury without ownership. Choose from our premium collection of cars, estates, yachts, and bikes.</p>
       </div>
 

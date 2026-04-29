@@ -74,7 +74,7 @@ const VerificationModal = ({ onClose, onUploadSuccess }) => {
             <div className="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl relative z-10 overflow-hidden animate-in zoom-in-95">
                 <div className="p-8 border-b border-gray-100 flex justify-between items-center">
                     <div>
-                        <h3 className="text-2xl font-bold font-playfair text-gray-900">Partner Verification</h3>
+                        <h3 className="text-2xl font-bold canela text-gray-900">Partner Verification</h3>
                         <p className="text-sm text-gray-500 mt-1">Submit documents to unlock seller privileges</p>
                     </div>
                     <button onClick={onClose} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors">

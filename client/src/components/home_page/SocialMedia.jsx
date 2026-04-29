@@ -31,7 +31,7 @@ const SocialMedia = () => {
     return (
         <section className="w-full px-3 md:px-16 py-6 bg-white overflow-hidden">
             <div className="flex flex-col items-center mb-16">
-                <h2 className="text-4xl playfair-display text-black mb-10">Follow Us On Social Media</h2>
+                <h2 className="text-4xl canela text-black mb-10">Follow Us On Social Media</h2>
                 <div className="flex items-center gap-12">
                     <a href="https://www.instagram.com/otulia.in?igsh=enZpemNoNzh0ZmZx" target='_blank'>
                         <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="instagram" className="h-8 w-8 object-contain cursor-pointer hover:scale-110 transition-transform" />

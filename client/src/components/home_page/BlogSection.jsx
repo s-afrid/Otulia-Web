@@ -40,7 +40,7 @@ const BlogSection = () => {
     return (
         <section className="w-full px-3 md:px-16 py-6 bg-white">
             <div className="flex items-center justify-between mb-12">
-                <h2 className="text-4xl playfair-display text-black">Our Blog</h2>
+                <h2 className="text-4xl canela text-black">Our Blog</h2>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">

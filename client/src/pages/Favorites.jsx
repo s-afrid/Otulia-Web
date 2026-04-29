@@ -61,7 +61,7 @@ const Favorites = () => {
                 <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 border-b border-gray-200 pb-6">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <h1 className="text-3xl font-bold text-gray-900 playfair-display">My Favorites</h1>
+                            <h1 className="text-3xl font-bold text-gray-900 canela">My Favorites</h1>
                             <FiHeart className="text-red-500 text-2xl fill-current" />
                         </div>
                         <p className="text-gray-500 text-sm">

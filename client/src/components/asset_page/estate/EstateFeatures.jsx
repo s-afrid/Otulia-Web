@@ -140,7 +140,7 @@ const EstateFeatures = ({ item }) => {
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
             <div className="flex justify-between items-center p-6 border-b border-gray-100">
-              <h2 className="text-2xl font-bold playfair-display">All Property Specifications</h2>
+              <h2 className="text-2xl font-bold canela">All Property Specifications</h2>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <FiX className="text-2xl" />
               </button>
@@ -160,7 +160,7 @@ const EstateFeatures = ({ item }) => {
       {/* AMENITIES / FEATURES VISUAL GRID */}
       {item?.amenities && item.amenities.length > 0 && (
         <div className="mt-16 w-full max-w-[1400px] mx-auto border-t border-gray-100 pt-16 mb-8">
-          <h2 className="text-3xl font-bold font-playfair flex items-center gap-2 mb-2">
+          <h2 className="text-3xl font-bold canela flex items-center gap-2 mb-2">
             Features ✨
           </h2>
           <p className="text-gray-500 mb-8 montserrat text-sm">Discover the finest amenities and luxury features this property has to offer.</p>
@@ -188,7 +188,7 @@ const EstateFeatures = ({ item }) => {
           <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
               <div>
-                <h2 className="text-2xl font-bold playfair-display mb-1 flex items-center gap-2">Features ✨</h2>
+                <h2 className="text-2xl font-bold canela mb-1 flex items-center gap-2">Features ✨</h2>
                 <span className="text-xs text-gray-500 uppercase tracking-widest montserrat font-bold">{item?.amenities?.length || 0} Amenities</span>
               </div>
               <button onClick={() => setIsFeaturesModalOpen(false)} className="p-3 hover:bg-gray-100 rounded-full transition-colors">

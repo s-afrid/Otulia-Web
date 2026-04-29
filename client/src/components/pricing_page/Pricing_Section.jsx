@@ -209,7 +209,7 @@ const PricingSection = () => {
 
       {/* HEADER */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-5xl playfair-display text-black mb-4">
+        <h2 className="text-3xl md:text-5xl canela text-black mb-4">
           Choose your pricing plan
         </h2>
         <p className="text-gray-500 text-sm md:text-lg max-w-xl mx-auto mb-6">
@@ -320,7 +320,7 @@ const PricingSection = () => {
             {/* Header */}
             <div className="bg-gray-50 p-6 border-b border-gray-100 flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-bold font-playfair text-gray-800">Complete Upgrade</h3>
+                <h3 className="text-lg font-bold canela text-gray-800">Complete Upgrade</h3>
                 <p className="text-sm text-gray-500">Upgrade to {selectedPlan.name}</p>
               </div>
               <button

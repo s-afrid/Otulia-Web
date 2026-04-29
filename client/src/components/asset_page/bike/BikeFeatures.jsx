@@ -108,7 +108,7 @@ const BikeFeatures = ({ item }) => {
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
             <div className="flex justify-between items-center p-6 border-b border-gray-100">
-              <h2 className="text-2xl font-bold playfair-display">All Bike Specifications</h2>
+              <h2 className="text-2xl font-bold canela">All Bike Specifications</h2>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <FiX className="text-2xl" />
               </button>

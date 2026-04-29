@@ -11,7 +11,7 @@ const FAQ = () => {
       />
       <Navbar />
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-playfair font-bold mb-8">Frequently Asked Questions</h1>
+        <h1 className="text-4xl canela font-bold mb-8">Frequently Asked Questions</h1>
         <p className="text-gray-500">Coming soon.</p>
       </div>
     </div>

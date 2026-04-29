@@ -197,10 +197,10 @@ const Estate_Section = () => {
       <div className='bg-white'>
         <section className="w-full px-3 md:px-16 py-12 bg-white">
           <div className="flex flex-col mb-10 gap-3">
-            <h2 className="text-3xl md:text-4xl playfair-display text-black">
+            <h2 className="text-3xl md:text-4xl canela text-black">
               Popular Locations
             </h2>
-            <p className='text-lg md:text-xl text-gray-500 playfair-display'>Explore the world's most prestigious real estate destinations. From the hills of Los Angeles to the towers of Dubai, find your
+            <p className='text-lg md:text-xl text-gray-500 canela'>Explore the world's most prestigious real estate destinations. From the hills of Los Angeles to the towers of Dubai, find your
               next luxury investment.</p>
           </div>
 
@@ -221,7 +221,7 @@ const Estate_Section = () => {
                   </div>
                   <div className="flex flex-1 items-end justify-between px-4 py-2">
                     <div className="flex flex-col gap-6 md:gap-9">
-                      <h3 className="playfair-display text-lg text-black font-medium leading-tight">
+                      <h3 className="canela text-lg text-black font-medium leading-tight">
                         {item.location}
                       </h3>
                       <span className="text-[10px] font-sans text-gray-400 font-bold uppercase tracking-widest">
@@ -250,7 +250,7 @@ const Estate_Section = () => {
         <div className="w-[92%] md:w-[95%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
         <section className="w-full px-3 md:px-16 py-12 bg-white">
-          <h2 className="text-3xl md:text-4xl playfair-display text-black mb-7 text-center flex justify-between">
+          <h2 className="text-3xl md:text-4xl canela text-black mb-7 text-center flex justify-between">
             <span>Filter Properties</span>
           </h2>
           <PropertyFilterBar onFilter={handleFilter} key={filterBarKey} hideLocation={true} />
@@ -261,7 +261,7 @@ const Estate_Section = () => {
             
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div>
-                <h2 className="text-3xl md:text-5xl font-normal playfair-display text-black mb-2">
+                <h2 className="text-3xl md:text-5xl font-normal canela text-black mb-2">
                   Featured Estates
                 </h2>
                 <p className="text-sm md:text-base text-gray-500 font-sans">
@@ -282,7 +282,7 @@ const Estate_Section = () => {
                 ))
               ) : (
                 <div className="col-span-full py-40 text-center">
-                  <p className="text-2xl text-gray-300 playfair-display italic font-light">No estates found matching your criteria. Try adjusting your search!</p>
+                  <p className="text-2xl text-gray-300 canela italic font-light">No estates found matching your criteria. Try adjusting your search!</p>
                 </div>
               )}
             </div>

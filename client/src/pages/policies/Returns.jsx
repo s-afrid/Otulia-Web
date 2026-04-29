@@ -11,14 +11,14 @@ const Returns = () => {
             />
             <Navbar />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 className="text-4xl font-playfair font-bold text-gray-900 mb-8 text-center">Returns & Refund Policy</h1>
+                <h1 className="text-4xl canela font-bold text-gray-900 mb-8 text-center">Returns & Refund Policy</h1>
 
                 <div className="prose prose-lg max-w-none text-gray-600">
                     <p>
                         Due to the exclusive and high-value nature of the assets listed on Otulia, our return and refund policies are specific to each asset category and transaction type.
                     </p>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">Asset Purchases</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">Asset Purchases</h2>
                     <p>
                         <strong>Vehicles & Yachts:</strong> All sales are generally final once the title transfer process has been initiated. We strongly recommend comprehensive pre-purchase inspections. In the rare event of a significant discrepancy between the listing and the delivered asset, please contact our concierge team within 48 hours of delivery to initiate a dispute resolution process.
                     </p>
@@ -26,7 +26,7 @@ const Returns = () => {
                         <strong>Real Estate:</strong> Real estate transactions are subject to the specific terms and conditions of the purchase agreement and local property laws. Refunds of earnest money deposits are governed by the contract contingencies.
                     </p>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">Rentals & Experiences</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">Rentals & Experiences</h2>
                     <p>
                         Cancellations for rentals and booked experiences are subject to the following standard policy, unless otherwise stated in your booking agreement:
                     </p>
@@ -36,7 +36,7 @@ const Returns = () => {
                         <li><strong>Less than 14 days prior:</strong> Non-refundable.</li>
                     </ul>
 
-                    <h2 className="text-2xl font-playfair font-semibold text-gray-900 mt-8 mb-4">Resolution Center</h2>
+                    <h2 className="text-2xl canela font-semibold text-gray-900 mt-8 mb-4">Resolution Center</h2>
                     <p>
                         We are dedicated to ensuring your satisfaction. If you believe a refund is warranted, please submit a claim through our Support Center. Each case is reviewed by a senior case manager.
                     </p>

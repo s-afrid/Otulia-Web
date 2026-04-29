@@ -65,7 +65,7 @@ const SharedFilterBar = ({ onSearch, initialLocation = '' }) => {
 
                 {/* LABEL */}
                 <div className="w-full lg:w-auto text-center lg:text-left border-b lg:border-r lg:border-b-0 border-gray-100 pb-2 lg:pb-0 lg:pr-6">
-                    <span className="font-playfair text-lg text-black whitespace-nowrap font-bold">
+                    <span className="canela text-lg text-black whitespace-nowrap font-bold">
                         Filter :
                     </span>
                 </div>
