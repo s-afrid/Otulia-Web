@@ -97,14 +97,14 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
           ) : (
             <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
               {!isAuthenticated && !hideLogin && (
-                <LoginButton isDarkText={isDarkText} />
+                <LoginButton isDark={isDarkText} />
               )}
               {isAuthenticated && (
                 <>
                   <div className="hidden lg:block">
-                    <ProfileDropdown text={isDarkText ? "text-black" : "text-white"} />
+                    <ProfileDropdown isDark={isDarkText} />
                   </div>
-                  <Cart text={isDarkText ? "text-black" : "text-white"} />
+                  <Cart isDark={isDarkText} />
                 </>
               )}
             </div>

@@ -15,7 +15,7 @@ const Cart = ({ isDark }) => {
     <button
       type="button"
       onClick={() => navigate('/cart')}
-      className={`relative flex items-center justify-center transition-all duration-300 focus:outline-none cursor-pointer group ${colorClass}`}
+      className={`relative flex items-center justify-center transition-all duration-300 focus:outline-none cursor-pointer group ${colorClass} hover:text-[#D48D2A] active:scale-95`}
       aria-label="View Shopping Bag"
     >
       {/* Premium Bag Icon */}

@@ -64,7 +64,7 @@ const NavbarMobile = () => {
               </div>
             ) : (
               <div className="mt-2">
-                <LoginButton />
+                <LoginButton isDark={true} />
               </div>
             )}
           </>
