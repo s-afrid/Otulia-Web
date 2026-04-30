@@ -9,7 +9,7 @@ const Cars_Hero = () => {
       <img className='absolute top-0 left-0 -z-10 h-full w-full object-cover' src={heroUrl} alt='hero_car' />
       
       {/* Clearer Overlay */}
-      <div className='absolute inset-0 bg-black/10 -z-5' />
+      <div className='absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent -z-5' />
 
       <div className='relative h-full w-full flex flex-col justify-center px-[6%] md:px-[8%] z-10 pt-20'>
         <div className='max-w-2xl flex flex-col gap-6 mb-16'>
