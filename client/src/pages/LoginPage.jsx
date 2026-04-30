@@ -84,7 +84,7 @@ const LoginPage = () => {
           <img
             src="/logos/otulia_logo_black.png"
             alt="Otulia"
-            className="h-10 object-contain"
+            className="h-[3.30625rem] object-contain"
             onError={(e) => {
               e.target.style.display = "none";
               e.target.nextSibling.style.display = "block";
@@ -93,7 +93,7 @@ const LoginPage = () => {
           {/* Fallback text logo */}
           <div style={{ display: "none" }} className="flex items-center gap-1">
             <span
-              className="text-2xl font-black tracking-tight text-black"
+              className="text-[1.98375rem] font-black tracking-tight text-black"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               OTULIA
@@ -102,7 +102,7 @@ const LoginPage = () => {
         </div>
 
         {/* Tagline */}
-        <p className="text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-8">
+        <p className="text-center text-[13px] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-8">
           The World of Luxury
         </p>
 
@@ -127,7 +127,7 @@ const LoginPage = () => {
 
         {/* Social Buttons */}
         <div className="space-y-3 mb-5">
-          <div className="w-full">
+          <div className="w-[85%] mx-auto">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
@@ -136,11 +136,12 @@ const LoginPage = () => {
               width="100%"
               text="continue_with"
               shape="rectangular"
+              style={{ gap: "4px" }}
             />
           </div>
           <button
             type="button"
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-lg text-sm font-medium text-black hover:bg-gray-50 transition-colors"
+            className="w-[85%] mx-auto flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-lg text-sm font-medium text-black hover:bg-gray-50 transition-colors"
           >
             <FaApple className="w-5 h-5" />
             Continue with Apple
@@ -148,14 +149,14 @@ const LoginPage = () => {
         </div>
 
         {/* Divider */}
-        <div className="relative flex items-center my-5">
-          <div className="flex-grow border-t border-gray-200"></div>
-          <span className="flex-shrink mx-4 text-gray-400 text-xs">or</span>
-          <div className="flex-grow border-t border-gray-200"></div>
+        <div className="relative flex items-center my-5 h-12 w-[85%] mx-auto">
+          <div className="grow border-t border-gray-200"></div>
+          <span className="shrink mx-4 text-gray-400 text-xs">or</span>
+          <div className="grow border-t border-gray-200"></div>
         </div>
 
         {/* Email Form */}
-        <form onSubmit={handleContinue} className="space-y-4">
+        <form onSubmit={handleContinue} className="space-y-4 w-[85%] mx-auto">
           <div className="relative">
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
               <FaEnvelope className="w-4 h-4 text-gray-400" />
@@ -198,7 +199,7 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            className="w-full flex items-center justify-between py-3.5 px-5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-900 transition-colors"
+            className="w-full flex items-center justify-center gap-x-2 py-3.5 px-5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-900 transition-colors"
           >
             <span>Continue</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -226,7 +227,7 @@ const LoginPage = () => {
         </p>
 
         {/* Footer links */}
-        <div className="mt-auto pt-10 flex gap-5 text-[10px] text-gray-400">
+        <div className="mt-auto pt-10 flex gap-5 text-[10px] text-gray-400 justify-center">
           <a href="#" className="hover:text-black transition-colors">
             Terms of Service
           </a>
@@ -282,20 +283,32 @@ const LoginPage = () => {
 
         {/* Bottom copy */}
         <div className="absolute bottom-12 left-10 right-16">
-          <p className="text-white/60 text-xs uppercase tracking-[0.2em] font-medium mb-3">
+          <p
+            className="text-white/60 text-xs uppercase tracking-[0.2em] font-medium mb-3"
+            style={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 500,
+              letterSpacing: "0.2em",
+            }}
+          >
             Curated Luxury
           </p>
           <h2
-            className="text-white text-4xl lg:text-5xl font-bold leading-tight mb-3"
+            className="text-white text-5xl lg:text-5xl font-bold leading-tight mb-3"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Extraordinary
+            <span className="font-bold">Extraordinary</span>
             <br />
-            <span style={{ color: "#C8922A", fontStyle: "italic" }}>
+            <span
+              style={{ color: "#C8922A", fontStyle: "italic", fontWeight: 700 }}
+            >
               Lives Begin Here
             </span>
           </h2>
-          <p className="text-white/70 text-sm max-w-xs leading-relaxed">
+          <p
+            className="text-white/70 text-sm max-w-xs leading-relaxed"
+            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 300 }}
+          >
             Explore exceptional properties, iconic cars,
             <br />
             luxury yachts and private jets.
