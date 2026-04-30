@@ -5,6 +5,7 @@ import TrendingListings from '../components/home_page/TrendingListings'
 import MostPopularAssets from '../components/home_page/MostPopularAssets'
 import BlogSection from '../components/home_page/BlogSection'
 import BrandCarousel from '../components/home_page/BrandCarousel'
+import PopularLinks from '../components/home_page/PopularLinks'
 import SEO from '../components/SEO'
 
 
@@ -24,7 +25,7 @@ const Home = () => {
       <MostPopularAssets />
       <BlogSection />
       <BrandCarousel />
-
+      <PopularLinks />
 
     </div>
   )

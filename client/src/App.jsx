@@ -41,6 +41,42 @@ const Shipping = lazy(() => import("./pages/policies/Shipping"));
 const Returns = lazy(() => import("./pages/policies/Returns"));
 const CookiePolicy = lazy(() => import("./pages/policies/CookiePolicy"));
 
+// Cities & Regions Pages (10)
+const PrivateIslandsPage = lazy(() => import("./pages/listings/cities/PrivateIslandsPage"));      
+const BalearicIslandsPage = lazy(() => import("./pages/listings/cities/BalearicIslandsPage"));
+const CostaDelSolPage = lazy(() => import("./pages/listings/cities/CostaDelSolPage"));
+const FrenchRivieraPage = lazy(() => import("./pages/listings/cities/FrenchRivieraPage"));
+const TuscanyPage = lazy(() => import("./pages/listings/cities/TuscanyPage"));
+const AmsterdamPage = lazy(() => import("./pages/listings/cities/AmsterdamPage"));
+const AtlantaPage = lazy(() => import("./pages/listings/cities/AtlantaPage"));
+const AustinPage = lazy(() => import("./pages/listings/cities/AustinPage"));
+const BenehavisPage = lazy(() => import("./pages/listings/cities/BenehavisPage"));
+const BeverlyHillsPage = lazy(() => import("./pages/listings/cities/BeverlyHillsPage"));
+
+// Countries Pages (10)
+const AustraliaPage = lazy(() => import("./pages/listings/countries/AustraliaPage"));
+const BritishVirginIslandsPage = lazy(() => import("./pages/listings/countries/BritishVirginIslandsPage"));
+const CanadaPage = lazy(() => import("./pages/listings/countries/CanadaPage"));
+const CaymanIslandsPage = lazy(() => import("./pages/listings/countries/CaymanIslandsPage"));
+const FrancePage = lazy(() => import("./pages/listings/countries/FrancePage"));
+const GermanyPage = lazy(() => import("./pages/listings/countries/GermanyPage"));
+const GreecePage = lazy(() => import("./pages/listings/countries/GreecePage"));
+const IndiaPage = lazy(() => import("./pages/listings/countries/IndiaPage"));
+const IrelandPage = lazy(() => import("./pages/listings/countries/IrelandPage"));
+const MonacoPage = lazy(() => import("./pages/listings/countries/MonacoPage"));
+
+// Car Pages (10)
+const FerrariPage = lazy(() => import("./pages/listings/cars/FerrariPage"));
+const AstonMartinPage = lazy(() => import("./pages/listings/cars/AstonMartinPage"));
+const KoenigseggPage = lazy(() => import("./pages/listings/cars/KoenigseggPage"));
+const LamborghiniPage = lazy(() => import("./pages/listings/cars/LamborghiniPage"));
+const BugattiPage = lazy(() => import("./pages/listings/cars/BugattiPage"));
+const MaseratiPage = lazy(() => import("./pages/listings/cars/MaseratiPage"));
+const PaganiPage = lazy(() => import("./pages/listings/cars/PaganiPage"));
+const PorschePage = lazy(() => import("./pages/listings/cars/PorschePage"));
+const RollsRoycePage = lazy(() => import("./pages/listings/cars/RollsRoycePage"));
+const BugattiChironPage = lazy(() => import("./pages/listings/cars/BugattiChironPage"));
+
 import Footer from "./components/Footer"
 import ScrollToTop from "./components/ScrollTop";
 import SplashScreen from "./components/SplashScreen";
@@ -99,6 +135,42 @@ function App() {
           <Route path="/returns" element={<Returns />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="/contact" element={<ContactSales />} />
+
+          {/* Cities & Regions Routes */}
+          <Route path="/listings/private-islands" element={<PrivateIslandsPage />} />
+          <Route path="/listings/balearic-islands" element={<BalearicIslandsPage />} />
+          <Route path="/listings/costa-del-sol" element={<CostaDelSolPage />} />
+          <Route path="/listings/french-riviera" element={<FrenchRivieraPage />} />
+          <Route path="/listings/tuscany" element={<TuscanyPage />} />
+          <Route path="/listings/amsterdam" element={<AmsterdamPage />} />
+          <Route path="/listings/atlanta" element={<AtlantaPage />} />
+          <Route path="/listings/austin" element={<AustinPage />} />
+          <Route path="/listings/benahavis" element={<BenehavisPage />} />
+          <Route path="/listings/beverly-hills" element={<BeverlyHillsPage />} />
+
+          {/* Countries Routes */}
+          <Route path="/listings/australia" element={<AustraliaPage />} />
+          <Route path="/listings/british-virgin-islands" element={<BritishVirginIslandsPage />} />
+          <Route path="/listings/canada" element={<CanadaPage />} />
+          <Route path="/listings/cayman-islands" element={<CaymanIslandsPage />} />
+          <Route path="/listings/france" element={<FrancePage />} />
+          <Route path="/listings/germany" element={<GermanyPage />} />
+          <Route path="/listings/greece" element={<GreecePage />} />
+          <Route path="/listings/india" element={<IndiaPage />} />
+          <Route path="/listings/ireland" element={<IrelandPage />} />
+          <Route path="/listings/monaco" element={<MonacoPage />} />
+
+          {/* Car Routes */}
+          <Route path="/listings/ferrari" element={<FerrariPage />} />
+          <Route path="/listings/aston-martin" element={<AstonMartinPage />} />
+          <Route path="/listings/koenigsegg" element={<KoenigseggPage />} />
+          <Route path="/listings/lamborghini" element={<LamborghiniPage />} />
+          <Route path="/listings/bugatti" element={<BugattiPage />} />
+          <Route path="/listings/maserati" element={<MaseratiPage />} />
+          <Route path="/listings/pagani" element={<PaganiPage />} />
+          <Route path="/listings/porsche" element={<PorschePage />} />
+          <Route path="/listings/rolls-royce" element={<RollsRoycePage />} />
+          <Route path="/listings/bugatti-chiron" element={<BugattiChironPage />} />
         </Routes>
       </Suspense>
       {shouldShowFooter && <Footer />}
