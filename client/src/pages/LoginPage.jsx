@@ -5,242 +5,318 @@ import { GoogleLogin } from "@react-oauth/google";
 import { FaEye, FaEyeSlash, FaEnvelope, FaApple } from "react-icons/fa";
 import SEO from "../components/SEO";
 
-// ✅ Add or remove paths to match your files in public/images/login/
+// ✅ Add or remove paths to match your files in public/images/login/    
 const images = [
-    "/images/login/1.webp",
-    "/images/login/2.webp",
-    "/images/login/3.webp",
-    "/images/login/4.webp",
-    "/images/login/5.webp",
-    "/images/login/6.webp",
-    "/images/login/7.webp",
-    "/images/login/8.webp",
-    "/images/login/9.webp",
-    "/images/login/10.webp",
+  "/images/login/1.webp",
+  "/images/login/2.webp",
+  "/images/login/3.webp",
+  "/images/login/4.webp",
+  "/images/login/5.webp",
+  "/images/login/6.webp",
+  "/images/login/7.webp",
+  "/images/login/8.webp",
+  "/images/login/9.webp",
+  "/images/login/10.webp",
 ];
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [step, setStep] = useState("email");
-    const [error, setError] = useState("");
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const { login, googleLogin } = useAuth();
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [step, setStep] = useState("email");
+  const [error, setError] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { login, googleLogin } = useAuth();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentImageIndex((prev) => (prev + 1) % images.length);
-        }, 5000);
-        return () => clearInterval(interval);
-    }, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-    const handleContinue = (e) => {
-        e.preventDefault();
-        if (step === "email") {
-            if (!email) return;
-            setStep("password");
-        } else {
-            handleSubmit(e);
-        }
-    };
+  const handleContinue = (e) => {
+    e.preventDefault();
+    if (step === "email") {
+      if (!email) return;
+      setStep("password");
+    } else {
+      handleSubmit(e);
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        const { success, error } = await login(email, password);
-        if (success) {
-            navigate("/");
-        } else {
-            setError(error || "Failed to login");
-        }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    const { success, error } = await login(email, password);
+    if (success) {
+      navigate("/");
+    } else {
+      setError(error || "Failed to login");
+    }
+  };
 
-    const handleGoogleSuccess = async (credentialResponse) => {
-        const { success, error } = await googleLogin(credentialResponse.credential);
-        if (success) {
-            navigate("/");
-        } else {
-            setError(error || "Google login failed");
-        }
-    };
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const { success, error } = await googleLogin(credentialResponse.credential);
+    if (success) {
+      navigate("/");
+    } else {
+      setError(error || "Google login failed");
+    }
+  };
 
-    const handleGoogleError = () => {
-        setError("Google login failed. Please try again.");
-    };
+  const handleGoogleError = () => {
+    setError("Google login failed. Please try again.");
+  };
 
-    return (
-        <div className="min-h-screen flex font-sans">
-            <SEO
-                title="Login"
-                description="Access your personal sanctuary on Otulia. Log in to manage your luxury listings and favorites."
-            />
+  return (
+    <div className="min-h-screen flex font-sans">
+      <SEO
+        title="Login"
+        description="Access your personal sanctuary on Otulia. Log in to manage your luxury listings and favorites."
+      />
 
-            {/* ── LEFT PANEL ── */}
-            <div className="relative w-full md:w-[450px] lg:w-[500px] flex-shrink-0 bg-black flex flex-col justify-center px-10 md:px-14 z-10 border-r border-white/5 overflow-y-auto">
-                <div className="py-12">
-                    {/* Decorative Top Line */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-[#D48D2A]/80 rounded-b-full shadow-[0_0_15px_rgba(212,141,42,0.5)]"></div>
-
-                    <div className="text-center mb-10 mt-2">
-                        <h2 className="text-3xl md:text-4xl font-bold canela text-white mb-3">Welcome Back</h2>
-                        <p className="text-gray-300 text-xs md:text-sm montserrat uppercase tracking-[0.2em] font-light">Access your personal sanctuary</p>
-                    </div>
-
-                    {error && (
-                        <div className="bg-red-500/10 border border-red-500/20 text-red-200 p-3 rounded-xl text-sm text-center mb-6 backdrop-blur-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    <div className="space-y-4 mb-8">
-                        <GoogleLogin
-                            onSuccess={handleGoogleSuccess}
-                            onError={handleGoogleError}
-                            theme="filled_black"
-                            size="large"
-                            width="100%"
-                            text="continue_with"
-                            shape="pill"
-                        />
-                    </div>
-
-                    <div className="relative flex items-center mb-8">
-                        <div className="flex-grow border-t border-white/10"></div>
-                        <span className="flex-shrink mx-4 text-gray-400 text-[10px] uppercase tracking-widest font-medium">Or via email</span>
-                        <div className="flex-grow border-t border-white/10"></div>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-5">
-                            <div className="group">
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-[#D48D2A] transition-colors">Email Address</label>
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="w-full px-5 py-4 bg-black/20 border border-white/10 text-white rounded-xl focus:outline-none focus:border-[#D48D2A] focus:bg-black/40 transition-all text-sm font-medium placeholder-white/20 hover:border-white/20"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                            <div className="group">
-                                <div className="flex justify-between items-center mb-2 ml-1">
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest group-focus-within:text-[#D48D2A] transition-colors">Password</label>
-                                    <a href="#" className="text-[10px] text-gray-400 hover:text-white transition-colors uppercase tracking-wider font-bold">Forgot?</a>
-                                </div>
-                                <div className="relative">
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                        className="w-full px-5 py-4 bg-black/20 border border-white/10 text-white rounded-xl focus:outline-none focus:border-[#D48D2A] focus:bg-black/40 transition-all text-sm font-medium placeholder-white/20 hover:border-white/20 pr-12"
-                                        placeholder="Enter your password"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none"
-                                    >
-                                        {showPassword ? (
-                                            <FaEye className="w-5 h-5" />
-                                        ) : (
-                                            <FaEyeSlash className="w-5 h-5" />
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="w-full py-4 bg-[#D48D2A] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-xl hover:bg-[#B5751C] hover:shadow-[0_0_20px_rgba(212,141,42,0.4)] transition-all duration-300 transform active:scale-[0.98] mt-4"
-                        >
-                            Log In
-                        </button>
-                    </form>
-
-                    <div className="text-center mt-10">
-                        <p className="text-gray-400 text-xs">
-                            Not a member yet?{' '}
-                            <Link to="/signup" className="font-bold text-white hover:text-[#D48D2A] transition-colors ml-1 uppercase tracking-wider text-[10px]">
-                                Apply for Access
-                            </Link>
-                        </p>
-                    </div>
-                </div>
-
-                {/* Footer Note */}
-                <p className="text-center text-white/20 text-[10px] mt-6 uppercase tracking-[0.3em] pb-8">
-                    Otulia &copy; 2026
-                </p>
-            </div>
-
-            {/* ── RIGHT PANEL — Slideshow ── */}
-            <div className="hidden md:block relative flex-1 overflow-hidden bg-black">
-                {images.map((src, i) => (
-                    <div
-                        key={src}
-                        className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
-                        style={{
-                            backgroundImage: `url('${src}')`,
-                            opacity: i === currentImageIndex ? 1 : 0,
-                        }}
-                    >
-                        {/* Image overlay to ensure readability */}
-                        <div className="absolute inset-0 bg-black/40"></div>
-                    </div>
-                ))}
-
-                {/* Content Overlay */}
-                <div className="absolute inset-0 flex flex-col justify-between p-16 z-10">
-                    <div className="flex justify-between items-start">
-                        <div className="flex flex-col">
-                            <span className="text-white/60 text-[10px] tracking-[0.4em] uppercase font-bold mb-2">Established 2025</span>
-                            <div className="w-12 h-0.5 bg-[#D48D2A]"></div>
-                        </div>
-                        <div className="flex gap-4">
-                            {images.map((_, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setCurrentImageIndex(i)}
-                                    className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${i === currentImageIndex ? 'bg-[#D48D2A] w-6' : 'bg-white/30'}`}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="max-w-xl">
-                        <h2 className="text-white text-6xl lg:text-7xl font-bold leading-tight mb-6 canela">
-                            Extraordinary<br />
-                            <span className="text-[#D48D2A] italic">Lives</span> Begin Here
-                        </h2>
-                        <p className="text-white/80 text-lg montserrat font-light leading-relaxed max-w-md">
-                            Experience the pinnacle of luxury with our curated collection of iconic assets and exclusive estates.
-                        </p>
-                    </div>
-
-                    <div className="flex justify-between items-end">
-                        <div className="flex gap-10">
-                            <div className="flex flex-col">
-                                <span className="text-[#D48D2A] text-2xl font-bold canela mb-1">500+</span>
-                                <span className="text-white/40 text-[9px] uppercase tracking-widest font-bold">Curated Assets</span>
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-[#D48D2A] text-2xl font-bold canela mb-1">24/7</span>
-                                <span className="text-white/40 text-[9px] uppercase tracking-widest font-bold">VIP Concierge</span>
-                            </div>
-                        </div>
-                        <span className="text-white/30 text-[10px] font-mono tracking-widest uppercase">
-                            Slide {currentImageIndex + 1} / {images.length}
-                        </span>
-                    </div>
-                </div>
-            </div>
+      {/* ── LEFT PANEL ── */}
+      <div className="relative w-full md:w-[420px] lg:w-[480px] flex-shrink-0 bg-white flex flex-col px-10 py-10 z-10 shadow-2xl">
+        {/* Logo */}
+        <div className="mb-10 flex justify-center">
+          <img
+            src="/logos/otulia_logo_black.png"
+            alt="Otulia"
+            className="h-[3.30625rem] object-contain"
+            onError={(e) => {
+              e.target.style.display = "none";
+              e.target.nextSibling.style.display = "block";
+            }}
+          />
+          {/* Fallback text logo */}
+          <div style={{ display: "none" }} className="flex items-center gap-1">
+            <span
+              className="text-[1.98375rem] font-black tracking-tight text-black"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              OTULIA
+            </span>
+          </div>
         </div>
-    );
+
+        {/* Tagline */}
+        <p className="text-center text-[13px] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-8">    
+          The World of Luxury
+        </p>
+
+        {/* Heading */}
+        <div className="mb-8 text-center">
+          <h1
+            className="text-[2rem] font-bold leading-tight text-black"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Welcome to <span style={{ color: "#C8922A" }}>Otulia</span>
+          </h1>
+          <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+            Sign in to access exclusive luxury assets worldwide.
+          </p>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg text-xs text-center mb-5">
+            {error}
+          </div>
+        )}
+
+        {/* Social Buttons */}
+        <div className="space-y-3 mb-5">
+          <div className="w-[85%] mx-auto">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              width="100%"
+              text="continue_with"
+              shape="rectangular"
+              style={{ gap: "4px" }}
+            />
+          </div>
+          <button
+            type="button"
+            className="w-[85%] mx-auto flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-lg text-sm font-medium text-black hover:bg-gray-50 transition-colors"
+          >
+            <FaApple className="w-5 h-5" />
+            Continue with Apple
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div className="relative flex items-center my-5 h-12 w-[85%] mx-auto">
+          <div className="grow border-t border-gray-200"></div>
+          <span className="shrink mx-4 text-gray-400 text-xs">or</span>
+          <div className="grow border-t border-gray-200"></div>
+        </div>
+
+        {/* Email Form */}
+        <form onSubmit={handleContinue} className="space-y-4 w-[85%] mx-auto">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <FaEnvelope className="w-4 h-4 text-gray-400" />
+            </div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={step === "password"}
+              className="w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-lg text-sm text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors disabled:bg-gray-50 disabled:text-gray-500" 
+              placeholder="Enter your email address"
+            />
+          </div>
+
+          {step === "password" && (
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoFocus
+                className="w-full px-4 py-3.5 border border-gray-200 rounded-lg text-sm text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors pr-11"
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-black"
+              >
+                {showPassword ? (
+                  <FaEye className="w-4 h-4" />
+                ) : (
+                  <FaEyeSlash className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="w-full flex items-center justify-center gap-x-2 py-3.5 px-5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-900 transition-colors"
+          >
+            <span>Continue</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M3 8H13M13 8L9 4M13 8L9 12"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </form>
+
+        {/* Sign up link */}
+        <p className="text-xs text-gray-400 mt-6 text-center">
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className="font-semibold hover:underline"
+            style={{ color: "#C8922A" }}
+          >
+            Create account
+          </Link>
+        </p>
+
+        {/* Footer links */}
+        <div className="mt-auto pt-10 flex gap-5 text-[10px] text-gray-400 justify-center">
+          <a href="#" className="hover:text-black transition-colors">
+            Terms of Service
+          </a>
+          <a href="#" className="hover:text-black transition-colors">
+            Privacy Policy
+          </a>
+          <a href="#" className="hover:text-black transition-colors">
+            Cookie Policy
+          </a>
+        </div>
+      </div>
+
+      {/* ── RIGHT PANEL — Slideshow ── */}
+      <div className="hidden md:block relative flex-1 overflow-hidden">
+        {images.map((src, i) => (
+          <div
+            key={src}
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+            style={{
+              backgroundImage: `url('${src}')`,
+              opacity: i === currentImageIndex ? 1 : 0,
+            }}
+          />
+        ))}
+
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3">
+          {images.map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-2 justify-end cursor-pointer"
+              onClick={() => setCurrentImageIndex(i)}
+            >
+              {i === currentImageIndex && (
+                <div className="w-6 h-px bg-white/80" />
+              )}
+              <span
+                className="text-xs font-mono transition-colors"
+                style={{
+                  color:
+                    i === currentImageIndex
+                      ? "white"
+                      : "rgba(255,255,255,0.35)",
+                  fontWeight: i === currentImageIndex ? "700" : "400",
+                }}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom copy */}
+        <div className="absolute bottom-12 left-10 right-16">
+          <p
+            className="text-white/60 text-xs uppercase tracking-[0.2em] font-medium mb-3"
+            style={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 500,
+              letterSpacing: "0.2em",
+            }}
+          >
+            Curated Luxury
+          </p>
+          <h2
+            className="text-white text-5xl lg:text-5xl font-bold leading-tight mb-3"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            <span className="font-bold">Extraordinary</span>
+            <br />
+            <span
+              style={{ color: "#C8922A", fontStyle: "italic", fontWeight: 700 }}
+            >
+              Lives Begin Here
+            </span>
+          </h2>
+          <p
+            className="text-white/70 text-sm max-w-xs leading-relaxed"
+            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 300 }}
+          >
+            Explore exceptional properties, iconic cars,
+            <br />
+            luxury yachts and private jets.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;
