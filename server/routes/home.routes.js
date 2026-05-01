@@ -18,7 +18,8 @@ router.get("/featured", async (req, res) => {
   try {
     const listings = await Listing.find({ isFeatured: true })
       .limit(6)
-      .select("title images price category location agent isPriceOnRequest type keySpecifications");
+      .select("title images price category location agent isPriceOnRequest type keySpecifications")
+      .lean();
 
     res.json(listings);
 
@@ -40,10 +41,10 @@ router.get("/popularity", async (req, res) => {
     const limit = 10;
     const [carAssets, estateAssets, bikeAssets, yachtAssets] =
       await Promise.all([
-        CarAsset.find().sort({ popularity: -1 }).limit(limit),
-        EstateAsset.find().sort({ popularity: -1 }).limit(limit),
-        BikeAsset.find().sort({ popularity: -1 }).limit(limit),
-        YachtAsset.find().sort({ popularity: -1 }).limit(limit),
+        CarAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
+        EstateAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
+        BikeAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
+        YachtAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
       ]);
 
     const combinedAssets = [
@@ -98,21 +99,53 @@ router.get("/trending", async (req, res) => {
     let trendingAssets = [];
 
     if (trendingActivities.length > 0) {
-      // Fetch the actual asset documents
+      const modelIdMap = {
+        CarAsset: [],
+        BikeAsset: [],
+        YachtAsset: [],
+        EstateAsset: [],
+      };
+
       for (const item of trendingActivities) {
-        let Model;
-        switch (item._id.assetModel) {
-          case 'CarAsset': Model = CarAsset; break;
-          case 'BikeAsset': Model = BikeAsset; break;
-          case 'YachtAsset': Model = YachtAsset; break;
-          case 'EstateAsset': Model = EstateAsset; break;
-          default: continue;
+        const modelKey = item._id.assetModel;
+        if (modelIdMap[modelKey]) {
+          modelIdMap[modelKey].push(item._id.assetId);
         }
+      }
 
-        const asset = await Model.findById(item._id.assetId)
-          .select("title images price category location agent isTrending status isPriceOnRequest type keySpecifications");
+      const [cars, bikes, yachts, estates] = await Promise.all([
+        modelIdMap.CarAsset.length
+          ? CarAsset.find({ _id: { $in: modelIdMap.CarAsset } })
+              .select("title images price category location agent isTrending status isPriceOnRequest type keySpecifications")
+              .lean()
+          : [],
+        modelIdMap.BikeAsset.length
+          ? BikeAsset.find({ _id: { $in: modelIdMap.BikeAsset } })
+              .select("title images price category location agent isTrending status isPriceOnRequest type keySpecifications")
+              .lean()
+          : [],
+        modelIdMap.YachtAsset.length
+          ? YachtAsset.find({ _id: { $in: modelIdMap.YachtAsset } })
+              .select("title images price category location agent isTrending status isPriceOnRequest type keySpecifications")
+              .lean()
+          : [],
+        modelIdMap.EstateAsset.length
+          ? EstateAsset.find({ _id: { $in: modelIdMap.EstateAsset } })
+              .select("title images price category location agent isTrending status isPriceOnRequest type keySpecifications")
+              .lean()
+          : [],
+      ]);
 
+      const assetById = new Map();
+      [...cars, ...bikes, ...yachts, ...estates].forEach((asset) => {
         if (asset && asset.status === 'Active') {
+          assetById.set(asset._id.toString(), asset);
+        }
+      });
+
+      for (const item of trendingActivities) {
+        const asset = assetById.get(item._id.assetId.toString());
+        if (asset) {
           trendingAssets.push(asset);
         }
       }
@@ -123,10 +156,10 @@ router.get("/trending", async (req, res) => {
      
 
       const [cars, bikes, yachts, estates] = await Promise.all([
-        CarAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5),
-        BikeAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5),
-        YachtAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5),
-        EstateAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5),
+        CarAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5).lean(),
+        BikeAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5).lean(),
+        YachtAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5).lean(),
+        EstateAsset.find({ status: 'Active' }).sort({ views: -1, isTrending: -1 }).limit(5).lean(),
       ]);
 
       const fallbackAssets = [...cars, ...bikes, ...yachts, ...estates];

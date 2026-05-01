@@ -8,12 +8,13 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
+    const limit = 10;
     const [carAssets, estateAssets, bikeAssets, yachtAssets] =
       await Promise.all([
-        CarAsset.find(),
-        EstateAsset.find(),
-        BikeAsset.find(),
-        YachtAsset.find(),
+        CarAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
+        EstateAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
+        BikeAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
+        YachtAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
       ]);
 
     const combinedAssets = [
@@ -24,7 +25,7 @@ router.get("/", async (req, res) => {
     ];
 
     const popularAssets = combinedAssets
-      .sort((a, b) => b.popularity - a.popularity)
+      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
       .slice(0, 10);
 
     res.json(popularAssets);

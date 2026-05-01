@@ -2,7 +2,7 @@ const express = require("express");
 const { cloudinary } = require("../config/cloudinary");
 const router = express.Router();
 const User = require("../models/User.model");
-const Listing = require("../models/Listing.model"); 
+const Listing = require("../models/Listing.model");
 const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 const BikeAsset = require("../models/BikeAsset.model");
@@ -41,22 +41,32 @@ const adminCheck = async (req, res, next) => {
  */
 router.get("/stats", authMiddleware, adminCheck, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
-        const totalUsers = await User.countDocuments({ role: "user" });
-        const partnerStores = await User.countDocuments({ role: { $in: ['agent', 'admin'] } }); // agents/partners (including admins)
-        const pendingVerifications = await User.countDocuments({ verificationStatus: "Pending" });
+        const [
+            user,
+            totalUsers,
+            partnerStores,
+            pendingVerifications,
+            totalUsersAll,
+            newUsersThisMonth,
+            activeUsers,
+        ] = await Promise.all([
+            User.findById(req.user.id),
+            User.countDocuments({ role: "user" }),
+            User.countDocuments({ role: { $in: ['agent', 'admin'] } }),
+            User.countDocuments({ verificationStatus: "Pending" }),
+            User.countDocuments({}),
+            User.countDocuments({ createdAt: { $gte: new Date(new Date().setDate(1)) } }),
+            ga.getRealtimeActiveUsers(),
+        ]);
 
         // Mock revenue for now (integration with Payment/Order model required for real value)
         const revenue = 4900000;
 
-        // Fetch real-time active users from GA4
-        const activeUsers = await ga.getRealtimeActiveUsers();
-
         res.json({
             revenue,
             revenueGrowth: 18.2,
-            totalUsers: await User.countDocuments({}), 
-            newUsersThisMonth: await User.countDocuments({ createdAt: { $gte: new Date(new Date().setDate(1)) } }), // Users created this month
+            totalUsers: totalUsersAll,
+            newUsersThisMonth: newUsersThisMonth, // Users created this month
             partnerStores,
             views: 2100000, // Mock platform views
             activeUsers: activeUsers || 0,
@@ -137,9 +147,9 @@ router.get("/analytics", authMiddleware, adminCheck, async (req, res) => {
             { name: 'Jun', value: 3000 }
         ];
 
-        res.json({ 
-            monthlyRevenue, 
-            userGrowth, 
+        res.json({
+            monthlyRevenue,
+            userGrowth,
             deviceDistribution: deviceDistribution || [],
             topCountries: topCountries || []
         });
@@ -190,14 +200,14 @@ router.get("/partners", authMiddleware, adminCheck, async (req, res) => {
             const secureDocs = {};
             if (userObj.verificationDocuments) {
                 // Handle Map or Object
-                const docs = userObj.verificationDocuments instanceof Map 
-                    ? Object.fromEntries(userObj.verificationDocuments) 
+                const docs = userObj.verificationDocuments instanceof Map
+                    ? Object.fromEntries(userObj.verificationDocuments)
                     : userObj.verificationDocuments;
 
                 for (const [key, publicId] of Object.entries(docs)) {
-                    secureDocs[key] = cloudinary.url(publicId, { 
-                        secure: true, 
-                        resource_type: 'image' 
+                    secureDocs[key] = cloudinary.url(publicId, {
+                        secure: true,
+                        resource_type: 'image'
                     });
                 }
             }
@@ -262,10 +272,10 @@ router.post("/verify-partner", authMiddleware, adminCheck, async (req, res) => {
         const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
 
         // Create Notification for User
-        const notificationMsg = action === 'approve' 
-            ? "Congratulations! Your dealer verification has been approved. You can now list assets." 
+        const notificationMsg = action === 'approve'
+            ? "Congratulations! Your dealer verification has been approved. You can now list assets."
             : "Your dealer verification was unfortunately rejected. Please check your settings to re-submit documents.";
-        
+
         await User.findByIdAndUpdate(userId, {
             $push: {
                 notifications: {
@@ -280,7 +290,7 @@ router.post("/verify-partner", authMiddleware, adminCheck, async (req, res) => {
         // Send Email to User
         const inventoryLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/inventory`;
         const settingsLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/inventory`; // Settings is a tab in inventory
-        
+
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: user.email,
@@ -289,10 +299,10 @@ router.post("/verify-partner", authMiddleware, adminCheck, async (req, res) => {
 
 ${notificationMsg}
 
-${action === 'approve' 
-    ? `Get started by listing your first asset: ${inventoryLink}` 
-    : `Review our requirements and re-submit: ${settingsLink}`
-}
+${action === 'approve'
+                    ? `Get started by listing your first asset: ${inventoryLink}`
+                    : `Review our requirements and re-submit: ${settingsLink}`
+                }
 
 Best regards,
 The Otulia Team`,
@@ -351,7 +361,7 @@ router.get("/coupons", authMiddleware, adminCheck, async (req, res) => {
 router.post("/coupons", authMiddleware, adminCheck, async (req, res) => {
     try {
         const { code, discountType, discountValue, expiresAt, usageLimit, usageLimitPerUser, isActive } = req.body;
-        
+
         const existing = await Coupon.findOne({ code: code.toUpperCase() });
         if (existing) return res.status(400).json({ error: "COUPON_ALREADY_EXISTS" });
 
@@ -378,7 +388,7 @@ router.post("/coupons", authMiddleware, adminCheck, async (req, res) => {
 router.put("/coupons/:id", authMiddleware, adminCheck, async (req, res) => {
     try {
         const { code, discountType, discountValue, expiresAt, usageLimit, usageLimitPerUser, isActive, usageCount } = req.body;
-        
+
         const coupon = await Coupon.findByIdAndUpdate(req.params.id, {
             code: code?.toUpperCase(),
             discountType,

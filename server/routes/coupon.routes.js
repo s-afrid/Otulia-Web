@@ -3,13 +3,19 @@ const router = express.Router();
 const Coupon = require('../models/Coupon.model');
 const authMiddleware = require('../middleware/auth.middleware');
 
+// Get all coupons
+
+
 // Validate a coupon code
 router.get('/validate/:code', authMiddleware, async (req, res) => {
     try {
         const { code } = req.params;
         
         // 2. Validate Coupon existence and status
+    
+
         const coupon = await Coupon.findOne({ code: code.toUpperCase() });
+        console.log("coupon datav", coupon);
 
         if (!coupon) {
             return res.status(404).json({ valid: false, message: 'Coupon not found' });
