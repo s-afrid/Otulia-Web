@@ -1,172 +1,325 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { GoogleLogin } from '@react-oauth/google';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import SEO from '../components/SEO';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { GoogleLogin } from "@react-oauth/google";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import SEO from "../components/SEO";
+
+// ✅ Add or remove paths to match your files in public/images/login/
+const images = [
+  "/images/login/1.webp",
+  "/images/login/2.webp",
+  "/images/login/3.webp",
+  "/images/login/4.webp",
+  "/images/login/5.webp",
+  "/images/login/6.webp",
+  "/images/login/7.webp",
+  "/images/login/8.webp",
+  "/images/login/9.webp",
+  "/images/login/10.webp",
+];
 
 const SignupPage = () => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
-    const { signup, googleLogin } = useAuth();
-    const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { signup, googleLogin } = useAuth();
+  const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        const { success, error } = await signup(name, email, password);
-        if (success) {
-            navigate('/');
-        } else {
-            setError(error || 'Failed to sign up');
-        }
-    };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-    const handleGoogleSuccess = async (credentialResponse) => {
-        const { success, error } = await googleLogin(credentialResponse.credential);
-        if (success) {
-            navigate('/');
-        } else {
-            setError(error || 'Google signup failed');
-        }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    const { success, error } = await signup(name, email, password);
+    if (success) {
+      navigate("/");
+    } else {
+      setError(error || "Failed to sign up");
+    }
+  };
 
-    const handleGoogleError = () => {
-        setError('Google signup failed. Please try again.');
-    };
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const { success, error } = await googleLogin(credentialResponse.credential);
+    if (success) {
+      navigate("/");
+    } else {
+      setError(error || "Google signup failed");
+    }
+  };
 
-    return (
-        <div className="relative min-h-screen flex items-center justify-center bg-black font-sans overflow-hidden space-y-10">
-            <SEO 
-                title="Sign Up"
-                description="Join Otulia and begin your legacy. Create an account to buy, sell, and rent exclusive luxury assets."
-            />
-            {/* Full Screen Background */}
-            <div className="absolute inset-0 z-0">
-                
-                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/90"></div>
-            </div>
+  const handleGoogleError = () => {
+    setError("Google signup failed. Please try again.");
+  };
 
-            {/* Navbar Overlay */}
-            <div className="absolute top-0 left-0 w-full z-50">
-                <Navbar hideSearch={true} hideLogin={true} forceTransparent={true} customLogo="/logos/otulia_logo_white.png" />
-            </div>
+  return (
+    <div className="min-h-screen flex font-sans">
+      <SEO
+        title="Sign Up"
+        description="Join Otulia and begin your legacy. Create an account to buy, sell, and rent exclusive luxury assets."
+      />
 
-            {/* Centered Glass Card */}
-            <div className="relative z-10 w-full max-w-xl p-1 px-4 animate-in zoom-in-95 duration-700">
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-[2rem] shadow-2xl p-8 md:p-12 overflow-hidden">
-
-                    {/* Decorative Top Line */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-[#D48D2A]/80 rounded-b-full shadow-[0_0_15px_rgba(212,141,42,0.5)]"></div>
-
-                    <div className="text-center mb-10 mt-2">
-                        <h2 className="text-3xl md:text-4xl font-bold playfair-display text-white mb-3">Join Otulia</h2>
-                        <p className="text-gray-300 text-xs md:text-sm montserrat uppercase tracking-[0.2em] font-light">Begin your legacy</p>
-                    </div>
-
-                    {error && (
-                        <div className="bg-red-500/10 border border-red-500/20 text-red-200 p-3 rounded-xl text-sm text-center mb-6 backdrop-blur-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    <div className="space-y-4 mb-8">
-                        <GoogleLogin
-                            onSuccess={handleGoogleSuccess}
-                            onError={handleGoogleError}
-                            theme="filled_black"
-                            size="large"
-                            width="100%"
-                            text="signup_with"
-                            shape="pill"
-                        />
-                    </div>
-
-                    <div className="relative flex items-center mb-8">
-                        <div className="flex-grow border-t border-white/10"></div>
-                        <span className="flex-shrink mx-4 text-gray-400 text-[10px] uppercase tracking-widest font-medium">Or via email</span>
-                        <div className="flex-grow border-t border-white/10"></div>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-5">
-                            <div className="group">
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-[#D48D2A] transition-colors">Full Name</label>
-                                <input
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    required
-                                    className="w-full px-5 py-4 bg-black/20 border border-white/10 text-white rounded-xl focus:outline-none focus:border-[#D48D2A] focus:bg-black/40 transition-all text-sm font-medium placeholder-white/20 hover:border-white/20"
-                                    placeholder="Enter your name"
-                                />
-                            </div>
-                            <div className="group">
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-[#D48D2A] transition-colors">Email Address</label>
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="w-full px-5 py-4 bg-black/20 border border-white/10 text-white rounded-xl focus:outline-none focus:border-[#D48D2A] focus:bg-black/40 transition-all text-sm font-medium placeholder-white/20 hover:border-white/20"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                            <div className="group">
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-[#D48D2A] transition-colors">Password</label>
-                                <div className="relative">
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                        className="w-full px-5 py-4 bg-black/20 border border-white/10 text-white rounded-xl focus:outline-none focus:border-[#D48D2A] focus:bg-black/40 transition-all text-sm font-medium placeholder-white/20 hover:border-white/20 pr-12" // Added pr-12 for icon spacing
-                                        placeholder="Create a password"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none"
-                                    >
-                                        {showPassword ? (
-                                            <FaEye className="w-5 h-5" />
-                                        ) : (
-                                            <FaEyeSlash className="w-5 h-5" />
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="w-full py-4 bg-[#D48D2A] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-xl hover:bg-[#B5751C] hover:shadow-[0_0_20px_rgba(212,141,42,0.4)] transition-all duration-300 transform active:scale-[0.98] mt-4"
-                        >
-                            Create Account
-                        </button>
-                    </form>
-
-                    <div className="text-center mt-10">
-                        <p className="text-gray-400 text-xs">
-                            Already a member?{' '}
-                            <Link to="/login" className="font-bold text-white hover:text-[#D48D2A] transition-colors ml-1 uppercase tracking-wider text-[10px]">
-                                Sign In
-                            </Link>
-                        </p>
-                    </div>
-                </div>
-
-                {/* Footer Note */}
-                <p className="text-center text-white/20 text-[10px] mt-6 uppercase tracking-[0.3em]">
-                    Otulia &copy; 2026
-                </p>
-            </div>
+      {/* ── LEFT PANEL ── */}
+      <div className="relative w-full md:w-[420px] lg:w-[480px] flex-shrink-0 bg-white flex flex-col px-10 py-10 z-10 shadow-2xl overflow-y-auto">
+        {/* Logo */}
+        <div className="mb-10 flex justify-center">
+          <img
+            src="/logos/otulia_logo_black.png"
+            alt="Otulia"
+            className="h-[3.30625rem] object-contain"
+            onError={(e) => {
+              e.target.style.display = "none";
+              e.target.nextSibling.style.display = "block";
+            }}
+          />
+          {/* Fallback text logo */}
+          <div style={{ display: "none" }} className="flex items-center gap-1">
+            <span
+              className="text-[1.98375rem] font-black tracking-tight text-black"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              OTULIA
+            </span>
+          </div>
         </div>
-    );
+
+        {/* Tagline */}
+        <p className="text-center text-[13px] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-8">
+          The World of Luxury
+        </p>
+
+        {/* Heading */}
+        <div className="mb-8 text-center">
+          <h1
+            className="text-[2rem] font-bold leading-tight text-black"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Join <span style={{ color: "#C8922A" }}>Otulia</span>
+          </h1>
+          <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+            Begin your legacy among the world's finest.
+          </p>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg text-xs text-center mb-5">
+            {error}
+          </div>
+        )}
+
+        {/* Google Button */}
+        <div className="space-y-3 mb-5">
+          <div className="w-[85%] mx-auto">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              width="100%"
+              text="signup_with"
+              shape="rectangular"
+            />
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="relative flex items-center my-5 h-12 w-[85%] mx-auto">
+          <div className="grow border-t border-gray-200"></div>
+          <span className="shrink mx-4 text-gray-400 text-xs">or</span>
+          <div className="grow border-t border-gray-200"></div>
+        </div>
+
+        {/* Signup Form */}
+        <form onSubmit={handleSubmit} className="space-y-4 w-[85%] mx-auto">
+          {/* Full Name */}
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              Full Name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full px-4 py-3.5 border border-gray-200 rounded-lg text-sm text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
+              placeholder="Enter your full name"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              Email Address
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3.5 border border-gray-200 rounded-lg text-sm text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
+              placeholder="Enter your email address"
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-4 py-3.5 border border-gray-200 rounded-lg text-sm text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors pr-11"
+                placeholder="Create a password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-black"
+              >
+                {showPassword ? (
+                  <FaEye className="w-4 h-4" />
+                ) : (
+                  <FaEyeSlash className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full flex items-center justify-center gap-x-2 py-3.5 px-5 bg-black text-white text-sm font-semibold rounded-lg hover:bg-gray-900 transition-colors"
+          >
+            <span>Create Account</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M3 8H13M13 8L9 4M13 8L9 12"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </form>
+
+        {/* Sign in link */}
+        <p className="text-xs text-gray-400 mt-6 text-center">
+          Already a member?{" "}
+          <Link
+            to="/login"
+            className="font-semibold hover:underline"
+            style={{ color: "#C8922A" }}
+          >
+            Sign in
+          </Link>
+        </p>
+
+        {/* Footer links */}
+        <div className="mt-auto pt-10 flex gap-5 text-[10px] text-gray-400 justify-center">
+          <a href="#" className="hover:text-black transition-colors">
+            Terms of Service
+          </a>
+          <a href="#" className="hover:text-black transition-colors">
+            Privacy Policy
+          </a>
+          <a href="#" className="hover:text-black transition-colors">
+            Cookie Policy
+          </a>
+        </div>
+      </div>
+
+      {/* ── RIGHT PANEL — Slideshow ── */}
+      <div className="hidden md:block relative flex-1 overflow-hidden">
+        {images.map((src, i) => (
+          <div
+            key={src}
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+            style={{
+              backgroundImage: `url('${src}')`,
+              opacity: i === currentImageIndex ? 1 : 0,
+            }}
+          />
+        ))}
+
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+        {/* Slideshow index indicators */}
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3">
+          {images.map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-2 justify-end cursor-pointer"
+              onClick={() => setCurrentImageIndex(i)}
+            >
+              {i === currentImageIndex && (
+                <div className="w-6 h-px bg-white/80" />
+              )}
+              <span
+                className="text-xs font-mono transition-colors"
+                style={{
+                  color:
+                    i === currentImageIndex
+                      ? "white"
+                      : "rgba(255,255,255,0.35)",
+                  fontWeight: i === currentImageIndex ? "700" : "400",
+                }}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom copy */}
+        <div className="absolute bottom-12 left-10 right-16">
+          <p
+            className="text-white/60 text-xs uppercase tracking-[0.2em] font-medium mb-3"
+            style={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 500,
+              letterSpacing: "0.2em",
+            }}
+          >
+            Curated Luxury
+          </p>
+          <h2
+            className="text-white text-5xl lg:text-5xl font-bold leading-tight mb-3"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            <span className="font-bold">Extraordinary</span>
+            <br />
+            <span
+              style={{ color: "#C8922A", fontStyle: "italic", fontWeight: 700 }}
+            >
+              Lives Begin Here
+            </span>
+          </h2>
+          <p
+            className="text-white/70 text-sm max-w-xs leading-relaxed"
+            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 300 }}
+          >
+            Explore exceptional properties, iconic cars,
+            <br />
+            luxury yachts and private jets.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default SignupPage;
