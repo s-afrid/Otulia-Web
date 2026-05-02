@@ -79,13 +79,13 @@ const CarFeatures = ({ item }) => {
   );
 
   return (
-    <div className="w-full px-6 md:px-10 py-8 bg-white montserrat">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-2xl font-bold">Car Details</h3>
+    <div className="w-full px-[2%] py-10 bg-white montserrat">
+      <div className="flex justify-between items-end mb-10">
+        <h3 className="text-2xl md:text-3xl font-normal canela text-black">Vehicle Specifications</h3>
         {allSpecs.length > LIMIT * 2 && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="text-black font-bold border-b-2 border-black hover:text-gray-600 hover:border-gray-600 transition-all text-sm uppercase tracking-widest"
+            className="text-black font-bold border-b border-black hover:text-gray-600 hover:border-gray-600 transition-all text-[10px] uppercase tracking-[0.2em] pb-1"
           >
             View All
           </button>

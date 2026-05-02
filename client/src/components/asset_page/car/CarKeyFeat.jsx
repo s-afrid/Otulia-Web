@@ -31,7 +31,7 @@ const CarKeyFeatures = ({ item }) => {
   );
 
   return (
-    <div className="w-full px-6 md:px-10 py-10 bg-white font-sans max-w-7xl mx-auto">
+    <div className="w-full px-[2%] py-10 bg-white font-sans">
       
       {/* Header Box - Line with Centered Text */}
       <div className="relative flex items-center justify-center mb-12">
