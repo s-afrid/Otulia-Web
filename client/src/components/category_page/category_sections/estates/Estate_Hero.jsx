@@ -1,5 +1,5 @@
 import React from 'react'
-import heroUrl from '../../../../assets/hero_banners/hero_estates_new.png'
+import heroUrl from '../../../../assets/hero_banners/hero_estate.webp'
 import Estate_Search from './Estate_Search'
 
 const Estate_Hero = () => {

@@ -1,5 +1,5 @@
 import React from 'react'
-import heroUrl from '../../../../assets/hero_banners/hero_bikes.webp'
+import heroUrl from '../../../../assets/hero_banners/hero_bike.webp'
 import Bike_Search from './Bike_Search'
 
 const Bike_Hero = () => {
