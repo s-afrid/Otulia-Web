@@ -84,7 +84,8 @@ router.get("/cars", async (req, res) => {
     const data = await CarAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .lean();
 
     res.json({
       data,
@@ -166,7 +167,8 @@ router.get("/estates", async (req, res) => {
     const data = await EstateAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .lean();
 
     res.json({
       data,
@@ -246,7 +248,8 @@ router.get("/bikes", async (req, res) => {
     const data = await BikeAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .lean();
 
     res.json({
       data,
@@ -326,7 +329,8 @@ router.get("/yachts", async (req, res) => {
     const data = await YachtAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .lean();
 
     res.json({
       data,
@@ -348,7 +352,7 @@ router.get("/yachts", async (req, res) => {
  */
 router.get("/all/cars", async (req, res) => {
   try {
-    const data = await CarAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
+    const data = await CarAsset.find({ status: 'Active' }).sort({ createdAt: -1 }).lean();
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all car assets" });
@@ -361,7 +365,7 @@ router.get("/all/cars", async (req, res) => {
  */
 router.get("/all/estates", async (req, res) => {
   try {
-    const data = await EstateAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
+    const data = await EstateAsset.find({ status: 'Active' }).sort({ createdAt: -1 }).lean();
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all estate assets" });
@@ -374,7 +378,7 @@ router.get("/all/estates", async (req, res) => {
  */
 router.get("/all/bikes", async (req, res) => {
   try {
-    const data = await BikeAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
+    const data = await BikeAsset.find({ status: 'Active' }).sort({ createdAt: -1 }).lean();
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all bike assets" });
@@ -387,7 +391,7 @@ router.get("/all/bikes", async (req, res) => {
  */
 router.get("/all/yachts", async (req, res) => {
   try {
-    const data = await YachtAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
+    const data = await YachtAsset.find({ status: 'Active' }).sort({ createdAt: -1 }).lean();
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all yacht assets" });

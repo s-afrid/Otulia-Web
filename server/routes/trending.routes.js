@@ -10,10 +10,10 @@ router.get("/", async (req, res) => {
   try {
     const [carAssets, estateAssets, bikeAssets, yachtAssets] =
       await Promise.all([
-        CarAsset.find({ isTrending: true }).limit(5),
-        EstateAsset.find({ isTrending: true }).limit(5),
-        BikeAsset.find({ isTrending: true }).limit(5),
-        YachtAsset.find({ isTrending: true }).limit(5),
+        CarAsset.find({ isTrending: true }).limit(5).lean(),
+        EstateAsset.find({ isTrending: true }).limit(5).lean(),
+        BikeAsset.find({ isTrending: true }).limit(5).lean(),
+        YachtAsset.find({ isTrending: true }).limit(5).lean(),
       ]);
 
     const combinedAssets = [

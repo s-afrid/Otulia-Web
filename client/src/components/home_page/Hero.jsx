@@ -141,7 +141,7 @@ const Hero = () => {
               src={img} 
               alt={`Luxury Asset ${index + 1}`}
               className='w-full h-full object-cover brightness-[0.7]'
-              fetchPriority={index === 0 ? "high" : "auto"}
+              fetchpriority={index === 0 ? "high" : "auto"}
               loading={index === 0 ? "eager" : "lazy"}
               decoding="async"
             />
