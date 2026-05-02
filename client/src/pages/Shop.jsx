@@ -155,47 +155,46 @@ const Shop = () => {
         )}
       </div>
 
-      {/* Category Tabs */}
-      <div className="flex justify-center gap-4 py-8 overflow-x-auto px-4">
+      {/* Category Tabs (Centered Pills) */}
+      <div className="flex justify-center items-center gap-2 py-10 bg-white">
         {categories.map((cat) => (
           <button
             key={cat.name}
             onClick={() => setActiveCategory(cat.name)}
-            className={`px-6 py-2 rounded-full border transition-all whitespace-nowrap font-medium ${activeCategory === cat.name
-              ? 'bg-black text-white border-black shadow-lg'
-              : 'bg-white text-black border-gray-200 hover:border-black'
-              }`}
+            className={`px-8 py-2.5 rounded-full text-[13px] font-medium transition-all duration-300 ${
+              activeCategory === cat.name
+              ? 'bg-black text-white shadow-xl scale-105'
+              : 'bg-white text-gray-500 hover:text-black hover:bg-gray-50'
+            }`}
           >
             {cat.name}
           </button>
         ))}
       </div>
 
-      {/* Listings */}
-      <div className="max-w-[1700px] mx-auto px-4 md:px-8 pb-16">
+      {/* Listings Grid */}
+      <div className="max-w-[1700px] mx-auto px-[2%] pb-24">
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <svg className="animate-spin h-8 w-8 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span className="ml-3 text-gray-500">Loading listings...</span>
+          <div className="flex justify-center items-center py-32">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
           </div>
         ) : listings.length === 0 ? (
-          <div className="text-center py-20 text-gray-500">No assets found matching your criteria.</div>
+          <div className="text-center py-32 text-gray-400 font-medium montserrat">No luxury assets found matching your criteria.</div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {listings.map((item, idx) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {listings.map((item) => (
                 <AssetCard key={item._id} item={item} />
               ))}
             </div>
 
-            <Pagination 
-              currentPage={page} 
-              totalPages={totalPages} 
-              onPageChange={handlePageChange} 
-            />
+            <div className="mt-20">
+              <Pagination 
+                currentPage={page} 
+                totalPages={totalPages} 
+                onPageChange={handlePageChange} 
+              />
+            </div>
           </>
         )}
       </div>
