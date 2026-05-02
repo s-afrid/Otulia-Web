@@ -94,7 +94,7 @@ const yachtAssetSchema = new mongoose.Schema(
 
     isTrending: { type: Boolean, default: false, index: true },
 
-    popularity: { type: Number, min: 1, max: 10, index: true },
+    popularity: { type: Number, default: 0, index: true },
 
     views: { type: Number, default: 0 },
 

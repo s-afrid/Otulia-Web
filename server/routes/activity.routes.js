@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware/auth.middleware");
 const User = require("../models/User.model");
 const UserActivity = require("../models/UserActivity.model");
+const { incrementPopularity } = require("../utils/popularityUpdater");
 const router = express.Router();
 
 /**
@@ -39,6 +40,10 @@ router.post("/record", async (req, res) => {
         });
 
         await activity.save();
+
+        // Update popularity score in real-time
+        const points = activityType === "VIEW" ? 1 : 15;
+        incrementPopularity(assetModel, assetId, points);
 
         res.status(201).json({ message: "ACTIVITY_RECORDED", activity });
     } catch (error) {

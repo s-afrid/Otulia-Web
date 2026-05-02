@@ -7,6 +7,7 @@ const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
 const Listing = require("../models/Listing.model");
 const User = require("../models/User.model");
+const { incrementPopularity } = require("../utils/popularityUpdater");
 
 const axios = require("axios");
 const router = express.Router();
@@ -621,13 +622,16 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
 
     // ❤️ increment likes
     asset.likes += 1;
-
-    // 🔥 optional popularity logic
-    if (asset.likes % 10 === 0 && asset.popularity < 10) {
-      asset.popularity += 1;
-    }
-
     await asset.save();
+
+    // 🔥 Update popularity score in real-time
+    const modelMapping = {
+      cars: "CarAsset",
+      estates: "EstateAsset",
+      bikes: "BikeAsset",
+      yachts: "YachtAsset"
+    };
+    incrementPopularity(modelMapping[type], id, 5);
 
     res.json({
       message: "Liked successfully",
