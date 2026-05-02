@@ -125,60 +125,64 @@ const AssetCard = ({ item }) => {
       </div>
 
       {/* CONTENT AREA */}
-      <div className="px-6 py-7 flex flex-col flex-1 bg-white">
-        <div className="flex flex-col gap-y-1">
-          {/* PRICE - Elegant Serif */}
-          <h3 className="text-[36px] font-normal text-[#1a1a1a] canela tracking-tight leading-none">
+      <div className="px-[30px] py-[26px] flex flex-col flex-1 bg-white">
+        {/* PRICE */}
+        <div className="mb-4">
+          <h3 className="text-[28px] font-normal text-[#1a1a1a] font-playfair tracking-tight leading-none lining-nums">
             {item.isPriceOnRequest ? 'Price on Demand' : `$${numberWithCommas(item.price)}`}
             {item.type === 'Rent' && !item.isPriceOnRequest && (
-              <span className="text-[12px] text-gray-400 font-normal montserrat ml-1">/ day</span>
+              <span className="text-[11px] text-gray-500 font-normal montserrat ml-1.5">/ day</span>
             )}
           </h3>
-
-          {/* PROPERTY DETAILS - Small Uppercase Sans-Serif */}
-          <p className="text-[11px] font-medium text-gray-400 montserrat tracking-[0.08em] uppercase">
-            {displayDetails ? displayDetails : (category.toUpperCase())}
-          </p>
-
-          {/* TITLE - Serif */}
-          <h4 className="text-[19px] font-normal text-[#1a1a1a] leading-snug canela line-clamp-1 mt-1">
-            {item.title}
-          </h4>
-
-          {/* LOCATION - Muted Grey */}
-          <div className="flex items-center gap-1.5 text-gray-400 mt-0.5 mb-8">
-            <FiMapPin className="text-[12px] shrink-0 opacity-70" />
-            <span className="text-[12px] font-normal truncate montserrat tracking-wide opacity-80">
-              {item.location}
-            </span>
-          </div>
         </div>
 
-        {/* FOOTER - Minimalist Luxury */}
-        <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
-          {/* Bottom Left: Minimal logo/initials */}
+        {/* PROPERTY DETAILS */}
+        <div className="mb-[14px]">
+          <p className="text-[11px] font-normal text-[#7a7a7a] montserrat tracking-[0.08em] uppercase">
+            {displayDetails ? displayDetails : (category.toUpperCase())}
+          </p>
+        </div>
+
+        {/* TITLE */}
+        <div className="mb-2.5">
+          <h4 className="text-[17px] font-normal text-[#2a2a2a] leading-[1.4] font-playfair line-clamp-1">
+            {item.title}
+          </h4>
+        </div>
+
+        {/* LOCATION */}
+        <div className="flex items-center gap-[6px] text-[#8a8a8a] mb-5">
+          <FiMapPin className="text-[12px] shrink-0" />
+          <span className="text-[12px] font-normal truncate montserrat">
+            {item.location}
+          </span>
+        </div>
+
+        {/* FOOTER */}
+        <div className="mt-auto pt-5 border-t border-[#eeeeee] flex items-center justify-between">
+          {/* Logo / Initials */}
           <div className="flex items-center">
              {item.agent?.companyLogo ? (
                <img 
                  src={optimizeCloudinaryUrl(item.agent.companyLogo, 200)} 
                  alt="Company" 
-                 className="h-5 w-auto object-contain shrink-0 grayscale opacity-80"
+                 className="h-8 w-auto object-contain shrink-0"
                />
              ) : (
-               <div className="text-[22px] font-normal tracking-tight text-[#1a1a1a] canela opacity-70">RH</div>
+               <div className="text-[24px] font-normal tracking-tight text-[#2a2a2a] canela">RH</div>
              )}
           </div>
           
-          {/* Bottom Right: Circular agent profile */}
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] font-normal text-gray-400 montserrat tracking-wide italic">
-              Listed by {item.agent?.name || 'Marshall Salvi'}
+          {/* Agent Section */}
+          <div className="flex items-center gap-[12px]">
+            <span className="text-[11px] font-normal text-[#9a9a9a] montserrat truncate max-w-[140px]">
+              Listed by <span className="text-[#5a5a5a] font-normal">{item.agent?.name?.split(' ')[0] || 'Marshall'}</span>
             </span>
-            <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-100 shadow-sm shrink-0">
+            <div className="w-[42px] h-[42px] rounded-full overflow-hidden border border-gray-50 shadow-sm shrink-0">
               <img 
                 src={optimizeCloudinaryUrl(item.agent?.photo || 'https://via.placeholder.com/100', 100, 100)} 
                 alt="Agent" 
-                className="w-full h-full object-cover grayscale-[20%]"
+                className="w-full h-full object-cover"
               />
             </div>
           </div>
