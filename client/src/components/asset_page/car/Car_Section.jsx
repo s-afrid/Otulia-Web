@@ -103,7 +103,7 @@ const Car_Section = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-white">
       <SEO 
         title={info.title}
         description={info.description}
@@ -112,27 +112,15 @@ const Car_Section = () => {
         productData={info}
       />
 
-      {/* Pass images array safely */}
       <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Car" />
 
-      {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="CarAsset" /> */}
-
-      <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
-
-      {/* 3. Pass the whole 'item' object (info) to children */}
-      {/* This works if your CarDetails expects ({ item }) props */}
-      <div className="flex w-full justify-center items-center">
       <CarDetails item={info} modelName="CarAsset" />
-      </div>
 
-      <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
-
-      {/* 4. Pass 'item' to features components */}
       <CarKeyFeatures item={info} />
 
       <CarFeatures item={info} />
 
-      <div className="flex items-center justify-center mb-4">
+      <div className="w-full mt-10">
         <LocationMap 
           locationName={info.location} 
           lat={info.specification?.latitude} 
@@ -143,18 +131,16 @@ const Car_Section = () => {
       <CompanyProfileSection agent={info.agent} />
 
       {similarAssets.length > 0 && (
-        <div className="py-8 bg-gray-50/50">
+        <div className="py-16 border-t border-gray-100">
           <AssetSlider title="Similar Cars" items={similarAssets} />
         </div>
       )}
 
       {agentAssets.length > 0 && (
-        <div className="py-8">
-          <AssetSlider title={`More from ${info.agent?.name || 'this Agent'}`} items={agentAssets} />
+        <div className="py-16 bg-gray-50/30">
+          <AssetSlider title={`More from ${info.agent?.company || 'this Agency'}`} items={agentAssets} />
         </div>
       )}
-
-      <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
       
     </div>
   );

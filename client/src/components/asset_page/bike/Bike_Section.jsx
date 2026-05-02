@@ -94,7 +94,7 @@ const Bike_Section = () => {
     }
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col bg-white">
            <SEO 
                 title={info.title}
                 description={info.description}
@@ -104,18 +104,13 @@ const Bike_Section = () => {
             />
             <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Bike" />
 
-            {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="BikeAsset" /> */}
-
-            <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
-
             <BikeDetails item={info} modelName="BikeAsset" />
-
-            <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
 
             <BikeKeyFeatures item={info} />
 
             <BikeFeatures item={info} />
-            <div className="flex items-center justify-center mb-4">
+            
+            <div className="w-full mt-10">
                 <LocationMap 
                     locationName={info.location} 
                     lat={info.specification?.latitude} 
@@ -126,18 +121,16 @@ const Bike_Section = () => {
             <CompanyProfileSection agent={info.agent} />
 
             {similarAssets.length > 0 && (
-                <div className="py-8 bg-gray-50/50">
+                <div className="py-16 border-t border-gray-100">
                     <AssetSlider title="Similar Bikes" items={similarAssets} />
                 </div>
             )}
 
             {agentAssets.length > 0 && (
-                <div className="py-8">
-                    <AssetSlider title={`More from ${info.agent?.name || 'this Agent'}`} items={agentAssets} />
+                <div className="py-16 bg-gray-50/30">
+                    <AssetSlider title={`More from ${info.agent?.company || 'this Agency'}`} items={agentAssets} />
                 </div>
             )}
-
-            <div className="w-[calc(100%-3rem)] md:w-[calc(100%-5rem)] h-px bg-gray-300 border-0 self-center my-5"></div>
 
         </div>
     );
