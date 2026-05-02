@@ -144,11 +144,11 @@ const FeaturedProducts = () => {
                 {/* Slides Track */}
                 <div className='overflow-hidden'>
                     <div
-                        className='flex gap-6 transition-transform duration-500 ease-out'
+                        className='flex gap-4 transition-transform duration-500 ease-out'
                         style={{ transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)` }}
                     >
                         {products.map((product) => (
-                            <div key={product.id} className='min-w-[calc(25%-18px)] flex-shrink-0 flex flex-col'>
+                            <div key={product.id} className='min-w-[calc(25%-12px)] flex-shrink-0 flex flex-col'>
                                 {/* Image Card */}
                                 <div className='relative aspect-square mb-4 bg-gray-50 overflow-hidden group'>
                                     {/* Badges */}

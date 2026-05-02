@@ -268,7 +268,7 @@ Reference ID: #${refId}
               className="text-3xl md:text-4xl font-bold text-black"
               style={{ fontFamily: 'Canela, "Times New Roman", Times, serif' }}
             >
-              {item.isPriceOnRequest ? 'Price on Demand' : `$ ${numberWithCommas(price)}`}
+              {item.isPriceOnRequest ? 'Price on Demand' : `$${numberWithCommas(price)}`}
             </h2>
             
             <div className="flex items-center gap-2 mt-4 p-3 bg-gray-50 border border-gray-100 rounded-lg text-xs text-gray-600 font-medium w-fit">
@@ -308,7 +308,7 @@ Reference ID: #${refId}
               {startDate && endDate && (
                 <div className="mb-4 p-3 bg-gray-50 rounded-lg flex justify-between items-center border border-gray-100">
                   <span className="text-xs font-medium text-gray-500">Total for {Math.ceil(Math.abs(new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24))} days</span>
-                  <span className="text-lg font-bold font-serif">$ {numberWithCommas(Math.ceil(Math.abs(new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * price)}</span>
+                  <span className="text-lg font-bold font-serif">${numberWithCommas(Math.ceil(Math.abs(new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * price)}</span>
                 </div>
               )}
             </div>

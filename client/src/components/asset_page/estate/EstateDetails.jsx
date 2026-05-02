@@ -267,7 +267,7 @@ Reference ID: #${refId}
               className="text-3xl md:text-4xl font-bold text-black"
               style={{ fontFamily: 'Canela, "Times New Roman", Times, serif' }}
             >
-              {item.isPriceOnRequest ? 'Price on Demand' : `AED ${numberWithCommas(price)}`}
+              {item.isPriceOnRequest ? 'Price on Demand' : `$${numberWithCommas(price)}`}
             </h2>
             
             <div className="flex items-center gap-2 mt-4 p-3 bg-gray-50 border border-gray-100 rounded-lg text-xs text-gray-600 font-medium w-fit">

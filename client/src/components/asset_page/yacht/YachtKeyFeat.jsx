@@ -51,7 +51,7 @@ const YachtKeyFeatures = ({ item }) => {
       </div>
 
       {/* 3-Column Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4 w-full">
         {specItems.map((spec, index) => (
           <FeatureCard 
             key={index}

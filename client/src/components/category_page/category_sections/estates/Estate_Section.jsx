@@ -205,7 +205,7 @@ const Estate_Section = () => {
           </div>
 
           <section className="w-full px-4 md:px-16 py-3 bg-white">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {locations.map((item) => (
                 <div
                   key={item.id}
@@ -273,7 +273,7 @@ const Estate_Section = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {list.length > 0 ? (
                 list.map((item, idx) => (
                   <div key={item._id}>

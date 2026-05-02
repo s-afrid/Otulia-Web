@@ -182,7 +182,7 @@ const Shop = () => {
           <div className="text-center py-32 text-gray-400 font-medium montserrat">No luxury assets found matching your criteria.</div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {listings.map((item) => (
                 <AssetCard key={item._id} item={item} />
               ))}

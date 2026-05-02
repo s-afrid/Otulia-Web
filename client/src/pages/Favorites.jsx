@@ -91,7 +91,7 @@ const Favorites = () => {
                         </Link>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 pb-20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-20">
                         {favorites.map((item, idx) => (
                             <div key={item._id || idx} className="relative group overflow-hidden rounded-2xl">
                                 <AssetCard item={item} />

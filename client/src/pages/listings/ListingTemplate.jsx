@@ -88,7 +88,7 @@ const ListingTemplate = ({
               <p className="text-gray-600">Loading listings...</p>
             </div>
           ) : listings.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {listings.map((listing) => (
                 <div key={listing._id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                   <img 

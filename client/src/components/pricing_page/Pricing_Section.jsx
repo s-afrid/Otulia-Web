@@ -381,9 +381,7 @@ const PricingSection = () => {
 
               <div className="mb-6 flex justify-between items-center">
                 <span className="text-gray-600 font-medium">Total Amount</span>
-                <span className="text-2xl font-bold text-black">
-                  ${calculateDiscountedPrice(selectedPlan.price)}
-                </span>
+                <span className="text-2xl font-bold text-black">${calculateDiscountedPrice(selectedPlan.price)}</span>
               </div>
 
               <div className="min-h-[150px] flex flex-col justify-center">

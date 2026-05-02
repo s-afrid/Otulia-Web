@@ -48,7 +48,7 @@ const AssetSlider = ({ title, items }) => {
         {/* SCROLLABLE LIST */}
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto scroll-smooth pb-4 px-1 no-scrollbar"
+          className="flex gap-4 overflow-x-auto scroll-smooth pb-4 px-1 no-scrollbar"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {items.map((item, idx) => (

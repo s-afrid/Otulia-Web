@@ -166,7 +166,7 @@ const Rent = () => {
           <div className="text-center py-20 text-gray-500">No rental listings found in this category.</div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {listings.map((item, idx) => (
                 <AssetCard key={item._id} item={item} />
               ))}

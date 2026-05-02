@@ -138,35 +138,34 @@ const CartPage = () => {
                                                     Duration: {item.duration} days
                                                 </div>
                                                 <div className="font-medium">
-                                                    $ {numberWithCommas(item.pricePerDay)} x {item.duration} = $ {numberWithCommas(item.totalPrice)}
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div className="font-medium">
-                                                Price: $ {numberWithCommas(item.totalPrice)}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                                                    $${numberWithCommas(item.pricePerDay)} x ${item.duration} = $${numberWithCommas(item.totalPrice)}
+                                                    </div>
+                                                    </>
+                                                    ) : (
+                                                    <div className="font-medium">
+                                                    Price: $${numberWithCommas(item.totalPrice)}
+                                                    </div>
+                                                    )}
+                                                    </div>
+                                                    </div>
+                                                    ))}
+                                                    </div>
 
-                        {/* Summary */}
-                        <div className="w-full lg:w-96 shrink-0">
-                            <div className="bg-gray-50 p-6 rounded-lg sticky top-24">
-                                <h2 className="text-xl font-bold mb-6 canela">Order Summary</h2>
-                                <div className="flex justify-between mb-4">
-                                    <span className="text-gray-600">Subtotal</span>
-                                    <span className="font-medium">$ {numberWithCommas(cartTotal)}</span>
-                                </div>
-                                <div className="flex justify-between mb-6">
-                                    <span className="text-gray-600">Service Fee</span>
-                                    <span className="font-medium">$ 0</span>
-                                </div>
-                                <div className="border-t pt-4 flex justify-between mb-8">
-                                    <span className="font-bold text-lg">Total</span>
-                                    <span className="font-bold text-lg">$ {numberWithCommas(cartTotal)}</span>
-                                </div>
+                                                    {/* Summary */}
+                                                    <div className="w-full lg:w-96 shrink-0">
+                                                    <div className="bg-gray-50 p-6 rounded-lg sticky top-24">
+                                                    <h2 className="text-xl font-bold mb-6 canela">Order Summary</h2>
+                                                    <div className="flex justify-between mb-4">
+                                                    <span className="text-gray-600">Subtotal</span>
+                                                    <span className="font-medium">$${numberWithCommas(cartTotal)}</span>
+                                                    </div>
+                                                    <div className="flex justify-between mb-6">
+                                                    <span className="text-gray-600">Service Fee</span>
+                                                    <span className="font-medium">$0</span>
+                                                    </div>
+                                                    <div className="border-t pt-4 flex justify-between mb-8">
+                                                    <span className="font-bold text-lg">Total</span>
+                                                    <span className="font-bold text-lg">$${numberWithCommas(cartTotal)}</span>                                </div>
                             </div>
                         </div>
                     </div>

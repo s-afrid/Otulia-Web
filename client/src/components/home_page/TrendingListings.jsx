@@ -78,13 +78,13 @@ const TrendingListings = () => {
         {/* SCROLLABLE LIST */}
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto scroll-smooth pb-8 pt-2"
+          className="flex gap-4 overflow-x-auto scroll-smooth pb-8 pt-2"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <style>{`.scroll-smooth::-webkit-scrollbar { display: none; }`}</style>
 
           {list.map((item, idx) => (
-            <div key={item._id} className="w-[85vw] sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] shrink-0 group-hover:opacity-100">
+            <div key={item._id} className="w-[85vw] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-10.66px)] lg:w-[calc(25%-12px)] shrink-0 group-hover:opacity-100">
               <AssetCard item={item} idx={idx} />
             </div>
           ))}
