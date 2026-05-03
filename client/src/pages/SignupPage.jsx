@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { GoogleLogin } from "@react-oauth/google";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaEnvelope, FaApple } from "react-icons/fa";
 import SEO from "../components/SEO";
 
 // ✅ Add or remove paths to match your files in public/images/login/
@@ -129,6 +129,14 @@ const SignupPage = () => {
               shape="rectangular"
             />
           </div>
+
+          <button
+            type="button"
+            className="w-[85%] mx-auto flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-lg text-sm font-medium text-black hover:bg-gray-50 transition-colors"
+          >
+            <FaApple className="w-5 h-5" />
+            Continue with Apple
+          </button>
         </div>
 
         {/* Divider */}
