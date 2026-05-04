@@ -66,7 +66,9 @@ app.get("/shipping-info", (req, res) => res.redirect(301, "/shipping"));
 app.get("/return-policy", (req, res) => res.redirect(301, "/returns"));
 
 const PORT = process.env.PORT || 5000;
-app.use(express.static(path.join(__dirname, "../client/dist"), { maxAge: "1y" }));
+app.use(
+  express.static(path.join(__dirname, "../client/dist"), { maxAge: "1y" }),
+);
 
 // routes register
 app.use("/api/auth", authRoutes);
@@ -86,10 +88,6 @@ app.use("/api/coupons", couponRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/admin", require("./routes/admin.routes.js"));
 
-
-
-
-
 app.get("/health", (req, res) => {
   res.json({
     status: "OK",
@@ -97,7 +95,10 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), { maxAge: "1y" }));
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"), { maxAge: "1y" }),
+);
 
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));
@@ -112,19 +113,26 @@ app.use((err, req, res, next) => {
       console.error(`[Multer Error] File too large: ${err.message}`);
       return res.status(400).json({
         error: "FILE_TOO_LARGE",
-        message: "One or more files are too large. Maximum allowed size per file is 5MB."
+        message:
+          "One or more files are too large. Maximum allowed size per file is 5MB.",
       });
     }
     console.error(`[Multer Error] ${err.code}: ${err.message}`);
-    return res.status(400).json({ error: "UPLOAD_ERROR", message: err.message });
+    return res
+      .status(400)
+      .json({ error: "UPLOAD_ERROR", message: err.message });
   }
 
   // Generic error fallback
   console.error(`[Internal Error]`, err);
-  res.status(500).json({ error: "INTERNAL_SERVER_ERROR", message: "An unexpected error occurred." });
+  res
+    .status(500)
+    .json({
+      error: "INTERNAL_SERVER_ERROR",
+      message: "An unexpected error occurred.",
+    });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on ${PORT}`)
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on ${PORT}`);
 });
-

@@ -1,64 +1,128 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 
 // Reusable Chevron Icon
 const ChevronDown = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-gray-500">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={2.5}
+    stroke="currentColor"
+    style={{ width: 12, height: 12, flexShrink: 0 }}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+    />
   </svg>
 );
 
-// --- NEW COMPONENT: Auto-Width Dropdown ---
-const AutoWidthDropdown = ({ label, value, options, onChange }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+// Sliders / filter icon for the "Filters N" button
+const FiltersIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={2}
+    stroke="currentColor"
+    style={{ width: 14, height: 14, flexShrink: 0 }}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+    />
+  </svg>
+);
 
-  // Close when clicking outside
+// --- Pill Dropdown ---
+const PillDropdown = ({ label, value, options, onChange, dark = false }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef(null);
+  const hasValue = value && value !== "";
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setIsOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSelect = (optionValue) => {
-    onChange(optionValue);
+  const handleSelect = (val) => {
+    onChange(val);
     setIsOpen(false);
   };
 
+  const pillBase = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "7px 14px",
+    borderRadius: 9999,
+    border: dark ? "none" : "1.5px solid #e2e2e2",
+    background: dark ? "#111" : hasValue ? "#f5f5f5" : "#fff",
+    color: dark ? "#fff" : "#111",
+    fontSize: 13,
+    fontWeight: dark ? 600 : hasValue ? 600 : 500,
+    fontFamily: "'DM Sans', sans-serif",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+    letterSpacing: "-0.01em",
+    transition: "all 0.15s ease",
+    userSelect: "none",
+  };
+
   return (
-    <div className="relative inline-block w-full xl:w-auto" ref={dropdownRef}>
+    <div style={{ position: "relative", display: "inline-block" }} ref={ref}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="
-          w-full xl:w-auto
-          flex items-center justify-between xl:justify-start gap-2
-          border border-gray-200
-          rounded-xl xl:rounded-full 
-          py-2.5 px-4 
-          bg-white hover:bg-gray-50
-          transition-colors
-          whitespace-nowrap
-        "
+        style={pillBase}
+        onMouseEnter={(e) => {
+          if (!dark) e.currentTarget.style.background = "#f0f0f0";
+        }}
+        onMouseLeave={(e) => {
+          if (!dark)
+            e.currentTarget.style.background = hasValue ? "#f5f5f5" : "#fff";
+        }}
       >
-        <span className="text-black montserrat text-sm truncate max-w-[100px]">
-          {value || label}
-        </span>
-        <ChevronDown />
+        {dark && <FiltersIcon />}
+        <span>{value || label}</span>
+        {!dark && <ChevronDown />}
       </button>
 
       {isOpen && (
-        <div className="
-          absolute z-50 mt-2 min-w-[150px] w-full xl:w-auto
-          bg-white border border-gray-200 rounded-xl shadow-xl 
-          max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-100
-        ">
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 8px)",
+            left: 0,
+            zIndex: 50,
+            minWidth: 160,
+            background: "#fff",
+            border: "1.5px solid #e8e8e8",
+            borderRadius: 14,
+            boxShadow: "0 8px 30px rgba(0,0,0,0.10)",
+            overflow: "hidden",
+            animation: "fadeInDown 0.12s ease",
+          }}
+        >
           <div
-            className="px-4 py-3 text-gray-400 text-sm cursor-pointer hover:bg-gray-50"
-            onClick={() => handleSelect('')}
+            onClick={() => handleSelect("")}
+            style={{
+              padding: "10px 16px",
+              fontSize: 13,
+              color: "#aaa",
+              cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif",
+              transition: "background 0.1s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#fafafa")}
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "transparent")
+            }
           >
             Any {label}
           </div>
@@ -66,10 +130,23 @@ const AutoWidthDropdown = ({ label, value, options, onChange }) => {
             <div
               key={opt}
               onClick={() => handleSelect(opt)}
-              className={`
-                px-4 py-2 cursor-pointer transition-colors montserrat text-sm
-                ${value === opt ? 'bg-[#9C824A]/10 text-[#9C824A] font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-black'}
-              `}
+              style={{
+                padding: "9px 16px",
+                fontSize: 13,
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: value === opt ? 600 : 400,
+                color: value === opt ? "#9C824A" : "#333",
+                background: value === opt ? "#fdf8f0" : "transparent",
+                cursor: "pointer",
+                transition: "background 0.1s",
+              }}
+              onMouseEnter={(e) => {
+                if (value !== opt) e.currentTarget.style.background = "#fafafa";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background =
+                  value === opt ? "#fdf8f0" : "transparent";
+              }}
             >
               {opt}
             </div>
@@ -80,43 +157,67 @@ const AutoWidthDropdown = ({ label, value, options, onChange }) => {
   );
 };
 
+// Count active filters for the badge
+const countActiveFilters = (filters) =>
+  Object.entries(filters).filter(
+    ([k, v]) => k !== "location" && k !== "q" && v !== "",
+  ).length;
+
 const FilterBar = ({
   onFilter,
-  initialLocation = '',
+  initialLocation = "",
   filterOptions = {},
   priceRanges = null,
-  hideLocation = false
+  yearOptions = [],
+  hideLocation = false,
 }) => {
   const [filters, setFilters] = useState({
     location: initialLocation,
-    q: '',
-    category: '',
-    brand: '',
-    model: '',
-    priceRange: '',
-    sort: ''
+    q: "",
+    category: "",
+    brand: "",
+    model: "",
+    priceRange: "",
+    year: "",
+    sort: "",
   });
 
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const locationRef = useRef(null);
 
-  // Sync internal location with prop
   useEffect(() => {
-    setFilters(prev => ({ ...prev, location: initialLocation }));
+    setFilters((prev) => ({ ...prev, location: initialLocation }));
   }, [initialLocation]);
 
-  // Derived Options
   const categories = filterOptions ? Object.keys(filterOptions) : [];
-  const brands = filters.category && filterOptions[filters.category] ? Object.keys(filterOptions[filters.category]) : Array.from(new Set(categories.flatMap(cat => Object.keys(filterOptions[cat] || {}))));
-  const models = filters.brand ? (filters.category ? (filterOptions[filters.category]?.[filters.brand] || []) : Array.from(new Set(categories.flatMap(cat => filterOptions[cat]?.[filters.brand] || [])))) : [];
+  const brands =
+    filters.category && filterOptions[filters.category]
+      ? Object.keys(filterOptions[filters.category])
+      : Array.from(
+          new Set(
+            categories.flatMap((cat) => Object.keys(filterOptions[cat] || {})),
+          ),
+        );
+  const models = filters.brand
+    ? filters.category
+      ? filterOptions[filters.category]?.[filters.brand] || []
+      : Array.from(
+          new Set(
+            categories.flatMap(
+              (cat) => filterOptions[cat]?.[filters.brand] || [],
+            ),
+          ),
+        )
+    : [];
 
-  // Fetch location suggestions
   useEffect(() => {
     const handler = setTimeout(async () => {
       if (!hideLocation && filters.location && filters.location.length > 0) {
         try {
-          const response = await fetch(`/api/assets/location-suggestions?q=${filters.location}`);
+          const response = await fetch(
+            `/api/assets/location-suggestions?q=${filters.location}`,
+          );
           const data = await response.json();
           setSuggestions(data);
         } catch (error) {
@@ -126,166 +227,227 @@ const FilterBar = ({
         setSuggestions([]);
       }
     }, 300);
-
     return () => clearTimeout(handler);
   }, [filters.location, hideLocation]);
 
-  // Handle click outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (locationRef.current && !locationRef.current.contains(event.target)) {
+    const handleClickOutside = (e) => {
+      if (locationRef.current && !locationRef.current.contains(e.target))
         setShowSuggestions(false);
-      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleFilterChange = (key, value) => {
-    setFilters(prev => {
-        const newFilters = { ...prev, [key]: value };
-        if (key === 'category') {
-            newFilters.brand = '';
-            newFilters.model = '';
-        } else if (key === 'brand') {
-            newFilters.model = '';
-        }
-        return newFilters;
+    setFilters((prev) => {
+      const newFilters = { ...prev, [key]: value };
+      if (key === "category") {
+        newFilters.brand = "";
+        newFilters.model = "";
+      } else if (key === "brand") {
+        newFilters.model = "";
+      }
+      return newFilters;
     });
   };
 
   const handleSearch = (e) => {
     if (e) e.preventDefault();
-    if (onFilter) {
-      onFilter(filters);
-    }
+    if (onFilter) onFilter(filters);
     setShowSuggestions(false);
   };
 
-  return (
-    <div className="w-full flex justify-center p-4">
-      <form onSubmit={handleSearch} className={`
-        w-full
-        bg-white border border-gray-200 
-        rounded-2xl xl:rounded-full 
-        p-4 xl:p-2 xl:pl-8
-        flex flex-col xl:flex-row items-center justify-between ${hideLocation ? 'gap-2' : 'gap-4 xl:gap-2'}
-        shadow-md transition-all duration-300
-      `}>
-        <div className="w-full xl:w-auto flex items-center gap-2 border-b xl:border-r xl:border-b-0 border-gray-100 pb-2 xl:pb-0 pr-6">
-          <span className="canela text-xl text-black whitespace-nowrap font-bold">
-            Filter :
-          </span>
-        </div>
+  const activeCount = countActiveFilters(filters);
 
-        <div className={`w-full flex flex-col md:flex-row xl:flex-1 items-center ${hideLocation ? 'gap-2' : 'gap-4 xl:gap-4'} justify-between`}>
+  return (
+    <>
+      {/* Inject font + keyframe */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          padding: "12px 16px",
+        }}
+      >
+        <form
+          onSubmit={handleSearch}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: 8,
+            width: "100%",
+          }}
+        >
+          {/* Filters badge pill (dark) */}
+          <PillDropdown
+            label={activeCount > 0 ? `Filters ${activeCount}` : "Filters"}
+            value=""
+            options={[]}
+            onChange={() => {}}
+            dark
+          />
 
           {/* Location */}
           {!hideLocation && (
-            <>
-              <div className="relative w-full xl:w-auto xl:flex-1 px-4" ref={locationRef}>
+            <div
+              style={{ position: "relative", display: "inline-block" }}
+              ref={locationRef}
+            >
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "7px 14px",
+                  borderRadius: 9999,
+                  border: "1.5px solid #e2e2e2",
+                  background: filters.location ? "#f5f5f5" : "#fff",
+                  fontSize: 13,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: filters.location ? 600 : 500,
+                  color: "#111",
+                  cursor: "text",
+                }}
+              >
                 <input
                   type="text"
                   placeholder="Location"
                   value={filters.location}
                   onChange={(e) => {
-                    handleFilterChange('location', e.target.value);
+                    handleFilterChange("location", e.target.value);
                     setShowSuggestions(true);
                   }}
                   onFocus={() => setShowSuggestions(true)}
-                  className="w-full outline-none text-sm font-sans placeholder:text-gray-300 text-black font-medium"
+                  style={{
+                    border: "none",
+                    outline: "none",
+                    background: "transparent",
+                    fontSize: 13,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: filters.location ? 600 : 500,
+                    color: "#111",
+                    width: filters.location
+                      ? Math.max(60, filters.location.length * 8)
+                      : 70,
+                    maxWidth: 140,
+                  }}
                 />
-                {showSuggestions && suggestions.length > 0 && (
-                  <ul className="absolute z-[110] w-full bg-white border border-gray-100 rounded-xl mt-4 shadow-2xl left-0 p-2 overflow-hidden">
-                    {suggestions.map((s, idx) => (
-                      <li key={idx} className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-600 text-sm font-medium transition-colors" onClick={() => {
-                        handleFilterChange('location', s);
-                        setShowSuggestions(false);
-                      }}>
-                        {s}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <ChevronDown />
               </div>
-              <div className="hidden xl:block h-8 w-px bg-gray-100"></div>
-            </>
+              {showSuggestions && suggestions.length > 0 && (
+                <ul
+                  style={{
+                    position: "absolute",
+                    zIndex: 110,
+                    top: "calc(100% + 8px)",
+                    left: 0,
+                    background: "#fff",
+                    border: "1.5px solid #e8e8e8",
+                    borderRadius: 14,
+                    boxShadow: "0 8px 30px rgba(0,0,0,0.10)",
+                    listStyle: "none",
+                    margin: 0,
+                    padding: "6px 0",
+                    minWidth: 180,
+                  }}
+                >
+                  {suggestions.map((s, idx) => (
+                    <li
+                      key={idx}
+                      onClick={() => {
+                        handleFilterChange("location", s);
+                        setShowSuggestions(false);
+                      }}
+                      style={{
+                        padding: "9px 16px",
+                        fontSize: 13,
+                        fontFamily: "'DM Sans', sans-serif",
+                        color: "#333",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = "#fafafa")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "transparent")
+                      }
+                    >
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
 
-          <div className="hidden xl:block h-8 w-px bg-gray-100"></div>
-
-          <AutoWidthDropdown
+          <PillDropdown
             label="Category"
             value={filters.category}
             options={categories}
-            onChange={(val) => handleFilterChange('category', val)}
+            onChange={(val) => handleFilterChange("category", val)}
           />
-
-          <div className="hidden xl:block h-8 w-px bg-gray-100"></div>
-
-          <AutoWidthDropdown
+          <PillDropdown
             label="Brand"
             value={filters.brand}
             options={brands}
-            onChange={(val) => handleFilterChange('brand', val)}
+            onChange={(val) => handleFilterChange("brand", val)}
           />
-
-          <div className="hidden xl:block h-8 w-px bg-gray-100"></div>
-
-          <AutoWidthDropdown
+          <PillDropdown
             label="Model"
             value={filters.model}
             options={models}
-            onChange={(val) => handleFilterChange('model', val)}
+            onChange={(val) => handleFilterChange("model", val)}
           />
-
-          <div className="hidden xl:block h-8 w-px bg-gray-100"></div>
-
-          <AutoWidthDropdown
-            label="Price Range"
+          <PillDropdown
+            label="Year"
+            value={filters.year}
+            options={yearOptions || []}
+            onChange={(val) => handleFilterChange("year", val)}
+          />
+          <PillDropdown
+            label="Price"
             value={filters.priceRange}
             options={priceRanges || []}
-            onChange={(val) => handleFilterChange('priceRange', val)}
+            onChange={(val) => handleFilterChange("priceRange", val)}
           />
 
-          <div className="hidden xl:block h-8 w-px bg-gray-100"></div>
-
-          <AutoWidthDropdown
-            label="Sort"
-            value={filters.sort}
-            options={['Newest', 'Oldest', 'Low to High', 'High to Low']}
-            onChange={(val) => handleFilterChange('sort', val)}
-          />
-
-          {/* SEARCH BUTTON (Mobile/Tablet) */}
-          <div className="xl:hidden w-full mt-4">
-            <button
-              type="submit"
-              className="w-full bg-black hover:bg-gray-800 text-white montserrat font-bold py-3 rounded-xl shadow-md transition-all uppercase tracking-widest text-xs"
-            >
-              Search
-            </button>
-          </div>
-
-        </div>
-
-        <button
-          type="submit"
-          className="
-            hidden xl:block
-            w-auto 
-            bg-black hover:bg-gray-800 
-            text-white font-sans text-xs font-bold 
-            px-10 py-3.5 
-            rounded-full 
-            transition-all duration-300 
-            uppercase tracking-widest
-          "
-        >
-          SEARCH
-        </button>
-      </form>
-    </div>
+          {/* Search pill */}
+          <button
+            type="submit"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              padding: "7px 20px",
+              borderRadius: 9999,
+              border: "none",
+              background: "#111",
+              color: "#fff",
+              fontSize: 13,
+              fontWeight: 600,
+              fontFamily: "'DM Sans', sans-serif",
+              cursor: "pointer",
+              letterSpacing: "0.04em",
+              transition: "background 0.15s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#333")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#111")}
+          >
+            Search
+          </button>
+        </form>
+      </div>
+    </>
   );
 };
 
