@@ -48,6 +48,16 @@ const userSchema = new mongoose.Schema(
     whatsapp: String,
     jobTitle: String,
     language: String,
+    timezone: String,
+    preferredContact: String,
+    agentDescription: String,
+    social: {
+      instagram: String,
+      linkedin: String,
+      facebook: String,
+      twitter: String,
+      youtube: String
+    },
 
     company: {
       companyName: String,
@@ -57,6 +67,15 @@ const userSchema = new mongoose.Schema(
       description: String,
       businessType: String,
       establishedYear: String,
+      phone: String,
+      email: String,
+      social: {
+        instagram: String,
+        linkedin: String,
+        facebook: String,
+        twitter: String,
+        youtube: String
+      }
     },
 
     isVerified: {

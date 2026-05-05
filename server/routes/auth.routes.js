@@ -434,7 +434,7 @@ router.post("/upgrade-plan", authMiddleware, async (req, res) => {
  */
 router.put("/update-profile", authMiddleware, async (req, res) => {
   try {
-    const { name, phone, whatsapp, jobTitle, language, profilePicture, company } = req.body;
+    const { name, phone, whatsapp, jobTitle, language, timezone, preferredContact, agentDescription, social, profilePicture, company } = req.body;
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
@@ -474,6 +474,15 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     if (whatsapp) user.whatsapp = whatsapp;
     if (jobTitle) user.jobTitle = jobTitle;
     if (language) user.language = language;
+    if (timezone) user.timezone = timezone;
+    if (preferredContact) user.preferredContact = preferredContact;
+    if (agentDescription) user.agentDescription = agentDescription;
+    if (social) {
+      user.social = {
+        ...user.social,
+        ...social
+      };
+    }
     if (profilePicture) user.profilePicture = profilePicture;
     if (req.body.leadEmailNotifications !== undefined) {
       user.leadEmailNotifications = !!req.body.leadEmailNotifications;
@@ -482,7 +491,8 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     if (company) {
       user.company = {
         ...user.company,
-        ...company
+        ...company,
+        social: company.social ? { ...user.company?.social, ...company.social } : user.company?.social
       };
     }
 

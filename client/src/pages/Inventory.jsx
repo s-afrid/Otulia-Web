@@ -32,6 +32,34 @@ const paypalOptions = {
     intent: "capture"
 };
 
+const languages = [
+    'English', 'Spanish', 'French', 'Arabic', 'German', 
+    'Chinese', 'Russian', 'Portuguese', 'Italian', 'Dutch'
+];
+
+const timezones = [
+    '(GMT-08:00) Pacific Time (US & Canada)',
+    '(GMT-05:00) Eastern Time (US & Canada)',
+    '(GMT+00:00) London, Dublin, Lisbon',
+    '(GMT+01:00) Paris, Berlin, Rome, Madrid',
+    '(GMT+02:00) Athens, Istanbul, Jerusalem',
+    '(GMT+03:00) Moscow, Riyadh, Nairobi',
+    '(GMT+04:00) Dubai, UAE',
+    '(GMT+05:30) Mumbai, New Delhi',
+    '(GMT+08:00) Singapore, Hong Kong, Beijing',
+    '(GMT+09:00) Tokyo, Seoul',
+    '(GMT+10:00) Sydney, Melbourne'
+];
+
+const contactMethods = ['WhatsApp', 'Email', 'Phone Call', 'SMS'];
+
+const businessTypes = [
+    'Car Dealership',
+    'Real Estate Agency',
+    'Bike Company',
+    'Yacht Company'
+];
+
 const Inventory = () => {
     const { token, user, refreshUser, updateUserLocal, logout, login } = useAuth();
     const navigate = useNavigate();
@@ -99,6 +127,103 @@ const Inventory = () => {
         }
     };
 
+    const fetchDashboard = async () => {
+        try {
+            const response = await fetch('/api/inventory/dashboard', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const resData = await response.json();
+                setData(resData);
+                if (resData.userProfile) {
+                    // Sync latest verification status to global user context
+                    if (updateUserLocal) {
+                        updateUserLocal({
+                            verificationStatus: resData.userProfile.verificationStatus,
+                            isVerified: resData.userProfile.isVerified,
+                            plan: resData.userProfile.plan
+                        });
+                    }
+
+                    const comp = resData.userProfile.company || {};
+                    
+                    let pCode = '+971';
+                    let pNum = '';
+                    if (resData.userProfile.phone) {
+                        const parts = resData.userProfile.phone.split(' ');
+                        if (parts.length > 1) {
+                            pCode = parts[0];
+                            pNum = parts.slice(1).join(' ');
+                        } else {
+                            pNum = resData.userProfile.phone;
+                        }
+                    }
+
+                    let cpCode = '+971';
+                    let cpNum = '';
+                    if (comp.phone) {
+                        const parts = comp.phone.split(' ');
+                        if (parts.length > 1) {
+                            cpCode = parts[0];
+                            cpNum = parts.slice(1).join(' ');
+                        } else {
+                            cpNum = comp.phone;
+                        }
+                    }
+
+                    let wCode = '+971';
+                    let wNum = '';
+                    if (resData.userProfile.whatsapp) {
+                        const parts = resData.userProfile.whatsapp.split(' ');
+                        if (parts.length > 1) {
+                            wCode = parts[0];
+                            wNum = parts.slice(1).join(' ');
+                        } else {
+                            wNum = resData.userProfile.whatsapp;
+                        }
+                    }
+
+                    setAgentInfo(prev => ({
+                        ...prev,
+                        photo: resData.userProfile.profilePicture || prev.photo,
+                        fullName: resData.userProfile.name || prev.fullName,
+                        email: resData.userProfile.email || prev.email,
+                        phoneCode: pCode,
+                        phone: pNum,
+                        whatsappCode: wCode,
+                        whatsapp: wNum,
+                        jobTitle: resData.userProfile.jobTitle || prev.jobTitle,
+                        language: resData.userProfile.language || prev.language,
+                        timezone: resData.userProfile.timezone || prev.timezone,
+                        preferredContact: resData.userProfile.preferredContact || prev.preferredContact,
+                        description: resData.userProfile.agentDescription || prev.description,
+                        social: resData.userProfile.social || prev.social
+                    }));
+
+                    setCompanyInfo(prev => ({
+                        ...prev,
+                        name: comp.companyName || '',
+                        email: comp.email || resData.userProfile.email || '',
+                        phoneCode: cpCode,
+                        phone: cpNum,
+                        address: comp.address || '',
+                        website: comp.website || '',
+                        logo: comp.companyLogo || null,
+                        description: comp.description || '',
+                        businessType: comp.businessType || prev.businessType,
+                        establishedYear: comp.establishedYear || prev.establishedYear,
+                        social: comp.social || prev.social
+                    }));
+                    setLeadEmailNotifications(resData.userProfile.leadEmailNotifications !== false);
+                }
+            }
+        } catch (error) {
+            console.error("Fetch Error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleStatusChange = async (id, newStatus, isActivity) => {
         try {
             const response = await fetch(`/api/leads/status/${id}`, {
@@ -132,12 +257,13 @@ const Inventory = () => {
     const [companyInfo, setCompanyInfo] = useState({
         name: '',
         email: '',
+        phoneCode: '+971',
         phone: '',
         address: '',
         website: '',
         logo: null,
         description: '',
-        businessType: 'Luxury Cars & Supercars Dealer',
+        businessType: 'Car Dealership',
         establishedYear: '2019',
         social: {
             instagram: '',
@@ -158,7 +284,7 @@ const Inventory = () => {
         whatsapp: '',
         preferredContact: 'WhatsApp',
         language: 'English',
-        timezone: '(GMT+4) Dubai, UAE',
+        timezone: '(GMT+04:00) Dubai, UAE',
         description: '',
         social: {
             instagram: '',
@@ -171,82 +297,6 @@ const Inventory = () => {
     useEffect(() => {
         fetchDashboard();
     }, [token]);
-
-    const fetchDashboard = async () => {
-        try {
-            const response = await fetch('/api/inventory/dashboard', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
-                const resData = await response.json();
-                setData(resData);
-                if (resData.userProfile) {
-                    // Sync latest verification status to global user context
-                    if (updateUserLocal) {
-                        updateUserLocal({
-                            verificationStatus: resData.userProfile.verificationStatus,
-                            isVerified: resData.userProfile.isVerified,
-                            plan: resData.userProfile.plan
-                        });
-                    }
-
-                    const comp = resData.userProfile.company || {};
-                    
-                    let pCode = '+971';
-                    let pNum = '';
-                    if (resData.userProfile.phone) {
-                        const parts = resData.userProfile.phone.split(' ');
-                        if (parts.length > 1) {
-                            pCode = parts[0];
-                            pNum = parts.slice(1).join(' ');
-                        } else {
-                            pNum = resData.userProfile.phone;
-                        }
-                    }
-
-                    let wCode = '+971';
-                    let wNum = '';
-                    if (resData.userProfile.whatsapp) {
-                        const parts = resData.userProfile.whatsapp.split(' ');
-                        if (parts.length > 1) {
-                            wCode = parts[0];
-                            wNum = parts.slice(1).join(' ');
-                        } else {
-                            wNum = resData.userProfile.whatsapp;
-                        }
-                    }
-
-                    setAgentInfo(prev => ({
-                        ...prev,
-                        photo: resData.userProfile.profilePicture || prev.photo,
-                        fullName: resData.userProfile.name || prev.fullName,
-                        email: resData.userProfile.email || prev.email,
-                        phoneCode: pCode,
-                        phone: pNum,
-                        whatsappCode: wCode,
-                        whatsapp: wNum,
-                        jobTitle: resData.userProfile.jobTitle || prev.jobTitle,
-                        language: resData.userProfile.language || prev.language
-                    }));
-
-                    setCompanyInfo(prev => ({
-                        ...prev,
-                        name: comp.companyName || '',
-                        email: resData.userProfile.email || '',
-                        phone: resData.userProfile.phone || '',
-                        address: comp.address || '',
-                        website: comp.website || '',
-                        logo: comp.companyLogo || null,
-                    }));
-                    setLeadEmailNotifications(resData.userProfile.leadEmailNotifications !== false);
-                }
-            }
-        } catch (error) {
-            console.error("Fetch Error:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleLogoUpload = (e) => {
         const file = e.target.files[0];
@@ -375,7 +425,11 @@ const Inventory = () => {
                     phone: `${agentInfo.phoneCode} ${agentInfo.phone}`,
                     whatsapp: `${agentInfo.whatsappCode} ${agentInfo.whatsapp}`,
                     jobTitle: agentInfo.jobTitle,
-                    language: agentInfo.language
+                    language: agentInfo.language,
+                    timezone: agentInfo.timezone,
+                    preferredContact: agentInfo.preferredContact,
+                    agentDescription: agentInfo.description,
+                    social: agentInfo.social
                 })
             });
 
@@ -413,8 +467,9 @@ const Inventory = () => {
                         description: companyInfo.description,
                         businessType: companyInfo.businessType,
                         establishedYear: companyInfo.establishedYear,
-                        phone: `${companyInfo.phoneCode || ''} ${companyInfo.phone || ''}`.trim(),
-                        email: companyInfo.email
+                        phone: `${companyInfo.phoneCode} ${companyInfo.phone}`,
+                        email: companyInfo.email,
+                        social: companyInfo.social
                     }
                 })
             });
@@ -2626,8 +2681,12 @@ const Inventory = () => {
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Preferred Contact Method</label>
                                                 <div className="relative w-full">
                                                     <div className="absolute inset-y-0 left-2.5 flex items-center text-emerald-500 pointer-events-none text-xs"><FiMessageSquare/></div>
-                                                    <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-8 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm">
-                                                        <option>WhatsApp</option>
+                                                    <select 
+                                                        value={agentInfo.preferredContact}
+                                                        onChange={e => setAgentInfo(p => ({...p, preferredContact: e.target.value}))}
+                                                        className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-8 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer"
+                                                    >
+                                                        {contactMethods.map(m => <option key={m} value={m}>{m}</option>)}
                                                     </select>
                                                     <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"/>
                                                 </div>
@@ -2635,8 +2694,12 @@ const Inventory = () => {
                                             <div>
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Language</label>
                                                 <div className="relative w-full">
-                                                    <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm">
-                                                        <option>English</option>
+                                                    <select 
+                                                        value={agentInfo.language}
+                                                        onChange={e => setAgentInfo(p => ({...p, language: e.target.value}))}
+                                                        className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer"
+                                                    >
+                                                        {languages.map(l => <option key={l} value={l}>{l}</option>)}
                                                     </select>
                                                     <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"/>
                                                 </div>
@@ -2644,8 +2707,12 @@ const Inventory = () => {
                                             <div>
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Time Zone</label>
                                                 <div className="relative w-full">
-                                                    <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm">
-                                                        <option>(GMT+4) Dubai, UAE</option>
+                                                    <select 
+                                                        value={agentInfo.timezone}
+                                                        onChange={e => setAgentInfo(p => ({...p, timezone: e.target.value}))}
+                                                        className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer"
+                                                    >
+                                                        {timezones.map(tz => <option key={tz} value={tz}>{tz}</option>)}
                                                     </select>
                                                     <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"/>
                                                 </div>
@@ -2657,8 +2724,13 @@ const Inventory = () => {
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide">Agent Description</label>
                                             </div>
                                             <div className="relative">
-                                                <textarea className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none" rows="3" defaultValue="Luxury asset consultant with 8+ years of experience in high-end cars and investment properties. Passionate about delivering a personalized, transparent, and premium experience to every client."></textarea>
-                                                <span className="absolute bottom-1.5 right-2 text-[8px] text-gray-400 font-bold bg-white">158 / 1000</span>
+                                                <textarea 
+                                                    value={agentInfo.description}
+                                                    onChange={e => setAgentInfo(p => ({...p, description: e.target.value}))}
+                                                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none" 
+                                                    rows="3"
+                                                ></textarea>
+                                                <span className="absolute bottom-1.5 right-2 text-[8px] text-gray-400 font-bold bg-white">{agentInfo.description?.length || 0} / 1000</span>
                                             </div>
                                         </div>
                                         
@@ -2667,19 +2739,43 @@ const Inventory = () => {
                                             <div className="grid grid-cols-2 gap-2">
                                                 <div className="relative w-full">
                                                     <div className="absolute inset-y-0 left-2.5 flex items-center text-pink-500 pointer-events-none text-[10px]"><FiInstagram/></div>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="instagram.com/mdriyaz" />
+                                                    <input 
+                                                        type="text" 
+                                                        value={agentInfo.social.instagram}
+                                                        onChange={e => setAgentInfo(p => ({...p, social: {...p.social, instagram: e.target.value}}))}
+                                                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                        placeholder="instagram.com/username"
+                                                    />
                                                 </div>
                                                 <div className="relative w-full">
                                                     <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-600 pointer-events-none text-[10px]"><FiLinkedin/></div>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="linkedin.com/in/mdriyaz" />
+                                                    <input 
+                                                        type="text" 
+                                                        value={agentInfo.social.linkedin}
+                                                        onChange={e => setAgentInfo(p => ({...p, social: {...p.social, linkedin: e.target.value}}))}
+                                                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                        placeholder="linkedin.com/in/username"
+                                                    />
                                                 </div>
                                                 <div className="relative w-full">
                                                     <div className="absolute inset-y-0 left-2.5 flex items-center text-gray-800 pointer-events-none text-[10px] font-serif font-black">X</div>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="x.com/mdriyaz" />
+                                                    <input 
+                                                        type="text" 
+                                                        value={agentInfo.social.x || agentInfo.social.twitter}
+                                                        onChange={e => setAgentInfo(p => ({...p, social: {...p.social, x: e.target.value, twitter: e.target.value}}))}
+                                                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                        placeholder="x.com/username"
+                                                    />
                                                 </div>
                                                 <div className="relative w-full">
                                                     <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-500 pointer-events-none text-[10px]"><FiFacebook/></div>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="facebook.com/mdriyaz" />
+                                                    <input 
+                                                        type="text" 
+                                                        value={agentInfo.social.facebook}
+                                                        onChange={e => setAgentInfo(p => ({...p, social: {...p.social, facebook: e.target.value}}))}
+                                                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                        placeholder="facebook.com/username"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
@@ -2718,15 +2814,24 @@ const Inventory = () => {
                                             <div className="flex-1 flex flex-col gap-3">
                                                 <div>
                                                     <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Company / Dealership Name</label>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="Visual Business Express" />
+                                                    <input 
+                                                       type="text" 
+                                                       value={companyInfo.name}
+                                                       onChange={e => setCompanyInfo(p => ({...p, name: e.target.value}))}
+                                                       className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                    />
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-3">
                                                     <div className="col-span-2">
                                                         <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Website</label>
-                                                        <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="https://vbexpress.com" />
+                                                        <input 
+                                                           type="text" 
+                                                           value={companyInfo.website}
+                                                           onChange={e => setCompanyInfo(p => ({...p, website: e.target.value}))}
+                                                           className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                        />
                                                     </div>
-                                                </div>
-                                            </div>
+                                                </div>                                            </div>
                                             <div className="flex flex-col gap-1.5 min-w-[140px]">
                                                 <label className="text-[9px] font-bold text-gray-700 capitalize tracking-wide">Company Logo</label>
                                                 <div className="flex items-center gap-2">
@@ -2752,13 +2857,22 @@ const Inventory = () => {
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="col-span-2">
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Company Email</label>
-                                                <input type="email" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="hello@vbexpress.com" />
+                                                <input 
+                                                    type="email" 
+                                                    value={companyInfo.email}
+                                                    onChange={e => setCompanyInfo(p => ({...p, email: e.target.value}))}
+                                                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                />
                                             </div>
                                             <div>
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Business Type</label>
                                                 <div className="relative w-full">
-                                                    <select className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm">
-                                                        <option>Luxury Cars & Supercars Dealer</option>
+                                                    <select 
+                                                        value={companyInfo.businessType}
+                                                        onChange={e => setCompanyInfo(p => ({...p, businessType: e.target.value}))}
+                                                        className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer"
+                                                    >
+                                                        {businessTypes.map(b => <option key={b} value={b}>{b}</option>)}
                                                     </select>
                                                     <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"/>
                                                 </div>
@@ -2767,18 +2881,51 @@ const Inventory = () => {
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Established Year</label>
                                                 <div className="relative w-full">
                                                     <div className="absolute right-2.5 inset-y-0 flex items-center text-gray-400 pointer-events-none text-[10px]"><FiCalendar/></div>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pr-8 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="2019" />
+                                                    <input 
+                                                        type="text" 
+                                                        value={companyInfo.establishedYear}
+                                                        onChange={e => setCompanyInfo(p => ({...p, establishedYear: e.target.value}))}
+                                                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pr-8 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                    />
                                                 </div>
                                             </div>
                                             <div>
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Office Address</label>
-                                                <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="5930, Amarilloor, Spain" />
+                                                <input 
+                                                    type="text" 
+                                                    value={companyInfo.address}
+                                                    onChange={e => setCompanyInfo(p => ({...p, address: e.target.value}))}
+                                                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                />
                                             </div>
                                             <div>
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Phone Number</label>
                                                 <div className="flex border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
-                                                    <div className="flex items-center px-2 bg-gray-50 border-r border-gray-200 text-[10px]"><span className="mr-1">🇦🇪</span> <FiChevronDown className="text-[8px] text-gray-500"/></div>
-                                                    <input type="text" className="w-full bg-transparent px-3 py-1.5 text-[10px] font-medium focus:outline-none" defaultValue="+44 123 456 7890" />
+                                                    <div className="flex items-center bg-gray-50 border-r border-gray-200 text-[10px] relative">
+                                                        <select 
+                                                            className="appearance-none bg-transparent pl-2 pr-6 py-1.5 outline-none font-medium cursor-pointer"
+                                                            value={companyInfo.phoneCode}
+                                                            onChange={e => setCompanyInfo(p => ({...p, phoneCode: e.target.value}))}
+                                                        >
+                                                            <option value="+1">🇺🇸 +1</option>
+                                                            <option value="+44">🇬🇧 +44</option>
+                                                            <option value="+971">🇦🇪 +971</option>
+                                                            <option value="+61">🇦🇺 +61</option>
+                                                            <option value="+91">🇮🇳 +91</option>
+                                                            <option value="+49">🇩🇪 +49</option>
+                                                            <option value="+33">🇫🇷 +33</option>
+                                                            <option value="+39">🇮🇹 +39</option>
+                                                            <option value="+81">🇯🇵 +81</option>
+                                                            <option value="+86">🇨🇳 +86</option>
+                                                        </select>
+                                                        <FiChevronDown className="absolute right-1.5 text-[8px] text-gray-500 pointer-events-none"/>
+                                                    </div>
+                                                    <input 
+                                                        type="text" 
+                                                        value={companyInfo.phone}
+                                                        onChange={e => setCompanyInfo(p => ({...p, phone: e.target.value}))}
+                                                        className="w-full bg-transparent px-3 py-1.5 text-[10px] font-medium focus:outline-none" 
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
@@ -2788,8 +2935,13 @@ const Inventory = () => {
                                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide">Dealer / Agent Description</label>
                                             </div>
                                             <div className="relative">
-                                                <textarea className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none" rows="3" defaultValue="Specialists in luxury cars & supercars trading, serving customers high-quality & exclusive properties on the Costa Tropical. With 10+ years of local market expertise, we ensure exceptional service and transparent deals."></textarea>
-                                                <span className="absolute bottom-1.5 right-2 text-[8px] text-gray-400 font-bold bg-white">176 / 1000</span>
+                                                <textarea 
+                                                    value={companyInfo.description}
+                                                    onChange={e => setCompanyInfo(p => ({...p, description: e.target.value}))}
+                                                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none" 
+                                                    rows="3"
+                                                ></textarea>
+                                                <span className="absolute bottom-1.5 right-2 text-[8px] text-gray-400 font-bold bg-white">{companyInfo.description?.length || 0} / 1000</span>
                                             </div>
                                         </div>
                                         
@@ -2798,19 +2950,43 @@ const Inventory = () => {
                                             <div className="grid grid-cols-2 gap-2">
                                                 <div className="relative w-full">
                                                     <div className="absolute inset-y-0 left-2.5 flex items-center text-pink-500 pointer-events-none text-[10px]"><FiInstagram/></div>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="instagram.com/vbexpress" />
+                                                    <input 
+                                                        type="text" 
+                                                        value={companyInfo.social.instagram}
+                                                        onChange={e => setCompanyInfo(p => ({...p, social: {...p.social, instagram: e.target.value}}))}
+                                                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                        placeholder="instagram.com/username"
+                                                    />
                                                 </div>
                                                 <div className="relative w-full">
                                                     <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-600 pointer-events-none text-[10px]"><FiLinkedin/></div>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="linkedin.com/company/vbexpress" />
+                                                    <input 
+                                                        type="text" 
+                                                        value={companyInfo.social.linkedin}
+                                                        onChange={e => setCompanyInfo(p => ({...p, social: {...p.social, linkedin: e.target.value}}))}
+                                                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                        placeholder="linkedin.com/company/username"
+                                                    />
                                                 </div>
                                                 <div className="relative w-full">
                                                     <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-500 pointer-events-none text-[10px]"><FiFacebook/></div>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="facebook.com/vbexpress" />
+                                                    <input 
+                                                        type="text" 
+                                                        value={companyInfo.social.facebook}
+                                                        onChange={e => setCompanyInfo(p => ({...p, social: {...p.social, facebook: e.target.value}}))}
+                                                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                        placeholder="facebook.com/username"
+                                                    />
                                                 </div>
                                                 <div className="relative w-full">
                                                     <div className="absolute inset-y-0 left-2.5 flex items-center text-red-600 pointer-events-none text-[10px]"><FiYoutube/></div>
-                                                    <input type="text" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" defaultValue="youtube.com/@vbexpress" />
+                                                    <input 
+                                                        type="text" 
+                                                        value={companyInfo.social.youtube}
+                                                        onChange={e => setCompanyInfo(p => ({...p, social: {...p.social, youtube: e.target.value}}))}
+                                                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" 
+                                                        placeholder="youtube.com/@username"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
