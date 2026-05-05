@@ -1,12 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
-import { FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, FiClock, FiActivity, FiXCircle, FiSettings, FiCheckCircle, FiEdit } from 'react-icons/fi';
+import { 
+  FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, 
+  FiClock, FiActivity, FiXCircle, FiSettings, FiCheckCircle, FiEdit, FiMessageSquare,
+  FiChevronDown, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiRefreshCw, FiBriefcase, FiGlobe, FiShield
+} from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import UserPlaceholder from '../assets/user.png';
 import VerificationModal from '../components/VerificationModal';
 import ImageCropModal from '../components/ImageCropModal';
 import SEO from '../components/SEO';
+
+const languages = [
+    'English', 'Spanish', 'French', 'Arabic', 'German', 
+    'Chinese', 'Russian', 'Portuguese', 'Italian', 'Dutch'
+];
+
+const timezones = [
+    '(GMT-08:00) Pacific Time (US & Canada)',
+    '(GMT-05:00) Eastern Time (US & Canada)',
+    '(GMT+00:00) London, Dublin, Lisbon',
+    '(GMT+01:00) Paris, Berlin, Rome, Madrid',
+    '(GMT+02:00) Athens, Istanbul, Jerusalem',
+    '(GMT+03:00) Moscow, Riyadh, Nairobi',
+    '(GMT+04:00) Dubai, UAE',
+    '(GMT+05:30) Mumbai, New Delhi',
+    '(GMT+08:00) Singapore, Hong Kong, Beijing',
+    '(GMT+09:00) Tokyo, Seoul',
+    '(GMT+10:00) Sydney, Melbourne'
+];
+
+const contactMethods = ['WhatsApp', 'Email', 'Phone Call', 'SMS'];
 
 const Profile = () => {
   const { user, logout, refreshUser, token } = useAuth();
@@ -17,14 +43,94 @@ const Profile = () => {
   const [imageToCrop, setImageToCrop] = useState(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Edit state
-  const [isEditingPhone, setIsEditingPhone] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
+  // Refs for focusing
+  const nameRef = useRef(null);
+  const jobRef = useRef(null);
+  const phoneRef = useRef(null);
+  const whatsappRef = useRef(null);
+  const contactRef = useRef(null);
+  const langRef = useRef(null);
+  const tzRef = useRef(null);
+  const descRef = useRef(null);
+  const instaRef = useRef(null);
+  const linkedRef = useRef(null);
+  const xRef = useRef(null);
+  const fbRef = useRef(null);
 
-  // Edit state for name
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [userName, setUserName] = useState('');
+  // Profile Form State
+  const [profileData, setProfileData] = useState({
+    name: '',
+    email: '',
+    phoneCode: '+971',
+    phone: '',
+    whatsappCode: '+971',
+    whatsapp: '',
+    jobTitle: '',
+    language: 'English',
+    timezone: '(GMT+04:00) Dubai, UAE',
+    preferredContact: 'WhatsApp',
+    description: '',
+    social: {
+      instagram: '',
+      linkedin: '',
+      facebook: '',
+      twitter: '',
+      youtube: ''
+    }
+  });
+
+  useEffect(() => {
+    if (user) {
+      // Parse phone
+      let pCode = '+971';
+      let pNum = '';
+      if (user.phone) {
+        const parts = user.phone.split(' ');
+        if (parts.length > 1) {
+          pCode = parts[0];
+          pNum = parts.slice(1).join(' ');
+        } else {
+          pNum = user.phone;
+        }
+      }
+
+      // Parse whatsapp
+      let wCode = '+971';
+      let wNum = '';
+      if (user.whatsapp) {
+        const parts = user.whatsapp.split(' ');
+        if (parts.length > 1) {
+          wCode = parts[0];
+          wNum = parts.slice(1).join(' ');
+        } else {
+          wNum = user.whatsapp;
+        }
+      }
+
+      setProfileData({
+        name: user.name || '',
+        email: user.email || '',
+        phoneCode: pCode,
+        phone: pNum,
+        whatsappCode: wCode,
+        whatsapp: wNum,
+        jobTitle: user.jobTitle || '',
+        language: user.language || 'English',
+        timezone: user.timezone || '(GMT+04:00) Dubai, UAE',
+        preferredContact: user.preferredContact || 'WhatsApp',
+        description: user.agentDescription || '',
+        social: {
+          instagram: user.social?.instagram || '',
+          linkedin: user.social?.linkedin || '',
+          facebook: user.social?.facebook || '',
+          twitter: user.social?.twitter || user.social?.x || '',
+          youtube: user.social?.youtube || ''
+        }
+      });
+    }
+  }, [user]);
 
   const handleUploadSuccess = async () => {
     setShowVerificationModal(false);
@@ -42,7 +148,8 @@ const Profile = () => {
     navigate('/');
   };
 
-  const handleUpdatePhone = async () => {
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
     try {
       const response = await fetch('/api/auth/update-profile', {
         method: 'PUT',
@@ -50,41 +157,31 @@ const Profile = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ phone: phoneNumber })
+        body: JSON.stringify({
+          name: profileData.name,
+          phone: `${profileData.phoneCode} ${profileData.phone}`,
+          whatsapp: `${profileData.whatsappCode} ${profileData.whatsapp}`,
+          jobTitle: profileData.jobTitle,
+          language: profileData.language,
+          timezone: profileData.timezone,
+          preferredContact: profileData.preferredContact,
+          agentDescription: profileData.description,
+          social: profileData.social
+        })
       });
 
       if (response.ok) {
         await refreshUser();
-        setIsEditingPhone(false);
+        alert("Profile updated successfully!");
       } else {
-        alert('Failed to update phone number');
+        const err = await response.json();
+        alert(err.error || 'Failed to update profile');
       }
     } catch (error) {
       console.error(error);
       alert('Error updating profile');
-    }
-  };
-
-  const handleUpdateName = async () => {
-    try {
-      const response = await fetch('/api/auth/update-profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ name: userName })
-      });
-
-      if (response.ok) {
-        await refreshUser();
-        setIsEditingName(false);
-      } else {
-        alert('Failed to update name');
-      }
-    } catch (error) {
-      console.error(error);
-      alert('Error updating profile');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -232,63 +329,236 @@ const Profile = () => {
               <div className="space-y-6">
                 {/* Personal Details */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                  <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Personal Details</h3>
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Personal Details</h3>
+                    <button 
+                      onClick={handleSaveProfile}
+                      disabled={isSaving}
+                      className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-all disabled:bg-gray-400"
+                    >
+                      {isSaving ? <FiRefreshCw className="animate-spin" /> : <FiCheckCircle />}
+                      {isSaving ? 'Saving...' : 'Save Details'}
+                    </button>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 relative group">
                       <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm"><FiUser /></div>
                       <div className="flex-1">
-                        <div className="flex justify-between items-center">
-                          <p className="text-[10px] text-gray-400 font-bold uppercase">Full Name</p>
-                          {!isEditingName && (
-                            <button onClick={() => { setIsEditingName(true); setUserName(user.name || ''); }} className="text-[10px] text-blue-600 font-bold uppercase hover:underline opacity-0 group-hover:opacity-100 transition-opacity">Edit</button>
-                          )}
-                        </div>
-                        {isEditingName ? (
-                          <div className="flex gap-2 mt-1">
-                            <input
-                              type="text"
-                              value={userName}
-                              onChange={(e) => setUserName(e.target.value)}
-                              className="w-full text-sm border-b border-gray-300 focus:border-black outline-none py-1 bg-transparent"
-                              placeholder="Enter your name"
-                            />
-                            <button onClick={handleUpdateName} className="text-green-600 font-bold uppercase text-[10px]">Save</button>
-                            <button onClick={() => setIsEditingName(false)} className="text-red-500 font-bold uppercase text-[10px]">Cancel</button>
-                          </div>
-                        ) : (
-                          <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-                        )}
+                        <p className="text-[10px] text-gray-400 font-bold uppercase">Full Name</p>
+                        <input
+                          ref={nameRef}
+                          type="text"
+                          value={profileData.name}
+                          onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                          className="w-full text-sm font-semibold text-gray-900 bg-transparent border-b border-transparent focus:border-gray-300 outline-none"
+                        />
                       </div>
+                      <button onClick={() => nameRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-3 right-3 text-blue-600 hover:text-blue-700 p-1"><FiEdit className="text-[10px]"/></button>
                     </div>
-                    <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100">
+
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm"><FiBriefcase /></div>
+                      <div className="flex-1">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase">Job Title / Role</p>
+                        <input
+                          ref={jobRef}
+                          type="text"
+                          value={profileData.jobTitle}
+                          onChange={(e) => setProfileData({...profileData, jobTitle: e.target.value})}
+                          className="w-full text-sm font-semibold text-gray-900 bg-transparent border-b border-transparent focus:border-gray-300 outline-none"
+                        />
+                      </div>
+                      <button onClick={() => jobRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-3 right-3 text-blue-600 hover:text-blue-700 p-1"><FiEdit className="text-[10px]"/></button>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 relative group">
                       <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm"><FiMail /></div>
-                      <div><p className="text-[10px] text-gray-400 font-bold uppercase">Email Address</p><p className="text-sm font-semibold text-gray-900">{user.email}</p></div>
+                      <div className="flex-1">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase">Email Address</p>
+                        <p className="text-sm font-semibold text-gray-900">{user.email}</p>
+                      </div>
+                      <div className="absolute top-3 right-3"><FiShield className="text-[10px] text-emerald-500" title="Verified Primary Email"/></div>
                     </div>
+
                     <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 relative group">
                       <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm"><FiPhone /></div>
                       <div className="flex-1">
-                        <div className="flex justify-between items-center">
-                          <p className="text-[10px] text-gray-400 font-bold uppercase">Phone Number</p>
-                          {!isEditingPhone && (
-                            <button onClick={() => { setIsEditingPhone(true); setPhoneNumber(user.phone || ''); }} className="text-[10px] text-blue-600 font-bold uppercase hover:underline opacity-0 group-hover:opacity-100 transition-opacity">Edit</button>
-                          )}
+                        <p className="text-[10px] text-gray-400 font-bold uppercase">Phone Number</p>
+                        <div className="flex gap-2">
+                          <select 
+                            value={profileData.phoneCode}
+                            onChange={(e) => setProfileData({...profileData, phoneCode: e.target.value})}
+                            className="text-sm font-semibold text-gray-900 bg-transparent outline-none border-b border-transparent focus:border-gray-300"
+                          >
+                            <option value="+971">+971</option>
+                            <option value="+91">+91</option>
+                            <option value="+1">+1</option>
+                            <option value="+44">+44</option>
+                          </select>
+                          <input
+                            ref={phoneRef}
+                            type="text"
+                            value={profileData.phone}
+                            onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                            className="flex-1 text-sm font-semibold text-gray-900 bg-transparent border-b border-transparent focus:border-gray-300 outline-none"
+                          />
                         </div>
+                      </div>
+                      <button onClick={() => phoneRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-3 right-3 text-blue-600 hover:text-blue-700 p-1"><FiEdit className="text-[10px]"/></button>
+                    </div>
 
-                        {isEditingPhone ? (
-                          <div className="flex gap-2 mt-1">
-                            <input
-                              type="text"
-                              value={phoneNumber}
-                              onChange={(e) => setPhoneNumber(e.target.value)}
-                              className="w-full text-sm border-b border-gray-300 focus:border-black outline-none py-1 bg-transparent"
-                              placeholder="Enter phone number"
-                            />
-                            <button onClick={handleUpdatePhone} className="text-green-600 font-bold uppercase text-[10px]">Save</button>
-                            <button onClick={() => setIsEditingPhone(false)} className="text-red-500 font-bold uppercase text-[10px]">Cancel</button>
-                          </div>
-                        ) : (
-                          <p className="text-sm font-semibold text-gray-900">{user.phone || 'Not provided'}</p>
-                        )}
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-green-500 shadow-sm"><FaWhatsapp /></div>
+                      <div className="flex-1">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase">WhatsApp Number</p>
+                        <div className="flex gap-2">
+                          <select 
+                            value={profileData.whatsappCode}
+                            onChange={(e) => setProfileData({...profileData, whatsappCode: e.target.value})}
+                            className="text-sm font-semibold text-gray-900 bg-transparent outline-none border-b border-transparent focus:border-gray-300"
+                          >
+                            <option value="+971">+971</option>
+                            <option value="+91">+91</option>
+                            <option value="+1">+1</option>
+                            <option value="+44">+44</option>
+                          </select>
+                          <input
+                            ref={whatsappRef}
+                            type="text"
+                            value={profileData.whatsapp}
+                            onChange={(e) => setProfileData({...profileData, whatsapp: e.target.value})}
+                            className="flex-1 text-sm font-semibold text-gray-900 bg-transparent border-b border-transparent focus:border-gray-300 outline-none"
+                          />
+                        </div>
+                      </div>
+                      <button onClick={() => whatsappRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-3 right-3 text-blue-600 hover:text-blue-700 p-1"><FiEdit className="text-[10px]"/></button>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm"><FiMessageSquare /></div>
+                      <div className="flex-1">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase">Preferred Contact Method</p>
+                        <div className="relative">
+                          <select 
+                            ref={contactRef}
+                            value={profileData.preferredContact}
+                            onChange={(e) => setProfileData({...profileData, preferredContact: e.target.value})}
+                            className="w-full text-sm font-semibold text-gray-900 bg-transparent appearance-none outline-none border-b border-transparent focus:border-gray-300 pr-6 cursor-pointer"
+                          >
+                            {contactMethods.map(m => <option key={m} value={m}>{m}</option>)}
+                          </select>
+                          <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
+                      <button onClick={() => contactRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-3 right-3 text-blue-600 hover:text-blue-700 p-1"><FiEdit className="text-[10px]"/></button>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm"><FiGlobe /></div>
+                      <div className="flex-1">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase">Language</p>
+                        <div className="relative">
+                          <select 
+                            ref={langRef}
+                            value={profileData.language}
+                            onChange={(e) => setProfileData({...profileData, language: e.target.value})}
+                            className="w-full text-sm font-semibold text-gray-900 bg-transparent appearance-none outline-none border-b border-transparent focus:border-gray-300 pr-6 cursor-pointer"
+                          >
+                            {languages.map(l => <option key={l} value={l}>{l}</option>)}
+                          </select>
+                          <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
+                      <button onClick={() => langRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-3 right-3 text-blue-600 hover:text-blue-700 p-1"><FiEdit className="text-[10px]"/></button>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm"><FiClock /></div>
+                      <div className="flex-1">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase">Time Zone</p>
+                        <div className="relative">
+                          <select 
+                            ref={tzRef}
+                            value={profileData.timezone}
+                            onChange={(e) => setProfileData({...profileData, timezone: e.target.value})}
+                            className="w-full text-sm font-semibold text-gray-900 bg-transparent appearance-none outline-none border-b border-transparent focus:border-gray-300 pr-6 cursor-pointer"
+                          >
+                            {timezones.map(tz => <option key={tz} value={tz}>{tz}</option>)}
+                          </select>
+                          <FiChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
+                      <button onClick={() => tzRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-3 right-3 text-blue-600 hover:text-blue-700 p-1"><FiEdit className="text-[10px]"/></button>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 relative group">
+                    <p className="text-[10px] text-gray-400 font-bold uppercase mb-2">Agent Description</p>
+                    <textarea 
+                      ref={descRef}
+                      value={profileData.description}
+                      onChange={(e) => setProfileData({...profileData, description: e.target.value})}
+                      rows="4"
+                      className="w-full p-4 rounded-xl bg-gray-50 border border-gray-100 text-sm font-medium text-gray-900 focus:border-gray-300 outline-none resize-none"
+                      placeholder="Tell us about yourself..."
+                    ></textarea>
+                    <button onClick={() => descRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-0 right-0 text-blue-600 hover:text-blue-700 p-1"><FiEdit className="text-[10px]"/></button>
+                    <div className="flex justify-end mt-1">
+                      <span className="text-[10px] text-gray-400 font-bold">{profileData.description?.length || 0}/1000</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-8">
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Social Profiles</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                        <FiInstagram className="text-pink-500" />
+                        <input
+                          ref={instaRef}
+                          type="text"
+                          placeholder="Instagram Profile URL"
+                          value={profileData.social.instagram}
+                          onChange={(e) => setProfileData({...profileData, social: {...profileData.social, instagram: e.target.value}})}
+                          className="flex-1 bg-transparent text-xs font-semibold text-gray-900 outline-none"
+                        />
+                        <button onClick={() => instaRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-1/2 -translate-y-1/2 right-3 text-blue-600 hover:text-blue-700"><FiEdit className="text-[10px]"/></button>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                        <FiLinkedin className="text-blue-600" />
+                        <input
+                          ref={linkedRef}
+                          type="text"
+                          placeholder="LinkedIn Profile URL"
+                          value={profileData.social.linkedin}
+                          onChange={(e) => setProfileData({...profileData, social: {...profileData.social, linkedin: e.target.value}})}
+                          className="flex-1 bg-transparent text-xs font-semibold text-gray-900 outline-none"
+                        />
+                        <button onClick={() => linkedRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-1/2 -translate-y-1/2 right-3 text-blue-600 hover:text-blue-700"><FiEdit className="text-[10px]"/></button>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                        <span className="font-black text-black text-xs">X</span>
+                        <input
+                          ref={xRef}
+                          type="text"
+                          placeholder="X (Twitter) Profile URL"
+                          value={profileData.social.twitter}
+                          onChange={(e) => setProfileData({...profileData, social: {...profileData.social, twitter: e.target.value}})}
+                          className="flex-1 bg-transparent text-xs font-semibold text-gray-900 outline-none"
+                        />
+                        <button onClick={() => xRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-1/2 -translate-y-1/2 right-3 text-blue-600 hover:text-blue-700"><FiEdit className="text-[10px]"/></button>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                        <FiFacebook className="text-blue-500" />
+                        <input
+                          ref={fbRef}
+                          type="text"
+                          placeholder="Facebook Profile URL"
+                          value={profileData.social.facebook}
+                          onChange={(e) => setProfileData({...profileData, social: {...profileData.social, facebook: e.target.value}})}
+                          className="flex-1 bg-transparent text-xs font-semibold text-gray-900 outline-none"
+                        />
+                        <button onClick={() => fbRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-1/2 -translate-y-1/2 right-3 text-blue-600 hover:text-blue-700"><FiEdit className="text-[10px]"/></button>
                       </div>
                     </div>
                   </div>
