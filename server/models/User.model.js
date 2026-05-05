@@ -41,6 +41,9 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
+    coverPhoto: String,
+    coverPhotoPublicId: String,
+
     phone: {
       type: String,
     },
@@ -62,6 +65,9 @@ const userSchema = new mongoose.Schema(
     company: {
       companyName: String,
       companyLogo: String,
+      companyLogoPublicId: String,
+      coverPhoto: String,
+      coverPhotoPublicId: String,
       address: String,
       website: String,
       description: String,

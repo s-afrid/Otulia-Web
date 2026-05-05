@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { 
   FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, 
   FiClock, FiActivity, FiXCircle, FiSettings, FiCheckCircle, FiEdit, FiMessageSquare,
-  FiChevronDown, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiRefreshCw, FiBriefcase, FiGlobe, FiShield
+  FiChevronDown, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiRefreshCw, FiBriefcase, FiGlobe, FiShield, FiUpload
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -43,7 +43,9 @@ const Profile = () => {
   const [imageToCrop, setImageToCrop] = useState(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [cropTarget, setCropTarget] = useState(null); // 'profile' or 'agentCover'
 
   // Refs for focusing
   const nameRef = useRef(null);
@@ -186,12 +188,24 @@ const Profile = () => {
   };
 
   const handleProfilePictureUpload = async (blob) => {
-    setIsUploading(true);
+    let endpoint = '';
+    let fieldName = '';
+
+    if (cropTarget === 'profile') {
+      setIsUploading(true);
+      endpoint = '/api/auth/upload-profile-picture';
+      fieldName = 'profilePicture';
+    } else {
+      setIsUploadingCover(true);
+      endpoint = '/api/auth/upload-cover-photo';
+      fieldName = 'coverPhoto';
+    }
+
     const formData = new FormData();
-    formData.append('profilePicture', blob, 'profile.png');
+    formData.append(fieldName, blob, 'image.png');
 
     try {
-      const response = await fetch('/api/auth/upload-profile-picture', {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -203,14 +217,17 @@ const Profile = () => {
         await refreshUser();
         setShowCropModal(false);
         setImageToCrop(null);
+        alert(`${cropTarget === 'profile' ? 'Profile picture' : 'Cover photo'} updated successfully!`);
       } else {
-        alert('Failed to upload profile picture.');
+        const err = await response.json();
+        alert(err.error || `Failed to upload ${cropTarget === 'profile' ? 'profile picture' : 'cover photo'}.`);
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Error uploading profile picture.');
+      alert('Error uploading image.');
     } finally {
       setIsUploading(false);
+      setIsUploadingCover(false);
     }
   };
 
@@ -253,16 +270,51 @@ const Profile = () => {
       <div className="pt-32 pb-20 px-6 max-w-6xl mx-auto">
         {/* Header Profile Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-          <div className="h-32 bg-gradient-to-r from-gray-900 to-black relative">
+          <div className="h-48 bg-gray-100 relative group">
+            {user.coverPhoto ? (
+              <img src={user.coverPhoto} className="w-full h-full object-cover" alt="Cover" />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-r from-gray-900 to-black"></div>
+            )}
+            
+            <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+              <div className="flex flex-col items-center text-white gap-2">
+                <FiUpload className="text-2xl" />
+                <span className="text-sm font-bold uppercase tracking-widest">Update Cover Photo</span>
+              </div>
+              <input 
+                type="file" 
+                className="hidden" 
+                accept="image/*" 
+                onChange={(e) => {
+                  if (e.target.files?.[0]) {
+                    setCropTarget('agentCover');
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      setImageToCrop(reader.result?.toString() || '');
+                      setShowCropModal(true);
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                  }
+                }} 
+              />
+            </label>
+
+            {isUploadingCover && (
+              <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center">
+                <FiRefreshCw className="text-white text-3xl animate-spin" />
+              </div>
+            )}
+
             <div className="absolute -bottom-12 left-8 md:left-12">
               <div className="relative">
-                <label className="relative cursor-pointer group">
+                <label className="relative cursor-pointer group/avatar block">
                   <img
                     src={user.profilePicture || UserPlaceholder}
                     alt={user.name}
                     className="w-24 h-24 rounded-full border-4 border-white object-cover shadow-lg"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity">
                     <FiEdit className="text-white text-2xl" />
                   </div>
                   <input
@@ -271,6 +323,7 @@ const Profile = () => {
                     accept="image/*"
                     onChange={(e) => {
                       if (e.target.files && e.target.files.length > 0) {
+                        setCropTarget('profile');
                         const reader = new FileReader();
                         reader.addEventListener('load', () =>
                           setImageToCrop(reader.result?.toString() || ''),
@@ -758,7 +811,7 @@ const Profile = () => {
             setShowCropModal(false);
             setImageToCrop(null);
           }}
-          isUploading={isUploading}
+          isUploading={cropTarget === 'profile' ? isUploading : isUploadingCover}
         />
       )}
     </div>

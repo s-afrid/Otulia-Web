@@ -248,6 +248,8 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 timezone: user.timezone,
                 preferredContact: user.preferredContact,
                 agentDescription: user.agentDescription,
+                social: user.social,
+                coverPhoto: user.coverPhoto,
                 plan: user.plan,
                 profilePicture: user.profilePicture,
                 company: user.company,

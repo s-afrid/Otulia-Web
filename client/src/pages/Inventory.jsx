@@ -88,8 +88,10 @@ const Inventory = () => {
     const [isVerifiedDealer, setIsVerifiedDealer] = useState(user?.isVerified || false);
     const [upgradePlan, setUpgradePlan] = useState(null); // 'Premium Basic' or 'Business VIP'
     const [logoLoading, setLogoLoading] = useState(false);
+    const [isUploadingCover, setIsUploadingCover] = useState(false);
     const [showCropModal, setShowCropModal] = useState(false);
     const [cropSrc, setCropSrc] = useState(null);
+    const [cropTarget, setCropTarget] = useState(null); // 'logo' or 'companyCover'
     const [leadEmailNotifications, setLeadEmailNotifications] = useState(user?.leadEmailNotifications !== false);
     
     // Actions Dropdown & Lead View Modal States
@@ -98,9 +100,6 @@ const Inventory = () => {
 
     const [savingPersonal, setSavingPersonal] = useState(false);
     const [savingCompany, setSavingCompany] = useState(false);
-
-    // Logic to allow editing for Premium users even after verification
-    const canEditProfile = !isVerifiedDealer || (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP');
 
     // Delete Confirmation State
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -186,6 +185,7 @@ const Inventory = () => {
                     setAgentInfo(prev => ({
                         ...prev,
                         photo: resData.userProfile.profilePicture || prev.photo,
+                        coverPhoto: resData.userProfile.coverPhoto || prev.coverPhoto,
                         fullName: resData.userProfile.name || prev.fullName,
                         email: resData.userProfile.email || prev.email,
                         phoneCode: pCode,
@@ -197,7 +197,10 @@ const Inventory = () => {
                         timezone: resData.userProfile.timezone || prev.timezone,
                         preferredContact: resData.userProfile.preferredContact || prev.preferredContact,
                         description: resData.userProfile.agentDescription || prev.description,
-                        social: resData.userProfile.social || prev.social
+                        social: {
+                            ...prev.social,
+                            ...(resData.userProfile.social || {})
+                        }
                     }));
 
                     setCompanyInfo(prev => ({
@@ -209,10 +212,14 @@ const Inventory = () => {
                         address: comp.address || '',
                         website: comp.website || '',
                         logo: comp.companyLogo || null,
+                        coverPhoto: comp.coverPhoto || null,
                         description: comp.description || '',
                         businessType: comp.businessType || prev.businessType,
                         establishedYear: comp.establishedYear || prev.establishedYear,
-                        social: comp.social || prev.social
+                        social: {
+                            ...prev.social,
+                            ...(comp.social || {})
+                        }
                     }));
                     setLeadEmailNotifications(resData.userProfile.leadEmailNotifications !== false);
                 }
@@ -302,11 +309,20 @@ const Inventory = () => {
         const file = e.target.files[0];
         if (!file) return;
 
-        if (!canEditProfile) {
-            alert("Verified dealers cannot change their company logo. Please contact support for assistance.");
-            return;
-        }
+        setCropTarget('logo');
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+            setCropSrc(reader.result);
+            setShowCropModal(true);
+        });
+        reader.readAsDataURL(file);
+    };
 
+    const handleCoverUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setCropTarget('companyCover');
         const reader = new FileReader();
         reader.addEventListener('load', () => {
             setCropSrc(reader.result);
@@ -316,12 +332,28 @@ const Inventory = () => {
     };
 
     const handleCropComplete = async (blob) => {
-        setLogoLoading(true);
         const formData = new FormData();
-        formData.append('companyLogo', blob, 'company_logo.png');
+        let endpoint = '';
+        let fieldName = '';
+
+        if (cropTarget === 'logo') {
+            setLogoLoading(true);
+            endpoint = '/api/auth/upload-company-logo';
+            fieldName = 'companyLogo';
+        } else if (cropTarget === 'companyCover') {
+            setIsUploadingCover(true);
+            endpoint = '/api/auth/upload-company-cover';
+            fieldName = 'coverPhoto';
+        } else if (cropTarget === 'agentCover') {
+            setIsUploadingCover(true);
+            endpoint = '/api/auth/upload-cover-photo';
+            fieldName = 'coverPhoto';
+        }
+
+        formData.append(fieldName, blob, 'image.png');
 
         try {
-            const response = await fetch('/api/auth/upload-company-logo', {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
@@ -329,19 +361,28 @@ const Inventory = () => {
 
             if (response.ok) {
                 const result = await response.json();
-                setCompanyInfo(prev => ({ ...prev, logo: result.companyLogo }));
-                alert("Company logo updated successfully!");
+                if (cropTarget === 'logo') {
+                    setCompanyInfo(prev => ({ ...prev, logo: result.companyLogo }));
+                    alert("Company logo updated successfully!");
+                } else if (cropTarget === 'companyCover') {
+                    setCompanyInfo(prev => ({ ...prev, coverPhoto: result.user.company.coverPhoto }));
+                    alert("Company cover photo updated successfully!");
+                } else if (cropTarget === 'agentCover') {
+                    setAgentInfo(prev => ({ ...prev, coverPhoto: result.user.coverPhoto }));
+                    alert("Agent cover photo updated successfully!");
+                }
                 if (refreshUser) refreshUser();
                 setShowCropModal(false);
             } else {
                 const err = await response.json();
-                alert(err.error || "Failed to upload logo");
+                alert(err.error || "Failed to upload image");
             }
         } catch (error) {
-            console.error("Logo upload error:", error);
-            alert("Error uploading logo");
+            console.error("Upload error:", error);
+            alert("Error uploading image");
         } finally {
             setLogoLoading(false);
+            setIsUploadingCover(false);
         }
     };
 
@@ -2810,8 +2851,31 @@ const Inventory = () => {
                                     
                                     {/* Form Fields container */}
                                     <div className="flex-1 overflow-auto custom-scrollbar pr-2 flex flex-col gap-3">
-                                        <div className="flex justify-between gap-4">
-                                            <div className="flex-1 flex flex-col gap-3">
+                                        {/* Cover Photo Upload */}
+                                        <div className="relative h-24 bg-gray-50 rounded-xl border border-dashed border-gray-200 overflow-hidden group shrink-0">
+                                           {companyInfo.coverPhoto ? (
+                                               <img src={companyInfo.coverPhoto} className="w-full h-full object-cover" alt="Company Cover" />
+                                           ) : (
+                                               <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-1">
+                                                   <FiImage className="text-lg" />
+                                                   <span className="text-[8px] font-bold uppercase tracking-wider">Upload Cover Photo</span>
+                                               </div>
+                                           )}
+                                           <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                               <div className="flex flex-col items-center text-white gap-1">
+                                                   <FiUpload className="text-sm" />
+                                                   <span className="text-[9px] font-bold">Change Cover</span>
+                                               </div>
+                                               <input type="file" className="hidden" accept="image/*" onChange={handleCoverUpload} disabled={isUploadingCover} />
+                                           </label>
+                                           {isUploadingCover && (
+                                               <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                                                   <FiRefreshCw className="text-[#D48D2A] animate-spin text-sm" />
+                                               </div>
+                                           )}
+                                        </div>
+
+                                        <div className="flex justify-between gap-4">                                            <div className="flex-1 flex flex-col gap-3">
                                                 <div>
                                                     <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Company / Dealership Name</label>
                                                     <input 
@@ -3151,7 +3215,7 @@ const Inventory = () => {
                     src={cropSrc}
                     onCropComplete={handleCropComplete}
                     onClose={() => setShowCropModal(false)}
-                    isUploading={logoLoading}
+                    isUploading={logoLoading || isUploadingCover}
                 />
             )}
 
