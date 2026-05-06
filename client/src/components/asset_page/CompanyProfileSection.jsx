@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { FiMapPin, FiGlobe, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 const CompanyProfileSection = ({ agent }) => {
@@ -9,6 +10,10 @@ const CompanyProfileSection = ({ agent }) => {
   const description = agent.companyDescription || agent.description || "";
   const isLongDescription = description.length > 300;
   const displayDescription = isExpanded ? description : description.slice(0, 300) + (isLongDescription ? "..." : "");
+
+  // Link to internal dealer profile if email is available, otherwise fallback to website
+  const profileLink = agent.email ? `/dealer/${agent.email}` : (agent.website ? (agent.website.startsWith('http') ? agent.website : `https://${agent.website}`) : null);
+  const isInternal = agent.email ? true : false;
 
   return (
     <div className="w-full px-6 md:px-10 py-10 border-t border-gray-100 mt-10">
@@ -41,16 +46,26 @@ const CompanyProfileSection = ({ agent }) => {
               </div>
             )}
 
-            {agent.website && (
-              <a 
-                href={agent.website.startsWith('http') ? agent.website : `https://${agent.website}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-blue-600 font-medium text-sm hover:underline"
-              >
-                <FiGlobe />
-                <span>View agency profile</span>
-              </a>
+            {profileLink && (
+              isInternal ? (
+                <Link 
+                  to={profileLink}
+                  className="flex items-center gap-2 text-blue-600 font-medium text-sm hover:underline"
+                >
+                  <FiGlobe />
+                  <span>View agency profile</span>
+                </Link>
+              ) : (
+                <a 
+                  href={profileLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-blue-600 font-medium text-sm hover:underline"
+                >
+                  <FiGlobe />
+                  <span>View agency profile</span>
+                </a>
+              )
             )}
           </div>
 

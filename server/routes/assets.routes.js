@@ -422,10 +422,13 @@ router.get("/car/:id", async (req, res) => {
       const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
         if (agentUser.company) {
           assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
           assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
         }
       }
     }
@@ -460,10 +463,13 @@ router.get("/estate/:id", async (req, res) => {
       const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
         if (agentUser.company) {
           assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
           assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
         }
       }
     }
@@ -498,10 +504,13 @@ router.get("/bike/:id", async (req, res) => {
       const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
         if (agentUser.company) {
           assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
           assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
         }
       }
     }
@@ -536,10 +545,13 @@ router.get("/yacht/:id", async (req, res) => {
       const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
         if (agentUser.company) {
           assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
           assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
         }
       }
     }
@@ -580,10 +592,13 @@ router.get("/:type/:id", async (req, res) => {
       const agentUser = await User.findById(assetObj.agent.id);
       if (agentUser) {
         assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
         assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
         if (agentUser.company) {
           assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
           assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
         }
       }
     }
