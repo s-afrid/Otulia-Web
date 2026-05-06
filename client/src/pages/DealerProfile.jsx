@@ -63,33 +63,33 @@ const DealerProfile = () => {
             <Navbar />
 
             {/* Banner Section */}
-            <div className="relative w-full h-[500px] overflow-hidden pt-20">
-                {displayCover ? (
-                    <img src={displayCover} className="w-full h-full object-cover" alt="Banner" />
-                ) : (
-                    <div className="w-full h-full bg-gradient-to-r from-gray-900 to-black"></div>
-                )}
+            <div className="relative w-full h-[500px] pt-20">
+                <div className="w-full h-full overflow-hidden">
+                    {displayCover ? (
+                        <img src={displayCover} className="w-full h-full object-cover" alt="Banner" />
+                    ) : (
+                        <div className="w-full h-full bg-gradient-to-r from-gray-900 to-black"></div>
+                    )}
+                </div>
                 
-                {/* Logo Overlap */}
-                <div className="absolute bottom-0 left-0 max-w-[1440px] mx-auto w-full px-6 md:px-12 pointer-events-none">
-                    <div className="bg-white p-4 shadow-xl inline-block rounded-t-lg pointer-events-auto border-x border-t border-gray-100">
-                        <div className="w-24 h-16 md:w-32 md:h-20 flex items-center justify-center overflow-hidden">
+                {/* Logo Overlap - Positioned relative to banner but not clipped */}
+                <div className="absolute bottom-0 left-0 max-w-[1850px] mx-auto w-full px-6 md:px-12 pointer-events-none">
+                    <div className="bg-white p-1.5 shadow-2xl inline-block rounded-2xl pointer-events-auto border border-gray-100 transform translate-y-[40%] relative z-30">
+                        <div className="w-20 h-20 md:w-32 md:h-32 flex items-center justify-center overflow-hidden bg-white rounded-xl border border-gray-50">
                             {displayLogo ? (
-                                <img src={displayLogo} className="max-w-full max-h-full object-contain" alt="Logo" />
+                                <img src={displayLogo} className="w-full h-full object-contain" alt="Logo" />
                             ) : (
-                                <span className="text-2xl font-black canela uppercase tracking-tighter">Otulia</span>
+                                <span className="text-3xl font-black canela uppercase tracking-tighter text-gray-200">O</span>
                             )}
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
 
-            {/* Profile Info Header */}
-            <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-10">
-                <div className="mb-10">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
-                        Luxury Listings by {displayName}
-                    </p>
+                {/* Profile Info Header */}
+                <div className="max-w-[1850px] mx-auto px-6 md:px-12 pt-16 pb-10">
+
+                <div className="mb-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         <div className="flex items-center gap-4">
                             <h1 className="text-4xl md:text-5xl font-normal text-gray-900 canela leading-tight">
@@ -116,7 +116,7 @@ const DealerProfile = () => {
                 </div>
 
                 {/* Stats Row */}
-                <div className="flex flex-wrap items-center gap-x-12 gap-y-6 pb-12 border-b border-gray-100 mb-12">
+                <div className="flex flex-wrap items-center gap-x-12 gap-y-6 pb-8 border-b border-gray-100 mb-8">
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Listings</span>
                         <span className="text-lg font-medium text-gray-900 montserrat">{listings.length}</span>
@@ -136,7 +136,7 @@ const DealerProfile = () => {
                 </div>
 
                 {/* Details Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
                     <div className="flex flex-col">
                         <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-4">Address</h4>
                         <p className="text-xs font-medium text-gray-600 leading-relaxed max-w-[200px]">
