@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { 
   FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, 
   FiClock, FiActivity, FiXCircle, FiSettings, FiCheckCircle, FiEdit, FiMessageSquare,
-  FiChevronDown, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiRefreshCw, FiBriefcase, FiGlobe, FiShield, FiUpload
+  FiChevronDown, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiRefreshCw, FiBriefcase, FiGlobe, FiShield, FiUpload, FiExternalLink
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -344,10 +344,19 @@ const Profile = () => {
               <h1 className="text-3xl font-bold text-gray-900 canela mb-1">{user.name}</h1>
               <p className="text-gray-500 text-sm font-medium montserrat">Member since {new Date(user.createdAt || Date.now()).getFullYear()}</p>
             </div>
-            <button onClick={handleLogout} className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all text-sm font-bold">
-              <FiLogOut />
-              <span className='montserrat'>Sign Out</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => window.open(`/dealer/${user?.email}`, '_blank')}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:text-black hover:border-black transition-all text-sm font-bold shadow-sm bg-white"
+              >
+                <FiExternalLink />
+                <span className='montserrat'>View Public Profile</span>
+              </button>
+              <button onClick={handleLogout} className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all text-sm font-bold">
+                <FiLogOut />
+                <span className='montserrat'>Sign Out</span>
+              </button>
+            </div>
           </div>
         </div>
 
