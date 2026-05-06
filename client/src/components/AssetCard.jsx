@@ -122,7 +122,7 @@ const AssetCard = ({ item }) => {
       className="group relative bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
     >
       {/* IMAGE AREA */}
-      <div className="relative aspect-[1.65/1] overflow-hidden">
+      <div className="relative aspect-[2/1] overflow-hidden">
         <img
           src={optimizeCloudinaryUrl(item.images?.[0] || item.image, 800)}
           alt={item.title}
@@ -148,10 +148,10 @@ const AssetCard = ({ item }) => {
       </div>
 
       {/* CONTENT AREA */}
-      <div className="px-[30px] py-[26px] flex flex-col flex-1 bg-white">
+      <div className="px-6 py-5 flex flex-col flex-1 bg-white">
         {/* PRICE */}
-        <div className="mb-4">
-          <h3 className="text-[28px] font-normal text-[#1a1a1a] font-playfair tracking-tight leading-none lining-nums">
+        <div className="mb-3">
+          <h3 className="text-[24px] font-normal text-[#1a1a1a] font-playfair tracking-tight leading-none lining-nums">
             {item.isPriceOnRequest
               ? "Price on Demand"
               : `$${numberWithCommas(item.price)}`}
@@ -164,21 +164,21 @@ const AssetCard = ({ item }) => {
         </div>
 
         {/* PROPERTY DETAILS */}
-        <div className="mb-[14px]">
+        <div className="mb-2">
           <p className="text-[11px] font-normal text-[#7a7a7a] montserrat tracking-[0.08em] uppercase">
             {displayDetails ? displayDetails : category.toUpperCase()}
           </p>
         </div>
 
         {/* TITLE */}
-        <div className="mb-2.5">
-          <h4 className="text-[17px] font-normal text-[#2a2a2a] leading-[1.4] font-playfair line-clamp-1">
+        <div className="mb-2">
+          <h4 className="text-[16px] font-normal text-[#2a2a2a] leading-[1.4] font-playfair line-clamp-1">
             {item.title}
           </h4>
         </div>
 
         {/* LOCATION */}
-        <div className="flex items-center gap-[6px] text-[#8a8a8a] mb-5">
+        <div className="flex items-center gap-[6px] text-[#8a8a8a] mb-4">
           <FiMapPin className="text-[12px] shrink-0" />
           <span className="text-[12px] font-normal truncate montserrat">
             {item.location}
@@ -186,31 +186,31 @@ const AssetCard = ({ item }) => {
         </div>
 
         {/* FOOTER */}
-        <div className="mt-auto pt-5 border-t border-[#eeeeee] flex items-center justify-between">
+        <div className="mt-auto pt-4 border-t border-[#eeeeee] flex items-center justify-between">
           {/* Logo / Initials */}
           <div className="flex items-center">
             {item.agent?.companyLogo ? (
               <img
                 src={optimizeCloudinaryUrl(item.agent.companyLogo, 200)}
                 alt="Company"
-                className="h-8 w-auto object-contain shrink-0"
+                className="h-7 w-auto object-contain shrink-0"
               />
             ) : (
-              <div className="text-[24px] font-normal tracking-tight text-[#2a2a2a] canela">
+              <div className="text-[20px] font-normal tracking-tight text-[#2a2a2a] canela">
                 RH
               </div>
             )}
           </div>
 
           {/* Agent Section */}
-          <div className="flex items-center gap-[12px]">
-            <span className="text-[11px] font-normal text-[#9a9a9a] montserrat truncate max-w-[140px]">
+          <div className="flex items-center gap-[10px]">
+            <span className="text-[10px] font-normal text-[#9a9a9a] montserrat truncate max-w-[120px]">
               Listed by{" "}
               <span className="text-[#5a5a5a] font-normal">
                 {item.agent?.name?.split(" ")[0] || "Marshall"}
               </span>
             </span>
-            <div className="w-[42px] h-[42px] rounded-full overflow-hidden border border-gray-50 shadow-sm shrink-0">
+            <div className="w-[36px] h-[36px] rounded-full overflow-hidden border border-gray-50 shadow-sm shrink-0">
               <img
                 src={optimizeCloudinaryUrl(
                   item.agent?.photo || "https://via.placeholder.com/100",
