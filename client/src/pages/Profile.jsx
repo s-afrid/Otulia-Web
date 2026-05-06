@@ -345,13 +345,15 @@ const Profile = () => {
               <p className="text-gray-500 text-sm font-medium montserrat">Member since {new Date(user.createdAt || Date.now()).getFullYear()}</p>
             </div>
             <div className="flex items-center gap-3">
-              <button 
-                onClick={() => window.open(`/dealer/${user?.email}`, '_blank')}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:text-black hover:border-black transition-all text-sm font-bold shadow-sm bg-white"
-              >
-                <FiExternalLink />
-                <span className='montserrat'>View Public Profile</span>
-              </button>
+              { (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP') && (
+                <button 
+                  onClick={() => window.open(`/dealer/${user?.email}`, '_blank')}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:text-black hover:border-black transition-all text-sm font-bold shadow-sm bg-white"
+                >
+                  <FiExternalLink />
+                  <span className='montserrat'>View Public Profile</span>
+                </button>
+              )}
               <button onClick={handleLogout} className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all text-sm font-bold">
                 <FiLogOut />
                 <span className='montserrat'>Sign Out</span>

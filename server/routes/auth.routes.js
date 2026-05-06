@@ -933,9 +933,22 @@ router.get("/public-profile/:email", async (req, res) => {
       return res.status(404).json({ error: "USER_NOT_FOUND" });
     }
 
-    // Fetch all active listings for this user
+    // Restriction: Dealer page feature only available to Premium Basic and Business VIP users
+    const allowedPlans = ["Premium Basic", "Business VIP"];
+    if (!allowedPlans.includes(user.plan)) {
+      return res.status(403).json({ 
+        error: "PROFILE_NOT_AVAILABLE", 
+        message: "This user does not have a public profile enabled. Public profiles are only available for Premium and Business members." 
+      });
+    }
+
+    // Fetch all active listings for this user across all models
+    // We check both 'ownerEmail' and 'agent.email' for compatibility
     const models = [CarAsset, BikeAsset, YachtAsset, EstateAsset, Listing];
-    const listingPromises = models.map(Model => Model.find({ ownerEmail: email, status: 'Active' }));
+    const listingPromises = models.map(Model => Model.find({ 
+      $or: [{ ownerEmail: email }, { "agent.email": email }],
+      status: 'Active' 
+    }));
     
     const results = await Promise.all(listingPromises);
     const allListings = results.flat();

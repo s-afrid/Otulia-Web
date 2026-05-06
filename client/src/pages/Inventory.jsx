@@ -941,13 +941,15 @@ const Inventory = () => {
                                 <div>
                                     <h2 className="text-xl font-bold text-gray-400 font-medium mb-0 leading-tight">Welcome back, <span className="text-gray-900 canela font-bold">{user?.name?.split(' ')[0] || user?.name || 'Md Riyaz'}</span> 👋</h2>
                                 </div>
-                                <button 
-                                    onClick={() => window.open(`/dealer/${user?.email}`, '_blank')}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-600 hover:text-black hover:border-black transition-all shadow-sm group"
-                                >
-                                    <FiExternalLink className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                    View Public Profile
-                                </button>
+                                { (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP') && (
+                                    <button 
+                                        onClick={() => window.open(`/dealer/${user?.email}`, '_blank')}
+                                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-600 hover:text-black hover:border-black transition-all shadow-sm group"
+                                    >
+                                        <FiExternalLink className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                        View Public Profile
+                                    </button>
+                                )}
                             </div>
 
                             {/* Top 4 KPI Cards */}
