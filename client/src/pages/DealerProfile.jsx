@@ -4,9 +4,15 @@ import Navbar from '../components/Navbar';
 import SEO from '../components/SEO';
 import AssetCard from '../components/AssetCard';
 import Pagination from '../components/Pagination';
-import { FiMail, FiPhone, FiMapPin, FiGlobe, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiMessageSquare, FiStar, FiChevronRight, FiX, FiExternalLink } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiGlobe, FiMessageSquare, FiStar, FiChevronRight, FiX, FiExternalLink } from 'react-icons/fi';
 import UserPlaceholder from '../assets/user.png';
 import numberWithCommas from '../modules/numberwithcomma';
+
+import facebookIcon from '../assets/icons/social/facebook.svg';
+import instagramIcon from '../assets/icons/social/instagram.svg';
+import linkedinIcon from '../assets/icons/social/linkedin.svg';
+import youtubeIcon from '../assets/icons/social/youtube.svg';
+import xIcon from '../assets/icons/social/x.svg';
 
 const DealerProfile = () => {
     const { email } = useParams();
@@ -152,10 +158,11 @@ const DealerProfile = () => {
                     <div className="flex flex-col">
                         <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-4">Social</h4>
                         <div className="flex items-center gap-3">
-                            {displaySocial?.instagram && <a href={`https://${displaySocial.instagram.replace('https://', '')}`} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:text-[#D48D2A] transition-colors"><FiInstagram /></a>}
-                            {displaySocial?.linkedin && <a href={`https://${displaySocial.linkedin.replace('https://', '')}`} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:text-[#D48D2A] transition-colors"><FiLinkedin /></a>}
-                            {displaySocial?.facebook && <a href={`https://${displaySocial.facebook.replace('https://', '')}`} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:text-[#D48D2A] transition-colors"><FiFacebook /></a>}
-                            {displaySocial?.youtube && <a href={`https://${displaySocial.youtube.replace('https://', '')}`} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:text-[#D48D2A] transition-colors"><FiYoutube /></a>}
+                            {displaySocial?.instagram && <a href={`https://${displaySocial.instagram.replace('https://', '')}`} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:opacity-70 transition-opacity"><img src={instagramIcon} className="h-4 w-4" alt="Instagram" /></a>}
+                            {displaySocial?.linkedin && <a href={`https://${displaySocial.linkedin.replace('https://', '')}`} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:opacity-70 transition-opacity"><img src={linkedinIcon} className="h-4 w-4" alt="LinkedIn" /></a>}
+                            {displaySocial?.facebook && <a href={`https://${displaySocial.facebook.replace('https://', '')}`} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:opacity-70 transition-opacity"><img src={facebookIcon} className="h-4 w-4" alt="Facebook" /></a>}
+                            {displaySocial?.youtube && <a href={`https://${displaySocial.youtube.replace('https://', '')}`} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:opacity-70 transition-opacity"><img src={youtubeIcon} className="h-4 w-5" alt="YouTube" /></a>}
+                            {displaySocial?.x && <a href={`https://${displaySocial.x.replace('https://', '')}`} target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:opacity-70 transition-opacity"><img src={xIcon} className="h-4 w-4" alt="X" /></a>}
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,9 @@
 import React from 'react'
 
+import instagramIcon from '../../assets/icons/social/instagram.svg'
+import youtubeIcon from '../../assets/icons/social/youtube.svg'
+import xIcon from '../../assets/icons/social/x.svg'
+
 const SocialMedia = () => {
     const posts = [
         {
@@ -34,13 +38,13 @@ const SocialMedia = () => {
                 <h2 className="text-4xl canela text-black mb-10">Follow Us On Social Media</h2>
                 <div className="flex items-center gap-12">
                     <a href="https://www.instagram.com/otulia.in?igsh=enZpemNoNzh0ZmZx" target='_blank'>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="instagram" className="h-8 w-8 object-contain cursor-pointer hover:scale-110 transition-transform" />
+                        <img src={instagramIcon} alt="instagram" className="h-8 w-8 object-contain cursor-pointer hover:scale-110 transition-transform" />
                     </a>
                     <a href="https://youtube.com/@otulia.com13?si=1klspMO6eVg1ZgQT" target='_blank'>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="youtube" className="h-8 w-10 object-contain cursor-pointer hover:scale-110 transition-transform" />
+                        <img src={youtubeIcon} alt="youtube" className="h-8 w-8 object-contain cursor-pointer hover:scale-110 transition-transform" />
                     </a>
                     <a href="https://x.com/OtuliaGlobal?s=20" target='_blank'>
-                    <svg className="h-8 w-8 cursor-pointer hover:scale-110 transition-transform" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"></path></svg>
+                        <img src={xIcon} alt="x" className="h-8 w-8 object-contain cursor-pointer hover:scale-110 transition-transform" />
                     </a>
                 </div>
             </div>

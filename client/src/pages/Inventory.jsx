@@ -11,7 +11,7 @@ import {
     FiSearch, FiFilter, FiPlus, FiChevronDown, FiHeart, FiEdit2, FiTrash2, FiEye,
     FiUser, FiLogOut, FiClock, FiLoader, FiMoreVertical, FiActivity,
     FiMessageSquare, FiPlayCircle, FiImage, FiDroplet, FiLayout, FiExternalLink, FiShare2, FiMoreHorizontal,
-    FiArrowRight, FiChevronRight, FiX, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiMonitor, FiRefreshCw
+    FiArrowRight, FiChevronRight, FiX, FiMonitor, FiRefreshCw
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { LineChart, Line, ResponsiveContainer, PieChart, Pie, Cell, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, BarChart, Bar } from 'recharts';
@@ -59,6 +59,12 @@ const businessTypes = [
     'Bike Company',
     'Yacht Company'
 ];
+
+import facebookIcon from '../assets/icons/social/facebook.svg';
+import instagramIcon from '../assets/icons/social/instagram.svg';
+import linkedinIcon from '../assets/icons/social/linkedin.svg';
+import youtubeIcon from '../assets/icons/social/youtube.svg';
+import xIcon from '../assets/icons/social/x.svg';
 
 const Inventory = () => {
     const { token, user, refreshUser, updateUserLocal, logout, login } = useAuth();
@@ -2024,7 +2030,7 @@ const Inventory = () => {
                                             <div className="flex justify-between items-center">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-2.5 h-2.5 rounded-full bg-[#9F7AEA]"></div>
-                                                    <FiInstagram className="text-[#E1306C] text-[13px]"/>
+                                                    <img src={instagramIcon} className="w-3.5 h-3.5 object-contain" alt="Instagram" />
                                                     <span className="text-gray-700 font-medium">Instagram</span>
                                                 </div>
                                                 <div className="flex justify-end pr-2 pl-3">
@@ -2035,7 +2041,7 @@ const Inventory = () => {
                                             <div className="flex justify-between items-center">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-2.5 h-2.5 rounded-full bg-[#F6AD55]"></div>
-                                                    <FiFacebook className="text-[#1877F2] text-[13px]"/>
+                                                    <img src={facebookIcon} className="w-3.5 h-3.5 object-contain" alt="Facebook" />
                                                     <span className="text-gray-700 font-medium">Facebook</span>
                                                 </div>
                                                 <div className="flex justify-end pr-2 pl-3">
@@ -2797,7 +2803,7 @@ const Inventory = () => {
                                             <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Social Profiles <span className="text-gray-400 font-medium normal-case">(Optional)</span></label>
                                             <div className="grid grid-cols-2 gap-2">
                                                 <div className="relative w-full">
-                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-pink-500 pointer-events-none text-[10px]"><FiInstagram/></div>
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={instagramIcon} className="w-3 h-3 object-contain" alt="Instagram" /></div>
                                                     <input 
                                                         type="text" 
                                                         value={agentInfo.social.instagram}
@@ -2807,7 +2813,7 @@ const Inventory = () => {
                                                     />
                                                 </div>
                                                 <div className="relative w-full">
-                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-600 pointer-events-none text-[10px]"><FiLinkedin/></div>
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={linkedinIcon} className="w-3 h-3 object-contain" alt="LinkedIn" /></div>
                                                     <input 
                                                         type="text" 
                                                         value={agentInfo.social.linkedin}
@@ -2817,7 +2823,7 @@ const Inventory = () => {
                                                     />
                                                 </div>
                                                 <div className="relative w-full">
-                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-gray-800 pointer-events-none text-[10px] font-serif font-black">X</div>
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={xIcon} className="w-3 h-3 object-contain" alt="X" /></div>
                                                     <input 
                                                         type="text" 
                                                         value={agentInfo.social.x || agentInfo.social.twitter}
@@ -2827,7 +2833,7 @@ const Inventory = () => {
                                                     />
                                                 </div>
                                                 <div className="relative w-full">
-                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-500 pointer-events-none text-[10px]"><FiFacebook/></div>
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={facebookIcon} className="w-3 h-3 object-contain" alt="Facebook" /></div>
                                                     <input 
                                                         type="text" 
                                                         value={agentInfo.social.facebook}
@@ -3031,7 +3037,7 @@ const Inventory = () => {
                                             <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Company Social Media <span className="text-gray-400 font-medium normal-case">(Optional)</span></label>
                                             <div className="grid grid-cols-2 gap-2">
                                                 <div className="relative w-full">
-                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-pink-500 pointer-events-none text-[10px]"><FiInstagram/></div>
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={instagramIcon} className="w-3 h-3 object-contain" alt="Instagram" /></div>
                                                     <input 
                                                         type="text" 
                                                         value={companyInfo.social.instagram}
@@ -3041,7 +3047,7 @@ const Inventory = () => {
                                                     />
                                                 </div>
                                                 <div className="relative w-full">
-                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-600 pointer-events-none text-[10px]"><FiLinkedin/></div>
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={linkedinIcon} className="w-3 h-3 object-contain" alt="LinkedIn" /></div>
                                                     <input 
                                                         type="text" 
                                                         value={companyInfo.social.linkedin}
@@ -3051,7 +3057,7 @@ const Inventory = () => {
                                                     />
                                                 </div>
                                                 <div className="relative w-full">
-                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-500 pointer-events-none text-[10px]"><FiFacebook/></div>
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={facebookIcon} className="w-3 h-3 object-contain" alt="Facebook" /></div>
                                                     <input 
                                                         type="text" 
                                                         value={companyInfo.social.facebook}
@@ -3061,7 +3067,7 @@ const Inventory = () => {
                                                     />
                                                 </div>
                                                 <div className="relative w-full">
-                                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-red-600 pointer-events-none text-[10px]"><FiYoutube/></div>
+                                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={youtubeIcon} className="w-3 h-3 object-contain" alt="YouTube" /></div>
                                                     <input 
                                                         type="text" 
                                                         value={companyInfo.social.youtube}

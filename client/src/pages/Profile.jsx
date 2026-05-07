@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { 
   FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, 
   FiClock, FiActivity, FiXCircle, FiSettings, FiCheckCircle, FiEdit, FiMessageSquare,
-  FiChevronDown, FiInstagram, FiLinkedin, FiFacebook, FiYoutube, FiRefreshCw, FiBriefcase, FiGlobe, FiShield, FiUpload, FiExternalLink
+  FiChevronDown, FiRefreshCw, FiBriefcase, FiGlobe, FiShield, FiUpload, FiExternalLink
 } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,12 @@ import UserPlaceholder from '../assets/user.png';
 import VerificationModal from '../components/VerificationModal';
 import ImageCropModal from '../components/ImageCropModal';
 import SEO from '../components/SEO';
+
+import facebookIcon from '../assets/icons/social/facebook.svg';
+import instagramIcon from '../assets/icons/social/instagram.svg';
+import linkedinIcon from '../assets/icons/social/linkedin.svg';
+import youtubeIcon from '../assets/icons/social/youtube.svg';
+import xIcon from '../assets/icons/social/x.svg';
 
 const languages = [
     'English', 'Spanish', 'French', 'Arabic', 'German', 
@@ -577,7 +583,7 @@ const Profile = () => {
                     <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Social Profiles</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
-                        <FiInstagram className="text-pink-500" />
+                        <img src={instagramIcon} className="h-4 w-4" alt="Instagram" />
                         <input
                           ref={instaRef}
                           type="text"
@@ -589,7 +595,7 @@ const Profile = () => {
                         <button onClick={() => instaRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-1/2 -translate-y-1/2 right-3 text-blue-600 hover:text-blue-700"><FiEdit className="text-[10px]"/></button>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
-                        <FiLinkedin className="text-blue-600" />
+                        <img src={linkedinIcon} className="h-4 w-4" alt="LinkedIn" />
                         <input
                           ref={linkedRef}
                           type="text"
@@ -601,7 +607,7 @@ const Profile = () => {
                         <button onClick={() => linkedRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-1/2 -translate-y-1/2 right-3 text-blue-600 hover:text-blue-700"><FiEdit className="text-[10px]"/></button>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
-                        <span className="font-black text-black text-xs">X</span>
+                        <img src={xIcon} className="h-4 w-4" alt="X" />
                         <input
                           ref={xRef}
                           type="text"
@@ -613,7 +619,7 @@ const Profile = () => {
                         <button onClick={() => xRef.current?.focus()} className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-1/2 -translate-y-1/2 right-3 text-blue-600 hover:text-blue-700"><FiEdit className="text-[10px]"/></button>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
-                        <FiFacebook className="text-blue-500" />
+                        <img src={facebookIcon} className="h-4 w-4" alt="Facebook" />
                         <input
                           ref={fbRef}
                           type="text"
