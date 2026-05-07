@@ -1,7 +1,7 @@
 import React from 'react';
-import engineIcon from '../../../assets/productpage/engine.png';
-import speedIcon from '../../../assets/productpage/speed.png';
-import fuelIcon from '../../../assets/productpage/fuelcapacity.png';
+import engineIcon from '../../../assets/productpage/engine.webp';
+import speedIcon from '../../../assets/productpage/speed.webp';
+import fuelIcon from '../../../assets/productpage/fuelcapacity.webp';
 
 const BikeKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
@@ -16,15 +16,15 @@ const BikeKeyFeatures = ({ item }) => {
 
   // Helper Component for a Feature Card
   const FeatureCard = ({ icon, label, value }) => (
-    <div className="flex items-center gap-6 border border-gray-100 rounded-lg px-8 py-6 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow cursor-default font-poppins">
+    <div className="flex items-center gap-4 border border-gray-100 rounded-lg px-5 py-4 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow cursor-default font-poppins">
       {/* Icon Container */}
       <div className="flex justify-center items-center text-gray-800 shrink-0">
-        <img src={icon} alt={label} className="w-7 h-7 object-contain" />
+        <img src={icon} alt={label} className="w-[3.3rem] h-[3.3rem] object-contain" />
       </div>
       {/* Text Content */}
       <div className="flex flex-col gap-1">
-         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">{label}</span>
-         <span className="text-xl font-medium text-black">{value}</span>
+         <span className="text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em]">{label}</span>
+         <span className="text-xl font-medium text-black font-pt-serif">{value}</span>
       </div>
     </div>
   );
@@ -38,7 +38,7 @@ const BikeKeyFeatures = ({ item }) => {
         <div className="w-full h-px bg-gray-200"></div>
         <div className="absolute bg-white px-10 flex flex-col items-center">
           <h2 className="text-3xl md:text-4xl font-normal canela text-black whitespace-nowrap">
-            Key Specifications
+            Key Features
           </h2>
           <span className="text-[#B58252] text-xs mt-2">♦</span>
         </div>
