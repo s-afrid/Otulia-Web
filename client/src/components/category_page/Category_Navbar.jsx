@@ -33,7 +33,7 @@ const Category_Navbar = () => {
         { to: "/category/bikes", text: "Bikes" }
     ];
     
-    const navClasses = `fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 flex items-center justify-between px-6 md:px-12 ${
+    const navClasses = `fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 flex items-center justify-between px-6 md:px-6 ${
         isScrolled 
             ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100" 
             : "bg-transparent"

@@ -171,7 +171,7 @@ const Yacht_Section = () => {
             <Yacht_Hero />
 
             <div className="bg-white">
-                <section className="w-full px-3 md:px-16 py-12 bg-white">
+                <section className="w-full px-3 md:px-6 py-12 bg-white">
                     <div className="flex flex-col items-center justify-center mb-10">
                         <h2 className="text-3xl md:text-4xl canela text-black mb-12 text-center">
                             Popular Brands
@@ -194,12 +194,12 @@ const Yacht_Section = () => {
 
                 <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
-                <section className="w-full px-3 md:px-16 py-12 bg-white">
+                <section className="w-full px-3 md:px-6 py-12 bg-white">
                     <FilterBar onFilter={handleFilter} key={filterBarKey} priceRanges={priceRanges} filterOptions={yachtFilterOptions} hideLocation={true} />
                 </section>
 
                 <section ref={featuredListRef} className="w-full bg-[#f9f9f9] py-16 mt-4">
-                  <div className="w-full px-4 md:px-16">
+                  <div className="w-full px-4 md:px-6">
                         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                             <div>
                                 <h2 className="text-3xl md:text-5xl font-normal canela text-black mb-2">

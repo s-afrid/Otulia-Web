@@ -29,7 +29,7 @@ const SocialMedia = () => {
     ]
 
     return (
-        <section className="w-full px-3 md:px-16 py-6 bg-white overflow-hidden">
+        <section className="w-full px-3 md:px-6 py-6 bg-white overflow-hidden">
             <div className="flex flex-col items-center mb-16">
                 <h2 className="text-4xl canela text-black mb-10">Follow Us On Social Media</h2>
                 <div className="flex items-center gap-12">

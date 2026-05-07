@@ -116,7 +116,7 @@ const Footer = () => {
             </div>
 
             {/* Divider */}
-            <div className="px-3 md:px-16"><div className="w-full h-px bg-gray-300"></div></div>
+            <div className="px-3 md:px-6"><div className="w-full h-px bg-gray-300"></div></div>
 
             {/* Legal Links Section */}
             <div className="px-3 md:px-8 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center">
@@ -132,10 +132,10 @@ const Footer = () => {
             </div>
 
             {/* Divider */}
-            <div className="px-3 md:px-16"><div className="w-full h-px bg-gray-300"></div></div>
+            <div className="px-3 md:px-6"><div className="w-full h-px bg-gray-300"></div></div>
 
             {/* Payment Options Section */}
-            <div className="px-3 md:px-16 py-12 flex flex-col items-center gap-6 hidden">
+            <div className="px-3 md:px-6 py-12 flex flex-col items-center gap-6 hidden">
                 <h4 className="text-sm font-bold text-black uppercase tracking-widest">Payment Options</h4>
                 <div className="flex items-center gap-8 justify-center grayscale opacity-70 flex-wrap">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="mastercard" className="h-6" />

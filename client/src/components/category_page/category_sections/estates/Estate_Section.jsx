@@ -202,7 +202,7 @@ const Estate_Section = () => {
       <Estate_Hero />
 
       <div className="bg-white">
-        <section className="w-full px-3 md:px-16 py-12 bg-white">
+        <section className="w-full px-3 md:px-6 py-12 bg-white">
           <div className="flex flex-col mb-10 gap-3">
             <h2 className="text-3xl md:text-4xl canela text-black">
               Popular Locations
@@ -214,7 +214,7 @@ const Estate_Section = () => {
             </p>
           </div>
 
-          <section className="w-full px-4 md:px-16 py-3 bg-white">
+          <section className="w-full px-4 md:px-6 py-3 bg-white">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {locations.map((item) => (
                 <div
@@ -263,7 +263,7 @@ const Estate_Section = () => {
 
         <div className="w-[92%] md:w-[95%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
-        <section className="w-full px-3 md:px-16 py-12 bg-white">
+        <section className="w-full px-3 md:px-6 py-12 bg-white">
           <h2 className="text-3xl md:text-4xl canela text-black mb-7 text-center flex justify-between">
             <span>Filter Properties</span>
           </h2>
@@ -278,7 +278,7 @@ const Estate_Section = () => {
           ref={featuredListRef}
           className="w-full bg-[#f9f9f9] py-16 mt-4"
         >
-          <div className="w-full px-4 md:px-16">
+          <div className="w-full px-4 md:px-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div>
                 <h2 className="text-3xl md:text-5xl font-normal canela text-black mb-2">

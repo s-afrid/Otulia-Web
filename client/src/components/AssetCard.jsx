@@ -151,7 +151,7 @@ const AssetCard = ({ item }) => {
       <div className="px-6 py-5 flex flex-col flex-1 bg-white">
         {/* PRICE */}
         <div className="mb-3">
-          <h3 className="text-[24px] font-normal text-[#1a1a1a] font-playfair tracking-tight leading-none lining-nums">
+          <h3 className="text-[18px] font-bold text-[#1a1a1a] font-pt-serif tracking-tight leading-none lining-nums">
             {item.isPriceOnRequest
               ? "Price on Demand"
               : `$${numberWithCommas(item.price)}`}
