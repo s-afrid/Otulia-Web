@@ -191,9 +191,9 @@ const AssetCard = ({ item }) => {
         </div>
 
         {/* LOCATION */}
-        <div className="flex items-center gap-[6px] text-[#8a8a8a] mb-4">
+        <div className="flex items-center gap-[6px] text-[#8A8A8A] mb-4">
           <FiMapPin className="text-[12px] shrink-0" />
-          <span className="text-[12px] font-normal truncate montserrat">
+          <span className="text-[12px] font-normal truncate font-pt-serif">
             {item.location}
           </span>
         </div>
