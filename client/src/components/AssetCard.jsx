@@ -54,7 +54,17 @@ const AssetCard = ({ item }) => {
   let specs_list = [];
   if (item.keySpecifications) {
     const specs = item.keySpecifications;
-    if (category === "car" || category === "bike") {
+    if (category === "car") {
+      specs_list = [
+        specs.engineType,
+        specs.power
+          ? specs.power.toString().toLowerCase().includes("hp")
+            ? specs.power
+            : `${specs.power} HP`
+          : null,
+        specs.year || item.specification?.yearOfConstruction,
+      ].filter(Boolean);
+    } else if (category === "bike") {
       specs_list = [
         specs.year,
         specs.engineCapacity || specs.engineType,
