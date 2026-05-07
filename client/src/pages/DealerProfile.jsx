@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import AssetCard from '../components/AssetCard';
 import Pagination from '../components/Pagination';
@@ -212,8 +211,6 @@ const DealerProfile = () => {
                     )}
                 </div>
             </div>
-
-            <Footer />
         </div>
     );
 };

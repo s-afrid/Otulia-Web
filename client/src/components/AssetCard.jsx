@@ -151,44 +151,90 @@ const AssetCard = ({ item }) => {
 
       {/* CONTENT AREA */}
       <div className="px-6 py-5 flex flex-col flex-1 bg-white">
-        {/* PRICE */}
-        <div className="mb-3">
-          <h3 className="text-[18px] font-bold text-[#1a1a1a] font-pt-serif tracking-tight leading-none lining-nums">
-            {item.isPriceOnRequest
-              ? "Price on Demand"
-              : `$${numberWithCommas(item.price)}`}
-            {item.type === "Rent" && !item.isPriceOnRequest && (
-              <span className="text-[11px] text-gray-500 font-normal montserrat ml-1.5">
-                / day
-              </span>
-            )}
-          </h3>
-        </div>
+        {/* Conditional Layout for Cars: Title above Price */}
+        {category === "car" ? (
+          <>
+            {/* TITLE */}
+            <div className="mb-2">
+              <h4 className="text-[20px] font-semibold text-[#2a2a2a] leading-[1.2] font-pt-serif line-clamp-1">
+                {item.title}
+              </h4>
+            </div>
 
-        {/* PROPERTY DETAILS */}
-        <div className="mb-2">
-          <div className="flex items-center gap-2 text-[12px] font-medium text-[#8A8A8A] font-pt-serif tracking-[0.1px]">
-            {specs_list.length > 0 ? (
-              specs_list.map((spec, index) => (
-                <React.Fragment key={index}>
-                  <div>{spec}</div>
-                  {index < specs_list.length - 1 && (
-                    <div className="text-[#8A8A8A] font-bold opacity-50">·</div>
-                  )}
-                </React.Fragment>
-              ))
-            ) : (
-              <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
-            )}
-          </div>
-        </div>
+            {/* PRICE */}
+            <div className="mb-3">
+              <h3 className="text-[18px] font-bold text-[#1a1a1a] font-pt-serif tracking-tight leading-none lining-nums">
+                {item.isPriceOnRequest
+                  ? "Price on Demand"
+                  : `$${numberWithCommas(item.price)}`}
+                {item.type === "Rent" && !item.isPriceOnRequest && (
+                  <span className="text-[11px] text-gray-500 font-normal montserrat ml-1.5">
+                    / day
+                  </span>
+                )}
+              </h3>
+            </div>
 
-        {/* TITLE */}
-        <div className="mb-2">
-          <h4 className="text-[20px] font-semibold text-[#2a2a2a] leading-[1.2] font-pt-serif line-clamp-1">
-            {item.title}
-          </h4>
-        </div>
+            {/* PROPERTY DETAILS */}
+            <div className="mb-2">
+              <div className="flex items-center gap-2 text-[12px] font-medium text-[#8A8A8A] font-pt-serif tracking-[0.1px]">
+                {specs_list.length > 0 ? (
+                  specs_list.map((spec, index) => (
+                    <React.Fragment key={index}>
+                      <div>{spec}</div>
+                      {index < specs_list.length - 1 && (
+                        <div className="text-[#8A8A8A] font-bold opacity-50">·</div>
+                      )}
+                    </React.Fragment>
+                  ))
+                ) : (
+                  <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
+                )}
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* PRICE */}
+            <div className="mb-3">
+              <h3 className="text-[18px] font-bold text-[#1a1a1a] font-pt-serif tracking-tight leading-none lining-nums">
+                {item.isPriceOnRequest
+                  ? "Price on Demand"
+                  : `$${numberWithCommas(item.price)}`}
+                {item.type === "Rent" && !item.isPriceOnRequest && (
+                  <span className="text-[11px] text-gray-500 font-normal montserrat ml-1.5">
+                    / day
+                  </span>
+                )}
+              </h3>
+            </div>
+
+            {/* PROPERTY DETAILS */}
+            <div className="mb-2">
+              <div className="flex items-center gap-2 text-[12px] font-medium text-[#8A8A8A] font-pt-serif tracking-[0.1px]">
+                {specs_list.length > 0 ? (
+                  specs_list.map((spec, index) => (
+                    <React.Fragment key={index}>
+                      <div>{spec}</div>
+                      {index < specs_list.length - 1 && (
+                        <div className="text-[#8A8A8A] font-bold opacity-50">·</div>
+                      )}
+                    </React.Fragment>
+                  ))
+                ) : (
+                  <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
+                )}
+              </div>
+            </div>
+
+            {/* TITLE */}
+            <div className="mb-2">
+              <h4 className="text-[20px] font-semibold text-[#2a2a2a] leading-[1.2] font-pt-serif line-clamp-1">
+                {item.title}
+              </h4>
+            </div>
+          </>
+        )}
 
         {/* LOCATION */}
         <div className="flex items-center gap-[6px] text-[#8A8A8A] mb-4">
