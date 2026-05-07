@@ -1,22 +1,21 @@
 import React from 'react';
-import { 
-  IoSpeedometerOutline, 
-  IoWaterOutline, 
-  IoBedOutline, 
-  IoExpandOutline 
-} from "react-icons/io5";
-import { MdOutlineSettings } from "react-icons/md";
+import sqftIcon from '../../../assets/productpage/sqft.webp';
+import bathroomIcon from '../../../assets/productpage/bathroom icon.webp';
+import fuelIcon from '../../../assets/productpage/fuelcapacity.png';
+import engineIcon from '../../../assets/productpage/engine.png';
+import bedroomIcon from '../../../assets/productpage/bed icon.webp';
+import speedIcon from '../../../assets/productpage/speed.png';
 
 const YachtKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
   
   const specItems = [
-    { label: 'Length', value: kSpecs.length, icon: <IoExpandOutline className="w-7 h-7" /> },
-    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: <IoWaterOutline className="w-7 h-7" /> },
-    { label: 'Fuel', value: kSpecs.fuelCapacity, icon: <IoWaterOutline className="w-7 h-7" /> },
-    { label: 'Engine', value: kSpecs.engineType, icon: <MdOutlineSettings className="w-7 h-7" /> },
-    { label: 'Bedrooms', value: kSpecs.bedrooms, icon: <IoBedOutline className="w-7 h-7" /> },
-    { label: 'Top Speed', value: kSpecs.topSpeed, icon: <IoSpeedometerOutline className="w-7 h-7" /> }
+    { label: 'Length', value: kSpecs.length, icon: sqftIcon },
+    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: bathroomIcon },
+    { label: 'Fuel', value: kSpecs.fuelCapacity, icon: fuelIcon },
+    { label: 'Engine', value: kSpecs.engineType, icon: engineIcon },
+    { label: 'Bedrooms', value: kSpecs.bedrooms, icon: bedroomIcon },
+    { label: 'Top Speed', value: kSpecs.topSpeed, icon: speedIcon }
   ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
 
   if (specItems.length === 0) return null;
@@ -26,7 +25,7 @@ const YachtKeyFeatures = ({ item }) => {
     <div className="flex items-center gap-6 border border-gray-100 rounded-lg px-8 py-6 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow cursor-default font-poppins">
       {/* Icon Container */}
       <div className="flex justify-center items-center text-gray-800 shrink-0">
-        {icon}
+        <img src={icon} alt={label} className="w-7 h-7 object-contain" />
       </div>
       {/* Text Content */}
       <div className="flex flex-col gap-1">

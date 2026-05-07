@@ -1,23 +1,21 @@
 import React from 'react';
-import { 
-  IoBedOutline, 
-  IoWaterOutline, 
-  IoSquareOutline, 
-  IoLocationOutline, 
-  IoLayersOutline 
-} from "react-icons/io5";
-import { MdOutlineGarage } from "react-icons/md";
+import bedroomIcon from '../../../assets/productpage/bed icon.webp';
+import bathroomIcon from '../../../assets/productpage/bathroom icon.webp';
+import sqftIcon from '../../../assets/productpage/sqft.webp';
+import landIcon from '../../../assets/productpage/land area.webp';
+import floorIcon from '../../../assets/productpage/floor.webp';
+import garageIcon from '../../../assets/productpage/garage iconn.webp';
 
 const EstateKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
 
   const specItems = [
-    { label: 'Bedrooms', value: kSpecs.bedrooms, icon: <IoBedOutline className="w-7 h-7" /> },
-    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: <IoWaterOutline className="w-7 h-7" /> },
-    { label: 'Built Area', value: kSpecs.builtUpArea, icon: <IoSquareOutline className="w-7 h-7" /> },
-    { label: 'Land Area', value: kSpecs.landArea, icon: <IoLocationOutline className="w-7 h-7" /> },
-    { label: 'Floors', value: kSpecs.floors, icon: <IoLayersOutline className="w-7 h-7" /> },
-    { label: 'Garage', value: kSpecs.garageCapacity, icon: <MdOutlineGarage className="w-7 h-7" /> }
+    { label: 'Bedrooms', value: kSpecs.bedrooms, icon: bedroomIcon },
+    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: bathroomIcon },
+    { label: 'Built Area', value: kSpecs.builtUpArea, icon: sqftIcon },
+    { label: 'Land Area', value: kSpecs.landArea, icon: landIcon },
+    { label: 'Floors', value: kSpecs.floors, icon: floorIcon },
+    { label: 'Garage', value: kSpecs.garageCapacity, icon: garageIcon }
   ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
 
   if (specItems.length === 0) return null;
@@ -27,7 +25,7 @@ const EstateKeyFeatures = ({ item }) => {
     <div className="flex items-center gap-6 border border-gray-100 rounded-lg px-8 py-6 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow cursor-default font-poppins">
       {/* Icon Container */}
       <div className="flex justify-center items-center text-gray-800 shrink-0">
-        {icon}
+        <img src={icon} alt={label} className="w-7 h-7 object-contain" />
       </div>
       {/* Text Content */}
       <div className="flex flex-col gap-1">

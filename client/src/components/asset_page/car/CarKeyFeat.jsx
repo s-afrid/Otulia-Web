@@ -1,15 +1,16 @@
 import React from 'react';
-import { IoSpeedometerOutline, IoFlashOutline } from "react-icons/io5";
-import { MdOutlineSettings } from "react-icons/md";
+import powerIcon from '../../../assets/productpage/power.png';
+import speedIcon from '../../../assets/productpage/speed.png';
+import engineIcon from '../../../assets/productpage/engine.png';
 
 const CarKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
   const specs = item?.specification || {};
   
   const specItems = [
-    { label: 'Power', value: kSpecs.power || specs.power, icon: <IoFlashOutline className="w-7 h-7" /> },
-    { label: 'Top Speed', value: kSpecs.topSpeed || specs.topSpeed, icon: <IoSpeedometerOutline className="w-7 h-7" /> },
-    { label: 'Engine', value: kSpecs.engineType || specs.engineType || specs.engine, icon: <MdOutlineSettings className="w-7 h-7" /> }
+    { label: 'Power', value: kSpecs.power || specs.power, icon: powerIcon },
+    { label: 'Top Speed', value: kSpecs.topSpeed || specs.topSpeed, icon: speedIcon },
+    { label: 'Engine', value: kSpecs.engineType || specs.engineType || specs.engine, icon: engineIcon }
   ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
 
   if (specItems.length === 0) return null;
@@ -19,7 +20,7 @@ const CarKeyFeatures = ({ item }) => {
     <div className="flex items-center gap-6 border border-gray-100 rounded-lg px-8 py-6 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow cursor-default font-poppins">
       {/* Icon Container */}
       <div className="flex justify-center items-center text-gray-800 shrink-0">
-        {icon}
+        <img src={icon} alt={label} className="w-7 h-7 object-contain" />
       </div>
       {/* Text Content */}
       <div className="flex flex-col gap-1">
