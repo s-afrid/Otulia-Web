@@ -51,29 +51,31 @@ const AssetCard = ({ item }) => {
   }
 
   // DETAILS EXTRACTION
-  let displayDetails = "";
+  let specs_list = [];
   if (item.keySpecifications) {
     const specs = item.keySpecifications;
     if (category === "car" || category === "bike") {
-      const year = specs.year;
-      const eng = specs.engineCapacity || specs.engineType;
-      const seats = specs.seatingCapacity
-        ? `${specs.seatingCapacity} Seats`
-        : null;
-      displayDetails = [year, eng, seats].filter(Boolean).join(" \u00B7 ");
+      specs_list = [
+        specs.year,
+        specs.engineCapacity || specs.engineType,
+        specs.seatingCapacity ? `${specs.seatingCapacity} Seats` : null,
+      ].filter(Boolean);
     } else if (category === "estate") {
-      const beds = specs.bedrooms ? `${specs.bedrooms} Beds` : null;
-      const baths = specs.bathrooms ? `${specs.bathrooms} Baths` : null;
       let area = specs.builtUpArea || specs.landArea;
       if (area && !area.toString().toLowerCase().includes("sq")) {
         area = `${area} Sqft`;
       }
-      displayDetails = [beds, baths, area].filter(Boolean).join(" \u00B7 ");
+      specs_list = [
+        specs.bedrooms ? `${specs.bedrooms} Beds` : null,
+        specs.bathrooms ? `${specs.bathrooms} Baths` : null,
+        area,
+      ].filter(Boolean);
     } else if (category === "yacht") {
-      const len = specs.length;
-      const guests = specs.guests ? `${specs.guests} Guests` : null;
-      const cabins = specs.cabins ? `${specs.cabins} Cabins` : null;
-      displayDetails = [len, guests, cabins].filter(Boolean).join(" \u00B7 ");
+      specs_list = [
+        specs.length,
+        specs.guests ? `${specs.guests} Guests` : null,
+        specs.cabins ? `${specs.cabins} Cabins` : null,
+      ].filter(Boolean);
     }
   }
 
@@ -165,14 +167,25 @@ const AssetCard = ({ item }) => {
 
         {/* PROPERTY DETAILS */}
         <div className="mb-2">
-          <p className="text-[11px] font-normal text-[#7a7a7a] montserrat tracking-[0.08em] uppercase">
-            {displayDetails ? displayDetails : category.toUpperCase()}
-          </p>
+          <div className="flex items-center gap-2 text-[12px] font-medium text-[#8A8A8A] font-pt-serif tracking-[0.1px]">
+            {specs_list.length > 0 ? (
+              specs_list.map((spec, index) => (
+                <React.Fragment key={index}>
+                  <div>{spec}</div>
+                  {index < specs_list.length - 1 && (
+                    <div className="text-[#8A8A8A] font-bold opacity-50">·</div>
+                  )}
+                </React.Fragment>
+              ))
+            ) : (
+              <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
+            )}
+          </div>
         </div>
 
         {/* TITLE */}
         <div className="mb-2">
-          <h4 className="text-[16px] font-normal text-[#2a2a2a] leading-[1.4] font-playfair line-clamp-1">
+          <h4 className="text-[20px] font-semibold text-[#2a2a2a] leading-[1.2] font-pt-serif line-clamp-1">
             {item.title}
           </h4>
         </div>
