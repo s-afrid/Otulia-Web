@@ -1,9 +1,9 @@
 import React from 'react';
 import { 
   IoBedOutline, 
-  IoBathtubOutline, 
-  IoRulerOutline, 
-  IoMapOutline, 
+  IoWaterOutline, 
+  IoSquareOutline, 
+  IoLocationOutline, 
   IoLayersOutline 
 } from "react-icons/io5";
 import { MdOutlineGarage } from "react-icons/md";
@@ -13,9 +13,9 @@ const EstateKeyFeatures = ({ item }) => {
 
   const specItems = [
     { label: 'Bedrooms', value: kSpecs.bedrooms, icon: <IoBedOutline className="w-7 h-7" /> },
-    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: <IoBathtubOutline className="w-7 h-7" /> },
-    { label: 'Built Area', value: kSpecs.builtUpArea, icon: <IoRulerOutline className="w-7 h-7" /> },
-    { label: 'Land Area', value: kSpecs.landArea, icon: <IoMapOutline className="w-7 h-7" /> },
+    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: <IoWaterOutline className="w-7 h-7" /> },
+    { label: 'Built Area', value: kSpecs.builtUpArea, icon: <IoSquareOutline className="w-7 h-7" /> },
+    { label: 'Land Area', value: kSpecs.landArea, icon: <IoLocationOutline className="w-7 h-7" /> },
     { label: 'Floors', value: kSpecs.floors, icon: <IoLayersOutline className="w-7 h-7" /> },
     { label: 'Garage', value: kSpecs.garageCapacity, icon: <MdOutlineGarage className="w-7 h-7" /> }
   ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");

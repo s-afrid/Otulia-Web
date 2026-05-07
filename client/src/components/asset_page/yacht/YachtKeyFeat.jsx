@@ -1,10 +1,9 @@
 import React from 'react';
 import { 
   IoSpeedometerOutline, 
-  IoFuelOutline, 
+  IoWaterOutline, 
   IoBedOutline, 
-  IoBathtubOutline, 
-  IoResizeOutline 
+  IoExpandOutline 
 } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 
@@ -12,9 +11,9 @@ const YachtKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
   
   const specItems = [
-    { label: 'Length', value: kSpecs.length, icon: <IoResizeOutline className="w-7 h-7" /> },
-    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: <IoBathtubOutline className="w-7 h-7" /> },
-    { label: 'Fuel', value: kSpecs.fuelCapacity, icon: <IoFuelOutline className="w-7 h-7" /> },
+    { label: 'Length', value: kSpecs.length, icon: <IoExpandOutline className="w-7 h-7" /> },
+    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: <IoWaterOutline className="w-7 h-7" /> },
+    { label: 'Fuel', value: kSpecs.fuelCapacity, icon: <IoWaterOutline className="w-7 h-7" /> },
     { label: 'Engine', value: kSpecs.engineType, icon: <MdOutlineSettings className="w-7 h-7" /> },
     { label: 'Bedrooms', value: kSpecs.bedrooms, icon: <IoBedOutline className="w-7 h-7" /> },
     { label: 'Top Speed', value: kSpecs.topSpeed, icon: <IoSpeedometerOutline className="w-7 h-7" /> }

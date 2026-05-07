@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoSpeedometerOutline, IoFuelOutline } from "react-icons/io5";
+import { IoSpeedometerOutline, IoWaterOutline } from "react-icons/io5";
 import { MdOutlineSettings } from "react-icons/md";
 
 const BikeKeyFeatures = ({ item }) => {
@@ -8,7 +8,7 @@ const BikeKeyFeatures = ({ item }) => {
   const specItems = [
     { label: 'Engine', value: kSpecs.engineCapacity, icon: <MdOutlineSettings className="w-7 h-7" /> },
     { label: 'Mileage', value: kSpecs.mileage, icon: <IoSpeedometerOutline className="w-7 h-7" /> },
-    { label: 'Fuel', value: kSpecs.fuelType, icon: <IoFuelOutline className="w-7 h-7" /> }
+    { label: 'Fuel', value: kSpecs.fuelType, icon: <IoWaterOutline className="w-7 h-7" /> }
   ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
 
   if (specItems.length === 0) return null;
