@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiMapPin, FiChevronDown, FiSearch } from 'react-icons/fi';
+import { FiMapPin, FiSearch } from 'react-icons/fi';
 
 const Cars_Search = () => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [listingType, setListingType] = useState('buy'); // 'buy' or 'rent'
   
   const navigate = useNavigate();
   const searchContainerRef = useRef(null);
@@ -29,7 +30,7 @@ const Cars_Search = () => {
   }, [query]);
 
   const handleSearch = () => {
-    navigate(`/category/cars?location=${encodeURIComponent(query)}`);
+    navigate(`/category/cars?location=${encodeURIComponent(query)}&acquisition=${listingType}`);
   };
 
   return (
@@ -37,7 +38,7 @@ const Cars_Search = () => {
       <div className="bg-[#D9D9D9]/90 backdrop-blur-md p-1.5 rounded-full flex items-center shadow-2xl">
         
         {/* 1. Location Section */}
-        <div className="flex-[2] flex items-center px-8 gap-4 border-r border-black/10">
+        <div className="flex-[2.5] flex items-center px-8 gap-4 border-r border-black/10">
           <FiMapPin className="text-gray-600 text-xl shrink-0" />
           <input
             type="text"
@@ -48,19 +49,33 @@ const Cars_Search = () => {
           />
         </div>
 
-        {/* 2. Buy Dropdown */}
-        <div className="flex-1 flex items-center justify-between px-8 cursor-pointer border-r border-black/10 hover:bg-black/5 transition-colors h-10">
-          <span className="text-sm font-medium text-gray-700">Buy</span>
-          <FiChevronDown className="text-gray-500" />
+        {/* 2. Toggle Section */}
+        <div className="flex-[1.5] flex items-center px-4">
+          <div className="flex bg-black/5 rounded-full p-1 w-full">
+            <button
+              onClick={() => setListingType('buy')}
+              className={`flex-1 py-2 text-sm font-semibold rounded-full transition-all duration-300 ${
+                listingType === 'buy' 
+                  ? 'bg-[#2C2C2C] text-white shadow-md' 
+                  : 'text-gray-600 hover:text-black'
+              }`}
+            >
+              Buy
+            </button>
+            <button
+              onClick={() => setListingType('rent')}
+              className={`flex-1 py-2 text-sm font-semibold rounded-full transition-all duration-300 ${
+                listingType === 'rent' 
+                  ? 'bg-[#2C2C2C] text-white shadow-md' 
+                  : 'text-gray-600 hover:text-black'
+              }`}
+            >
+              Rent
+            </button>
+          </div>
         </div>
 
-        {/* 3. Rent Dropdown */}
-        <div className="flex-1 flex items-center justify-between px-8 cursor-pointer hover:bg-black/5 transition-colors h-10 mr-2">
-          <span className="text-sm font-medium text-gray-700">Rent</span>
-          <FiChevronDown className="text-gray-500" />
-        </div>
-
-        {/* 4. Circular Button */}
+        {/* 3. Circular Button */}
         <button 
           onClick={handleSearch}
           className="w-12 h-12 bg-[#2C2C2C] rounded-full flex items-center justify-center text-white hover:bg-black transition-all shadow-lg active:scale-95 shrink-0"
@@ -71,7 +86,7 @@ const Cars_Search = () => {
 
       {/* Suggestions */}
       {suggestions.length > 0 && (
-        <div className="absolute mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-fade-in left-6">
+        <div className="absolute mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-[9999] animate-fade-in left-6">
           {suggestions.map((loc, idx) => (
             <div 
               key={idx}

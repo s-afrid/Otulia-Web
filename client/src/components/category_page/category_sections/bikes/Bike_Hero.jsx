@@ -4,7 +4,7 @@ import Bike_Search from './Bike_Search'
 
 const Bike_Hero = () => {
   return (
-    <div className='relative flex flex-col hero-banner h-screen w-full overflow-hidden'>
+    <div className='relative flex flex-col hero-banner h-screen w-full z-20'>
       {/* Background Image */}
       <img className='absolute top-0 left-0 -z-10 h-full w-full object-cover' src={heroUrl} alt='hero_bike' />
       
