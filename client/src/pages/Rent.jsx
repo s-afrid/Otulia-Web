@@ -159,7 +159,7 @@ const Rent = () => {
       </div>
 
       {/* Listings */}
-      <div className="max-w-[1700px] mx-auto px-4 md:px-8 pb-16">
+      <div className="w-full px-2 md:px-4 pb-16">
         {loading ? (
           <div className="text-center py-20 text-gray-500">Loading rentals...</div>
         ) : listings.length === 0 ? (

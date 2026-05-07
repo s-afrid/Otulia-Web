@@ -124,7 +124,7 @@ const AssetCard = ({ item }) => {
       className="group relative bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
     >
       {/* IMAGE AREA */}
-      <div className="relative aspect-[2/1] overflow-hidden">
+      <div className="relative aspect-[3/2] overflow-hidden">
         <img
           src={optimizeCloudinaryUrl(item.images?.[0] || item.image, 800)}
           alt={item.title}

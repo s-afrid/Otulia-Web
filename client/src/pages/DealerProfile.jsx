@@ -79,7 +79,7 @@ const DealerProfile = () => {
                 </div>
                 
                 {/* Logo Overlap - Positioned relative to banner but not clipped */}
-                <div className="absolute bottom-0 left-0 max-w-[1850px] mx-auto w-full px-6 md:px-12 pointer-events-none">
+                <div className="absolute bottom-0 left-0 w-full px-2 md:px-4 pointer-events-none">
                     <div className="bg-white p-1.5 shadow-2xl inline-block rounded-2xl pointer-events-auto border border-gray-100 transform translate-y-[40%] relative z-30">
                         <div className="w-20 h-20 md:w-32 md:h-32 flex items-center justify-center overflow-hidden bg-white rounded-xl border border-gray-50">
                             {displayLogo ? (
@@ -93,7 +93,7 @@ const DealerProfile = () => {
                 </div>
 
                 {/* Profile Info Header */}
-                <div className="max-w-[1850px] mx-auto px-6 md:px-12 pt-16 pb-10">
+                <div className="w-full px-2 md:px-4 pt-16 pb-10">
 
                 <div className="mb-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -185,7 +185,7 @@ const DealerProfile = () => {
 
                     {listings.length > 0 ? (
                         <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {listings
                                     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                                     .map(item => (

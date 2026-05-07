@@ -173,7 +173,7 @@ const Shop = () => {
       </div>
 
       {/* Listings Grid */}
-      <div className="max-w-[1700px] mx-auto px-[2%] pb-24">
+      <div className="w-full px-2 md:px-4 pb-24">
         {loading ? (
           <div className="flex justify-center items-center py-32">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
