@@ -131,8 +131,12 @@ const AssetCard = ({ item }) => {
       onClick={() => navigate(`/asset/${category}/${item._id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col"
-      style={{ width: "595px" }}
+      className="group relative bg-white flex flex-col"
+      style={{ 
+        width: "595px", 
+        borderRadius: "1px", 
+        border: "1px solid rgba(0, 0, 0, 0.12)" 
+      }}
     >
       {/* IMAGE AREA */}
       <div className="relative overflow-hidden" style={{ width: "595px", height: "375px" }}>
@@ -161,102 +165,124 @@ const AssetCard = ({ item }) => {
       </div>
 
       {/* CONTENT AREA */}
-      <div className="px-6 py-5 flex flex-col bg-white" style={{ width: "595px", height: "191px" }}>
+      <div className="px-6 py-5 flex flex-col bg-white" style={{ width: "595px", height: "191px", border: "1px solid rgba(0,0,0,0.12)" }}>
         {/* Conditional Layout for Cars: Title above Price */}
-        {category === "car" ? (
-          <>
-            {/* TITLE */}
-            <div className="mb-2">
-              <h4 className="text-[20px] font-semibold text-[#2a2a2a] leading-[1.2] font-pt-serif line-clamp-1">
-                {item.title}
-              </h4>
-            </div>
-
-            {/* PRICE */}
-            <div className="mb-3">
-              <h3 className="text-[18px] font-bold text-[#1a1a1a] font-pt-serif tracking-tight leading-none lining-nums">
-                {item.isPriceOnRequest
-                  ? "Price on Demand"
-                  : `$${numberWithCommas(item.price)}`}
-                {item.type === "Rent" && !item.isPriceOnRequest && (
-                  <span className="text-[11px] text-gray-500 font-normal montserrat ml-1.5">
-                    / day
-                  </span>
-                )}
-              </h3>
-            </div>
-
-            {/* PROPERTY DETAILS */}
-            <div className="mb-2">
-              <div className="flex items-center gap-2 text-[12px] font-medium text-[#8A8A8A] font-pt-serif tracking-[0.1px]">
-                {specs_list.length > 0 ? (
-                  specs_list.map((spec, index) => (
-                    <React.Fragment key={index}>
-                      <div>{spec}</div>
-                      {index < specs_list.length - 1 && (
-                        <div className="text-[#8A8A8A] font-bold opacity-50">·</div>
-                      )}
-                    </React.Fragment>
-                  ))
-                ) : (
-                  <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
-                )}
+        <div className="flex flex-col gap-2">
+          {category === "car" ? (
+            <>
+              {/* TITLE */}
+              <div>
+                <h4 
+                  className="line-clamp-1"
+                  style={{ fontFamily: "'Kaisei Decol', serif", fontWeight: 500, fontSize: "20px", lineHeight: "100%", color: "#2A2A2A" }}
+                >
+                  {item.title}
+                </h4>
               </div>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* PRICE */}
-            <div className="mb-3">
-              <h3 className="text-[18px] font-bold text-[#1a1a1a] font-pt-serif tracking-tight leading-none lining-nums">
-                {item.isPriceOnRequest
-                  ? "Price on Demand"
-                  : `$${numberWithCommas(item.price)}`}
-                {item.type === "Rent" && !item.isPriceOnRequest && (
-                  <span className="text-[11px] text-gray-500 font-normal montserrat ml-1.5">
-                    / day
-                  </span>
-                )}
-              </h3>
-            </div>
 
-            {/* PROPERTY DETAILS */}
-            <div className="mb-2">
-              <div className="flex items-center gap-2 text-[12px] font-medium text-[#8A8A8A] font-pt-serif tracking-[0.1px]">
-                {specs_list.length > 0 ? (
-                  specs_list.map((spec, index) => (
-                    <React.Fragment key={index}>
-                      <div>{spec}</div>
-                      {index < specs_list.length - 1 && (
-                        <div className="text-[#8A8A8A] font-bold opacity-50">·</div>
-                      )}
-                    </React.Fragment>
-                  ))
-                ) : (
-                  <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
-                )}
+              {/* PRICE */}
+              <div>
+                <h3 
+                  className="text-[18px] text-[#1a1a1a] tracking-tight lining-nums"
+                  style={{ fontFamily: "'Konkhmer Sleokchher', cursive", fontWeight: 400, lineHeight: "100%" }}
+                >
+                  {item.isPriceOnRequest
+                    ? "Price on Demand"
+                    : `$${numberWithCommas(item.price)}`}
+                  {item.type === "Rent" && !item.isPriceOnRequest && (
+                    <span className="text-[11px] text-gray-500 font-normal montserrat ml-1.5" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                      / day
+                    </span>
+                  )}
+                </h3>
               </div>
-            </div>
 
-            {/* TITLE */}
-            <div className="mb-2">
-              <h4 className="text-[20px] font-semibold text-[#2a2a2a] leading-[1.2] font-pt-serif line-clamp-1">
-                {item.title}
-              </h4>
-            </div>
-          </>
-        )}
+              {/* PROPERTY DETAILS */}
+              <div>
+                <div 
+                  className="flex items-center gap-2 tracking-[0.1px]"
+                  style={{ fontFamily: "'Inter', sans-serif", fontWeight: 400, fontSize: "14px", lineHeight: "20px", color: "#999999" }}
+                >
+                  {specs_list.length > 0 ? (
+                    specs_list.map((spec, index) => (
+                      <React.Fragment key={index}>
+                        <div>{spec}</div>
+                        {index < specs_list.length - 1 && (
+                          <div style={{ color: "#999999", fontWeight: "bold", opacity: 0.5 }}>·</div>
+                        )}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* PRICE */}
+              <div>
+                <h3 
+                  className="text-[24px] text-[#1a1a1a] tracking-tight lining-nums"
+                  style={{ fontFamily: "'Konkhmer Sleokchher', cursive", fontWeight: 400, lineHeight: "100%" }}
+                >
+                  {item.isPriceOnRequest
+                    ? "Price on Demand"
+                    : `$${numberWithCommas(item.price)}`}
+                  {item.type === "Rent" && !item.isPriceOnRequest && (
+                    <span className="text-[11px] text-gray-500 font-normal montserrat ml-1.5" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                      / day
+                    </span>
+                  )}
+                </h3>
+              </div>
 
-        {/* LOCATION */}
-        <div className="flex items-center gap-[6px] text-[#8A8A8A] mb-4">
-          <FiMapPin className="text-[12px] shrink-0" />
-          <span className="text-[12px] font-normal truncate font-pt-serif">
-            {item.location}
-          </span>
+              {/* PROPERTY DETAILS */}
+              <div>
+                <div 
+                  className="flex items-center gap-2 tracking-[0.1px]"
+                  style={{ fontFamily: "'Inter', sans-serif", fontWeight: 400, fontSize: "14px", lineHeight: "20px", color: "#999999" }}
+                >
+                  {specs_list.length > 0 ? (
+                    specs_list.map((spec, index) => (
+                      <React.Fragment key={index}>
+                        <div>{spec}</div>
+                        {index < specs_list.length - 1 && (
+                          <div style={{ color: "#999999", fontWeight: "bold", opacity: 0.5 }}>·</div>
+                        )}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
+                  )}
+                </div>
+              </div>
+
+              {/* TITLE */}
+              <div>
+                <h4 
+                  className="line-clamp-1"
+                  style={{ fontFamily: "'Kaisei Decol', serif", fontWeight: 500, fontSize: "15px", lineHeight: "100%", color: "#2A2A2A" }}
+                >
+                  {item.title}
+                </h4>
+              </div>
+            </>
+          )}
+
+          {/* LOCATION */}
+          <div>
+            <span 
+              className="truncate"
+              style={{ fontFamily: "'Inter', sans-serif", fontWeight: 400, fontSize: "11.5px", lineHeight: "100%", color: "#888888" }}
+            >
+              {item.location}
+            </span>
+          </div>
         </div>
 
         {/* FOOTER */}
-        <div className="mt-auto pt-4 border-t border-[#eeeeee] flex items-center justify-between">
+        <div className="mt-auto pt-[6px] border-t border-[#eeeeee] flex items-center justify-between">
           {/* Logo / Initials */}
           <div className="flex items-center">
             {item.agent?.companyLogo ? (
@@ -280,7 +306,7 @@ const AssetCard = ({ item }) => {
                 {item.agent?.name?.split(" ")[0] || "Marshall"}
               </span>
             </span>
-            <div className="w-[36px] h-[36px] rounded-full overflow-hidden border border-gray-50 shadow-sm shrink-0">
+            <div className="w-[47px] h-[45px] rounded-full overflow-hidden border border-gray-50 shadow-sm shrink-0">
               <img
                 src={optimizeCloudinaryUrl(
                   item.agent?.photo || "https://via.placeholder.com/100",
