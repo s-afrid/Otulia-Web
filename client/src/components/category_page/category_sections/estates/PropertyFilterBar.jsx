@@ -395,7 +395,7 @@ const PropertyFilterBar = ({
     <div className="w-full py-6 px-4 bg-white flex flex-col items-center relative z-20">
       <form
         onSubmit={handleSearch}
-        className="flex flex-wrap items-center justify-center gap-4 w-full"
+        className="flex flex-nowrap items-center justify-center overlow-x-auto gap-4 w-full max-w-[1500px] border border-gray-200 rounded-2xl p-4 shadow-sm bg-white"
       >
         {/* Location */}
         {!hideLocation && (
