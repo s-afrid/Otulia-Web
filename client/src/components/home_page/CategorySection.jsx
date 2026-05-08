@@ -53,7 +53,7 @@ const CategorySection = () => {
             </div>
 
             {/* Grid */}
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2'>
                 {categories.map((cat) => (
                     <div onClick={() => { navigate(`/category/${cat.navigate}`) }} key={cat.id} className='relative group overflow-hidden aspect-[3/4] cursor-pointer'>
                         <img

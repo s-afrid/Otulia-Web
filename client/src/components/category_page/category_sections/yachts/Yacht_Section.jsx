@@ -212,12 +212,10 @@ const Yacht_Section = () => {
                                 <SortDropdown onSortChange={handleSortChange} currentSort={currentSort} />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="flex flex-wrap justify-center gap-4">
                             {list.length > 0 ? (
                                 list.map((item, idx) => (
-                                    <div key={item._id}>
-                                        <AssetCard item={item} idx={idx} />
-                                    </div>
+                                    <AssetCard key={item._id} item={item} idx={idx} />
                                 ))
                             ) : (
                                 <div className="col-span-full py-40 text-center">

@@ -131,10 +131,11 @@ const AssetCard = ({ item }) => {
       onClick={() => navigate(`/asset/${category}/${item._id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
+      className="group relative bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col"
+      style={{ width: "595px" }}
     >
       {/* IMAGE AREA */}
-      <div className="relative aspect-[3/2] overflow-hidden">
+      <div className="relative overflow-hidden" style={{ width: "595px", height: "375px" }}>
         <img
           src={optimizeCloudinaryUrl(item.images?.[0] || item.image, 800)}
           alt={item.title}
@@ -160,7 +161,7 @@ const AssetCard = ({ item }) => {
       </div>
 
       {/* CONTENT AREA */}
-      <div className="px-6 py-5 flex flex-col flex-1 bg-white">
+      <div className="px-6 py-5 flex flex-col bg-white" style={{ width: "595px", height: "191px" }}>
         {/* Conditional Layout for Cars: Title above Price */}
         {category === "car" ? (
           <>
