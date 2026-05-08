@@ -40,7 +40,7 @@ const TrendingListings = () => {
   }, []);
 
   return (
-    <section className="relative px-4 md:px-6 py-16 bg-[#f9f9f9] group w-full">
+    <section className="relative px-4 md:px-6 pt-16 pb-2 bg-[#f9f9f9] group w-full">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
         <div>
