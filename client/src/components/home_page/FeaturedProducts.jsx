@@ -105,7 +105,7 @@ const FeaturedProducts = () => {
     ]
 
     const [currentIndex, setCurrentIndex] = useState(0)
-    const itemsPerPage = 4
+    const itemsPerPage = 3
 
     const nextSlide = () => {
         setCurrentIndex((prevIndex) =>
@@ -148,7 +148,7 @@ const FeaturedProducts = () => {
                         style={{ transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)` }}
                     >
                         {products.map((product) => (
-                            <div key={product.id} className='min-w-[calc(25%-12px)] flex-shrink-0 flex flex-col'>
+                            <div key={product.id} className='min-w-[calc(33.333%-10.66px)] flex-shrink-0 flex flex-col'>
                                 {/* Image Card */}
                                 <div className='relative aspect-square mb-4 bg-gray-50 overflow-hidden group'>
                                     {/* Badges */}

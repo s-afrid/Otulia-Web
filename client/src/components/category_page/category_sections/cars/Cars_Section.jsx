@@ -280,7 +280,7 @@ const Cars_Section = () => {
                 />
             </div>
 
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
               {list.length > 0 ? (
                 list.map((item, idx) => (
                   <AssetCard key={item._id} item={item} idx={idx} />
