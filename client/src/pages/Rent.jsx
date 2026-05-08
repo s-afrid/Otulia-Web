@@ -143,7 +143,7 @@ const Rent = () => {
       </div>
 
       {/* Category Tabs */}
-      <div className="flex justify-center gap-4 py-8 overflow-x-auto px-4">
+      <div className="flex justify-center gap-4 py-4 overflow-x-auto px-4">
         {categories.map((cat) => (
           <button
             key={cat.name}
@@ -166,7 +166,7 @@ const Rent = () => {
           <div className="text-center py-20 text-gray-500">No rental listings found in this category.</div>
         ) : (
           <>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
               {listings.map((item, idx) => (
                 <AssetCard key={item._id} item={item} />
               ))}

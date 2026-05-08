@@ -156,7 +156,7 @@ const Shop = () => {
       </div>
 
       {/* Category Tabs (Centered Pills) */}
-      <div className="flex justify-center items-center gap-2 py-10 bg-white">
+      <div className="flex justify-center items-center gap-2 py-4 bg-white">
         {categories.map((cat) => (
           <button
             key={cat.name}
@@ -182,7 +182,7 @@ const Shop = () => {
           <div className="text-center py-32 text-gray-400 font-medium montserrat">No luxury assets found matching your criteria.</div>
         ) : (
           <>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
               {listings.map((item) => (
                 <AssetCard key={item._id} item={item} />
               ))}

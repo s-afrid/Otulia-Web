@@ -191,7 +191,7 @@ const DealerProfile = () => {
 
                     {listings.length > 0 ? (
                         <>
-                            <div className="flex flex-wrap justify-center gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
                                 {listings
                                     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                                     .map(item => (

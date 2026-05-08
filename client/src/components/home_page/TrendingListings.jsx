@@ -84,7 +84,7 @@ const TrendingListings = () => {
           <style>{`.scroll-smooth::-webkit-scrollbar { display: none; }`}</style>
 
           {list.map((item, idx) => (
-            <div key={item._id} className="w-[85vw] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-10.66px)] lg:w-[calc(25%-12px)] shrink-0 group-hover:opacity-100">
+            <div key={item._id} className="w-[85vw] sm:w-[calc(50%-8px)] lg:w-[calc(33.333%-10.66px)] shrink-0 group-hover:opacity-100">
               <AssetCard item={item} idx={idx} />
             </div>
           ))}

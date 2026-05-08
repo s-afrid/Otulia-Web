@@ -91,7 +91,7 @@ const Favorites = () => {
                         </Link>
                     </div>
                 ) : (
-                    <div className="flex flex-wrap justify-center gap-4 pb-20">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center pb-20">
                         {favorites.map((item, idx) => (
                             <AssetCard key={item._id || idx} item={item} />
                         ))}
