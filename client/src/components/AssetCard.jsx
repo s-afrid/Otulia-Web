@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import numberWithCommas from "../modules/numberwithcomma";
 import { useAuth } from "../contexts/AuthContext";
-import { FiHeart, FiMapPin } from "react-icons/fi";
+import { FiHeart, FiMapPin, FiPlay } from "react-icons/fi";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 
 const AssetCard = ({ item }) => {
@@ -155,7 +155,7 @@ const AssetCard = ({ item }) => {
           )}
           {item.videoUrl && (
             <div className="bg-[#1a1a1a] text-white text-[9px] font-bold px-2.5 py-1.5 rounded-md uppercase tracking-[0.1em] shadow-lg flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+              <FiPlay className="w-2 h-2 fill-white" />
               VIDEO
             </div>
           )}
