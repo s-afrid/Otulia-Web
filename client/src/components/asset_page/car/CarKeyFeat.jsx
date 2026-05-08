@@ -17,15 +17,15 @@ const CarKeyFeatures = ({ item }) => {
 
   // Helper Component for a Feature Card
   const FeatureCard = ({ icon, label, value }) => (
-    <div className="flex items-center gap-4 border border-gray-100 rounded-lg px-5 py-4 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow cursor-default font-poppins">
+    <div className="flex items-center gap-4 w-[300px] h-[100px] bg-[#FCFBF9] border border-[#E8E3DD] rounded-[8px] px-5 py-[12px] shadow-none hover:shadow-sm transition-shadow cursor-default">
       {/* Icon Container */}
-      <div className="flex justify-center items-center text-gray-800 shrink-0">
-        <img src={icon} alt={label} className="w-[3.3rem] h-[3.3rem] object-contain" />
+      <div className="flex justify-center items-center shrink-0">
+        <img src={icon} alt={label} className="w-[70px] h-[70px] object-contain" />
       </div>
       {/* Text Content */}
-      <div className="flex flex-col gap-1">
-         <span className="text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em]">{label}</span>
-         <span className="text-xl font-medium text-black font-pt-serif">{value}</span>
+      <div className="flex flex-col gap-[2px] justify-center">
+         <span className="text-[9px] font-semibold text-[#9D8F84] uppercase tracking-[1.8px] leading-[11px] montserrat">{label}</span>
+         <span className="text-[18px] font-semibold text-[#1E1E1E] leading-[22px] font-cormorant">{value}</span>
       </div>
     </div>
   );
@@ -46,7 +46,7 @@ const CarKeyFeatures = ({ item }) => {
       </div>
 
       {/* Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1000px] mx-auto justify-items-center">
         {specItems.map((spec, index) => (
           <FeatureCard 
             key={index}
