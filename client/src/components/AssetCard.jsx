@@ -146,12 +146,20 @@ const AssetCard = ({ item }) => {
           className={`w-full h-full object-cover transition-transform duration-700 ease-out ${isHovered ? "scale-105" : "scale-100"}`}
         />
 
-        {/* TOP LEFT BADGE */}
-        {item.type === "Rent" && (
-          <div className="absolute top-4 left-4 z-10 bg-[#1a1a1a] text-white text-[9px] font-bold px-2.5 py-1.5 rounded-md uppercase tracking-[0.1em] shadow-lg">
-            FOR RENT
-          </div>
-        )}
+        {/* TOP LEFT BADGES */}
+        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+          {item.type === "Rent" && (
+            <div className="bg-[#1a1a1a] text-white text-[9px] font-bold px-2.5 py-1.5 rounded-md uppercase tracking-[0.1em] shadow-lg">
+              FOR RENT
+            </div>
+          )}
+          {item.videoUrl && (
+            <div className="bg-[#1a1a1a] text-white text-[9px] font-bold px-2.5 py-1.5 rounded-md uppercase tracking-[0.1em] shadow-lg flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+              VIDEO
+            </div>
+          )}
+        </div>
 
         {/* TOP RIGHT FAVORITE */}
         <button
@@ -174,7 +182,7 @@ const AssetCard = ({ item }) => {
               <div>
                 <h4 
                   className="line-clamp-1"
-                  style={{ fontFamily: "'Kaisei Decol', serif", fontWeight: 500, fontSize: "20px", lineHeight: "100%", color: "#2A2A2A" }}
+                  style={{ fontFamily: "'Kaisei Decol', serif", fontWeight: 500, fontSize: "15px", lineHeight: "100%", color: "#2A2A2A" }}
                 >
                   {item.title}
                 </h4>
@@ -183,7 +191,7 @@ const AssetCard = ({ item }) => {
               {/* PRICE */}
               <div>
                 <h3 
-                  className="text-[18px] text-[#1a1a1a] tracking-tight lining-nums"
+                  className="text-[24px] text-[#1a1a1a] tracking-tight lining-nums"
                   style={{ fontFamily: "'Konkhmer Sleokchher', cursive", fontWeight: 400, lineHeight: "100%" }}
                 >
                   {item.isPriceOnRequest
