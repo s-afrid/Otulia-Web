@@ -125,12 +125,10 @@ app.use((err, req, res, next) => {
 
   // Generic error fallback
   console.error(`[Internal Error]`, err);
-  res
-    .status(500)
-    .json({
-      error: "INTERNAL_SERVER_ERROR",
-      message: "An unexpected error occurred.",
-    });
+  res.status(500).json({
+    error: "INTERNAL_SERVER_ERROR",
+    message: "An unexpected error occurred.",
+  });
 });
 
 app.listen(PORT, "0.0.0.0", () => {
