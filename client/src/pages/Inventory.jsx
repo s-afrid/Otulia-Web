@@ -24,7 +24,7 @@ import ImageCropModal from '../components/ImageCropModal';
 import numberWithCommas from '../modules/numberwithcomma';
 import SEO from '../components/SEO';
 import ContactModal from '../components/ContactModal';
-
+import wavingHand from '../assets/icons/waving-hand.webp';
 
 const paypalOptions = {
     "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
@@ -754,7 +754,7 @@ const Inventory = () => {
                             {activeTab === 'dashboard' && (
                                 <p className="text-[12px] font-normal text-[#999999] inter leading-none mt-1 flex items-center gap-1">
                                     Welcome back, {user?.name?.split(' ')[0] || user?.name || 'Md Riyaz'} 
-                                    <img src="/src/assets/icons/waving-hand.webp" alt="👋" className="w-3.5 h-3.5 object-contain" />
+                                    <img src={wavingHand} alt="👋" className="w-3.5 h-3.5 object-contain" />
                                 </p>
                             )}
                         </div>
