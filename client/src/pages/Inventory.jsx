@@ -664,17 +664,17 @@ const Inventory = () => {
 
 
             {/* SIDEBAR */}
-            <div className={`w-72 border-r flex flex-col fixed inset-y-0 z-50 transition-colors duration-300 bg-white border-gray-100`}>
-                <div className="p-8 pb-10">
-                    <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-[42px] cursor-pointer" onClick={() => navigate('/')} />
+            <div className={`w-[240px] border-r flex flex-col fixed inset-y-0 z-50 transition-colors duration-300 bg-white border-gray-100`}>
+                <div className="p-6 pb-10">
+                    <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-[38px] cursor-pointer" onClick={() => navigate('/')} />
                 </div>
 
-                <nav className="flex-1 px-5 space-y-2 overflow-y-auto custom-scrollbar pb-8">
+                <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto custom-scrollbar pb-8">
                     {navItems.map((item) => (
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
                                 ? 'bg-[#FFF7ED] text-gray-900 border-l-[3px] border-[#D48D2A] shadow-sm'
                                 : 'text-gray-500 hover:bg-gray-50'
                                 }`}
@@ -685,7 +685,7 @@ const Inventory = () => {
                     ))}
                 </nav>
 
-                <div className="px-6 pb-6 mt-auto">
+                <div className="px-4 pb-6 mt-auto">
                     {/* User Profile Snippet */}
                     <div 
                         className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors mb-4 relative"
@@ -716,17 +716,17 @@ const Inventory = () => {
                     </div>
 
                     {/* Premium Card */}
-                    <div className="bg-[#FFF8F0] border border-[#F2E8DB] rounded-xl p-4 flex items-center justify-between cursor-pointer hover:bg-[#FFF4E5] transition-colors mb-6 shadow-sm" onClick={() => setActiveTab('subscription')}>
+                    <div className="bg-[#FFF8F0] border border-[#F2E8DB] rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-[#FFF4E5] transition-colors mb-6 shadow-sm" onClick={() => setActiveTab('subscription')}>
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D48D2A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                             </div>
-                            <div>
-                                <p className="text-xs font-bold text-[#D48D2A]">Premium Member</p>
-                                <p className="text-[9px] font-medium text-gray-500">Access exclusive features</p>
+                            <div className="overflow-hidden">
+                                <p className="text-xs font-bold text-[#D48D2A] truncate">Premium Member</p>
+                                <p className="text-[9px] font-medium text-gray-500 truncate">Access exclusive features</p>
                             </div>
                         </div>
-                        <FiChevronDown className="text-[#D48D2A] text-sm -rotate-90" />
+                        <FiChevronDown className="text-[#D48D2A] text-sm -rotate-90 shrink-0" />
                     </div>
 
                     <p className="text-[10px] text-gray-400 font-bold tracking-wider leading-relaxed px-2">
@@ -737,22 +737,30 @@ const Inventory = () => {
 
             {/* MAIN CONTENT AREA */}
             {/* MAIN CONTENT AREA */}
-            <div className={`flex-1 ml-72 transition-colors duration-300 bg-[#F9FAFB]`}>
+            <div className={`flex-1 ml-[240px] transition-colors duration-300 bg-[#F9FAFB]`}>
 
                 {/* TOP HEADER BAR */}
-                <header className={`h-20 border-b flex items-center justify-between px-8 sticky top-0 z-[40] transition-colors duration-300 bg-white border-gray-100`}>
+                <header className={`h-[72px] border-b flex items-center justify-between px-8 sticky top-0 z-[40] transition-colors duration-300 bg-white border-gray-100`}>
                     <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                            {activeTab === 'settings' ? 'Profile & Company Settings' : navItems.find(n => n.id === activeTab)?.label}
-                            {activeTab === 'inventory' && (
-                                <span className="text-sm font-medium text-gray-400">
-                                    ({data?.inventory?.length || 0}/{user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5} used)
-                                </span>
+                        <div className="flex flex-col">
+                            <h2 className="text-[22px] font-bold text-gray-900 flex items-center gap-2 leading-none inter">
+                                {activeTab === 'settings' ? 'Profile & Company Settings' : navItems.find(n => n.id === activeTab)?.label}
+                                {activeTab === 'inventory' && (
+                                    <span className="text-sm font-medium text-gray-400 montserrat ml-1">
+                                        ({data?.inventory?.length || 0}/{user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5} used)
+                                    </span>
+                                )}
+                            </h2>
+                            {activeTab === 'dashboard' && (
+                                <p className="text-[12px] font-normal text-[#999999] inter leading-none mt-1 flex items-center gap-1">
+                                    Welcome back, {user?.name?.split(' ')[0] || user?.name || 'Md Riyaz'} 
+                                    <img src="/src/assets/icons/waving-hand.webp" alt="👋" className="w-3.5 h-3.5 object-contain" />
+                                </p>
                             )}
-                        </h2>
+                        </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-6">
                         {activeTab === 'dashboard' && (
                             <>
                                 {/* Last 30 Days Dropdown */}
@@ -784,16 +792,15 @@ const Inventory = () => {
                         )}
 
                         {/* Icons Section */}
-                        <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
+                        <div className="flex items-center">
                             <div className="relative">
                                 <button
                                     onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
-                                    className="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-all focus:outline-none"
+                                    className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-all focus:outline-none"
                                 >
-                                    <FiBell className="text-gray-400 text-lg" />
+                                    <FiBell className="text-gray-400 text-xl" />
                                     {data?.notifications?.length > 0 && (
-                                        <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-[9px] text-white font-bold flex items-center justify-center">
-                                            {data.notifications.length}
+                                        <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white">
                                         </span>
                                     )}
                                 </button>
@@ -870,7 +877,7 @@ const Inventory = () => {
                         </div>
 
                         {/* User Profile Section */}
-                        <div className="relative border-l border-gray-200 pl-4">
+                        <div className="relative">
                             <button
                                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                                 onBlur={() => setTimeout(() => setIsProfileDropdownOpen(false), 200)}
@@ -878,7 +885,7 @@ const Inventory = () => {
                             >
                                 <div className="text-right">
                                     <p className="text-sm font-bold text-gray-900">{user?.name || 'Prestige Motors'}</p>
-                                    <p className="text-xs text-gray-400 font-medium">{user?.plan || 'Professional'} Plan</p>
+                                    <p className="text-[10px] text-gray-400 font-medium">{user?.plan || 'Professional'} Plan</p>
                                 </div>
                                 <img src={user?.profilePicture || '/assets/user.png'} className="w-10 h-10 rounded-full border border-gray-200" alt="Profile" />
                                 <FiChevronDown className={`text-gray-400 text-sm transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
@@ -945,7 +952,7 @@ const Inventory = () => {
                             {/* Header Row */}
                             <div className="flex justify-between items-end shrink-0 mb-0">
                                 <div>
-                                    <h2 className="text-xl font-bold text-gray-400 font-medium mb-0 leading-tight">Welcome back, <span className="text-gray-900 canela font-bold">{user?.name?.split(' ')[0] || user?.name || 'Md Riyaz'}</span> 👋</h2>
+                                    {/* Removed Welcome message from here as it's now in header */}
                                 </div>
                                 { (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP') && (
                                     <button 
