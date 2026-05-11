@@ -964,7 +964,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Views</span>
-                                            <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{numberWithCommas(data?.stats?.totalViews || 2456)}</span>
+                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{numberWithCommas(data?.stats?.totalViews || 2456)}</span>
                                             <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 12.5% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0"><FiEye className="text-[18px]" /></div>
@@ -978,7 +978,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Leads</span>
-                                            <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{numberWithCommas(data?.stats?.totalLeads || 142)}</span>
+                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{numberWithCommas(data?.stats?.totalLeads || 142)}</span>
                                             <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 8.2% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 justify-center flex items-center shrink-0"><FiUser className="text-[18px]" /></div>
@@ -992,7 +992,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Saved / Shortlisted</span>
-                                            <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{data?.stats?.savedCount || 48}</span>
+                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{data?.stats?.savedCount || 48}</span>
                                             <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 5.1% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 justify-center flex items-center shrink-0"><FiHeart className="text-[18px]" /></div>
@@ -1006,7 +1006,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Est. Lead Value</span>
-                                            <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">${((data?.stats?.estLeadValue || 2450000)/1000000).toFixed(2)}M</span>
+                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">${((data?.stats?.estLeadValue || 2450000)/1000000).toFixed(2)}M</span>
                                             <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 15.3% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 justify-center flex items-center shrink-0"><FiTrendingUp className="text-[18px]" /></div>
@@ -1790,7 +1790,7 @@ const Inventory = () => {
                                         <div className="flex justify-between items-start z-10 relative">
                                             <div className="flex flex-col">
                                                 <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">{kpi.label}</span>
-                                                <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{kpi.val}</span>
+                                                <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{kpi.val}</span>
                                             </div>
                                             <div className="w-[34px] h-[34px] rounded-[10px] justify-center flex items-center shrink-0 border border-gray-100 shadow-sm" style={{backgroundColor: kpi.bg, color: kpi.col}}>
                                                 <kpi.icon className="text-[15px]" />
