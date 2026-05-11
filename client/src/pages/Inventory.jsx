@@ -81,6 +81,7 @@ const Inventory = () => {
     const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
     const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    const [isHeaderDropdownOpen, setIsHeaderDropdownOpen] = useState(false);
     const [leadStatusFilter, setLeadStatusFilter] = useState('All Status');
     const [leadSourceFilter, setLeadSourceFilter] = useState('All Source');
     const [leadAssetFilter, setLeadAssetFilter] = useState('All Assets');
@@ -694,8 +695,8 @@ const Inventory = () => {
                         <div className="flex items-center gap-3 overflow-hidden">
                             <img src={user?.profilePicture || '/assets/user.png'} className="w-[36px] h-[36px] rounded-full border border-gray-200 shrink-0 object-cover" alt="Profile" />
                             <div className="overflow-hidden">
-                                <p className="text-sm font-bold text-gray-900 truncate">{user?.name || 'Md Riyaz'}</p>
-                                <p className="text-[10px] text-gray-400 font-medium truncate">{user?.plan || 'Premium Basic Plan'}</p>
+                                <p className="inter text-[12px] font-semibold text-gray-900 truncate leading-none">{user?.name || 'Md Riyaz'}</p>
+                                <p className="inter text-[9px] font-normal text-gray-400 truncate leading-none mt-1">{user?.plan || 'Premium Basic Plan'}</p>
                             </div>
                         </div>
                         <FiChevronDown className="text-gray-400 text-sm shrink-0" />
@@ -729,8 +730,8 @@ const Inventory = () => {
                         <FiChevronDown className="text-[#D48D2A] text-sm -rotate-90 shrink-0" />
                     </div>
 
-                    <p className="inter text-[12px] font-semibold text-gray-400 tracking-wider leading-none px-2">
-                        © 2026 OTULIA <br /> All rights reserved.
+                    <p className="inter text-[10px] font-semibold text-[#BFBFBF] leading-none px-2 w-full">
+                        © 2026 OTULIA · All rights reserved.
                     </p>
                 </div>
             </div>
@@ -880,8 +881,8 @@ const Inventory = () => {
                         {/* User Profile Section */}
                         <div className="relative">
                             <button
-                                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                                onBlur={() => setTimeout(() => setIsProfileDropdownOpen(false), 200)}
+                                onClick={() => setIsHeaderDropdownOpen(!isHeaderDropdownOpen)}
+                                onBlur={() => setTimeout(() => setIsHeaderDropdownOpen(false), 200)}
                                 className="flex items-center gap-3 hover:opacity-80 transition-opacity focus:outline-none"
                             >
                                 <img src={user?.profilePicture || '/assets/user.png'} className="w-[36px] h-[36px] rounded-full border border-gray-200 object-cover" alt="Profile" />
@@ -889,11 +890,11 @@ const Inventory = () => {
                                     <p className="text-[11px] font-semibold text-gray-900 inter leading-none mb-1">{user?.name || 'Prestige Motors'}</p>
                                     <p className="text-[9px] text-[#999999] font-normal inter leading-none">{user?.plan || 'Professional'} Plan</p>
                                 </div>
-                                <FiChevronDown className={`text-gray-400 text-sm transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                                <FiChevronDown className={`text-gray-400 text-sm transition-transform duration-200 ${isHeaderDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
 
                             {/* Dropdown Menu */}
-                            {isProfileDropdownOpen && (
+                            {isHeaderDropdownOpen && (
                                 <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
                                     <div className="px-4 py-3 border-b border-gray-50">
                                         <p className="text-[13px] font-bold text-gray-900 inter leading-none mb-1">{user?.name || 'Prestige Motors'}</p>
