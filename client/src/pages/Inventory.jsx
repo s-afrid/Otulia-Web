@@ -955,73 +955,63 @@ const Inventory = () => {
                             <div className="flex justify-between items-end shrink-0 mb-0">
                                 <div>
                                     {/* Removed Welcome message from here as it's now in header */}
-                                </div>
-                                { (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP') && (
-                                    <button 
-                                        onClick={() => window.open(`/dealer/${user?.email}`, '_blank')}
-                                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-600 hover:text-black hover:border-black transition-all shadow-sm group"
-                                    >
-                                        <FiExternalLink className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                        View Public Profile
-                                    </button>
-                                )}
-                            </div>
+                                </div>                            </div>
 
                             {/* Top 4 KPI Cards */}
-                            <div className="grid grid-cols-4 gap-5 shrink-0 h-[105px]">
+                            <div className="flex gap-5 shrink-0 h-[165px]">
                                 {/* Card 1 */}
-                                <div className="bg-white rounded-2xl p-4 px-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+                                <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Total Views</span>
+                                            <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Views</span>
                                             <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{numberWithCommas(data?.stats?.totalViews || 2456)}</span>
                                             <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 12.5% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0"><FiEye className="text-[18px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-0 left-0 w-full h-[35px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <svg className="absolute bottom-0 left-0 w-full h-[50px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
                                         <path d="M0,15 L10,12 L20,18 L30,8 L40,14 L50,6 L60,12 L70,4 L80,10 L90,2 L100,6" fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </div>
                                 {/* Card 2 */}
-                                <div className="bg-white rounded-2xl p-4 px-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+                                <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Total Leads</span>
+                                            <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Leads</span>
                                             <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{numberWithCommas(data?.stats?.totalLeads || 142)}</span>
                                             <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 8.2% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 justify-center flex items-center shrink-0"><FiUser className="text-[18px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-0 left-0 w-full h-[35px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <svg className="absolute bottom-0 left-0 w-full h-[50px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
                                         <path d="M0,12 L10,15 L20,5 L30,10 L40,4 L50,12 L60,3 L70,8 L80,2 L90,6 L100,4" fill="none" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </div>
                                 {/* Card 3 */}
-                                <div className="bg-white rounded-2xl p-4 px-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+                                <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Saved / Shortlisted</span>
+                                            <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Saved / Shortlisted</span>
                                             <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">{data?.stats?.savedCount || 48}</span>
                                             <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 5.1% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 justify-center flex items-center shrink-0"><FiHeart className="text-[18px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-0 left-0 w-full h-[35px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <svg className="absolute bottom-0 left-0 w-full h-[50px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
                                         <path d="M0,18 L15,10 L30,14 L45,6 L60,16 L75,8 L90,4 L100,6" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </div>
                                 {/* Card 4 */}
-                                <div className="bg-white rounded-2xl p-4 px-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+                                <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Est. Lead Value</span>
+                                            <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Est. Lead Value</span>
                                             <span className="text-[28px] font-medium text-gray-900 leading-none mt-1.5 tracking-tight">${((data?.stats?.estLeadValue || 2450000)/1000000).toFixed(2)}M</span>
                                             <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 15.3% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 justify-center flex items-center shrink-0"><FiTrendingUp className="text-[18px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-0 left-0 w-full h-[35px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <svg className="absolute bottom-0 left-0 w-full h-[50px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
                                         <path d="M0,15 L20,10 L40,6 L60,4 L80,2 L100,5" fill="none" stroke="#8B5CF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </div>
@@ -2255,7 +2245,6 @@ const Inventory = () => {
                                         <h3 className="text-[16px] font-bold text-gray-900 mb-1 canela">Public Preview</h3>
                                         <p className="text-[10px] text-gray-400 font-medium border-l-[3px] border-[#10B981] pl-2 -ml-[3px]">This is how your listings appear to potential buyers on the marketplace.</p>
                                     </div>
-                                    <button className="px-4 py-1.5 border border-gray-200 rounded-[8px] text-[9px] font-bold text-gray-700 bg-white hover:bg-gray-50 flex items-center gap-1.5 shadow-sm transition-colors uppercase tracking-widest">View Public Profile <FiExternalLink className="text-[11px] text-gray-400"/></button>
                                 </div>
                                 
                                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4 pb-4">
@@ -2642,15 +2631,6 @@ const Inventory = () => {
                             )}
                             
                             {/* 2 Main Columns */}
-                            <div className="flex justify-end pr-1 mb-1 shrink-0">
-                                <button 
-                                    onClick={() => window.open(`/dealer/${user?.email}`, '_blank')}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-600 hover:text-black hover:border-black transition-all shadow-sm group"
-                                >
-                                    <FiExternalLink className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                    Preview Public Profile
-                                </button>
-                            </div>
                             <div className="flex flex-1 gap-4 min-h-0">
                                 {/* Personal Details */}
                                 <div className="flex-1 bg-white border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] rounded-[1.2rem] p-4 flex flex-col relative h-full">
