@@ -71,7 +71,7 @@ const Inventory = () => {
     const navigate = useNavigate();
 
     // UI State
-    const [activeTab, setActiveTab] = useState('inventory');
+    const [activeTab, setActiveTab] = useState('dashboard');
     const [timeframe, setTimeframe] = useState('Week');
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -674,7 +674,7 @@ const Inventory = () => {
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl inter text-[12px] font-semibold leading-none transition-all ${activeTab === item.id
                                 ? 'bg-[#FFF7ED] text-gray-900 border-l-[3px] border-[#D48D2A] shadow-sm'
                                 : 'text-gray-500 hover:bg-gray-50'
                                 }`}
@@ -692,7 +692,7 @@ const Inventory = () => {
                         onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                     >
                         <div className="flex items-center gap-3 overflow-hidden">
-                            <img src={user?.profilePicture || '/assets/user.png'} className="w-10 h-10 rounded-full border border-gray-200 shrink-0" alt="Profile" />
+                            <img src={user?.profilePicture || '/assets/user.png'} className="w-[36px] h-[36px] rounded-full border border-gray-200 shrink-0 object-cover" alt="Profile" />
                             <div className="overflow-hidden">
                                 <p className="text-sm font-bold text-gray-900 truncate">{user?.name || 'Md Riyaz'}</p>
                                 <p className="text-[10px] text-gray-400 font-medium truncate">{user?.plan || 'Premium Basic Plan'}</p>
@@ -704,10 +704,10 @@ const Inventory = () => {
                         {isProfileDropdownOpen && (
                             <div className="absolute left-0 bottom-full mb-2 w-full bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-bottom-2 duration-200 z-50">
                                 <div className="py-1">
-                                    <button onClick={(e) => { e.stopPropagation(); navigate('/profile'); }} className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2">
+                                    <button onClick={(e) => { e.stopPropagation(); navigate('/profile'); }} className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2">
                                         <FiUser className="text-lg" /> Profile Settings
                                     </button>
-                                    <button onClick={(e) => { e.stopPropagation(); logout(); navigate('/login'); }} className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 flex items-center gap-2">
+                                    <button onClick={(e) => { e.stopPropagation(); logout(); navigate('/login'); }} className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-red-600 inter hover:bg-red-50 flex items-center gap-2">
                                         <FiLogOut className="text-lg" /> Sign Out
                                     </button>
                                 </div>
@@ -722,14 +722,14 @@ const Inventory = () => {
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D48D2A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                             </div>
                             <div className="overflow-hidden">
-                                <p className="text-xs font-bold text-[#D48D2A] truncate">Premium Member</p>
+                                <p className="inter text-[12px] font-semibold text-[#D48D2A] truncate leading-none">Premium Member</p>
                                 <p className="text-[9px] font-medium text-gray-500 truncate">Access exclusive features</p>
                             </div>
                         </div>
                         <FiChevronDown className="text-[#D48D2A] text-sm -rotate-90 shrink-0" />
                     </div>
 
-                    <p className="text-[10px] text-gray-400 font-bold tracking-wider leading-relaxed px-2">
+                    <p className="inter text-[12px] font-semibold text-gray-400 tracking-wider leading-none px-2">
                         © 2026 OTULIA <br /> All rights reserved.
                     </p>
                 </div>
@@ -764,25 +764,26 @@ const Inventory = () => {
                         {activeTab === 'dashboard' && (
                             <>
                                 {/* Last 30 Days Dropdown */}
-                                <div className="relative">
-                                    <select className="appearance-none bg-white border border-gray-200 rounded-lg py-2 pl-4 pr-10 text-sm font-medium text-gray-600 focus:outline-none focus:border-[#D48D2A] cursor-pointer">
+                                <div className="relative w-[148px] h-[34px]">
+                                    <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999] text-xs pointer-events-none" />
+                                    <select className="w-full h-full appearance-none bg-white border border-gray-100 rounded-lg pl-8 pr-8 text-[11px] font-normal text-[#999999] inter focus:outline-none focus:border-[#D48D2A] cursor-pointer leading-none">
                                         <option>Last 30 days</option>
                                         <option>Last 7 days</option>
                                         <option>Last 90 days</option>
                                         <option>This year</option>
                                     </select>
-                                    <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-sm" />
+                                    <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none text-[10px]" />
                                 </div>
 
                                 {/* Day/Week/Month Tabs */}
-                                <div className="flex items-center rounded-lg bg-gray-50 p-1">
+                                <div className="flex items-center rounded-lg bg-gray-50 p-1 h-[34px]">
                                     {['Day', 'Week', 'Month'].map((t) => (
                                         <button
                                             key={t}
                                             onClick={() => setTimeframe(t)}
-                                            className={`px-5 py-2 text-sm font-semibold transition-all rounded-md ${timeframe === t
-                                                ? 'bg-[#D48D2A] text-white shadow-sm'
-                                                : 'text-gray-600 hover:text-gray-900'}`}
+                                            className={`px-5 h-full flex items-center justify-center text-[11px] font-normal inter leading-none transition-all rounded-md ${timeframe === t
+                                                ? 'bg-black text-white shadow-sm'
+                                                : 'text-[#999999] hover:text-gray-900'}`}
                                         >
                                             {t}
                                         </button>
@@ -796,11 +797,11 @@ const Inventory = () => {
                             <div className="relative">
                                 <button
                                     onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
-                                    className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-all focus:outline-none"
+                                    className="w-[36px] h-[36px] rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-all focus:outline-none"
                                 >
-                                    <FiBell className="text-gray-400 text-xl" />
+                                    <FiBell className="text-gray-400 text-[20px]" />
                                     {data?.notifications?.length > 0 && (
-                                        <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white">
+                                        <span className="absolute top-[8px] right-[8px] w-[7px] h-[7px] bg-red-500 rounded-full border border-white">
                                         </span>
                                     )}
                                 </button>
@@ -883,11 +884,11 @@ const Inventory = () => {
                                 onBlur={() => setTimeout(() => setIsProfileDropdownOpen(false), 200)}
                                 className="flex items-center gap-3 hover:opacity-80 transition-opacity focus:outline-none"
                             >
-                                <div className="text-right">
-                                    <p className="text-sm font-bold text-gray-900">{user?.name || 'Prestige Motors'}</p>
-                                    <p className="text-[10px] text-gray-400 font-medium">{user?.plan || 'Professional'} Plan</p>
+                                <img src={user?.profilePicture || '/assets/user.png'} className="w-[36px] h-[36px] rounded-full border border-gray-200 object-cover" alt="Profile" />
+                                <div className="text-left">
+                                    <p className="text-[11px] font-semibold text-gray-900 inter leading-none mb-1">{user?.name || 'Prestige Motors'}</p>
+                                    <p className="text-[9px] text-[#999999] font-normal inter leading-none">{user?.plan || 'Professional'} Plan</p>
                                 </div>
-                                <img src={user?.profilePicture || '/assets/user.png'} className="w-10 h-10 rounded-full border border-gray-200" alt="Profile" />
                                 <FiChevronDown className={`text-gray-400 text-sm transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
 
@@ -895,33 +896,33 @@ const Inventory = () => {
                             {isProfileDropdownOpen && (
                                 <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
                                     <div className="px-4 py-3 border-b border-gray-50">
-                                        <p className="text-sm font-bold text-gray-900">{user?.name || 'Prestige Motors'}</p>
-                                        <p className="text-xs text-gray-500 truncate">{user?.email || 'contact@prestigemotors.com'}</p>
+                                        <p className="text-[13px] font-bold text-gray-900 inter leading-none mb-1">{user?.name || 'Prestige Motors'}</p>
+                                        <p className="text-[11px] text-[#999999] inter truncate leading-none">{user?.email || 'contact@prestigemotors.com'}</p>
                                     </div>
                                     <div className="py-1">
                                         <button
                                             onClick={() => navigate('/profile')}
-                                            className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
+                                            className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
                                         >
                                             <FiUser className="text-lg" /> My Profile
                                         </button>
                                         {user?.role === 'admin' && (
                                             <button
                                                 onClick={() => navigate('/admin')}
-                                                className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
+                                                className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
                                             >
                                                 <FiShield className="text-lg" /> Admin Dashboard
                                             </button>
                                         )}
                                         <button
                                             onClick={() => setActiveTab('subscription')}
-                                            className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
+                                            className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
                                         >
                                             <FiCreditCard className="text-lg" /> Subscription
                                         </button>
                                         <button
                                             onClick={() => setActiveTab('settings')}
-                                            className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
+                                            className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
                                         >
                                             <FiSettings className="text-lg" /> Settings
                                         </button>
@@ -932,7 +933,7 @@ const Inventory = () => {
                                                 logout();
                                                 navigate('/login');
                                             }}
-                                            className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                                            className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-red-600 inter hover:bg-red-50 flex items-center gap-2 transition-colors"
                                         >
                                             <FiLogOut className="text-lg" /> Sign Out
                                         </button>
