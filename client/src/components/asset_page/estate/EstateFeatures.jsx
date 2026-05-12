@@ -1,21 +1,9 @@
 import React, { useState } from 'react';
-import { FiX, FiCheck, FiWifi, FiWind, FiSun, FiMonitor, FiMap, FiVideo, FiShield, FiCoffee, FiStar, FiHome } from 'react-icons/fi';
+import { FiX, FiCheck, FiHome } from 'react-icons/fi';
+import { getAmenityIcon } from '../../../utils/assetIcons';
 
 const getFeatureIcon = (name) => {
-  const lower = name.toLowerCase();
-  if (lower.includes('wifi') || lower.includes('internet')) return <FiWifi />;
-  if (lower.includes('climate') || lower.includes('ac') || lower.includes('sauna') || lower.includes('steam')) return <FiWind />;
-  if (lower.includes('sun') || lower.includes('view')) return <FiSun />;
-  if (lower.includes('smart') || lower.includes('cinema') || lower.includes('theater')) return <FiMonitor />;
-  if (lower.includes('garden') || lower.includes('lawn') || lower.includes('park')) return <FiMap />;
-  if (lower.includes('cctv') || lower.includes('video') || lower.includes('surveillance')) return <FiVideo />;
-  if (lower.includes('security') || lower.includes('gate') || lower.includes('lock')) return <FiShield />;
-  if (lower.includes('bar') || lower.includes('lounge') || lower.includes('kitchen') || lower.includes('dining')) return <FiCoffee />;
-  if (lower.includes('luxury') || lower.includes('premium')) return <FiStar />;
-  if (lower.includes('pool') || lower.includes('jacuzzi') || lower.includes('bath')) return <span className="text-[10px] leading-none text-current">〰️</span>;
-  if (lower.includes('car') || lower.includes('garage') || lower.includes('parking')) return <span className="text-[10px] leading-none text-current">🚗</span>;
-  if (lower.includes('gym') || lower.includes('fitness')) return <span className="text-[10px] leading-none text-current">🏋️</span>;
-  return <FiHome />;
+  return getAmenityIcon(name, "w-5 h-5");
 };
 
 const EstateFeatures = ({ item }) => {
