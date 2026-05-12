@@ -1142,9 +1142,9 @@ const Inventory = () => {
                                 {/* Right Donut */}
                                 <div className="flex-1 bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-w-[320px]">
                                     <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal mb-3 shrink-0">Leads by Asset Category</h4>
-                                    <div className="flex-1 flex items-center justify-between min-h-0 pl-1 pr-3">
-                                        <div className="w-[140px] h-full flex items-center justify-center relative shrink-0">
-                                            <svg viewBox="0 0 100 100" className="w-[125%] transform -rotate-90">
+                                    <div className="flex-1 flex items-center justify-center gap-8 min-h-0 pl-1 pr-3">
+                                        <div style={{ width: '229px', height: '209px' }} className="flex items-center justify-center relative shrink-0">
+                                            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                                                 <circle cx="50" cy="50" r="38" fill="none" stroke="#F3F4F6" strokeWidth="14" />
                                                 {(() => {
                                                     const items = data?.analytics?.leadsByCategory || [];
@@ -1167,7 +1167,7 @@ const Inventory = () => {
                                                 <span className="inter text-[9px] capitalize text-gray-500 font-medium tracking-wide mt-1">Total Leads</span>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col justify-center gap-3 pl-4 flex-1">
+                                        <div className="flex flex-col justify-center gap-3 w-[140px]">
                                             {(data?.analytics?.leadsByCategory || []).map((r, i) => {
                                                 const colors = ['#D48D2A', '#1E3B70', '#10B981', '#9CA3AF'];
                                                 return (
@@ -1180,7 +1180,9 @@ const Inventory = () => {
                                         </div>
                                     </div>
                                     <div className="flex justify-end pt-2 shrink-0">
-                                        <button onClick={() => setActiveTab('analytics')} className="text-[11px] font-black text-gray-500 border border-gray-200 shadow-sm px-4 py-1.5 rounded-[10px] transition-colors flex items-center gap-1.5 hover:bg-gray-50 tracking-wide hover:text-gray-900">View Full Report <FiChevronRight /></button>
+                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[12px] font-medium text-[#D48D2A] hover:text-[#B37622] transition-colors flex items-center gap-1.5 tracking-normal">
+                                            View Full Report <FiArrowRight className="text-[13px]" />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1229,9 +1231,9 @@ const Inventory = () => {
                                         <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Leads Source</h4>
                                         <button onClick={() => setActiveTab('analytics')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
                                     </div>
-                                    <div className="flex-1 flex items-center justify-between z-10 px-0 mt-3 -ml-1">
-                                        <div className="w-1/2 h-full flex items-center justify-center relative pb-3 -ml-2">
-                                            <svg viewBox="0 0 100 100" className="w-[115%] transform -rotate-90">
+                                    <div className="flex-1 flex items-center justify-between z-10 px-0 mt-2">
+                                        <div style={{ width: '229px', height: '209px' }} className="flex items-center justify-center relative shrink-0 -ml-4">
+                                            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                                                 <circle cx="50" cy="50" r="35" fill="none" stroke="#F3F4F6" strokeWidth="20" />
                                                 {(() => {
                                                     const items = data?.analytics?.leadsBySource || [];
@@ -1622,7 +1624,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
                                             <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Total Leads</span>
-                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{numberWithCommas(data?.stats?.totalLeads || 0)}</span>
+                                            <span className="text-2xl font-bold text-gray-900 kaisei leading-none mt-1">{numberWithCommas(data?.stats?.totalLeads || 0)}</span>
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUsers className="text-sm" /></div>
                                     </div>
@@ -1637,7 +1639,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
                                             <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">New Leads</span>
-                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='New').length}</span>
+                                            <span className="text-2xl font-bold text-gray-900 kaisei leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='New').length}</span>
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUser className="text-sm" /></div>
                                     </div>
@@ -1652,7 +1654,7 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
                                             <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Qualified Leads</span>
-                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='Qualified').length}</span>
+                                            <span className="text-2xl font-bold text-gray-900 kaisei leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='Qualified').length}</span>
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-emerald-50 justify-center text-emerald-600 flex items-center shrink-0 border border-emerald-100"><FiCheckCircle className="text-sm" /></div>
                                     </div>
@@ -1741,14 +1743,14 @@ const Inventory = () => {
                                         <thead className="sticky top-0 bg-white z-20 border-b border-gray-50 shadow-[0_4px_10px_-4px_rgba(0,0,0,0.02)]">
                                             <tr>
                                                 <th className="w-10 px-4 py-3"><input type="checkbox" className="rounded border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A]"/></th>
-                                                <th className="w-2/12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">LEAD</th>
-                                                <th className="w-[18%] px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">ASSET INTERESTED</th>
-                                                <th className="w-2/12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">SOURCE</th>
-                                                <th className="w-1/12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">STATUS</th>
-                                                <th className="w-1/12 px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">VALUE</th>
-                                                <th className="w-[12%] px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">DATE ADDED <FiChevronDown className="inline ml-0.5"/></th>
-                                                <th className="w-[18%] px-2 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">MESSAGE</th>
-                                                <th className="w-20 px-4 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest text-right">ACTIONS</th>
+                                                <th className="w-2/12 px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">LEAD</th>
+                                                <th className="w-[18%] px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">ASSET INTERESTED</th>
+                                                <th className="w-2/12 px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">SOURCE</th>
+                                                <th className="w-1/12 px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">STATUS</th>
+                                                <th className="w-1/12 px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">VALUE</th>
+                                                <th className="w-[12%] px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">DATE ADDED <FiChevronDown className="inline ml-0.5"/></th>
+                                                <th className="w-[18%] px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">MESSAGE</th>
+                                                <th className="w-20 px-4 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">ACTIONS</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-50 text-[10px] font-bold">
@@ -1907,22 +1909,26 @@ const Inventory = () => {
                             {/* KPI Row */}
                             <div className="flex gap-4 shrink-0 h-[100px]">
                                 {[
-                                    {label: 'TOTAL VIEWS', val: data?.stats?.totalViews ? numberWithCommas(data.stats.totalViews) : '0', chg: '+0.0%', icon: FiEye, col: '#D48D2A', bg: '#FFF8F0'},
-                                    {label: 'TOTAL LEADS', val: data?.stats?.totalLeads ? numberWithCommas(data.stats.totalLeads) : '0', chg: '+0.0%', icon: FiUsers, col: '#3B82F6', bg: '#EFF6FF'},
-                                    {label: 'CONVERSION RATE', val: data?.stats?.avgConversion ? `${Number(data.stats.avgConversion).toFixed(2)}%` : '0.00%', chg: '+0.0%', icon: FiTrendingUp, col: '#10B981', bg: '#ECFDF5'},
-                                    {label: 'AVG LEAD VALUE', val: data?.stats?.estLeadValue ? `$${numberWithCommas(data.stats.estLeadValue)}` : '$0', chg: '+0.0%', icon: FiCreditCard, col: '#8B5CF6', bg: '#F5F3FF'}
+                                    {label: 'TOTAL VIEWS', val: data?.stats?.trends?.views?.current ? numberWithCommas(data.stats.trends.views.current) : '0', chg: data?.stats?.trends?.views?.change, icon: FiEye, col: '#D48D2A', bg: '#FFF8F0'},
+                                    {label: 'TOTAL LEADS', val: data?.stats?.trends?.leads?.current ? numberWithCommas(data.stats.trends.leads.current) : '0', chg: data?.stats?.trends?.leads?.change, icon: FiUsers, col: '#3B82F6', bg: '#EFF6FF'},
+                                    {label: 'CONVERSION RATE', val: data?.stats?.avgConversion ? `${Number(data.stats.avgConversion).toFixed(2)}%` : '0.00%', chg: data?.stats?.trends?.leads?.change, icon: FiTrendingUp, col: '#10B981', bg: '#ECFDF5'},
+                                    {label: 'AVG LEAD VALUE', val: data?.stats?.trends?.value?.current ? `$${(data.stats.trends.value.current / 1000000).toFixed(2)}M` : '$0', chg: data?.stats?.trends?.value?.change, icon: FiCreditCard, col: '#8B5CF6', bg: '#F5F3FF'}
                                 ].map((kpi, idx) => (
                                     <div key={idx} className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col justify-between relative overflow-hidden group">
                                         <div className="flex justify-between items-start z-10 relative">
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">{kpi.label}</span>
+                                                <span className="inter text-[10px] font-black uppercase text-gray-400 tracking-widest">{kpi.label}</span>
                                                 <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{kpi.val}</span>
                                             </div>
                                             <div className="w-[34px] h-[34px] rounded-[10px] justify-center flex items-center shrink-0 border border-gray-100 shadow-sm" style={{backgroundColor: kpi.bg, color: kpi.col}}>
                                                 <kpi.icon className="text-[15px]" />
                                             </div>
                                         </div>
-                                        <span className="inter text-[10px] font-bold text-emerald-500 flex items-center gap-1 z-10 relative mt-auto tracking-wide"><FiTrendingUp className="text-[11px]" /> {kpi.chg} <span className="text-gray-400 font-medium whitespace-nowrap normal-case text-[10px]">from last 30 days</span></span>
+                                        <span className={`inter text-[10px] font-bold ${Number(kpi.chg) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 z-10 relative mt-auto tracking-wide`}>
+                                            {Number(kpi.chg) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
+                                            {Math.abs(kpi.chg || 0)}% 
+                                            <span className="inter text-gray-400 font-medium whitespace-nowrap normal-case text-[10px]">from last 30 days</span>
+                                        </span>
                                         <div className="absolute bottom-0 left-0 right-0 h-[35%] opacity-20 pointer-events-none transition-opacity duration-300 group-hover:opacity-30">
                                             <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full fill-current" style={{color: kpi.col}}><path d={idx%2===0?"M0,30 L0,20 Q15,10 30,25 T60,15 T85,25 T100,5 L100,30 Z":"M0,30 L0,15 Q10,25 20,10 T40,15 T60,5 T80,20 T100,10 L100,30 Z"}/></svg>
                                             <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full absolute bottom-0 left-0 outline-none"><path d={idx%2===0?"M0,20 Q15,10 30,25 T60,15 T85,25 T100,5":"M0,15 Q10,25 20,10 T40,15 T60,5 T80,20 T100,10"} fill="none" stroke={kpi.col} strokeWidth="1.5"/></svg>
@@ -1936,15 +1942,15 @@ const Inventory = () => {
                                 {/* Performance Trend */}
                                 <div className="flex-[1.5] bg-white rounded-[1.25rem] p-5 pb-3 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 z-10 shrink-0">
-                                        <h3 className="text-[16px] font-bold text-gray-900 canela">Performance Trend</h3>
+                                        <h3 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Performance Trend</h3>
                                         <div className="flex items-center gap-8">
-                                            <div className="flex items-center gap-5 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                                            <div className="flex items-center gap-5 inter text-[10px] font-black uppercase tracking-widest text-gray-500">
                                                 <div className="flex items-center gap-1.5"><div className="w-[12px] h-[3px] rounded-full bg-[#D48D2A]"></div>VIEWS</div>
                                                 <div className="flex items-center gap-1.5"><div className="w-[12px] h-[3px] rounded-full bg-blue-500"></div>LEADS</div>
                                                 <div className="flex items-center gap-1.5"><div className="w-[12px] h-[3px] rounded-full bg-emerald-500"></div>CONVERSIONS</div>
                                             </div>
                                             <div className="relative">
-                                                <select className="appearance-none bg-white border border-gray-200 rounded-[8px] py-1 pl-3 pr-8 text-[11px] font-bold text-gray-700 shadow-sm cursor-pointer hover:border-gray-300">
+                                                <select className="appearance-none bg-white border border-gray-200 rounded-[8px] py-1 inter pl-3 pr-8 text-[11px] font-bold text-gray-700 shadow-sm cursor-pointer hover:border-gray-300">
                                                     <option>Daily</option>
                                                     <option>Weekly</option>
                                                 </select>
@@ -1968,31 +1974,43 @@ const Inventory = () => {
                                     
                                     <div className="flex gap-16 mt-1 pt-3 shrink-0">
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Views</span>
+                                            <span className="inter text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Views</span>
                                             <div className="flex items-center gap-2">
-                                                <span className="inter text-[16px] font-medium text-gray-900 leading-none tracking-tight">24,856</span>
-                                                <span className="inter text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 18.2%</span>
+                                                <span className="inter text-[16px] font-medium text-gray-900 leading-none tracking-tight">{numberWithCommas(data?.stats?.trends?.views?.current || 0)}</span>
+                                                <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.views?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} tracking-wide`}>
+                                                    {Number(data?.stats?.trends?.views?.change) >= 0 ? <FiTrendingUp className="inline -mt-0.5" /> : <FiTrendingDown className="inline -mt-0.5" />} 
+                                                    {Math.abs(data?.stats?.trends?.views?.change || 0)}%
+                                                </span>
                                             </div>
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Leads</span>
+                                            <span className="inter text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Leads</span>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-[16px] font-medium text-gray-900 leading-none tracking-tight">1,248</span>
-                                                <span className="inter text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 12.5%</span>
+                                                <span className="inter text-[16px] font-medium text-gray-900 leading-none tracking-tight">{numberWithCommas(data?.stats?.trends?.leads?.current || 0)}</span>
+                                                <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} tracking-wide`}>
+                                                    {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="inline -mt-0.5" /> : <FiTrendingDown className="inline -mt-0.5" />} 
+                                                    {Math.abs(data?.stats?.trends?.leads?.change || 0)}%
+                                                </span>
                                             </div>
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Conversions</span>
+                                            <span className="inter text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Conversions</span>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-[16px] font-medium text-gray-900 leading-none tracking-tight">68</span>
-                                                <span className="inter text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 8.6%</span>
+                                                <span className="inter text-[16px] font-medium text-gray-900 leading-none tracking-tight">{(data?.analytics?.performanceTrend || []).reduce((s, w) => s + w.leads, 0)}</span>
+                                                <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} tracking-wide`}>
+                                                    {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="inline -mt-0.5" /> : <FiTrendingDown className="inline -mt-0.5" />} 
+                                                    {Math.abs(data?.stats?.trends?.leads?.change || 0)}%
+                                                </span>
                                             </div>
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Conversion Rate</span>
+                                            <span className="inter text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Conversion Rate</span>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-[15px] font-bold text-gray-900 leading-none">5.48%</span>
-                                                <span className="inter text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 0.3%</span>
+                                                <span className="inter text-[15px] font-bold text-gray-900 leading-none">{data?.stats?.avgConversion || '0.00'}%</span>
+                                                <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} tracking-wide`}>
+                                                    {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="inline -mt-0.5" /> : <FiTrendingDown className="inline -mt-0.5" />} 
+                                                    {Math.abs(data?.stats?.trends?.leads?.change || 0)}%
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -2001,22 +2019,21 @@ const Inventory = () => {
                                 {/* Leads by Location */}
                                 <div className="flex-1 bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[380px]">
                                     <div className="flex justify-between items-center mb-3">
-                                        <h3 className="text-[16px] font-bold text-gray-900 canela">Leads by Location</h3>
-                                        <button className="px-3 py-1.5 text-[10px] rounded-lg border border-gray-200 bg-white flex items-center gap-2 font-bold text-gray-600 hover:bg-gray-50 shadow-sm"><FiMap className="text-gray-400"/> View Map</button>
+                                        <h3 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Leads by Location</h3>
+                                        <button className="px-3 py-1.5 inter text-[10px] rounded-lg border border-gray-200 bg-white flex items-center gap-2 font-bold text-gray-600 hover:bg-gray-50 shadow-sm transition-colors"><FiMap className="text-gray-400"/> View Map</button>
                                     </div>
-                                    
+
                                     <div className="flex flex-1 overflow-hidden relative gap-6">
                                         {/* Left List */}
                                         <div className="w-[45%] flex flex-col z-10 shrink-0">
-                                            <div className="flex justify-between mb-3 text-[9px] font-black uppercase text-gray-400 tracking-widest">
+                                            <div className="flex justify-between mb-3 inter text-[10px] font-black uppercase text-gray-400 tracking-widest">
                                                 <span>LOCATION</span>
                                                 <div className="flex gap-4 pr-1">
                                                     <span className="w-8 text-right">LEADS</span>
                                                     <span className="w-[4.5rem] text-right">PERCENTAGE</span>
                                                 </div>
                                             </div>
-                                            <div className="flex flex-col flex-1 gap-2.5 font-bold text-[11px] overflow-y-auto custom-scrollbar">
-                                                {(() => {
+                                            <div className="flex flex-col flex-1 gap-2.5 inter font-medium text-[11px] overflow-y-auto custom-scrollbar">                                                {(() => {
                                                     const locations = data?.analytics?.leadsByLocation || [];
                                                     const total = locations.reduce((sum, loc) => sum + loc.count, 0) || 1;
                                                     
@@ -2091,7 +2108,7 @@ const Inventory = () => {
                             <div className="flex gap-4 flex-1 min-h-0 pb-1 shrink-0">
                                 {/* Leads by Source */}
                                 <div className="flex-[1] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-w-[260px]">
-                                    <h3 className="text-[16px] font-bold text-gray-900 canela mb-3 leading-none">Leads by Source</h3>
+                                    <h3 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Leads by Source</h3>
                                     <div className="flex flex-col flex-1 relative items-center justify-center">
                                         <div className="w-full flex-1 relative flex items-center justify-center -mt-2">
                                             <ResponsiveContainer width="100%" height="100%">
@@ -2176,8 +2193,8 @@ const Inventory = () => {
                                         </div>
                                     </div>
                                     <div className="flex justify-end mt-4">
-                                        <button className="px-4 py-1.5 border border-gray-100/80 rounded-lg text-[#D48D2A] text-[11px] font-medium hover:bg-gray-50 flex items-center gap-1 transition-colors shadow-sm">
-                                            View Full Report <FiChevronRight className="text-[10px] mt-px"/>
+                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[12px] font-medium text-[#D48D2A] hover:text-[#B37622] transition-colors flex items-center gap-1.5 tracking-normal">
+                                            View Full Report <FiArrowRight className="text-[13px]" />
                                         </button>
                                     </div>
                                 </div>
@@ -2185,40 +2202,42 @@ const Inventory = () => {
                                 {/* Top Performing Assets */}
                                 <div className="flex-[1.5] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col overflow-hidden min-w-[340px]">
                                     <div className="flex justify-between items-center mb-3">
-                                        <h3 className="text-[16px] font-bold text-gray-900 canela">Top Performing Assets</h3>
-                                        <button className="px-3 py-1 text-[10px] rounded-lg border border-gray-200 bg-white font-bold text-gray-600 hover:bg-gray-50 shadow-sm transition-colors">View All</button>
+                                        <h3 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Top Performing Assets</h3>
+                                        <button className="px-3 py-1 text-[10px] rounded-lg border border-gray-200 bg-white inter font-bold text-gray-600 hover:bg-gray-50 shadow-sm transition-colors">View All</button>
                                     </div>
                                     <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
                                         <table className="w-full text-left table-fixed">
                                             <thead>
                                                 <tr className="border-b border-gray-100">
-                                                    <th className="pb-3 pt-1 text-[9px] font-black uppercase tracking-widest text-gray-400">ASSET</th>
-                                                    <th className="pb-3 pt-1 text-[9px] font-black uppercase tracking-widest text-gray-400 w-14 text-right">VIEWS</th>
-                                                    <th className="pb-3 pt-1 text-[9px] font-black uppercase tracking-widest text-gray-400 w-14 text-right">LEADS</th>
-                                                    <th className="pb-3 pt-1 text-[9px] font-black uppercase tracking-widest text-gray-400 w-[5rem] text-right">CONV RATE</th>
+                                                    <th className="pb-3 pt-1 inter text-[9px] font-black uppercase tracking-widest text-gray-400">ASSET</th>
+                                                    <th className="pb-3 pt-1 inter text-[9px] font-black uppercase tracking-widest text-gray-400 w-14 text-right">VIEWS</th>
+                                                    <th className="pb-3 pt-1 inter text-[9px] font-black uppercase tracking-widest text-gray-400 w-14 text-right">LEADS</th>
+                                                    <th className="pb-3 pt-1 inter text-[9px] font-black uppercase tracking-widest text-gray-400 w-[5rem] text-right">CONV RATE</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-50">
-                                                {[
-                                                    {name: 'Ferrari SF90', img: data?.inventory?.[0]?.images?.[0] || "/assets/placeholder.jpg", v: '6,428', l: 265, r: '4.12%'},
-                                                    {name: 'Sunseeker 88 Yacht', img: data?.inventory?.[1]?.images?.[0] || "/assets/placeholder.jpg", v: '4,256', l: 198, r: '4.65%'},
-                                                    {name: 'Dubai Marina Penthouse', img: data?.inventory?.[2]?.images?.[0] || "/assets/placeholder.jpg", v: '3,842', l: 156, r: '4.06%'},
-                                                    {name: 'Rolex Daytona', img: data?.inventory?.[3]?.images?.[0] || "/assets/placeholder.jpg", v: '2,985', l: 112, r: '3.75%'}
-                                                ].map((a,i) => (
-                                                <tr key={i} className="hover:bg-gray-50/50 group transition-colors">
-                                                    <td className="py-2.5 flex items-center gap-3 pr-2">
-                                                        <div className="w-[42px] h-[30px] rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200/50"><img src={a.img} className="w-full h-full object-cover group-hover:scale-105 transition-transform"/></div>
-                                                        <span className="text-[12px] font-bold text-gray-900 truncate max-w-[120px]" title={a.name}>{a.name}</span>
-                                                    </td>
-                                                    <td className="py-2.5 text-[12px] font-bold text-gray-700 text-right">{a.v}</td>
-                                                    <td className="py-2.5 text-[12px] font-bold text-gray-700 text-right">{a.l}</td>
-                                                    <td className="py-2.5 text-[12px] font-bold text-emerald-500 text-right">{a.r}</td>
-                                                </tr>
-                                                ))}
+                                                {(data?.inventory || []).sort((a,b)=>b.views-a.views).slice(0, 5).map((a,i) => {
+                                                    const name = a.propertyName || a.yachtName || a.name || a.title || 'Untitled';
+                                                    const leads = (data?.leads || []).filter(l=>l.assetName === name || l.assetId === a.id).length;
+                                                    const rate = a.views > 0 ? ((leads/a.views)*100).toFixed(1) + '%' : '0.0%';
+                                                    return (
+                                                        <tr key={i} className="hover:bg-gray-50/50 group transition-colors">
+                                                            <td className="py-2.5 flex items-center gap-3 pr-2">
+                                                                <div className="w-[42px] h-[30px] rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200/50">
+                                                                    {a.images?.[0] ? <img src={a.images[0]} className="w-full h-full object-cover group-hover:scale-105 transition-transform"/> : <FiImage className="w-full h-full p-2 text-gray-300"/>}
+                                                                </div>
+                                                                <span className="inter text-[12px] font-medium text-gray-900 truncate max-w-[120px]" title={name}>{name}</span>
+                                                            </td>
+                                                            <td className="py-2.5 inter text-[12px] font-bold text-gray-700 text-right">{numberWithCommas(a.views)}</td>
+                                                            <td className="py-2.5 inter text-[12px] font-bold text-gray-700 text-right">{leads}</td>
+                                                            <td className="py-2.5 inter text-[12px] font-bold text-emerald-500 text-right">{rate}</td>
+                                                        </tr>
+                                                    );
+                                                })}
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div className="text-[10px] text-gray-400 font-medium italic text-center mt-3 border-t border-gray-50 pt-2 shrink-0">
+                                    <div className="inter text-[10px] text-gray-400 font-medium italic text-center mt-3 border-t border-gray-50 pt-2 shrink-0">
                                         All times are in (GMT +04:00) Dubai, UAE
                                     </div>
                                 </div>
@@ -2226,8 +2245,8 @@ const Inventory = () => {
                                 {/* Lead Funnel */}
                                 <div className="flex-[1.5] bg-white rounded-[1.25rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col relative overflow-hidden min-w-[340px]">
                                     <div className="flex justify-between items-center mb-4 shrink-0 z-10">
-                                        <h3 className="text-[16px] font-bold text-gray-900 canela leading-none">Lead Funnel</h3>
-                                        <button className="px-3 py-1 text-[10px] rounded-lg border border-gray-200 bg-white font-bold text-gray-600 hover:bg-gray-50 shadow-sm transition-colors">View Funnel</button>
+                                        <h3 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Lead Funnel</h3>
+                                        <button className="px-3 py-1 text-[10px] rounded-lg border border-gray-200 bg-white inter font-bold text-gray-600 hover:bg-gray-50 shadow-sm transition-colors">View Funnel</button>
                                     </div>
                                     <div className="flex-1 flex min-h-0 relative z-10 items-center justify-between">
                                         {/* Funnel SVG Graphic */}
@@ -2237,23 +2256,23 @@ const Inventory = () => {
                                             <div className="w-[50%] h-[20%] bg-[#D946EF] shadow-sm mt-[2%]" style={{clipPath: 'polygon(0% 0, 100% 0, 75% 100%, 25% 100%)'}}></div>
                                             <div className="w-[35%] h-[20%] bg-[#D48D2A] shadow-sm mt-[2%]" style={{clipPath: 'polygon(0% 0, 100% 0, 95% 100%, 5% 100%)'}}></div>
                                         </div>
-                                        <div className="flex-1 flex flex-col justify-around py-1 h-[100%] text-[10px] font-bold text-gray-500">
+                                        <div className="flex-1 flex flex-col justify-around py-1 h-[100%] inter text-[10px] font-bold text-gray-500">
                                             <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                                                <span>Total Views</span><span className="text-gray-900 font-black text-[12px]">24,856</span>
+                                                <span>Total Views</span><span className="text-gray-900 font-bold text-[12px]">{numberWithCommas(data?.stats?.trends?.views?.current || 0)}</span>
                                             </div>
                                             <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                                                <span>Leads Captured</span><span className="text-gray-900 font-black flex gap-1.5 text-[12px] items-center">1,248 <span className="text-gray-400 font-medium text-[9px]">(5.02%)</span></span>
+                                                <span>Leads Captured</span><span className="text-gray-900 font-bold flex gap-1.5 text-[12px] items-center">{numberWithCommas(data?.stats?.trends?.leads?.current || 0)} <span className="text-gray-400 font-normal text-[9px]">({data?.stats?.avgConversion}%)</span></span>
                                             </div>
                                             <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                                                <span>Qualified Leads</span><span className="text-gray-900 font-black flex gap-1.5 text-[12px] items-center">342 <span className="text-gray-400 font-medium text-[9px]">(27.4%)</span></span>
+                                                <span>Qualified Leads</span><span className="text-gray-900 font-bold flex gap-1.5 text-[12px] items-center">{(data?.leads || []).filter(l=>l.status==='Qualified').length} <span className="text-gray-400 font-normal text-[9px]">({data?.stats?.trends?.leads?.current > 0 ? (((data?.leads || []).filter(l=>l.status==='Qualified').length / data.stats.trends.leads.current)*100).toFixed(1) : 0}%)</span></span>
                                             </div>
                                             <div className="flex justify-between items-center">
-                                                <span>Converted Leads</span><span className="text-gray-900 font-black flex gap-1.5 text-[12px] items-center">68 <span className="text-gray-400 font-medium text-[9px]">(5.48%)</span></span>
+                                                <span>Converted Leads</span><span className="text-gray-900 font-bold flex gap-1.5 text-[12px] items-center">{(data?.leads || []).filter(l=>l.status==='Closed').length} <span className="text-gray-400 font-normal text-[9px]">({data?.stats?.trends?.leads?.current > 0 ? (((data?.leads || []).filter(l=>l.status==='Closed').length / data.stats.trends.leads.current)*100).toFixed(1) : 0}%)</span></span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="mt-4 pt-4 border-t border-gray-50 text-center text-[12px] font-bold text-gray-500 shrink-0 z-10 w-full flex justify-center gap-2">
-                                        Overall Conversion Rate: <span className="text-emerald-500 font-black">5.48%</span>
+                                    <div className="mt-4 pt-4 border-t border-gray-50 text-center inter text-[12px] font-bold text-gray-500 shrink-0 z-10 w-full flex justify-center gap-2">
+                                        Overall Conversion Rate: <span className="text-emerald-500 font-black">{data?.stats?.avgConversion || '0.00'}%</span>
                                     </div>
                                 </div>
                             </div>
@@ -2270,8 +2289,8 @@ const Inventory = () => {
                                 <div className="flex-[3] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-h-0 relative">
                                     <div className="flex justify-between items-start mb-4 shrink-0">
                                         <div>
-                                            <h3 className="text-[15px] font-bold text-gray-900 mb-1 canela">Visibility Controls</h3>
-                                            <p className="text-[10px] text-gray-400 font-medium border-l-[3px] border-[#D48D2A] pl-2 -ml-[3px]">Manage profile visibility.</p>
+                                            <h3 className="inter text-[15px] font-semibold text-gray-900 mb-1 leading-none tracking-normal">Visibility Controls</h3>
+                                            <p className="inter text-[10px] text-gray-400 font-medium border-l-[3px] border-[#D48D2A] pl-2 -ml-[3px]">Manage profile visibility.</p>
                                         </div>
                                         <button className="px-4 py-1.5 border border-gray-200 rounded-[8px] text-[9px] font-bold text-gray-700 bg-white hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors uppercase tracking-widest"><FiLayout className="text-gray-400"/> Manage Listings</button>
                                     </div>
