@@ -658,6 +658,22 @@ const Inventory = () => {
         { id: 'settings', label: 'Settings', icon: FiSettings },
     ];
 
+    // Helper for sparklines
+    const generateSparkline = (data, type) => {
+        if (!data || !data.length) return "M0,15 L100,15";
+        const vals = data.map(d => d[type] || 0);
+        const max = Math.max(...vals, 1);
+        const width = 100;
+        const height = 20;
+        const step = width / (vals.length - 1);
+        return vals.map((val, i) => {
+            const x = i * step;
+            const y = height - (val / max) * height;
+            const paddedY = 2 + (y * 0.8);
+            return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${paddedY.toFixed(1)}`;
+        }).join(' ');
+    };
+
     return (
         <div className="min-h-screen bg-[#F9FAFB] flex montserrat">
             <SEO title="Inventory Dashboard" description="Manage your dealership inventory and leads on Otulia." />
@@ -959,60 +975,79 @@ const Inventory = () => {
 
                             {/* Top 4 KPI Cards */}
                             <div className="flex gap-5 shrink-0 h-[165px]">
-                                {/* Card 1 */}
+                                {/* Card 1: Total Views */}
                                 <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Views</span>
-                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{numberWithCommas(data?.stats?.totalViews || 2456)}</span>
-                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 12.5% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
+                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.views?.current || 0)}</span>
+                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.views?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1.5`}>
+                                                {Number(data?.stats?.trends?.views?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
+                                                {Math.abs(data?.stats?.trends?.views?.change || 0)}% 
+                                                <span className="inter text-gray-400 font-medium">vs last 30 days</span>
+                                            </span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0"><FiEye className="text-[18px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-0 left-0 w-full h-[50px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
-                                        <path d="M0,15 L10,12 L20,18 L30,8 L40,14 L50,6 L60,12 L70,4 L80,10 L90,2 L100,6" fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[63px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                        <path d={generateSparkline(data?.stats?.dailyTrends, 'views')} fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(212, 141, 42, 0.4))' }} />
                                     </svg>
                                 </div>
-                                {/* Card 2 */}
+
+                                {/* Card 2: Total Leads */}
                                 <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Leads</span>
-                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{numberWithCommas(data?.stats?.totalLeads || 142)}</span>
-                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 8.2% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
+                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.leads?.current || 0)}</span>
+                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1.5`}>
+                                                {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
+                                                {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
+                                                <span className="inter text-gray-400 font-medium">vs last 30 days</span>
+                                            </span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 justify-center flex items-center shrink-0"><FiUser className="text-[18px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-0 left-0 w-full h-[50px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
-                                        <path d="M0,12 L10,15 L20,5 L30,10 L40,4 L50,12 L60,3 L70,8 L80,2 L90,6 L100,4" fill="none" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[63px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                        <path d={generateSparkline(data?.stats?.dailyTrends, 'leads')} fill="none" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(37, 99, 235, 0.4))' }} />
                                     </svg>
                                 </div>
-                                {/* Card 3 */}
+
+                                {/* Card 3: Saved / Shortlisted */}
                                 <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Saved / Shortlisted</span>
-                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{data?.stats?.savedCount || 48}</span>
-                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 5.1% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
+                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{data?.stats?.trends?.saved?.current || 0}</span>
+                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.saved?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1.5`}>
+                                                {Number(data?.stats?.trends?.saved?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
+                                                {Math.abs(data?.stats?.trends?.saved?.change || 0)}% 
+                                                <span className="inter text-gray-400 font-medium">vs last 30 days</span>
+                                            </span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 justify-center flex items-center shrink-0"><FiHeart className="text-[18px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-0 left-0 w-full h-[50px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
-                                        <path d="M0,18 L15,10 L30,14 L45,6 L60,16 L75,8 L90,4 L100,6" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[63px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                        <path d={generateSparkline(data?.stats?.dailyTrends, 'saved')} fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(16, 185, 129, 0.4))' }} />
                                     </svg>
                                 </div>
-                                {/* Card 4 */}
+
+                                {/* Card 4: Est. Lead Value */}
                                 <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Est. Lead Value</span>
-                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">${((data?.stats?.estLeadValue || 2450000)/1000000).toFixed(2)}M</span>
-                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5"><FiTrendingUp className="text-[11px]" /> 15.3% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
+                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">${((data?.stats?.trends?.value?.current || 0)/1000000).toFixed(2)}M</span>
+                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.value?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1.5`}>
+                                                {Number(data?.stats?.trends?.value?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
+                                                {Math.abs(data?.stats?.trends?.value?.change || 0)}% 
+                                                <span className="inter text-gray-400 font-medium">vs last 30 days</span>
+                                            </span>
                                         </div>
                                         <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 justify-center flex items-center shrink-0"><FiTrendingUp className="text-[18px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-0 left-0 w-full h-[50px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
-                                        <path d="M0,15 L20,10 L40,6 L60,4 L80,2 L100,5" fill="none" stroke="#8B5CF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[63px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                        <path d={generateSparkline(data?.stats?.dailyTrends, 'value')} fill="none" stroke="#8B5CF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(139, 92, 246, 0.4))' }} />
                                     </svg>
                                 </div>
                             </div>
@@ -1036,22 +1071,25 @@ const Inventory = () => {
                                     
                                     <div className="flex-1 relative mt-[1px] min-h-0 w-full">
                                         <div className="absolute inset-0 pb-6 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-2">
-                                            {[300, 225, 150, 75, 0].map((val, i) => (
-                                                <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
-                                                    <span className="absolute -left-[30px] text-[10px] text-gray-400 font-medium w-[24px] text-right mt-0 bg-white leading-none">{val}</span>
-                                                </div>
-                                            ))}
+                                            {[...Array(5)].map((_, i) => {
+                                                const maxVal = Math.max(...(data?.stats?.dailyTrends?.map(d => Math.max(d.views, d.leads)) || [300]), 100);
+                                                const val = Math.round((maxVal / 4) * (4 - i));
+                                                return (
+                                                    <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
+                                                        <span className="absolute -left-[30px] text-[10px] text-gray-400 font-medium w-[24px] text-right mt-0 bg-white leading-none">{val}</span>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                         <div className="absolute inset-x-0 bottom-0 pl-10 pr-4 h-6 flex justify-between items-end text-[10px] font-medium text-gray-400 pb-1">
-                                            <span>24 Apr</span><span>27 Apr</span><span>30 Apr</span><span>03 May</span><span>06 May</span><span>09 May</span><span>12 May</span><span>15 May</span><span>21 May</span>
+                                            {(data?.stats?.dailyTrends || []).filter((_, i) => i % 4 === 0).map((d, i) => (
+                                                <span key={i}>{new Date(d.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
+                                            ))}
                                         </div>
                                         <div className="absolute inset-0 pb-6 pl-10 pr-4 mt-2">
                                             <svg className="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                                <path d="M0,70 L12.5,45 L25,48 L37.5,30 L50,50 L62.5,40 L75,55 L87.5,45 L100,50" fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                {[0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100].map((cx, i) => <circle key={`o-${i}`} cx={cx} cy={[70,45,48,30,50,40,55,45,50][i]} r="2.5" fill="#D48D2A" stroke="white" strokeWidth="1"/>)}
-                                                
-                                                <path d="M0,90 L12.5,85 L25,65 L37.5,70 L50,85 L62.5,75 L75,85 L87.5,80 L100,82" fill="none" stroke="#1E3B70" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                {[0, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100].map((cx, i) => <circle key={`b-${i}`} cx={cx} cy={[90,85,65,70,85,75,85,80,82][i]} r="2.5" fill="#1E3B70" stroke="white" strokeWidth="1"/>)}
+                                                <path d={generateSparkline(data?.stats?.dailyTrends, 'views')} fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d={generateSparkline(data?.stats?.dailyTrends, 'leads')} fill="none" stroke="#1E3B70" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         </div>
                                     </div>
@@ -1064,32 +1102,41 @@ const Inventory = () => {
                                         <div className="w-[140px] h-full flex items-center justify-center relative shrink-0">
                                             <svg viewBox="0 0 100 100" className="w-[125%] transform -rotate-90">
                                                 <circle cx="50" cy="50" r="38" fill="none" stroke="#F3F4F6" strokeWidth="14" />
-                                                <circle cx="50" cy="50" r="38" fill="none" stroke="#D48D2A" strokeWidth="14" strokeDasharray="238.7" strokeDashoffset={238.7 * (1 - 0.472)} />
-                                                <circle cx="50" cy="50" r="38" fill="none" stroke="#1E3B70" strokeWidth="14" strokeDasharray="238.7" strokeDashoffset={238.7 * (1 - 0.317)} style={{strokeDashoffset: 238.7 * (1 - 0.317) + 238.7 * (1 - 0.472)}}/>
-                                                <circle cx="50" cy="50" r="38" fill="none" stroke="#10B981" strokeWidth="14" strokeDasharray="238.7" strokeDashoffset={238.7 * (1 - 0.155)} style={{strokeDashoffset: 238.7 * (1 - 0.155) + 238.7 * (1 - (0.472+0.317))}}/>
-                                                <circle cx="50" cy="50" r="38" fill="none" stroke="#9CA3AF" strokeWidth="14" strokeDasharray="238.7" strokeDashoffset={238.7 * (1 - 0.056)} style={{strokeDashoffset: 238.7 * (1 - 0.056) + 238.7 * (1 - (0.472+0.317+0.155))}}/>
+                                                {(() => {
+                                                    const items = data?.analytics?.leadsByCategory || [];
+                                                    const total = items.reduce((s, i) => s + i.count, 0) || 1;
+                                                    const colors = ['#D48D2A', '#1E3B70', '#10B981', '#9CA3AF'];
+                                                    let cumulativeOffset = 0;
+                                                    return items.map((item, idx) => {
+                                                        const pct = item.count / total;
+                                                        const dashArray = 238.7;
+                                                        const offset = cumulativeOffset;
+                                                        cumulativeOffset += pct;
+                                                        return (
+                                                            <circle key={idx} cx="50" cy="50" r="38" fill="none" stroke={colors[idx]} strokeWidth="14" strokeDasharray={dashArray} strokeDashoffset={dashArray * (1 - pct)} style={{ transform: `rotate(${offset * 360}deg)`, transformOrigin: 'center' }} />
+                                                        );
+                                                    });
+                                                })()}
                                             </svg>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center text-center pt-1">
-                                                <span className="text-[26px] font-medium text-gray-900 leading-none">{data?.stats?.totalLeads || 142}</span>
+                                                <span className="text-[26px] font-medium text-gray-900 leading-none">{data?.stats?.totalLeads || 0}</span>
                                                 <span className="text-[9px] capitalize text-gray-500 font-medium tracking-wide mt-1">Total Leads</span>
                                             </div>
                                         </div>
                                         <div className="flex flex-col justify-center gap-3 pl-4 flex-1">
-                                            {[ 
-                                                {n:'Cars', v: 67, p:'47.2%', c:'#D48D2A'}, 
-                                                {n:'Yachts', v: 45, p:'31.7%', c:'#1E3B70'},
-                                                {n:'Real Estate', v: 22, p:'15.5%', c:'#10B981'},
-                                                {n:'Others', v: 8, p:'5.6%', c:'#9CA3AF'}
-                                            ].map((r,i) => (
-                                                <div key={i} className="flex items-center justify-between text-[11px] font-bold text-gray-600">
-                                                    <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{backgroundColor:r.c}}></span>{r.n}</span>
-                                                    <span className="text-gray-900 truncate pl-1 flex gap-1.5"><span className="w-4 text-right">{r.v}</span> <span className="text-gray-400 font-medium w-10 text-right">({r.p})</span></span>
-                                                </div>
-                                            ))}
+                                            {(data?.analytics?.leadsByCategory || []).map((r, i) => {
+                                                const colors = ['#D48D2A', '#1E3B70', '#10B981', '#9CA3AF'];
+                                                return (
+                                                    <div key={i} className="flex items-center justify-between text-[11px] font-bold text-gray-600">
+                                                        <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: colors[i] }}></span>{r.label}</span>
+                                                        <span className="text-gray-900 truncate pl-1 flex gap-1.5"><span className="w-4 text-right">{r.count}</span> <span className="text-gray-400 font-medium w-10 text-right">({r.p})</span></span>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                     <div className="flex justify-end pt-2 shrink-0">
-                                        <button onClick={() => setActiveTab('analytics')} className="text-[11px] font-black text-gray-500 border border-gray-200 shadow-sm px-4 py-1.5 rounded-[10px] transition-colors flex items-center gap-1.5 hover:bg-gray-50 tracking-wide hover:text-gray-900">View Full Report <FiChevronRight/></button>
+                                        <button onClick={() => setActiveTab('analytics')} className="text-[11px] font-black text-gray-500 border border-gray-200 shadow-sm px-4 py-1.5 rounded-[10px] transition-colors flex items-center gap-1.5 hover:bg-gray-50 tracking-wide hover:text-gray-900">View Full Report <FiChevronRight /></button>
                                     </div>
                                 </div>
                             </div>
@@ -1112,27 +1159,26 @@ const Inventory = () => {
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-50 text-[11px] font-bold text-gray-600">
-                                                {[
-                                                    {n: 'Ferrari SF90', v: 892, c: '↗ 18.2%', im: ''},
-                                                    {n: 'Sunseeker 88 Yacht', v: 673, c: '↗ 12.8%', im: ''},
-                                                    {n: 'Dubai Marina Penthouse', v: 512, c: '↗ 9.4%', im: ''}
-                                                ].map((item, i) => (
+                                                {(data?.stats?.topAssets || []).map((item, i) => (
                                                     <tr key={i} className="hover:bg-gray-50/50">
                                                         <td className="py-2.5 flex items-center gap-3 truncate">
                                                             <div className="w-10 h-8 rounded-lg object-cover shadow-[0_2px_5px_rgba(0,0,0,0.1)] shrink-0 bg-gray-100 flex items-center justify-center overflow-hidden">
-                                                                <FiImage className="text-gray-300 transform scale-125"/>
+                                                                {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <FiImage className="text-gray-300 transform scale-125" />}
                                                             </div>
-                                                            <span className="text-gray-900 truncate overflow-hidden whitespace-nowrap text-[12px] font-medium">{item.n}</span>
+                                                            <span className="text-gray-900 truncate overflow-hidden whitespace-nowrap text-[12px] font-medium">{item.name}</span>
                                                         </td>
-                                                        <td className="py-2.5 text-center text-gray-900 font-bold">{item.v}</td>
-                                                        <td className="py-2.5 text-right text-emerald-500 font-bold tracking-tight pr-2">{item.c}</td>
+                                                        <td className="py-2.5 text-center text-gray-900 font-bold">{numberWithCommas(item.views)}</td>
+                                                        <td className={`py-2.5 text-right font-bold tracking-tight pr-2 inter text-[10px] ${item.change.includes('-') ? 'text-red-500' : 'text-emerald-500'}`}>{item.change}</td>
                                                     </tr>
                                                 ))}
+                                                {(!data?.stats?.topAssets || data.stats.topAssets.length === 0) && (
+                                                    <tr><td colSpan="3" className="py-8 text-center text-gray-400 text-xs font-medium">No activity data available yet</td></tr>
+                                                )}
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                
+
                                 {/* Leads Source Donut */}
                                 <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-0">
@@ -1143,39 +1189,51 @@ const Inventory = () => {
                                         <div className="w-1/2 h-full flex items-center justify-center relative pb-3 -ml-2">
                                             <svg viewBox="0 0 100 100" className="w-[115%] transform -rotate-90">
                                                 <circle cx="50" cy="50" r="35" fill="none" stroke="#F3F4F6" strokeWidth="20" />
-                                                <circle cx="50" cy="50" r="35" fill="none" stroke="#D48D2A" strokeWidth="20" strokeDasharray="219.9" strokeDashoffset={219.9 * (1 - 0.437)} />
-                                                <circle cx="50" cy="50" r="35" fill="none" stroke="#1E3B70" strokeWidth="20" strokeDasharray="219.9" strokeDashoffset={219.9 * (1 - 0.338)} style={{strokeDashoffset: 219.9 * (1 - 0.338) + 219.9 * (1 - 0.437)}}/>
-                                                <circle cx="50" cy="50" r="35" fill="none" stroke="#10B981" strokeWidth="20" strokeDasharray="219.9" strokeDashoffset={219.9 * (1 - 0.155)} style={{strokeDashoffset: 219.9 * (1 - 0.155) + 219.9 * (1 - (0.437+0.338))}}/>
-                                                <circle cx="50" cy="50" r="35" fill="none" stroke="#8B5CF6" strokeWidth="20" strokeDasharray="219.9" strokeDashoffset={219.9 * (1 - 0.07)} style={{strokeDashoffset: 219.9 * (1 - 0.07) + 219.9 * (1 - (0.437+0.338+0.155))}}/>
+                                                {(() => {
+                                                    const items = data?.analytics?.leadsBySource || [];
+                                                    const colors = ['#D48D2A', '#1E3B70', '#10B981', '#8B5CF6'];
+                                                    const total = items.reduce((s, i) => s + i.count, 0) || 1;
+                                                    let cumulativeOffset = 0;
+                                                    return items.map((item, idx) => {
+                                                        const pct = item.count / total;
+                                                        const dashArray = 219.9;
+                                                        const offset = cumulativeOffset;
+                                                        cumulativeOffset += pct;
+                                                        return (
+                                                            <circle key={idx} cx="50" cy="50" r="35" fill="none" stroke={colors[idx]} strokeWidth="20" strokeDasharray={dashArray} strokeDashoffset={dashArray * (1 - pct)} style={{ transform: `rotate(${offset * 360}deg)`, transformOrigin: 'center' }} />
+                                                        );
+                                                    });
+                                                })()}
                                             </svg>
                                         </div>
                                         <div className="w-1/2 flex flex-col justify-center gap-2.5 pl-3 z-10 pb-2">
-                                            {[
-                                                {n:'Direct', v: 62, p:'43.7%', c:'#D48D2A'}, 
-                                                {n:'Website', v: 48, p:'33.8%', c:'#1E3B70'}, 
-                                                {n:'Public Marketplace', v: 22, p:'15.5%', c:'#10B981'}, 
-                                                {n:'Social Media', v: 10, p:'7.0%', c:'#8B5CF6'}, 
-                                                {n:'Others', v: 0, p:'0%', c:'#9CA3AF'}
-                                            ].map((r,i) => (
-                                                <div key={i} className="flex items-center justify-between text-[10px] font-bold text-gray-600 w-[140px]">
-                                                    <span className="flex items-center gap-2 truncate mr-1" title={r.n}><span className="w-2.5 h-2.5 rounded-full shrink-0" style={{backgroundColor:r.c}}></span><span className="truncate">{r.n}</span></span>
-                                                    <span className="text-gray-900 text-right flex shrink-0 whitespace-nowrap"><span className="w-[16px]">{r.v}</span> <span className="text-gray-400 font-medium w-[32px] tracking-tight text-right">({r.p})</span></span>
-                                                </div>
-                                            ))}
+                                            {(data?.analytics?.leadsBySource || []).map((r, i) => {
+                                                const colors = ['#D48D2A', '#1E3B70', '#10B981', '#8B5CF6'];
+                                                return (
+                                                    <div key={i} className="flex items-center justify-between text-[10px] font-bold text-gray-600 w-[140px]">
+                                                        <span className="flex items-center gap-2 truncate mr-1" title={r.label}><span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: colors[i] }}></span><span className="truncate">{r.label}</span></span>
+                                                        <span className="text-gray-900 text-right flex shrink-0 whitespace-nowrap"><span className="w-[16px]">{r.count}</span> <span className="text-gray-400 font-medium w-[32px] tracking-tight text-right">({r.p})</span></span>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 {/* Conversion Rate Bars */}
                                 <div className="flex-[1.2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
                                     <div className="flex justify-between items-start mb-2 shrink-0">
                                         <div className="flex flex-col">
                                             <h4 className="text-[15px] font-bold text-gray-900 canela tracking-wide leading-none">Conversion Rate</h4>
-                                            <span className="text-[32px] font-medium text-gray-900 mt-2 tracking-tight leading-none">5.8%</span>
-                                            <span className="text-[10px] font-bold text-emerald-500 mt-2 flex items-center gap-1"><FiTrendingUp className="text-[11px]"/> 2.3% <span className="text-gray-400 font-medium">vs last 30 days</span></span>
+                                            <span className="text-[32px] font-medium text-gray-900 mt-2 tracking-tight leading-none">{data?.stats?.avgConversion || '0.00'}%</span>
+                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} mt-2 flex items-center gap-1`}>
+                                                {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
+                                                {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
+                                                <span className="inter text-gray-400 font-medium">vs last 30 days</span>
+                                            </span>
                                         </div>
                                         <div className="border border-gray-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1 text-[10px] font-bold text-gray-600 shadow-sm cursor-pointer hover:bg-gray-50">
-                                            Week <FiChevronDown className="text-[12px]"/>
+                                            Week <FiChevronDown className="text-[12px]" />
                                         </div>
                                     </div>
                                     <div className="flex-1 flex items-end justify-between px-1 mt-1 relative min-h-0">
@@ -1185,23 +1243,27 @@ const Inventory = () => {
                                         </div>
                                         {/* Bars Container */}
                                         <div className="flex-1 flex justify-between items-end h-full ml-6 pb-5 pt-3">
-                                            {[40, 40, 50, 48, 85, 50].map((h, i) => (
-                                                <div key={i} className="flex flex-col items-center justify-end h-full group cursor-default relative w-full px-1.5">
-                                                    {i === 4 && (
-                                                        <div className="absolute -top-6 bg-gray-900 text-white text-[9px] px-1.5 py-0.5 rounded font-bold shadow-md z-20 tooltip-arrow">5.8%</div>
-                                                    )}
-                                                    <div className={`w-3.5 rounded-t group-hover:bg-gray-800 transition-colors relative z-10 ${i === 4 ? 'bg-gray-900' : 'bg-[#D48D2A]'}`} style={{height: `${h}%`}}></div>
-                                                </div>
-                                            ))}
+                                            {(data?.analytics?.performanceTrend || []).map((w, i) => {
+                                                const conv = w.views > 0 ? (w.leads / w.views) * 100 : 0;
+                                                const h = Math.min(Math.max((conv / 9) * 100, 10), 100);
+                                                return (
+                                                    <div key={i} className="flex flex-col items-center justify-end h-full group cursor-default relative w-full px-1.5">
+                                                        {i === (data.analytics.performanceTrend.length - 1) && (
+                                                            <div className="absolute -top-6 bg-gray-900 text-white text-[9px] px-1.5 py-0.5 rounded font-bold shadow-md z-20 tooltip-arrow">{conv.toFixed(1)}%</div>
+                                                        )}
+                                                        <div className={`w-3.5 rounded-t group-hover:bg-gray-800 transition-colors relative z-10 ${i === (data.analytics.performanceTrend.length - 1) ? 'bg-gray-900' : 'bg-[#D48D2A]'}`} style={{ height: `${h}%` }}></div>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                         {/* X Axis */}
                                         <div className="absolute inset-x-0 bottom-0 flex justify-between ml-[32px] text-[9px] font-medium text-gray-400 pb-0.5 pointer-events-none pr-1">
-                                            <span>24 Apr</span><span>01 May</span><span>08 May</span><span>15 May</span><span>21 May</span>
+                                            {(data?.analytics?.performanceTrend || []).map((w, i) => <span key={i}>{w.week}</span>)}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             {/* Fourth Row */}
                             <div className="flex gap-5 flex-[0.8] min-h-[140px] shrink-0">
                                 <div className="flex-[2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
@@ -1210,16 +1272,15 @@ const Inventory = () => {
                                         <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase tracking-widest whitespace-nowrap mt-1">View all activity</button>
                                     </div>
                                     <div className="space-y-[8px] flex-1 overflow-auto custom-scrollbar pr-2 mt-2">
-                                        {[
-                                            {m: 'New view on Ferrari SF90', icon: FiEye, t: '2 minutes ago'},
-                                            {m: <span>New lead from <strong>Website</strong></span>, icon: FiUser, t: '15 minutes ago'},
-                                            {m: <span>Asset <strong>Sunseeker 88 Yacht</strong> shortlisted</span>, icon: FiHeart, t: '1 hour ago'}
-                                        ].map((notif, idx) => (
+                                        {(data?.notifications || []).slice(0, 3).map((notif, idx) => (
                                             <div key={idx} className="flex justify-between items-center text-[12px] group hover:bg-gray-50 -mx-2 px-2 py-1.5 rounded-lg transition-colors">
-                                                <div className="flex items-center gap-3 text-gray-600 truncate"><notif.icon className="text-[#D48D2A] shrink-0 text-[14px]"/> <span className="font-normal text-gray-800 truncate">{notif.m}</span></div>
-                                                <span className="text-gray-400 font-medium shrink-0 ml-2">{notif.t}</span>
+                                                <div className="flex items-center gap-3 text-gray-600 truncate"><FiActivity className="text-[#D48D2A] shrink-0 text-[14px]" /> <span className="font-normal text-gray-800 truncate">{notif.message}</span></div>
+                                                <span className="text-gray-400 font-medium shrink-0 ml-2">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                             </div>
                                         ))}
+                                        {(!data?.notifications || data.notifications.length === 0) && (
+                                            <div className="text-center py-4 text-gray-400 text-xs">No recent activity recorded</div>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="flex-[1.1] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
@@ -1230,22 +1291,22 @@ const Inventory = () => {
                                     <div className="flex justify-between items-start mt-4 px-1 pb-2">
                                         <div className="flex flex-col text-left flex-1 border-r border-gray-100 pr-2">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5 whitespace-nowrap">Total Assets</span>
-                                            <span className="text-[26px] font-medium text-gray-900 leading-none">25</span>
-                                            <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-2 tracking-tight"><FiTrendingUp className="text-[10px]" /> 3 new</span>
+                                            <span className="text-[26px] font-medium text-gray-900 leading-none">{data?.stats?.totalAssets || 0}</span>
+                                            <span className="inter text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-2 tracking-tight"><FiTrendingUp className="text-[11px]" /> {data?.stats?.trends?.views?.current > 0 ? 'Active' : 'Idle'}</span>
                                         </div>
                                         <div className="flex flex-col text-left flex-1 pl-4 border-r border-gray-100 pr-2">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5 whitespace-nowrap">Live Assets</span>
-                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">18</span>
+                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">{data?.stats?.activeCount || 0}</span>
                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-3.5 shadow-sm shadow-emerald-500/20"></div>
                                         </div>
                                         <div className="flex flex-col text-left flex-[0.8] pl-4 border-r border-gray-100 pr-2">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5">Drafts</span>
-                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">4</span>
+                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">0</span>
                                             <div className="w-1.5 h-1.5 rounded-full bg-[#D48D2A] mt-3.5 shadow-sm shadow-[#D48D2A]/20"></div>
                                         </div>
                                         <div className="flex flex-col text-left flex-[0.8] pl-4">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5">Sold</span>
-                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">3</span>
+                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">{data?.stats?.closedCount || 0}</span>
                                             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-3.5 border border-gray-200"></div>
                                         </div>
                                     </div>
@@ -1516,7 +1577,11 @@ const Inventory = () => {
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUsers className="text-sm" /></div>
                                     </div>
-                                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-auto tracking-wide"><FiTrendingUp className="text-[10px]" /> 8.2% <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span></span>
+                                    <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-auto tracking-wide`}>
+                                        {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[10px]" /> : <FiTrendingDown className="text-[10px]" />} 
+                                        {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
+                                        <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span>
+                                    </span>
                                 </div>
                                 {/* New Leads */}
                                 <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
@@ -1527,7 +1592,11 @@ const Inventory = () => {
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUser className="text-sm" /></div>
                                     </div>
-                                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-auto tracking-wide"><FiTrendingUp className="text-[10px]" /> 12.5% <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span></span>
+                                    <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-auto tracking-wide`}>
+                                        {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[10px]" /> : <FiTrendingDown className="text-[10px]" />} 
+                                        {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
+                                        <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span>
+                                    </span>
                                 </div>
                                 {/* Qualified Leads */}
                                 <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
@@ -1538,18 +1607,26 @@ const Inventory = () => {
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-emerald-50 justify-center text-emerald-600 flex items-center shrink-0 border border-emerald-100"><FiCheckCircle className="text-sm" /></div>
                                     </div>
-                                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-auto tracking-wide"><FiTrendingUp className="text-[10px]" /> 6.1% <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span></span>
+                                    <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-auto tracking-wide`}>
+                                        {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[10px]" /> : <FiTrendingDown className="text-[10px]" />} 
+                                        {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
+                                        <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span>
+                                    </span>
                                 </div>
                                 {/* Conversion Rate */}
                                 <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
                                             <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Conversion Rate</span>
-                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{data?.stats?.totalViews ? ((data?.stats?.totalLeads / data?.stats?.totalViews) * 100).toFixed(1) : '0.0'}%</span>
+                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{data?.stats?.avgConversion || '0.0'}%</span>
                                         </div>
                                         <div className="w-8 h-8 rounded-lg bg-purple-50 justify-center text-purple-600 flex items-center shrink-0 border border-purple-100"><FiActivity className="text-sm" /></div>
                                     </div>
-                                    <span className="text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-auto tracking-wide"><FiTrendingUp className="text-[10px]" /> 3.4% <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span></span>
+                                    <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-auto tracking-wide`}>
+                                        {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[10px]" /> : <FiTrendingDown className="text-[10px]" />} 
+                                        {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
+                                        <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span>
+                                    </span>
                                 </div>
                             </div>
 
@@ -1796,7 +1873,7 @@ const Inventory = () => {
                                                 <kpi.icon className="text-[15px]" />
                                             </div>
                                         </div>
-                                        <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1 z-10 relative mt-auto tracking-wide"><FiTrendingUp className="text-[11px]" /> {kpi.chg} <span className="text-gray-400 font-medium whitespace-nowrap normal-case text-[9px]">from last 30 days</span></span>
+                                        <span className="inter text-[10px] font-bold text-emerald-500 flex items-center gap-1 z-10 relative mt-auto tracking-wide"><FiTrendingUp className="text-[11px]" /> {kpi.chg} <span className="text-gray-400 font-medium whitespace-nowrap normal-case text-[10px]">from last 30 days</span></span>
                                         <div className="absolute bottom-0 left-0 right-0 h-[35%] opacity-20 pointer-events-none transition-opacity duration-300 group-hover:opacity-30">
                                             <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full fill-current" style={{color: kpi.col}}><path d={idx%2===0?"M0,30 L0,20 Q15,10 30,25 T60,15 T85,25 T100,5 L100,30 Z":"M0,30 L0,15 Q10,25 20,10 T40,15 T60,5 T80,20 T100,10 L100,30 Z"}/></svg>
                                             <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full absolute bottom-0 left-0 outline-none"><path d={idx%2===0?"M0,20 Q15,10 30,25 T60,15 T85,25 T100,5":"M0,15 Q10,25 20,10 T40,15 T60,5 T80,20 T100,10"} fill="none" stroke={kpi.col} strokeWidth="1.5"/></svg>
@@ -1829,25 +1906,13 @@ const Inventory = () => {
                                     
                                     <div className="flex-1 min-h-0 relative -ml-2 z-10 pt-1 shrink-0 w-full">
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={[
-                                                { name: '24 Apr', views: 5000, leads: 2000, conv: 500 },
-                                                { name: '28 Apr', views: 10000, leads: 3000, conv: 800 },
-                                                { name: '02 May', views: 15000, leads: 2800, conv: 1000 },
-                                                { name: '06 May', views: 11000, leads: 3200, conv: 1200 },
-                                                { name: '10 May', views: 16000, leads: 2900, conv: 1100 },
-                                                { name: '14 May', views: 12000, leads: 3500, conv: 900 },
-                                                { name: '18 May', views: 18000, leads: 3800, conv: 1400 },
-                                                { name: '22 May', views: 14000, leads: 3100, conv: 1200 },
-                                                { name: '24 May', views: 9000, leads: 2500, conv: 800 },
-                                            ]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                            <LineChart data={data?.analytics?.performanceTrend || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 700 }} dy={5} />
-                                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 700 }} tickFormatter={val => val>=1000 ? `${val/1000}K` : val} />
+                                                <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 700 }} dy={5} />
+                                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#9ca3af', fontWeight: 700 }} />
                                                 <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', fontSize: '11px', fontWeight: 'bold' }} />
-                                                <Area type="monotone" dataKey="views" fill="#FFF8F0" stroke="none" activeDot={false} />
                                                 <Line type="monotone" dataKey="views" stroke="#D48D2A" strokeWidth={2} dot={{ r: 3, strokeWidth: 1, fill: "#fff" }} activeDot={{ r: 5, strokeWidth: 0 }} />
                                                 <Line type="monotone" dataKey="leads" stroke="#3B82F6" strokeWidth={2} dot={{ r: 3, strokeWidth: 1, fill: "#fff" }} activeDot={{ r: 5, strokeWidth: 0 }} />
-                                                <Line type="monotone" dataKey="conv" stroke="#10B981" strokeWidth={2} dot={{ r: 3, strokeWidth: 1, fill: "#fff" }} activeDot={{ r: 5, strokeWidth: 0 }} />
                                             </LineChart>
                                         </ResponsiveContainer>
                                     </div>
@@ -1856,29 +1921,29 @@ const Inventory = () => {
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Views</span>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-[16px] font-medium text-gray-900 leading-none tracking-tight">24,856</span>
-                                                <span className="text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 18.2%</span>
+                                                <span className="inter text-[16px] font-medium text-gray-900 leading-none tracking-tight">24,856</span>
+                                                <span className="inter text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 18.2%</span>
                                             </div>
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Leads</span>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[16px] font-medium text-gray-900 leading-none tracking-tight">1,248</span>
-                                                <span className="text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 12.5%</span>
+                                                <span className="inter text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 12.5%</span>
                                             </div>
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Conversions</span>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[16px] font-medium text-gray-900 leading-none tracking-tight">68</span>
-                                                <span className="text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 8.6%</span>
+                                                <span className="inter text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 8.6%</span>
                                             </div>
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Conversion Rate</span>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[15px] font-bold text-gray-900 leading-none">5.48%</span>
-                                                <span className="text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 0.3%</span>
+                                                <span className="inter text-[10px] font-bold text-emerald-500 tracking-wide"><FiTrendingUp className="inline -mt-0.5" /> 0.3%</span>
                                             </div>
                                         </div>
                                     </div>
@@ -3373,10 +3438,10 @@ const AnalyticsCard = ({ title, value, growth, icon, iconBgClass, chartColor, da
         </div>
         <div className="flex flex-col gap-1 mt-4">
             <div className="flex items-center gap-1.5">
-                <span className={`text-[10px] font-bold flex items-center ${growth.startsWith('+') ? 'text-emerald-500' : 'text-red-500'}`}>
+                <span className={`inter text-[10px] font-bold flex items-center ${growth.startsWith('+') ? 'text-emerald-500' : 'text-red-500'}`}>
                     {growth.startsWith('+') ? <FiTrendingUp className="mr-0.5" /> : <FiTrendingDown className="mr-0.5" />} {growth}
                 </span>
-                <span className="text-[10px] text-gray-400 font-medium">vs last 30 days</span>
+                <span className="inter text-[10px] text-gray-400 font-medium">vs last 30 days</span>
             </div>
             {data && data.length > 0 && (
                 <div className="h-8 mt-2 w-full">
