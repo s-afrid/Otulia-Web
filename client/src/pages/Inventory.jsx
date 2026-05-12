@@ -1086,48 +1086,57 @@ const Inventory = () => {
                                         </div>
 
                                         <div className="flex-1 relative mt-[1px] min-h-0 w-full">
-                                        <div className="absolute inset-0 pb-6 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-2">
-                                            {[...Array(5)].map((_, i) => {
-                                                const trendData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
-                                                const maxVal = Math.max(...(trendData.map(d => Math.max(d.views, d.leads)) || [100]), 100);
-                                                const val = Math.round((maxVal / 4) * (4 - i));
-                                                return (
+                                            <div className="absolute inset-0 pb-6 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-2">
+                                                {[100, 75, 50, 25, 0].map((val, i) => (
                                                     <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
                                                         <span className="absolute -left-[30px] inter text-[10px] text-gray-400 font-normal w-[24px] text-right mt-0 bg-white leading-none tracking-normal">{val}</span>
                                                     </div>
-                                                );
-                                            })}
-                                        </div>
-                                        <div className="absolute inset-x-0 bottom-0 pl-10 pr-4 h-6 flex justify-between items-end inter text-[10px] font-normal text-gray-400 pb-1 tracking-normal leading-none">
-                                            {(() => {
-                                                const trendData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
-                                                const labelMod = chartInterval === 'Month' ? 5 : 1;
-                                                return trendData.filter((_, i) => i % labelMod === 0 || i === trendData.length - 1).map((d, i) => (
-                                                    <span key={i}>{new Date(d.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
-                                                ));
-                                            })()}
-                                        </div>
-                                        <div className="absolute inset-0 pb-6 pl-10 pr-4 mt-2">
-                                            <svg className="w-full h-full overflow-visible" viewBox="0 0 300 100" preserveAspectRatio="none">
+                                                ))}
+                                            </div>
+                                            <div className="absolute inset-x-0 bottom-0 pl-10 pr-4 h-6 flex justify-between items-end inter text-[10px] font-normal text-gray-400 pb-1 tracking-normal leading-none">
                                                 {(() => {
-                                                    const trendData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
-                                                    const viewsData = getSparklineData(trendData, 'views', 300, 100, 10);
-                                                    const leadsData = getSparklineData(trendData, 'leads', 300, 100, 10);
-                                                    return (
-                                                        <>
-                                                            <path d={viewsData.path} fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                            {viewsData.points.map((pt, i) => (
-                                                                <circle key={`v-${i}`} cx={pt.x} cy={pt.y} r="1.5" fill="#D48D2A" stroke="white" strokeWidth="0.5" />
-                                                            ))}
-                                                            <path d={leadsData.path} fill="none" stroke="#1E3B70" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                            {leadsData.points.map((pt, i) => (
-                                                                <circle key={`l-${i}`} cx={pt.x} cy={pt.y} r="1.5" fill="#1E3B70" stroke="white" strokeWidth="0.5" />
-                                                            ))}
-                                                        </>
-                                                    );
+                                                    const rawData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
+                                                    const points = [];
+                                                    if (rawData.length > 0) {
+                                                        for (let i = 0; i < 10; i++) {
+                                                            const idx = Math.min(Math.floor((i / 9) * (rawData.length - 1)), rawData.length - 1);
+                                                            points.push(rawData[idx]);
+                                                        }
+                                                    }
+                                                    // Show 5 labels for 10 points
+                                                    return points.filter((_, i) => i % 2 === 0).map((d, i) => (
+                                                        <span key={i}>{new Date(d.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
+                                                    ));
                                                 })()}
-                                            </svg>
-                                        </div>
+                                            </div>
+                                            <div className="absolute inset-0 pb-6 pl-10 pr-4 mt-2">
+                                                <svg className="w-full h-full overflow-visible" viewBox="0 0 300 100" preserveAspectRatio="none">
+                                                    {(() => {
+                                                        const rawData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
+                                                        const trendData = [];
+                                                        if (rawData.length > 0) {
+                                                            for (let i = 0; i < 10; i++) {
+                                                                const idx = Math.min(Math.floor((i / 9) * (rawData.length - 1)), rawData.length - 1);
+                                                                trendData.push(rawData[idx]);
+                                                            }
+                                                        }
+                                                        const viewsData = getSparklineData(trendData, 'views', 300, 100, 10);
+                                                        const leadsData = getSparklineData(trendData, 'leads', 300, 100, 10);
+                                                        return (
+                                                            <>
+                                                                <path d={viewsData.path} fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                                {viewsData.points.map((pt, i) => (
+                                                                    <circle key={`v-${i}`} cx={pt.x} cy={pt.y} r="1.5" fill="#D48D2A" stroke="white" strokeWidth="0.5" />
+                                                                ))}
+                                                                <path d={leadsData.path} fill="none" stroke="#1E3B70" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                                {leadsData.points.map((pt, i) => (
+                                                                    <circle key={`l-${i}`} cx={pt.x} cy={pt.y} r="1.5" fill="#1E3B70" stroke="white" strokeWidth="0.5" />
+                                                                ))}
+                                                            </>
+                                                        );
+                                                    })()}
+                                                </svg>
+                                            </div>
                                         </div>                                </div>
                                 
                                 {/* Right Donut */}
