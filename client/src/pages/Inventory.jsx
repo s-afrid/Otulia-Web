@@ -73,6 +73,7 @@ const Inventory = () => {
     // UI State
     const [activeTab, setActiveTab] = useState('dashboard');
     const [chartInterval, setChartInterval] = useState('Week');
+    const [convInterval, setConvInterval] = useState('Week');
     const [timeframe, setTimeframe] = useState('Week');
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -1282,37 +1283,81 @@ const Inventory = () => {
                                             </span>
                                         </div>
                                         <div className="relative">
-                                            <select className="inter text-[10px] font-normal text-gray-600 bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[80px]">
-                                                <option>Day</option>
-                                                <option selected>Week</option>
-                                                <option>Month</option>
+                                            <select 
+                                                value={convInterval}
+                                                onChange={(e) => setConvInterval(e.target.value)}
+                                                className="inter text-[10px] font-normal text-gray-600 bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[80px]"
+                                            >
+                                                <option value="Day">Day</option>
+                                                <option value="Week">Week</option>
+                                                <option value="Month">Month</option>
                                             </select>
                                             <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[12px]" />
                                         </div>
                                     </div>
-                                    <div className="flex-1 flex items-end justify-between px-1 mt-1 relative min-h-0">
-                                        {/* Axes */}
-                                        <div className="absolute inset-y-0 left-0 flex flex-col justify-between pt-1 pb-[18px] inter text-[10px] text-gray-400 font-normal z-10 w-4 pr-1 text-right">
-                                            <span>9%</span><span>6%</span><span>3%</span><span>0%</span>
+                                    <div className="flex-1 flex flex-col mt-4 relative min-h-0">
+                                        {/* Grid and Y-Axis */}
+                                        <div className="absolute inset-0 pb-6 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none">
+                                            {[100, 75, 50, 25, 0].map((val, i) => (
+                                                <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
+                                                    <span className="absolute -left-[30px] inter text-[10px] text-gray-400 font-normal w-[24px] text-right bg-white leading-none tracking-normal z-10">{val}%</span>
+                                                </div>
+                                            ))}
                                         </div>
+
+                                        {/* X-Axis Labels */}
+                                        <div className="absolute inset-x-0 bottom-0 pl-8 pr-1 h-6 flex justify-between items-end inter text-[9px] font-normal text-gray-400 pb-1 tracking-normal leading-none z-20">
+                                            {(() => {
+                                                const rawData = (data?.stats?.dailyTrends || []).slice(convInterval === 'Day' ? -3 : convInterval === 'Week' ? -7 : -30);
+                                                const trendData = [];
+                                                if (rawData.length > 0) {
+                                                    for (let i = 0; i < 10; i++) {
+                                                        const idx = Math.min(Math.floor((i / 9) * (rawData.length - 1)), rawData.length - 1);
+                                                        trendData.push(rawData[idx]);
+                                                    }
+                                                }
+                                                // 10 bars indexed 0-9. Indices 0, 5, 9 will align with justify-between
+                                                return trendData.filter((_, i) => i === 0 || i === 5 || i === 9).map((d, i) => (
+                                                    <span key={i} className="whitespace-nowrap">{new Date(d.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
+                                                ));
+                                            })()}
+                                        </div>
+
                                         {/* Bars Container */}
-                                        <div className="flex-1 flex justify-between items-end h-full ml-6 pb-5 pt-3">
-                                            {(data?.analytics?.performanceTrend || []).map((w, i) => {
-                                                const conv = w.views > 0 ? (w.leads / w.views) * 100 : 0;
-                                                const h = Math.min(Math.max((conv / 9) * 100, 10), 100);
-                                                return (
-                                                    <div key={i} className="flex flex-col items-center justify-end h-full group cursor-default relative w-full px-1.5">
-                                                        {i === (data.analytics.performanceTrend.length - 1) && (
-                                                            <div className="absolute -top-6 bg-gray-900 text-white inter text-[10px] px-1.5 py-0.5 rounded font-bold shadow-md z-20 tooltip-arrow">{conv.toFixed(1)}%</div>
-                                                        )}
-                                                        <div className={`w-3.5 rounded-t group-hover:bg-gray-800 transition-colors relative z-10 ${i === (data.analytics.performanceTrend.length - 1) ? 'bg-gray-900' : 'bg-[#D48D2A]'}`} style={{ height: `${h}%` }}></div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                        {/* X Axis */}
-                                        <div className="absolute inset-x-0 bottom-0 flex justify-between ml-[32px] inter text-[10px] font-normal text-gray-400 pb-0.5 pointer-events-none pr-1">
-                                            {(data?.analytics?.performanceTrend || []).map((w, i) => <span key={i}>{w.week}</span>)}
+                                        <div className="flex-1 flex justify-between items-end h-full ml-8 pb-6 pt-4 relative z-10 gap-[8px]">
+                                            {(() => {
+                                                const rawData = (data?.stats?.dailyTrends || []).slice(convInterval === 'Day' ? -3 : convInterval === 'Week' ? -7 : -30);
+                                                const trendData = [];
+                                                if (rawData.length > 0) {
+                                                    for (let i = 0; i < 10; i++) {
+                                                        const idx = Math.min(Math.floor((i / 9) * (rawData.length - 1)), rawData.length - 1);
+                                                        trendData.push(rawData[idx]);
+                                                    }
+                                                }
+
+                                                if (trendData.length === 0) return <div className="flex-1 h-full flex items-center justify-center text-gray-300 inter text-[10px]">No trend data</div>;
+                                                
+                                                return trendData.map((d, i) => {
+                                                    const conv = d.views > 0 ? (d.leads / d.views) * 100 : 0;
+                                                    const h = Math.min(Math.max((conv / 100) * 100, 2), 100);
+                                                    const isLast = i === (trendData.length - 1);
+                                                    const isHighlighted = isLast || i === 5 || i === 2; 
+                                                    
+                                                    return (
+                                                        <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group cursor-default relative">
+                                                            {(isLast || i === 5) && (
+                                                                <div className="absolute -top-5 bg-gray-900 text-white inter text-[8px] px-1.5 py-0.5 rounded-md font-bold shadow-md z-20 whitespace-nowrap">
+                                                                    {conv.toFixed(1)}%
+                                                                </div>
+                                                            )}
+                                                            <div 
+                                                                className={`w-full max-w-[34px] rounded-full group-hover:opacity-80 transition-all relative z-10 ${isHighlighted ? 'bg-[#D48D2A]' : 'bg-[#F3EBE3]'}`} 
+                                                                style={{ height: `${h}%` }}
+                                                            ></div>
+                                                        </div>
+                                                    );
+                                                });
+                                            })()}
                                         </div>
                                     </div>
                                 </div>
