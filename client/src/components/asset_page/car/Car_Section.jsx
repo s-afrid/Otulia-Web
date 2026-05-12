@@ -19,7 +19,6 @@ const Car_Section = () => {
   // 1. Get ID correctly regardless of URL structure
   const { id } = useParams();
 
-
   // Car info fetching
   const infoFetch = async () => {
     // Safety check
@@ -42,7 +41,6 @@ const Car_Section = () => {
 
       // Record VIEW activity
       recordView(result._id || result.id);
-
     } catch (error) {
       console.error("Error fetching car info:", error.message);
     }
@@ -50,14 +48,14 @@ const Car_Section = () => {
 
   const recordView = async (assetId) => {
     try {
-      await fetch('/api/activity/record', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/activity/record", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           assetId,
-          assetModel: 'CarAsset',
-          activityType: 'VIEW'
-        })
+          assetModel: "CarAsset",
+          activityType: "VIEW",
+        }),
       });
     } catch (e) {
       console.error("Failed to record view activity", e);
@@ -78,7 +76,9 @@ const Car_Section = () => {
 
   const fetchAgentAssets = async (agentId, currentId) => {
     try {
-      const response = await fetch(`/api/assets/agent/${agentId}/car?excludeId=${currentId}`);
+      const response = await fetch(
+        `/api/assets/agent/${agentId}/car?excludeId=${currentId}`,
+      );
       if (response.ok) {
         const data = await response.json();
         setAgentAssets(data);
@@ -97,14 +97,16 @@ const Car_Section = () => {
   if (!info) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <div className="text-xl montserrat text-gray-500">Loading Asset Details...</div>
+        <div className="text-xl montserrat text-gray-500">
+          Loading Asset Details...
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col bg-white">
-      <SEO 
+      <SEO
         title={info.title}
         description={info.description}
         image={info.images?.[0]}
@@ -112,7 +114,11 @@ const Car_Section = () => {
         productData={info}
       />
 
-      <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Car" />
+      <AssetGallery
+        images={info.images}
+        videoUrl={info.videoUrl}
+        assetType="Car"
+      />
 
       <CarDetails item={info} modelName="CarAsset" />
 
@@ -121,10 +127,10 @@ const Car_Section = () => {
       <CarFeatures item={info} />
 
       <div className="w-full mt-10">
-        <LocationMap 
-          locationName={info.location} 
-          lat={info.specification?.latitude} 
-          lng={info.specification?.longitude} 
+        <LocationMap
+          locationName={info.location}
+          lat={info.specification?.latitude}
+          lng={info.specification?.longitude}
         />
       </div>
 
@@ -138,10 +144,12 @@ const Car_Section = () => {
 
       {agentAssets.length > 0 && (
         <div className="py-16 bg-gray-50/30">
-          <AssetSlider title={`More from ${info.agent?.company || 'this Agency'}`} items={agentAssets} />
+          <AssetSlider
+            title={`More from ${info.agent?.company || "this Agency"}`}
+            items={agentAssets}
+          />
         </div>
       )}
-      
     </div>
   );
 };
