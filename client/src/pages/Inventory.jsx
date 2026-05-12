@@ -969,11 +969,11 @@ const Inventory = () => {
                 </header>
 
                 {/* TAB CONTENT */}
-                <main className={`p-8 pt-6 h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar ${activeTab === 'dashboard' ? 'overflow-hidden' : ''}`}>
+                <main className={`p-8 pt-6 h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar`}>
 
                     {/* DASHBOARD TAB */}
                     {activeTab === 'dashboard' && (
-                        <div className="h-full flex flex-col gap-4 animate-in fade-in duration-700 pb-2">
+                        <div className="flex flex-col gap-6 animate-in fade-in duration-700 pb-8">
                             {/* Header Row */}
                             <div className="flex justify-between items-end shrink-0 mb-0">
                                 <div>
@@ -1190,31 +1190,34 @@ const Inventory = () => {
                             {/* Third Row */}
                             <div className="flex gap-5 flex-1 min-h-[190px]">
                                 {/* Top Assets Table */}
-                                <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
-                                    <div className="flex justify-between items-center mb-3">
-                                        <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Top Performing Assets</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
+                                <div className="w-[470px] h-[248px] shrink-0 bg-white rounded-2xl p-5 px-6 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h4 className="inter text-[16px] font-bold text-gray-900 leading-none tracking-normal">Top Performing Assets</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="text-[11px] font-medium text-[#D48D2A] hover:opacity-80 transition-opacity">View all</button>
                                     </div>
-                                    <div className="flex-1 overflow-auto custom-scrollbar pr-1 -mx-2 px-2">
+                                    <div className="flex-1 overflow-auto custom-scrollbar -mx-2 px-2">
                                         <table className="w-full text-left table-fixed">
                                             <thead className="sticky top-0 bg-white z-10 w-full">
                                                 <tr>
-                                                    <th className="pb-2 pt-1 inter text-[10px] font-normal text-gray-400 uppercase tracking-widest border-b border-gray-100 w-6/12">Asset</th>
-                                                    <th className="pb-2 pt-1 inter text-[10px] font-normal text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-center">Views</th>
-                                                    <th className="pb-2 pt-1 inter text-[10px] font-normal text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right pr-2">Change</th>
+                                                    <th className="pb-3 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-7/12">Asset</th>
+                                                    <th className="pb-3 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-2/12 text-center">Views</th>
+                                                    <th className="pb-3 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right">Change</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-gray-50 text-[11px] font-bold text-gray-600">
+                                            <tbody className="divide-y divide-gray-100 text-[11px] font-bold text-gray-600">
                                                 {(data?.stats?.topAssets || []).map((item, i) => (
-                                                    <tr key={i} className="hover:bg-gray-50/50">
-                                                        <td className="py-2.5 flex items-center gap-3 truncate">
-                                                            <div className="w-10 h-8 rounded-lg object-cover shadow-[0_2px_5px_rgba(0,0,0,0.1)] shrink-0 bg-gray-100 flex items-center justify-center overflow-hidden">
-                                                                {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <FiImage className="text-gray-300 transform scale-125" />}
+                                                    <tr key={i} className="hover:bg-gray-50/30 transition-colors">
+                                                        <td className="py-3 flex items-center gap-4 truncate">
+                                                            <div className="w-[44px] h-[38px] rounded-lg bg-[#F3EBE3] shrink-0 flex items-center justify-center overflow-hidden">
+                                                                {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <FiImage className="text-gray-300" />}
                                                             </div>
-                                                            <span className="text-gray-900 truncate overflow-hidden whitespace-nowrap text-[12px] font-medium">{item.name}</span>
+                                                            <span className="inter text-gray-900 truncate overflow-hidden whitespace-nowrap text-[12px] font-medium leading-none tracking-normal">{item.name}</span>
                                                         </td>
-                                                        <td className="py-2.5 text-center text-gray-900 font-bold">{numberWithCommas(item.views)}</td>
-                                                        <td className={`py-2.5 text-right font-bold tracking-tight pr-2 inter text-[10px] ${item.change.includes('-') ? 'text-red-500' : 'text-emerald-500'}`}>{item.change}</td>
+                                                        <td className="py-3 text-center text-gray-700 font-medium text-[12px] kaisei leading-none tracking-normal">{numberWithCommas(item.views)}</td>
+                                                        <td className={`py-3 text-right font-medium tracking-tight inter text-[12px] ${item.change.includes('-') ? 'text-red-500' : 'text-[#10B981]'}`}>
+                                                            {!item.change.includes('-') && <span className="mr-1">↑</span>}
+                                                            {item.change.startsWith('+') ? item.change : (item.change.includes('-') ? item.change : `+${item.change}`)}
+                                                        </td>
                                                     </tr>
                                                 ))}
                                                 {(!data?.stats?.topAssets || data.stats.topAssets.length === 0) && (
@@ -1226,7 +1229,7 @@ const Inventory = () => {
                                 </div>
 
                                 {/* Leads Source Donut */}
-                                <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                <div className="flex-1 min-w-0 h-[248px] bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-0">
                                         <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Leads Source</h4>
                                         <button onClick={() => setActiveTab('analytics')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
@@ -1267,7 +1270,7 @@ const Inventory = () => {
                                 </div>
 
                                 {/* Conversion Rate Bars */}
-                                <div className="flex-[1.2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
+                                <div className="flex-[1.2] min-w-0 h-[248px] bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
                                     <div className="flex justify-between items-start mb-2 shrink-0">
                                         <div className="flex flex-col">
                                             <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Conversion Rate</h4>
@@ -1315,9 +1318,9 @@ const Inventory = () => {
                                 </div>
                             </div>
 
-                            {/* Fourth Row */}
-                            <div className="flex gap-5 flex-[0.8] min-h-[140px] shrink-0">
-                                <div className="flex-[2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
+                            {/* Fourth Row: Recent Activity */}
+                            <div className="flex shrink-0">
+                                <div className="flex-1 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 pb-1">
                                         <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal mt-1">Recent Activity</h4>
                                         <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase tracking-widest whitespace-nowrap mt-1">View all activity</button>
@@ -1334,7 +1337,11 @@ const Inventory = () => {
                                         )}
                                     </div>
                                 </div>
-                                <div className="flex-[1.1] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
+                            </div>
+
+                            {/* Fifth Row: Assets Overview */}
+                            <div className="flex shrink-0">
+                                <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 pb-1 mt-1">
                                         <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Assets Overview</h4>
                                         <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase whitespace-nowrap">Manage Assets</button>
