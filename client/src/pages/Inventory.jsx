@@ -1193,28 +1193,28 @@ const Inventory = () => {
                                 <div className="w-[470px] h-[248px] shrink-0 bg-white rounded-2xl p-5 px-6 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-4">
                                         <h4 className="inter text-[16px] font-bold text-gray-900 leading-none tracking-normal">Top Performing Assets</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="text-[11px] font-medium text-[#D48D2A] hover:opacity-80 transition-opacity">View all</button>
+                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[10px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
                                     </div>
-                                    <div className="flex-1 overflow-auto custom-scrollbar -mx-2 px-2">
+                                    <div className="flex-1 overflow-hidden -mx-2 px-2">
                                         <table className="w-full text-left table-fixed">
                                             <thead className="sticky top-0 bg-white z-10 w-full">
                                                 <tr>
-                                                    <th className="pb-3 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-7/12">Asset</th>
-                                                    <th className="pb-3 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-2/12 text-center">Views</th>
-                                                    <th className="pb-3 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right">Change</th>
+                                                    <th className="pb-2 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-7/12">Asset</th>
+                                                    <th className="pb-2 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-2/12 text-center">Views</th>
+                                                    <th className="pb-2 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right">Change</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-100 text-[11px] font-bold text-gray-600">
-                                                {(data?.stats?.topAssets || []).map((item, i) => (
+                                                {(data?.stats?.topAssets || []).slice(0, 3).map((item, i) => (
                                                     <tr key={i} className="hover:bg-gray-50/30 transition-colors">
-                                                        <td className="py-3 flex items-center gap-4 truncate">
+                                                        <td className="py-2 flex items-center gap-4 truncate">
                                                             <div className="w-[44px] h-[38px] rounded-lg bg-[#F3EBE3] shrink-0 flex items-center justify-center overflow-hidden">
                                                                 {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <FiImage className="text-gray-300" />}
                                                             </div>
                                                             <span className="inter text-gray-900 truncate overflow-hidden whitespace-nowrap text-[12px] font-medium leading-none tracking-normal">{item.name}</span>
                                                         </td>
-                                                        <td className="py-3 text-center text-gray-700 font-medium text-[12px] kaisei leading-none tracking-normal">{numberWithCommas(item.views)}</td>
-                                                        <td className={`py-3 text-right font-medium tracking-tight inter text-[12px] ${item.change.includes('-') ? 'text-red-500' : 'text-[#10B981]'}`}>
+                                                        <td className="py-2 text-center text-gray-700 font-medium text-[12px] kaisei leading-none tracking-normal">{numberWithCommas(item.views)}</td>
+                                                        <td className={`py-2 text-right font-medium tracking-tight inter text-[12px] ${item.change.includes('-') ? 'text-red-500' : 'text-[#10B981]'}`}>
                                                             {!item.change.includes('-') && <span className="mr-1">↑</span>}
                                                             {item.change.startsWith('+') ? item.change : (item.change.includes('-') ? item.change : `+${item.change}`)}
                                                         </td>
@@ -1232,7 +1232,7 @@ const Inventory = () => {
                                 <div className="flex-1 min-w-0 h-[248px] bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-0">
                                         <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Leads Source</h4>
-                                        <button onClick={() => setActiveTab('analytics')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
+                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[10px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
                                     </div>
                                     <div className="flex-1 flex items-center justify-between z-10 px-0 mt-2">
                                         <div style={{ width: '229px', height: '209px' }} className="flex items-center justify-center relative shrink-0 -ml-4">
@@ -1318,12 +1318,12 @@ const Inventory = () => {
                                 </div>
                             </div>
 
-                            {/* Fourth Row: Recent Activity */}
-                            <div className="flex shrink-0">
-                                <div className="flex-1 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
+                            {/* Fourth Row: Recent Activity & Assets Overview */}
+                            <div className="flex gap-6">
+                                <div className="flex-1 h-[160px] bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 pb-1">
                                         <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal mt-1">Recent Activity</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase tracking-widest whitespace-nowrap mt-1">View all activity</button>
+                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[10px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal mt-1">View all</button>
                                     </div>
                                     <div className="space-y-[8px] flex-1 overflow-auto custom-scrollbar pr-2 mt-2">
                                         {(data?.notifications || []).slice(0, 3).map((notif, idx) => (
@@ -1337,14 +1337,11 @@ const Inventory = () => {
                                         )}
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Fifth Row: Assets Overview */}
-                            <div className="flex shrink-0">
-                                <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
+                                <div className="flex-[1.8] h-[160px] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 pb-1 mt-1">
                                         <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Assets Overview</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase whitespace-nowrap">Manage Assets</button>
+                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[10px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">Manage Assets</button>
                                     </div>
                                     <div className="flex justify-between items-start mt-4 px-1 pb-2">
                                         <div className="flex flex-col text-left flex-1 border-r border-gray-100 pr-2">
