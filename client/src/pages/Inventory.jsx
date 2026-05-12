@@ -72,6 +72,7 @@ const Inventory = () => {
 
     // UI State
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [chartInterval, setChartInterval] = useState('Week');
     const [timeframe, setTimeframe] = useState('Week');
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -658,20 +659,26 @@ const Inventory = () => {
         { id: 'settings', label: 'Settings', icon: FiSettings },
     ];
 
-    // Helper for sparklines
-    const generateSparkline = (data, type) => {
-        if (!data || !data.length) return "M0,15 L100,15";
+    const getSparklineData = (data, type, w = 100, h = 20, p = 2) => {
+        if (!data || !data.length) return { path: `M0,${h/2} L${w},${h/2}`, points: [] };
         const vals = data.map(d => d[type] || 0);
         const max = Math.max(...vals, 1);
-        const width = 100;
-        const height = 20;
-        const step = width / (vals.length - 1);
-        return vals.map((val, i) => {
+        const width = w;
+        const height = h;
+        const step = width / (vals.length - 1 || 1);
+        const points = vals.map((val, i) => {
             const x = i * step;
             const y = height - (val / max) * height;
-            const paddedY = 2 + (y * 0.8);
-            return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${paddedY.toFixed(1)}`;
-        }).join(' ');
+            const paddedY = p + (y * (1 - (p * 2 / height)));
+            return { x, y: paddedY };
+        });
+        const path = points.map((pt, i) => `${i === 0 ? 'M' : 'L'}${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' ');
+        return { path, points };
+    };
+
+    const generateSparkline = (data, type) => {
+        const { path } = getSparklineData(data, type, 100, 20, 2);
+        return path;
     };
 
     return (
@@ -1053,51 +1060,79 @@ const Inventory = () => {
                             </div>
 
                             {/* Middle Row (Flex-1 for expansion) */}
-                            <div className="flex flex-[1.1] gap-5 min-h-[240px]">
+                            <div className="flex gap-5 h-[329px] shrink-0">
                                 {/* Left Line Chart */}
-                                <div className="flex-[2] bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                <div style={{ width: '964px', height: '329px' }} className="bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden shrink-0">
                                     <div className="flex justify-between items-center mb-2 shrink-0 relative z-10">
                                         <div className="flex flex-col gap-2">
-                                            <h4 className="text-[16px] font-bold text-gray-900 canela tracking-wide leading-none">Views vs Leads Over Time</h4>
+                                            <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Views vs Leads Over Time</h4>
                                             <div className="flex gap-4">
-                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#D48D2A]"></div><span className="text-[9px] font-bold text-gray-500 capitalize">Views</span></div>
-                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#1E3B70]"></div><span className="text-[9px] font-bold text-gray-500 capitalize">Leads</span></div>
+                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#D48D2A]"></div><span className="inter text-[10px] font-normal text-gray-500 capitalize leading-none tracking-normal">Views</span></div>
+                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#1E3B70]"></div><span className="inter text-[10px] font-normal text-gray-500 capitalize leading-none tracking-normal">Leads</span></div>
                                             </div>
                                         </div>
-                                        <div className="border border-gray-200 rounded-lg px-3 py-1 flex items-center gap-1 text-[11px] font-bold text-gray-600 shadow-sm cursor-pointer hover:bg-gray-50">
-                                            Week <FiChevronDown className="text-[12px]"/>
+                                        <div className="relative">
+                                            <select 
+                                                value={chartInterval} 
+                                                onChange={(e) => setChartInterval(e.target.value)}
+                                                className="inter text-[10px] font-normal text-gray-600 bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[80px]"
+                                            >
+                                                <option value="Day">Day</option>
+                                                <option value="Week">Week</option>
+                                                <option value="Month">Month</option>
+                                            </select>
+                                            <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[12px]" />
                                         </div>
-                                    </div>
-                                    
-                                    <div className="flex-1 relative mt-[1px] min-h-0 w-full">
+                                        </div>
+
+                                        <div className="flex-1 relative mt-[1px] min-h-0 w-full">
                                         <div className="absolute inset-0 pb-6 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-2">
                                             {[...Array(5)].map((_, i) => {
-                                                const maxVal = Math.max(...(data?.stats?.dailyTrends?.map(d => Math.max(d.views, d.leads)) || [300]), 100);
+                                                const trendData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
+                                                const maxVal = Math.max(...(trendData.map(d => Math.max(d.views, d.leads)) || [100]), 100);
                                                 const val = Math.round((maxVal / 4) * (4 - i));
                                                 return (
                                                     <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
-                                                        <span className="absolute -left-[30px] text-[10px] text-gray-400 font-medium w-[24px] text-right mt-0 bg-white leading-none">{val}</span>
+                                                        <span className="absolute -left-[30px] inter text-[10px] text-gray-400 font-normal w-[24px] text-right mt-0 bg-white leading-none tracking-normal">{val}</span>
                                                     </div>
                                                 );
                                             })}
                                         </div>
-                                        <div className="absolute inset-x-0 bottom-0 pl-10 pr-4 h-6 flex justify-between items-end text-[10px] font-medium text-gray-400 pb-1">
-                                            {(data?.stats?.dailyTrends || []).filter((_, i) => i % 4 === 0).map((d, i) => (
-                                                <span key={i}>{new Date(d.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
-                                            ))}
+                                        <div className="absolute inset-x-0 bottom-0 pl-10 pr-4 h-6 flex justify-between items-end inter text-[10px] font-normal text-gray-400 pb-1 tracking-normal leading-none">
+                                            {(() => {
+                                                const trendData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
+                                                const labelMod = chartInterval === 'Month' ? 5 : 1;
+                                                return trendData.filter((_, i) => i % labelMod === 0 || i === trendData.length - 1).map((d, i) => (
+                                                    <span key={i}>{new Date(d.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
+                                                ));
+                                            })()}
                                         </div>
                                         <div className="absolute inset-0 pb-6 pl-10 pr-4 mt-2">
-                                            <svg className="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                                <path d={generateSparkline(data?.stats?.dailyTrends, 'views')} fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                <path d={generateSparkline(data?.stats?.dailyTrends, 'leads')} fill="none" stroke="#1E3B70" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <svg className="w-full h-full overflow-visible" viewBox="0 0 300 100" preserveAspectRatio="none">
+                                                {(() => {
+                                                    const trendData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
+                                                    const viewsData = getSparklineData(trendData, 'views', 300, 100, 10);
+                                                    const leadsData = getSparklineData(trendData, 'leads', 300, 100, 10);
+                                                    return (
+                                                        <>
+                                                            <path d={viewsData.path} fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                            {viewsData.points.map((pt, i) => (
+                                                                <circle key={`v-${i}`} cx={pt.x} cy={pt.y} r="1.5" fill="#D48D2A" stroke="white" strokeWidth="0.5" />
+                                                            ))}
+                                                            <path d={leadsData.path} fill="none" stroke="#1E3B70" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                            {leadsData.points.map((pt, i) => (
+                                                                <circle key={`l-${i}`} cx={pt.x} cy={pt.y} r="1.5" fill="#1E3B70" stroke="white" strokeWidth="0.5" />
+                                                            ))}
+                                                        </>
+                                                    );
+                                                })()}
                                             </svg>
                                         </div>
-                                    </div>
-                                </div>
+                                        </div>                                </div>
                                 
                                 {/* Right Donut */}
                                 <div className="flex-1 bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-w-[320px]">
-                                    <h4 className="text-[16px] font-bold text-gray-900 canela tracking-wide mb-3 shrink-0">Leads by Asset Category</h4>
+                                    <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal mb-3 shrink-0">Leads by Asset Category</h4>
                                     <div className="flex-1 flex items-center justify-between min-h-0 pl-1 pr-3">
                                         <div className="w-[140px] h-full flex items-center justify-center relative shrink-0">
                                             <svg viewBox="0 0 100 100" className="w-[125%] transform -rotate-90">
@@ -1119,17 +1154,17 @@ const Inventory = () => {
                                                 })()}
                                             </svg>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center text-center pt-1">
-                                                <span className="text-[26px] font-medium text-gray-900 leading-none">{data?.stats?.totalLeads || 0}</span>
-                                                <span className="text-[9px] capitalize text-gray-500 font-medium tracking-wide mt-1">Total Leads</span>
+                                                <span className="text-[26px] font-medium text-gray-900 leading-none kaisei">{data?.stats?.totalLeads || 0}</span>
+                                                <span className="inter text-[9px] capitalize text-gray-500 font-medium tracking-wide mt-1">Total Leads</span>
                                             </div>
                                         </div>
                                         <div className="flex flex-col justify-center gap-3 pl-4 flex-1">
                                             {(data?.analytics?.leadsByCategory || []).map((r, i) => {
                                                 const colors = ['#D48D2A', '#1E3B70', '#10B981', '#9CA3AF'];
                                                 return (
-                                                    <div key={i} className="flex items-center justify-between text-[11px] font-bold text-gray-600">
+                                                    <div key={i} className="flex items-center justify-between inter text-[10px] font-medium text-gray-600">
                                                         <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: colors[i] }}></span>{r.label}</span>
-                                                        <span className="text-gray-900 truncate pl-1 flex gap-1.5"><span className="w-4 text-right">{r.count}</span> <span className="text-gray-400 font-medium w-10 text-right">({r.p})</span></span>
+                                                        <span className="text-gray-900 truncate pl-1 flex gap-1.5"><span className="w-4 text-right">{r.count}</span> <span className="text-gray-400 font-normal w-10 text-right">({r.p})</span></span>
                                                     </div>
                                                 );
                                             })}
@@ -1146,16 +1181,16 @@ const Inventory = () => {
                                 {/* Top Assets Table */}
                                 <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-3">
-                                        <h4 className="text-[15px] font-bold text-gray-900 canela tracking-wide leading-none">Top Performing Assets</h4>
+                                        <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Top Performing Assets</h4>
                                         <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
                                     </div>
                                     <div className="flex-1 overflow-auto custom-scrollbar pr-1 -mx-2 px-2">
                                         <table className="w-full text-left table-fixed">
                                             <thead className="sticky top-0 bg-white z-10 w-full">
                                                 <tr>
-                                                    <th className="pb-2 pt-1 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 w-6/12">Asset</th>
-                                                    <th className="pb-2 pt-1 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-center">Views</th>
-                                                    <th className="pb-2 pt-1 text-[9px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right pr-2">Change</th>
+                                                    <th className="pb-2 pt-1 inter text-[10px] font-normal text-gray-400 uppercase tracking-widest border-b border-gray-100 w-6/12">Asset</th>
+                                                    <th className="pb-2 pt-1 inter text-[10px] font-normal text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-center">Views</th>
+                                                    <th className="pb-2 pt-1 inter text-[10px] font-normal text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right pr-2">Change</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-50 text-[11px] font-bold text-gray-600">
@@ -1182,7 +1217,7 @@ const Inventory = () => {
                                 {/* Leads Source Donut */}
                                 <div className="flex-1 min-w-0 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-0">
-                                        <h4 className="text-[15px] font-bold text-gray-900 canela tracking-wide leading-none">Leads Source</h4>
+                                        <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Leads Source</h4>
                                         <button onClick={() => setActiveTab('analytics')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-2.5 py-1 rounded-[8px] transition-colors hover:bg-gray-50 whitespace-nowrap">View all</button>
                                     </div>
                                     <div className="flex-1 flex items-center justify-between z-10 px-0 mt-3 -ml-1">
@@ -1211,8 +1246,8 @@ const Inventory = () => {
                                                 const colors = ['#D48D2A', '#1E3B70', '#10B981', '#8B5CF6'];
                                                 return (
                                                     <div key={i} className="flex items-center justify-between text-[10px] font-bold text-gray-600 w-[140px]">
-                                                        <span className="flex items-center gap-2 truncate mr-1" title={r.label}><span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: colors[i] }}></span><span className="truncate">{r.label}</span></span>
-                                                        <span className="text-gray-900 text-right flex shrink-0 whitespace-nowrap"><span className="w-[16px]">{r.count}</span> <span className="text-gray-400 font-medium w-[32px] tracking-tight text-right">({r.p})</span></span>
+                                                        <span className="flex items-center gap-2 truncate mr-1" title={r.label}><span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: colors[i] }}></span><span className="truncate inter font-normal">{r.label}</span></span>
+                                                        <span className="text-gray-900 text-right flex shrink-0 whitespace-nowrap"><span className="w-[16px] inter font-normal">{r.count}</span> <span className="text-gray-400 font-normal w-[32px] tracking-tight text-right inter">({r.p})</span></span>
                                                     </div>
                                                 );
                                             })}
@@ -1224,21 +1259,26 @@ const Inventory = () => {
                                 <div className="flex-[1.2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
                                     <div className="flex justify-between items-start mb-2 shrink-0">
                                         <div className="flex flex-col">
-                                            <h4 className="text-[15px] font-bold text-gray-900 canela tracking-wide leading-none">Conversion Rate</h4>
-                                            <span className="text-[32px] font-medium text-gray-900 mt-2 tracking-tight leading-none">{data?.stats?.avgConversion || '0.00'}%</span>
+                                            <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Conversion Rate</h4>
+                                            <span className="text-[32px] font-medium text-gray-900 mt-2 tracking-tight leading-none kaisei">{data?.stats?.avgConversion || '0.00'}%</span>
                                             <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} mt-2 flex items-center gap-1`}>
                                                 {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
                                                 {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium">vs last 30 days</span>
                                             </span>
                                         </div>
-                                        <div className="border border-gray-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1 text-[10px] font-bold text-gray-600 shadow-sm cursor-pointer hover:bg-gray-50">
-                                            Week <FiChevronDown className="text-[12px]" />
+                                        <div className="relative">
+                                            <select className="inter text-[10px] font-normal text-gray-600 bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[80px]">
+                                                <option>Day</option>
+                                                <option selected>Week</option>
+                                                <option>Month</option>
+                                            </select>
+                                            <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[12px]" />
                                         </div>
                                     </div>
                                     <div className="flex-1 flex items-end justify-between px-1 mt-1 relative min-h-0">
                                         {/* Axes */}
-                                        <div className="absolute inset-y-0 left-0 flex flex-col justify-between pt-1 pb-[18px] text-[9px] text-gray-400 font-medium z-10 w-4 pr-1 text-right">
+                                        <div className="absolute inset-y-0 left-0 flex flex-col justify-between pt-1 pb-[18px] inter text-[10px] text-gray-400 font-normal z-10 w-4 pr-1 text-right">
                                             <span>9%</span><span>6%</span><span>3%</span><span>0%</span>
                                         </div>
                                         {/* Bars Container */}
@@ -1249,7 +1289,7 @@ const Inventory = () => {
                                                 return (
                                                     <div key={i} className="flex flex-col items-center justify-end h-full group cursor-default relative w-full px-1.5">
                                                         {i === (data.analytics.performanceTrend.length - 1) && (
-                                                            <div className="absolute -top-6 bg-gray-900 text-white text-[9px] px-1.5 py-0.5 rounded font-bold shadow-md z-20 tooltip-arrow">{conv.toFixed(1)}%</div>
+                                                            <div className="absolute -top-6 bg-gray-900 text-white inter text-[10px] px-1.5 py-0.5 rounded font-bold shadow-md z-20 tooltip-arrow">{conv.toFixed(1)}%</div>
                                                         )}
                                                         <div className={`w-3.5 rounded-t group-hover:bg-gray-800 transition-colors relative z-10 ${i === (data.analytics.performanceTrend.length - 1) ? 'bg-gray-900' : 'bg-[#D48D2A]'}`} style={{ height: `${h}%` }}></div>
                                                     </div>
@@ -1257,7 +1297,7 @@ const Inventory = () => {
                                             })}
                                         </div>
                                         {/* X Axis */}
-                                        <div className="absolute inset-x-0 bottom-0 flex justify-between ml-[32px] text-[9px] font-medium text-gray-400 pb-0.5 pointer-events-none pr-1">
+                                        <div className="absolute inset-x-0 bottom-0 flex justify-between ml-[32px] inter text-[10px] font-normal text-gray-400 pb-0.5 pointer-events-none pr-1">
                                             {(data?.analytics?.performanceTrend || []).map((w, i) => <span key={i}>{w.week}</span>)}
                                         </div>
                                     </div>
@@ -1268,14 +1308,14 @@ const Inventory = () => {
                             <div className="flex gap-5 flex-[0.8] min-h-[140px] shrink-0">
                                 <div className="flex-[2] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 pb-1">
-                                        <h4 className="text-[16px] font-bold text-gray-900 canela tracking-wide leading-none mt-1">Recent Activity</h4>
+                                        <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal mt-1">Recent Activity</h4>
                                         <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase tracking-widest whitespace-nowrap mt-1">View all activity</button>
                                     </div>
                                     <div className="space-y-[8px] flex-1 overflow-auto custom-scrollbar pr-2 mt-2">
                                         {(data?.notifications || []).slice(0, 3).map((notif, idx) => (
                                             <div key={idx} className="flex justify-between items-center text-[12px] group hover:bg-gray-50 -mx-2 px-2 py-1.5 rounded-lg transition-colors">
-                                                <div className="flex items-center gap-3 text-gray-600 truncate"><FiActivity className="text-[#D48D2A] shrink-0 text-[14px]" /> <span className="font-normal text-gray-800 truncate">{notif.message}</span></div>
-                                                <span className="text-gray-400 font-medium shrink-0 ml-2">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                <div className="flex items-center gap-3 text-gray-600 truncate"><FiActivity className="text-[#D48D2A] shrink-0 text-[14px]" /> <span className="font-normal text-gray-800 truncate inter">{notif.message}</span></div>
+                                                <span className="text-gray-400 font-normal inter shrink-0 ml-2">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                             </div>
                                         ))}
                                         {(!data?.notifications || data.notifications.length === 0) && (
@@ -1285,28 +1325,28 @@ const Inventory = () => {
                                 </div>
                                 <div className="flex-[1.1] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between h-full relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-1 pb-1 mt-1">
-                                        <h4 className="text-[16px] font-bold text-gray-900 canela tracking-wide leading-none">Assets Overview</h4>
+                                        <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Assets Overview</h4>
                                         <button onClick={() => setActiveTab('inventory')} className="text-[10px] font-bold text-gray-500 border border-gray-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)] bg-white px-3 py-1.5 rounded-[8px] transition-colors hover:bg-gray-50 uppercase whitespace-nowrap">Manage Assets</button>
                                     </div>
                                     <div className="flex justify-between items-start mt-4 px-1 pb-2">
                                         <div className="flex flex-col text-left flex-1 border-r border-gray-100 pr-2">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5 whitespace-nowrap">Total Assets</span>
-                                            <span className="text-[26px] font-medium text-gray-900 leading-none">{data?.stats?.totalAssets || 0}</span>
+                                            <span className="inter text-[10px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1.5 whitespace-nowrap">Total Assets</span>
+                                            <span className="text-[26px] font-bold text-gray-900 leading-none kaisei">{data?.stats?.totalAssets || 0}</span>
                                             <span className="inter text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-2 tracking-tight"><FiTrendingUp className="text-[11px]" /> {data?.stats?.trends?.views?.current > 0 ? 'Active' : 'Idle'}</span>
                                         </div>
                                         <div className="flex flex-col text-left flex-1 pl-4 border-r border-gray-100 pr-2">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5 whitespace-nowrap">Live Assets</span>
-                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">{data?.stats?.activeCount || 0}</span>
+                                            <span className="inter text-[10px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1.5 whitespace-nowrap">Live Assets</span>
+                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-2 kaisei">{data?.stats?.activeCount || 0}</span>
                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-3.5 shadow-sm shadow-emerald-500/20"></div>
                                         </div>
                                         <div className="flex flex-col text-left flex-[0.8] pl-4 border-r border-gray-100 pr-2">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5">Drafts</span>
-                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">0</span>
+                                            <span className="inter text-[10px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1.5">Drafts</span>
+                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-2 kaisei">0</span>
                                             <div className="w-1.5 h-1.5 rounded-full bg-[#D48D2A] mt-3.5 shadow-sm shadow-[#D48D2A]/20"></div>
                                         </div>
                                         <div className="flex flex-col text-left flex-[0.8] pl-4">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] mb-1.5">Sold</span>
-                                            <span className="text-[26px] font-medium text-gray-900 leading-none mt-2">{data?.stats?.closedCount || 0}</span>
+                                            <span className="inter text-[10px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1.5">Sold</span>
+                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-2 kaisei">{data?.stats?.closedCount || 0}</span>
                                             <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-3.5 border border-gray-200"></div>
                                         </div>
                                     </div>
