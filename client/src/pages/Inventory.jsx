@@ -970,131 +970,125 @@ const Inventory = () => {
                 </header>
 
                 {/* TAB CONTENT */}
-                <main className={`p-8 pt-6 h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar`}>
+                <main className={`px-6 pb-6 pt-1 h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar`}>
 
                     {/* DASHBOARD TAB */}
                     {activeTab === 'dashboard' && (
-                        <div className="flex flex-col gap-6 animate-in fade-in duration-700 pb-8">
-                            {/* Header Row */}
-                            <div className="flex justify-between items-end shrink-0 mb-0">
-                                <div>
-                                    {/* Removed Welcome message from here as it's now in header */}
-                                </div>                            </div>
-
+                        <div className="flex flex-col gap-4 animate-in fade-in duration-700 pb-6">
                             {/* Top 4 KPI Cards */}
-                            <div className="flex gap-5 shrink-0 h-[165px]">
+                            <div className="flex gap-4 shrink-0 h-[145px]">
                                 {/* Card 1: Total Views */}
-                                <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
+                                <div style={{ width: '374px', height: '145px' }} className="bg-white rounded-2xl p-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Views</span>
-                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.views?.current || 0)}</span>
-                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.views?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1.5`}>
+                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-1 kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.views?.current || 0)}</span>
+                                            <span className={`inter text-[9px] font-bold ${Number(data?.stats?.trends?.views?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1`}>
                                                 {Number(data?.stats?.trends?.views?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
                                                 {Math.abs(data?.stats?.trends?.views?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium">vs last 30 days</span>
                                             </span>
                                         </div>
-                                        <div className="w-10 h-10 rounded-xl bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0"><FiEye className="text-[18px]" /></div>
+                                        <div className="w-9 h-9 rounded-xl bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0"><FiEye className="text-[16px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[63px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[55px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
                                         <path d={generateSparkline(data?.stats?.dailyTrends, 'views')} fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(212, 141, 42, 0.4))' }} />
                                     </svg>
                                 </div>
 
                                 {/* Card 2: Total Leads */}
-                                <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
+                                <div style={{ width: '374px', height: '145px' }} className="bg-white rounded-2xl p-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Leads</span>
-                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.leads?.current || 0)}</span>
-                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1.5`}>
+                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-1 kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.leads?.current || 0)}</span>
+                                            <span className={`inter text-[9px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1`}>
                                                 {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
                                                 {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium">vs last 30 days</span>
                                             </span>
                                         </div>
-                                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 justify-center flex items-center shrink-0"><FiUser className="text-[18px]" /></div>
+                                        <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 justify-center flex items-center shrink-0"><FiUser className="text-[16px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[63px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[55px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
                                         <path d={generateSparkline(data?.stats?.dailyTrends, 'leads')} fill="none" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(37, 99, 235, 0.4))' }} />
                                     </svg>
                                 </div>
 
                                 {/* Card 3: Saved / Shortlisted */}
-                                <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
+                                <div style={{ width: '374px', height: '145px' }} className="bg-white rounded-2xl p-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Saved / Shortlisted</span>
-                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">{data?.stats?.trends?.saved?.current || 0}</span>
-                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.saved?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1.5`}>
+                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-1 kaisei tracking-tight">{data?.stats?.trends?.saved?.current || 0}</span>
+                                            <span className={`inter text-[9px] font-bold ${Number(data?.stats?.trends?.saved?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1`}>
                                                 {Number(data?.stats?.trends?.saved?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
                                                 {Math.abs(data?.stats?.trends?.saved?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium">vs last 30 days</span>
                                             </span>
                                         </div>
-                                        <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 justify-center flex items-center shrink-0"><FiHeart className="text-[18px]" /></div>
+                                        <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 justify-center flex items-center shrink-0"><FiHeart className="text-[16px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[63px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[55px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
                                         <path d={generateSparkline(data?.stats?.dailyTrends, 'saved')} fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(16, 185, 129, 0.4))' }} />
                                     </svg>
                                 </div>
 
                                 {/* Card 4: Est. Lead Value */}
-                                <div style={{ width: '374px', height: '165px' }} className="bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
+                                <div style={{ width: '374px', height: '145px' }} className="bg-white rounded-2xl p-5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group shrink-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
                                             <span className="inter text-[8.5px] font-medium uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Est. Lead Value</span>
-                                            <span className="text-[28px] font-bold text-gray-900 leading-none mt-1.5 kaisei tracking-tight">${((data?.stats?.trends?.value?.current || 0)/1000000).toFixed(2)}M</span>
-                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.value?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1.5`}>
+                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-1 kaisei tracking-tight">${((data?.stats?.trends?.value?.current || 0)/1000000).toFixed(2)}M</span>
+                                            <span className={`inter text-[9px] font-bold ${Number(data?.stats?.trends?.value?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-1`}>
                                                 {Number(data?.stats?.trends?.value?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
                                                 {Math.abs(data?.stats?.trends?.value?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium">vs last 30 days</span>
                                             </span>
                                         </div>
-                                        <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 justify-center flex items-center shrink-0"><FiTrendingUp className="text-[18px]" /></div>
+                                        <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 justify-center flex items-center shrink-0"><FiTrendingUp className="text-[16px]" /></div>
                                     </div>
-                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[63px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[313px] h-[55px] select-none pointer-events-none opacity-80" viewBox="0 0 100 20" preserveAspectRatio="none">
                                         <path d={generateSparkline(data?.stats?.dailyTrends, 'value')} fill="none" stroke="#8B5CF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(139, 92, 246, 0.4))' }} />
                                     </svg>
                                 </div>
                             </div>
 
                             {/* Middle Row (Flex-1 for expansion) */}
-                            <div className="flex gap-5 h-[329px] shrink-0">
+                            <div className="flex gap-4 h-[290px] shrink-0">
                                 {/* Left Line Chart */}
-                                <div style={{ width: '964px', height: '329px' }} className="bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden shrink-0">
-                                    <div className="flex justify-between items-center mb-2 shrink-0 relative z-10">
-                                        <div className="flex flex-col gap-2">
-                                            <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Views vs Leads Over Time</h4>
+                                <div style={{ width: '964px', height: '290px' }} className="bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden shrink-0">
+                                    <div className="flex justify-between items-center mb-1.5 shrink-0 relative z-10">
+                                        <div className="flex flex-col gap-1.5">
+                                            <h4 className="inter text-[14px] font-semibold text-gray-900 leading-none tracking-normal">Views vs Leads Over Time</h4>
                                             <div className="flex gap-4">
-                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#D48D2A]"></div><span className="inter text-[10px] font-normal text-gray-500 capitalize leading-none tracking-normal">Views</span></div>
-                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#1E3B70]"></div><span className="inter text-[10px] font-normal text-gray-500 capitalize leading-none tracking-normal">Leads</span></div>
+                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#D48D2A]"></div><span className="inter text-[9px] font-normal text-gray-500 capitalize leading-none tracking-normal">Views</span></div>
+                                                <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded-full bg-[#1E3B70]"></div><span className="inter text-[9px] font-normal text-gray-500 capitalize leading-none tracking-normal">Leads</span></div>
                                             </div>
                                         </div>
                                         <div className="relative">
                                             <select 
                                                 value={chartInterval} 
                                                 onChange={(e) => setChartInterval(e.target.value)}
-                                                className="inter text-[10px] font-normal text-gray-600 bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[80px]"
+                                                className="inter text-[9px] font-normal text-gray-600 bg-white border border-gray-200 rounded-lg pl-2 pr-7 py-1 outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[70px]"
                                             >
                                                 <option value="Day">Day</option>
                                                 <option value="Week">Week</option>
                                                 <option value="Month">Month</option>
                                             </select>
-                                            <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[12px]" />
+                                            <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
                                         </div>
                                         </div>
 
                                         <div className="flex-1 relative mt-[1px] min-h-0 w-full">
-                                            <div className="absolute inset-0 pb-6 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-2">
+                                            <div className="absolute inset-0 pb-5 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-2">
                                                 {[100, 75, 50, 25, 0].map((val, i) => (
                                                     <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
-                                                        <span className="absolute -left-[30px] inter text-[10px] text-gray-400 font-normal w-[24px] text-right mt-0 bg-white leading-none tracking-normal">{val}</span>
+                                                        <span className="absolute -left-[30px] inter text-[9px] text-gray-400 font-normal w-[24px] text-right mt-0 bg-white leading-none tracking-normal">{val}</span>
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="absolute inset-x-0 bottom-0 pl-10 pr-4 h-6 flex justify-between items-end inter text-[10px] font-normal text-gray-400 pb-1 tracking-normal leading-none">
+                                            <div className="absolute inset-x-0 bottom-0 pl-10 pr-4 h-5 flex justify-between items-end inter text-[9px] font-normal text-gray-400 pb-1 tracking-normal leading-none">
                                                 {(() => {
                                                     const rawData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
                                                     const points = [];
@@ -1110,7 +1104,7 @@ const Inventory = () => {
                                                     ));
                                                 })()}
                                             </div>
-                                            <div className="absolute inset-0 pb-6 pl-10 pr-4 mt-2">
+                                            <div className="absolute inset-0 pb-5 pl-10 pr-4 mt-1.5">
                                                 <svg className="w-full h-full overflow-visible" viewBox="0 0 300 100" preserveAspectRatio="none">
                                                     {(() => {
                                                         const rawData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
@@ -1141,10 +1135,10 @@ const Inventory = () => {
                                         </div>                                </div>
                                 
                                 {/* Right Donut */}
-                                <div className="flex-1 bg-white rounded-2xl p-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-w-[320px]">
-                                    <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal mb-3 shrink-0">Leads by Asset Category</h4>
-                                    <div className="flex-1 flex items-center justify-center gap-8 min-h-0 pl-1 pr-3">
-                                        <div style={{ width: '229px', height: '209px' }} className="flex items-center justify-center relative shrink-0">
+                                <div className="flex-1 bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-w-[320px]">
+                                    <h4 className="inter text-[14px] font-semibold text-gray-900 leading-none tracking-normal mb-2.5 shrink-0">Leads by Asset Category</h4>
+                                    <div className="flex-1 flex items-center justify-center gap-6 min-h-0 pl-1 pr-3">
+                                        <div style={{ width: '190px', height: '170px' }} className="flex items-center justify-center relative shrink-0">
                                             <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                                                 <circle cx="50" cy="50" r="38" fill="none" stroke="#F3F4F6" strokeWidth="14" />
                                                 {(() => {
@@ -1164,65 +1158,65 @@ const Inventory = () => {
                                                 })()}
                                             </svg>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center text-center pt-1">
-                                                <span className="text-[26px] font-medium text-gray-900 leading-none kaisei">{data?.stats?.totalLeads || 0}</span>
-                                                <span className="inter text-[9px] capitalize text-gray-500 font-medium tracking-wide mt-1">Total Leads</span>
+                                                <span className="text-[22px] font-medium text-gray-900 leading-none kaisei">{data?.stats?.totalLeads || 0}</span>
+                                                <span className="inter text-[8px] capitalize text-gray-500 font-medium tracking-wide mt-1">Total Leads</span>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col justify-center gap-3 w-[140px]">
+                                        <div className="flex flex-col justify-center gap-2.5 w-[130px]">
                                             {(data?.analytics?.leadsByCategory || []).map((r, i) => {
                                                 const colors = ['#D48D2A', '#1E3B70', '#10B981', '#9CA3AF'];
                                                 return (
-                                                    <div key={i} className="flex items-center justify-between inter text-[10px] font-medium text-gray-600">
-                                                        <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: colors[i] }}></span>{r.label}</span>
-                                                        <span className="text-gray-900 truncate pl-1 flex gap-1.5"><span className="w-4 text-right">{r.count}</span> <span className="text-gray-400 font-normal w-10 text-right">({r.p})</span></span>
+                                                    <div key={i} className="flex items-center justify-between inter text-[9px] font-medium text-gray-600">
+                                                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[i] }}></span>{r.label}</span>
+                                                        <span className="text-gray-900 truncate pl-1 flex gap-1"><span className="w-3 text-right">{r.count}</span> <span className="text-gray-400 font-normal w-9 text-right">({r.p})</span></span>
                                                     </div>
                                                 );
                                             })}
                                         </div>
                                     </div>
-                                    <div className="flex justify-end pt-2 shrink-0">
-                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[12px] font-medium text-[#D48D2A] hover:text-[#B37622] transition-colors flex items-center gap-1.5 tracking-normal">
-                                            View Full Report <FiArrowRight className="text-[13px]" />
+                                    <div className="flex justify-end pt-1 shrink-0">
+                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[11px] font-medium text-[#D48D2A] hover:text-[#B37622] transition-colors flex items-center gap-1 tracking-normal">
+                                            View Full Report <FiArrowRight className="text-[12px]" />
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Third Row */}
-                            <div className="flex gap-5 flex-1 min-h-[190px]">
+                            <div className="flex gap-4 h-[220px] shrink-0">
                                 {/* Top Assets Table */}
-                                <div className="w-[470px] h-[248px] shrink-0 bg-white rounded-2xl p-5 px-6 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h4 className="inter text-[16px] font-bold text-gray-900 leading-none tracking-normal">Top Performing Assets</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[10px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
+                                <div className="w-[470px] h-[220px] shrink-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h4 className="inter text-[14px] font-bold text-gray-900 leading-none tracking-normal">Top Performing Assets</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[9px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
                                     </div>
-                                    <div className="flex-1 overflow-hidden -mx-2 px-2">
+                                    <div className="flex-1 overflow-hidden -mx-1 px-1">
                                         <table className="w-full text-left table-fixed">
                                             <thead className="sticky top-0 bg-white z-10 w-full">
                                                 <tr>
-                                                    <th className="pb-2 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-7/12">Asset</th>
-                                                    <th className="pb-2 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-2/12 text-center">Views</th>
-                                                    <th className="pb-2 inter text-[10px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right">Change</th>
+                                                    <th className="pb-1.5 inter text-[9px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-7/12">Asset</th>
+                                                    <th className="pb-1.5 inter text-[9px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-2/12 text-center">Views</th>
+                                                    <th className="pb-1.5 inter text-[9px] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right">Change</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-gray-100 text-[11px] font-bold text-gray-600">
+                                            <tbody className="divide-y divide-gray-100 text-[10px] font-bold text-gray-600">
                                                 {(data?.stats?.topAssets || []).slice(0, 3).map((item, i) => (
                                                     <tr key={i} className="hover:bg-gray-50/30 transition-colors">
-                                                        <td className="py-2 flex items-center gap-4 truncate">
-                                                            <div className="w-[44px] h-[38px] rounded-lg bg-[#F3EBE3] shrink-0 flex items-center justify-center overflow-hidden">
+                                                        <td className="py-1.5 flex items-center gap-3 truncate">
+                                                            <div className="w-[38px] h-[32px] rounded-lg bg-[#F3EBE3] shrink-0 flex items-center justify-center overflow-hidden">
                                                                 {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <FiImage className="text-gray-300" />}
                                                             </div>
-                                                            <span className="inter text-gray-900 truncate overflow-hidden whitespace-nowrap text-[12px] font-medium leading-none tracking-normal">{item.name}</span>
+                                                            <span className="inter text-gray-900 truncate overflow-hidden whitespace-nowrap text-[11px] font-medium leading-none tracking-normal">{item.name}</span>
                                                         </td>
-                                                        <td className="py-2 text-center text-gray-700 font-medium text-[12px] kaisei leading-none tracking-normal">{numberWithCommas(item.views)}</td>
-                                                        <td className={`py-2 text-right font-medium tracking-tight inter text-[12px] ${item.change.includes('-') ? 'text-red-500' : 'text-[#10B981]'}`}>
-                                                            {!item.change.includes('-') && <span className="mr-1">↑</span>}
+                                                        <td className="py-1.5 text-center text-gray-700 font-medium text-[11px] kaisei leading-none tracking-normal">{numberWithCommas(item.views)}</td>
+                                                        <td className={`py-1.5 text-right font-medium tracking-tight inter text-[11px] ${item.change.includes('-') ? 'text-red-500' : 'text-[#10B981]'}`}>
+                                                            {!item.change.includes('-') && <span className="mr-0.5">↑</span>}
                                                             {item.change.startsWith('+') ? item.change : (item.change.includes('-') ? item.change : `+${item.change}`)}
                                                         </td>
                                                     </tr>
                                                 ))}
                                                 {(!data?.stats?.topAssets || data.stats.topAssets.length === 0) && (
-                                                    <tr><td colSpan="3" className="py-8 text-center text-gray-400 text-xs font-medium">No activity data available yet</td></tr>
+                                                    <tr><td colSpan="3" className="py-6 text-center text-gray-400 text-xs font-medium">No activity data available yet</td></tr>
                                                 )}
                                             </tbody>
                                         </table>
@@ -1230,13 +1224,13 @@ const Inventory = () => {
                                 </div>
 
                                 {/* Leads Source Donut */}
-                                <div className="flex-1 min-w-0 h-[248px] bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                <div className="flex-1 min-w-0 h-[220px] bg-white rounded-2xl p-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
                                     <div className="flex justify-between items-center mb-0">
-                                        <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Leads Source</h4>
-                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[10px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
+                                        <h4 className="inter text-[14px] font-semibold text-gray-900 leading-none tracking-normal">Leads Source</h4>
+                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[9px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
                                     </div>
-                                    <div className="flex-1 flex items-center justify-between z-10 px-0 mt-2">
-                                        <div style={{ width: '229px', height: '209px' }} className="flex items-center justify-center relative shrink-0 -ml-4">
+                                    <div className="flex-1 flex items-center justify-between z-10 px-0 mt-1">
+                                        <div style={{ width: '190px', height: '170px' }} className="flex items-center justify-center relative shrink-0 -ml-4">
                                             <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                                                 <circle cx="50" cy="50" r="35" fill="none" stroke="#F3F4F6" strokeWidth="20" />
                                                 {(() => {
@@ -1256,13 +1250,13 @@ const Inventory = () => {
                                                 })()}
                                             </svg>
                                         </div>
-                                        <div className="w-1/2 flex flex-col justify-center gap-2.5 pl-3 z-10 pb-2">
+                                        <div className="w-1/2 flex flex-col justify-center gap-2 pl-2 z-10 pb-1">
                                             {(data?.analytics?.leadsBySource || []).map((r, i) => {
                                                 const colors = ['#D48D2A', '#1E3B70', '#10B981', '#8B5CF6'];
                                                 return (
-                                                    <div key={i} className="flex items-center justify-between text-[10px] font-bold text-gray-600 w-[140px]">
-                                                        <span className="flex items-center gap-2 truncate mr-1" title={r.label}><span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: colors[i] }}></span><span className="truncate inter font-normal">{r.label}</span></span>
-                                                        <span className="text-gray-900 text-right flex shrink-0 whitespace-nowrap"><span className="w-[16px] inter font-normal">{r.count}</span> <span className="text-gray-400 font-normal w-[32px] tracking-tight text-right inter">({r.p})</span></span>
+                                                    <div key={i} className="flex items-center justify-between text-[9px] font-bold text-gray-600 w-[130px]">
+                                                        <span className="flex items-center gap-1.5 truncate mr-1" title={r.label}><span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: colors[i] }}></span><span className="truncate inter font-normal">{r.label}</span></span>
+                                                        <span className="text-gray-900 text-right flex shrink-0 whitespace-nowrap"><span className="w-[14px] inter font-normal">{r.count}</span> <span className="text-gray-400 font-normal w-[30px] tracking-tight text-right inter">({r.p})</span></span>
                                                     </div>
                                                 );
                                             })}
@@ -1271,12 +1265,12 @@ const Inventory = () => {
                                 </div>
 
                                 {/* Conversion Rate Bars */}
-                                <div className="flex-[1.2] min-w-0 h-[248px] bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
-                                    <div className="flex justify-between items-start mb-2 shrink-0">
+                                <div className="flex-[1.2] min-w-0 h-[220px] bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
+                                    <div className="flex justify-between items-start mb-1 shrink-0">
                                         <div className="flex flex-col">
-                                            <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Conversion Rate</h4>
-                                            <span className="text-[32px] font-medium text-gray-900 mt-2 tracking-tight leading-none kaisei">{data?.stats?.avgConversion || '0.00'}%</span>
-                                            <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} mt-2 flex items-center gap-1`}>
+                                            <h4 className="inter text-[14px] font-semibold text-gray-900 leading-none tracking-normal">Conversion Rate</h4>
+                                            <span className="text-[28px] font-medium text-gray-900 mt-1 tracking-tight leading-none kaisei">{data?.stats?.avgConversion || '0.00'}%</span>
+                                            <span className={`inter text-[9px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} mt-1 flex items-center gap-1`}>
                                                 {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[11px]" /> : <FiTrendingDown className="text-[11px]" />} 
                                                 {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium">vs last 30 days</span>
@@ -1286,27 +1280,27 @@ const Inventory = () => {
                                             <select 
                                                 value={convInterval}
                                                 onChange={(e) => setConvInterval(e.target.value)}
-                                                className="inter text-[10px] font-normal text-gray-600 bg-white border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[80px]"
+                                                className="inter text-[9px] font-normal text-gray-600 bg-white border border-gray-200 rounded-lg pl-2 pr-7 py-1 outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[70px]"
                                             >
                                                 <option value="Day">Day</option>
                                                 <option value="Week">Week</option>
                                                 <option value="Month">Month</option>
                                             </select>
-                                            <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[12px]" />
+                                            <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
                                         </div>
                                     </div>
-                                    <div className="flex-1 flex flex-col mt-4 relative min-h-0">
+                                    <div className="flex-1 flex flex-col mt-2 relative min-h-0">
                                         {/* Grid and Y-Axis */}
-                                        <div className="absolute inset-0 pb-6 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none">
+                                        <div className="absolute inset-0 pb-5 pl-8 flex flex-col justify-between border-b border-gray-50 pointer-events-none">
                                             {[100, 75, 50, 25, 0].map((val, i) => (
                                                 <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
-                                                    <span className="absolute -left-[30px] inter text-[10px] text-gray-400 font-normal w-[24px] text-right bg-white leading-none tracking-normal z-10">{val}%</span>
+                                                    <span className="absolute -left-[30px] inter text-[9px] text-gray-400 font-normal w-[24px] text-right bg-white leading-none tracking-normal z-10">{val}%</span>
                                                 </div>
                                             ))}
                                         </div>
 
                                         {/* X-Axis Labels */}
-                                        <div className="absolute inset-x-0 bottom-0 pl-8 pr-1 h-6 flex justify-between items-end inter text-[9px] font-normal text-gray-400 pb-1 tracking-normal leading-none z-20">
+                                        <div className="absolute inset-x-0 bottom-0 pl-8 pr-1 h-5 flex justify-between items-end inter text-[8px] font-normal text-gray-400 pb-1 tracking-normal leading-none z-20">
                                             {(() => {
                                                 const rawData = (data?.stats?.dailyTrends || []).slice(convInterval === 'Day' ? -3 : convInterval === 'Week' ? -7 : -30);
                                                 const trendData = [];
@@ -1324,7 +1318,7 @@ const Inventory = () => {
                                         </div>
 
                                         {/* Bars Container */}
-                                        <div className="flex-1 flex justify-between items-end h-full ml-8 pb-6 pt-4 relative z-10 gap-[8px]">
+                                        <div className="flex-1 flex justify-between items-end h-full ml-8 pb-5 pt-3 relative z-10 gap-[8px]">
                                             {(() => {
                                                 const rawData = (data?.stats?.dailyTrends || []).slice(convInterval === 'Day' ? -3 : convInterval === 'Week' ? -7 : -30);
                                                 const trendData = [];
@@ -1335,7 +1329,7 @@ const Inventory = () => {
                                                     }
                                                 }
 
-                                                if (trendData.length === 0) return <div className="flex-1 h-full flex items-center justify-center text-gray-300 inter text-[10px]">No trend data</div>;
+                                                if (trendData.length === 0) return <div className="flex-1 h-full flex items-center justify-center text-gray-300 inter text-[9px]">No trend data</div>;
                                                 
                                                 return trendData.map((d, i) => {
                                                     const conv = d.views > 0 ? (d.leads / d.views) * 100 : 0;
@@ -1346,7 +1340,7 @@ const Inventory = () => {
                                                     return (
                                                         <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group cursor-default relative">
                                                             {(isLast || i === 5) && (
-                                                                <div className="absolute -top-5 bg-gray-900 text-white inter text-[8px] px-1.5 py-0.5 rounded-md font-bold shadow-md z-20 whitespace-nowrap">
+                                                                <div className="absolute -top-4 bg-gray-900 text-white inter text-[7px] px-1.5 py-0.5 rounded-md font-bold shadow-md z-20 whitespace-nowrap">
                                                                     {conv.toFixed(1)}%
                                                                 </div>
                                                             )}
@@ -1364,50 +1358,50 @@ const Inventory = () => {
                             </div>
 
                             {/* Fourth Row: Recent Activity & Assets Overview */}
-                            <div className="flex gap-6">
-                                <div className="flex-1 h-[160px] bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden">
-                                    <div className="flex justify-between items-center mb-1 pb-1">
-                                        <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal mt-1">Recent Activity</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[10px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal mt-1">View all</button>
+                            <div className="flex gap-4">
+                                <div className="flex-1 h-[140px] bg-white rounded-2xl p-3.5 px-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-0.5 pb-0.5">
+                                        <h4 className="inter text-[14px] font-semibold text-gray-900 leading-none tracking-normal mt-1">Recent Activity</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[9px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal mt-1">View all</button>
                                     </div>
-                                    <div className="space-y-[8px] flex-1 overflow-auto custom-scrollbar pr-2 mt-2">
+                                    <div className="space-y-[6px] flex-1 overflow-auto custom-scrollbar pr-2 mt-1.5">
                                         {(data?.notifications || []).slice(0, 3).map((notif, idx) => (
-                                            <div key={idx} className="flex justify-between items-center text-[12px] group hover:bg-gray-50 -mx-2 px-2 py-1.5 rounded-lg transition-colors">
-                                                <div className="flex items-center gap-3 text-gray-600 truncate"><FiActivity className="text-[#D48D2A] shrink-0 text-[14px]" /> <span className="font-normal text-gray-800 truncate inter">{notif.message}</span></div>
+                                            <div key={idx} className="flex justify-between items-center text-[11px] group hover:bg-gray-50 -mx-1.5 px-1.5 py-1 rounded-lg transition-colors">
+                                                <div className="flex items-center gap-2.5 text-gray-600 truncate"><FiActivity className="text-[#D48D2A] shrink-0 text-[12px]" /> <span className="font-normal text-gray-800 truncate inter">{notif.message}</span></div>
                                                 <span className="text-gray-400 font-normal inter shrink-0 ml-2">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                             </div>
                                         ))}
                                         {(!data?.notifications || data.notifications.length === 0) && (
-                                            <div className="text-center py-4 text-gray-400 text-xs">No recent activity recorded</div>
+                                            <div className="text-center py-3 text-gray-400 text-xs">No recent activity recorded</div>
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="flex-[1.8] h-[160px] min-w-0 bg-white rounded-2xl p-4 px-5 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden">
-                                    <div className="flex justify-between items-center mb-1 pb-1 mt-1">
-                                        <h4 className="inter text-[15px] font-semibold text-gray-900 leading-none tracking-normal">Assets Overview</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[10px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">Manage Assets</button>
+                                <div className="flex-[1.8] h-[140px] min-w-0 bg-white rounded-2xl p-3.5 px-4 flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-0.5 pb-0.5 mt-0.5">
+                                        <h4 className="inter text-[14px] font-semibold text-gray-900 leading-none tracking-normal">Assets Overview</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[9px] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">Manage Assets</button>
                                     </div>
-                                    <div className="flex justify-between items-start mt-4 px-1 pb-2">
+                                    <div className="flex justify-between items-start mt-3 px-1 pb-1">
                                         <div className="flex flex-col text-left flex-1 border-r border-gray-100 pr-2">
-                                            <span className="inter text-[10px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1.5 whitespace-nowrap">Total Assets</span>
-                                            <span className="text-[26px] font-bold text-gray-900 leading-none kaisei">{data?.stats?.totalAssets || 0}</span>
-                                            <span className="inter text-[10px] font-bold text-emerald-500 flex items-center gap-1 mt-2 tracking-tight"><FiTrendingUp className="text-[11px]" /> {data?.stats?.trends?.views?.current > 0 ? 'Active' : 'Idle'}</span>
+                                            <span className="inter text-[9px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1 whitespace-nowrap">Total Assets</span>
+                                            <span className="text-[22px] font-bold text-gray-900 leading-none kaisei">{data?.stats?.totalAssets || 0}</span>
+                                            <span className="inter text-[9px] font-bold text-emerald-500 flex items-center gap-1 mt-1.5 tracking-tight"><FiTrendingUp className="text-[10px]" /> {data?.stats?.trends?.views?.current > 0 ? 'Active' : 'Idle'}</span>
                                         </div>
-                                        <div className="flex flex-col text-left flex-1 pl-4 border-r border-gray-100 pr-2">
-                                            <span className="inter text-[10px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1.5 whitespace-nowrap">Live Assets</span>
-                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-2 kaisei">{data?.stats?.activeCount || 0}</span>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-3.5 shadow-sm shadow-emerald-500/20"></div>
+                                        <div className="flex flex-col text-left flex-1 pl-3.5 border-r border-gray-100 pr-2">
+                                            <span className="inter text-[9px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1 whitespace-nowrap">Live Assets</span>
+                                            <span className="text-[22px] font-bold text-gray-900 leading-none mt-1.5 kaisei">{data?.stats?.activeCount || 0}</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-3 shadow-sm shadow-emerald-500/20"></div>
                                         </div>
-                                        <div className="flex flex-col text-left flex-[0.8] pl-4 border-r border-gray-100 pr-2">
-                                            <span className="inter text-[10px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1.5">Drafts</span>
-                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-2 kaisei">0</span>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[#D48D2A] mt-3.5 shadow-sm shadow-[#D48D2A]/20"></div>
+                                        <div className="flex flex-col text-left flex-[0.8] pl-3.5 border-r border-gray-100 pr-2">
+                                            <span className="inter text-[9px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1">Drafts</span>
+                                            <span className="text-[22px] font-bold text-gray-900 leading-none mt-1.5 kaisei">0</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[#D48D2A] mt-3 shadow-sm shadow-[#D48D2A]/20"></div>
                                         </div>
-                                        <div className="flex flex-col text-left flex-[0.8] pl-4">
-                                            <span className="inter text-[10px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1.5">Sold</span>
-                                            <span className="text-[26px] font-bold text-gray-900 leading-none mt-2 kaisei">{data?.stats?.closedCount || 0}</span>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-3.5 border border-gray-200"></div>
+                                        <div className="flex flex-col text-left flex-[0.8] pl-3.5">
+                                            <span className="inter text-[9px] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-1">Sold</span>
+                                            <span className="text-[22px] font-bold text-gray-900 leading-none mt-1.5 kaisei">{data?.stats?.closedCount || 0}</span>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-3 border border-gray-200"></div>
                                         </div>
                                     </div>
                                 </div>
