@@ -1499,10 +1499,10 @@ const Inventory = () => {
                                     });
                                     const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
                                     return paginated.map((item) => {
-                                    const categoryName = (item.category === 'CarAsset' || item.category === 'vehicles') ? 'CARS' :
-                                        (item.category === 'YachtAsset' || item.category === 'yachts') ? 'YACHTS' :
+                                    const categoryName = (item.category === 'CarAsset' || item.category === 'vehicles' || item.brand || item.specification?.model) ? 'CARS' :
+                                        (item.category === 'YachtAsset' || item.category === 'yachts' || item.yachtName) ? 'YACHTS' :
                                         (item.category === 'BikeAsset' || item.category === 'bikes') ? 'BIKES' :
-                                            (item.category === 'EstateAsset' || item.category === 'estates') ? 'REAL ESTATE' :
+                                            (item.category === 'EstateAsset' || item.category === 'estates' || item.propertyName) ? 'REAL ESTATE' :
                                                 item.category?.replace('Asset', 'S')?.toUpperCase() || 'ASSET';
 
                                     return (
@@ -1576,9 +1576,9 @@ const Inventory = () => {
                             {(() => {
                                 const filtered = (data.inventory || []).filter(item => {
                                     const matchesCategory = inventoryCategoryFilter === 'All Categories' ||
-                                        ((item.category === 'CarAsset' || item.category === 'vehicles') && inventoryCategoryFilter === 'Cars') ||
-                                        ((item.category === 'YachtAsset' || item.category === 'yachts') && inventoryCategoryFilter === 'Yachts') ||
-                                        ((item.category === 'EstateAsset' || item.category === 'estates') && inventoryCategoryFilter === 'Real Estate') ||
+                                        ((item.category === 'CarAsset' || item.category === 'vehicles' || item.brand || item.specification?.model) && inventoryCategoryFilter === 'Cars') ||
+                                        ((item.category === 'YachtAsset' || item.category === 'yachts' || item.yachtName) && inventoryCategoryFilter === 'Yachts') ||
+                                        ((item.category === 'EstateAsset' || item.category === 'estates' || item.propertyName) && inventoryCategoryFilter === 'Real Estate') ||
                                         ((item.category === 'BikeAsset' || item.category === 'bikes') && inventoryCategoryFilter === 'Bikes');
     
                                     const matchesStatus = inventoryStatusFilter === 'All Status' ||

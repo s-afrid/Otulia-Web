@@ -126,8 +126,8 @@ const LoginPage = () => {
         )}
 
         {/* Social Buttons */}
-        <div className="space-y-3 mb-5">
-          <div className="w-[85%] mx-auto">
+        <div className="w-[85%] mx-auto space-y-3 mb-5">
+          <div className="h-[40px] w-full overflow-hidden">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
@@ -136,15 +136,14 @@ const LoginPage = () => {
               width="100%"
               text="continue_with"
               shape="rectangular"
-              style={{ gap: "4px" }}
             />
           </div>
           <button
             type="button"
-            className="w-[85%] mx-auto flex items-center justify-center gap-3 py-3 px-4 border border-gray-200 rounded-lg text-sm font-medium text-black hover:bg-gray-50 transition-colors"
+            className="w-full h-[40px] flex items-center justify-center gap-3 border border-gray-200 rounded-lg text-sm font-medium text-black hover:bg-gray-50 transition-colors"
           >
-            <FaApple className="w-5 h-5" />
-            Continue with Apple
+            <FaApple className="w-5 h-5 shrink-0" />
+            <span className="leading-none">Continue with Apple</span>
           </button>
         </div>
 
