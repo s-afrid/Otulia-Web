@@ -689,54 +689,54 @@ const Inventory = () => {
 
 
             {/* SIDEBAR */}
-            <div className="w-[12vw] min-w-[180px] max-w-[280px] h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0 z-[50] transition-all duration-300 overflow-hidden">
+            <div className="w-[clamp(180px,14vw,320px)] h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0 z-[50] transition-all duration-300 overflow-hidden">
                 {/* Logo Area */}
-                <div className="h-[8vh] min-h-[50px] flex items-center px-[1.5vw] border-b border-gray-50">
-                    <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-[2.5vh] min-h-[20px] object-contain cursor-pointer" onClick={() => navigate('/')} />
+                <div className="h-[clamp(50px,8vh,80px)] flex items-center px-[clamp(12px,1.5vw,24px)] border-b border-gray-50">
+                    <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-[clamp(20px,2.5vh,40px)] object-contain cursor-pointer" onClick={() => navigate('/')} />
                 </div>
 
-                <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto custom-scrollbar pb-8">
+                <nav className="flex-1 px-[clamp(8px,1vw,16px)] space-y-[clamp(4px,0.8vh,8px)] overflow-y-auto custom-scrollbar pb-8">
                     {navItems.map((item) => (
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
-                            className={`w-full flex items-center gap-[0.8vw] px-[1vw] py-[1.2vh] rounded-[1vh] transition-all group relative ${activeTab === item.id 
+                            className={`w-full flex items-center gap-[clamp(8px,0.8vw,16px)] px-[clamp(8px,1vw,20px)] py-[clamp(8px,1.2vh,16px)] rounded-[clamp(4px,1vh,12px)] transition-all group relative ${activeTab === item.id 
                                 ? 'bg-[#FFF8F0] text-[#D48D2A]' 
                                 : 'text-gray-500 hover:bg-gray-50'}`}
                         >
-                            <item.icon className={`text-[1.8vh] ${activeTab === item.id ? 'text-[#D48D2A]' : 'text-gray-400 group-hover:text-gray-600'}`} />
-                            <span className="inter text-[clamp(11px,1.4vh,16px)] font-semibold tracking-tight">{item.label}</span>
+                            <item.icon className={`text-[clamp(14px,1.8vh,24px)] ${activeTab === item.id ? 'text-[#D48D2A]' : 'text-gray-400 group-hover:text-gray-600'}`} />
+                            <span className="inter text-[clamp(10px,1.5vh,20px)] font-semibold tracking-tight">{item.label}</span>
                             {activeTab === item.id && (
-                                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[0.3vw] h-[2vh] bg-[#D48D2A] rounded-l-full" />
+                                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[clamp(2px,0.3vw,6px)] h-[clamp(12px,2vh,30px)] bg-[#D48D2A] rounded-l-full" />
                             )}
                         </button>
                     ))}
                 </nav>
 
-                <div className="p-[1vw] border-t border-gray-100 space-y-[1.5vh]">
+                <div className="p-[clamp(8px,1vw,16px)] border-t border-gray-100 space-y-[clamp(8px,1.5vh,20px)]">
                     {/* User Profile Snippet */}
                     <div 
-                        className="flex items-center justify-between p-[0.8vh] rounded-[1vh] hover:bg-gray-50 cursor-pointer transition-colors relative"
+                        className="flex items-center justify-between p-[clamp(4px,0.8vh,12px)] rounded-[clamp(4px,1vh,12px)] hover:bg-gray-50 cursor-pointer transition-colors relative"
                         onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                     >
-                        <div className="flex items-center gap-[0.6vw] overflow-hidden">
-                            <img src={user?.profilePicture || '/assets/user.png'} className="w-[3.5vh] h-[3.5vh] rounded-full border border-gray-200 shrink-0 object-cover" alt="Profile" />
+                        <div className="flex items-center gap-[clamp(4px,0.6vw,12px)] overflow-hidden">
+                            <img src={user?.profilePicture || '/assets/user.png'} className="w-[clamp(28px,3.5vh,48px)] h-[clamp(28px,3.5vh,48px)] rounded-full border border-gray-200 shrink-0 object-cover" alt="Profile" />
                             <div className="overflow-hidden">
-                                <p className="inter text-[clamp(10px,1.3vh,14px)] font-semibold text-gray-900 truncate leading-none">{user?.name || 'Md Riyaz'}</p>
-                                <p className="inter text-[clamp(7px,0.9vh,11px)] font-normal text-gray-400 truncate leading-none mt-[0.3vh]">{user?.plan || 'Premium Basic Plan'}</p>
+                                <p className="inter text-[clamp(10px,1.4vh,18px)] font-semibold text-gray-900 truncate leading-none">{user?.name || 'Md Riyaz'}</p>
+                                <p className="inter text-[clamp(8px,1vh,14px)] font-normal text-gray-400 truncate leading-none mt-[clamp(2px,0.3vh,6px)]">{user?.plan || 'Premium Basic Plan'}</p>
                             </div>
                         </div>
-                        <FiChevronDown className="text-gray-400 text-[1.2vh] shrink-0" />
+                        <FiChevronDown className="text-gray-400 text-[clamp(10px,1.2vh,18px)] shrink-0" />
 
                         {/* Profile Dropdown positioned above */}
                         {isProfileDropdownOpen && (
                             <div className="absolute left-0 bottom-full mb-2 w-full bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-bottom-2 duration-200 z-50">
                                 <div className="py-1">
-                                    <button onClick={(e) => { e.stopPropagation(); navigate('/profile'); }} className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2">
-                                        <FiUser className="text-lg" /> Profile Settings
+                                    <button onClick={(e) => { e.stopPropagation(); navigate('/profile'); }} className="w-full text-left px-4 py-2.5 text-[clamp(11px,1.5vh,18px)] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2">
+                                        <FiUser className="text-[clamp(16px,2vh,24px)]" /> Profile Settings
                                     </button>
-                                    <button onClick={(e) => { e.stopPropagation(); logout(); navigate('/login'); }} className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-red-600 inter hover:bg-red-50 flex items-center gap-2">
-                                        <FiLogOut className="text-lg" /> Sign Out
+                                    <button onClick={(e) => { e.stopPropagation(); logout(); navigate('/login'); }} className="w-full text-left px-4 py-2.5 text-[clamp(11px,1.5vh,18px)] font-medium text-red-600 inter hover:bg-red-50 flex items-center gap-2">
+                                        <FiLogOut className="text-[clamp(16px,2vh,24px)]" /> Sign Out
                                     </button>
                                 </div>
                             </div>
@@ -744,71 +744,71 @@ const Inventory = () => {
                     </div>
 
                     {/* Premium Card */}
-                    <div className="bg-[#FFF8F0] border border-[#F2E8DB] rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-[#FFF4E5] transition-colors mb-6 shadow-sm" onClick={() => setActiveTab('subscription')}>
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D48D2A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <div className="bg-[#FFF8F0] border border-[#F2E8DB] rounded-[clamp(8px,1.2vh,16px)] p-[clamp(8px,1.2vh,16px)] flex items-center justify-between cursor-pointer hover:bg-[#FFF4E5] transition-colors mb-[clamp(8px,1.5vh,24px)] shadow-sm" onClick={() => setActiveTab('subscription')}>
+                        <div className="flex items-center gap-[clamp(8px,1vw,16px)]">
+                            <div className="w-[clamp(24px,3.2vh,48px)] h-[clamp(24px,3.2vh,48px)] rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
+                                <svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" stroke="#D48D2A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                             </div>
                             <div className="overflow-hidden">
-                                <p className="inter text-[12px] font-semibold text-[#D48D2A] truncate leading-none">Premium Member</p>
-                                <p className="text-[9px] font-medium text-gray-500 truncate">Access exclusive features</p>
+                                <p className="inter text-[clamp(10px,1.2vh,16px)] font-semibold text-[#D48D2A] truncate leading-none">Premium Member</p>
+                                <p className="text-[clamp(8px,0.9vh,12px)] font-medium text-gray-500 truncate">Access exclusive features</p>
                             </div>
                         </div>
-                        <FiChevronDown className="text-[#D48D2A] text-sm -rotate-90 shrink-0" />
+                        <FiChevronDown className="text-[#D48D2A] text-[clamp(10px,1.2vh,18px)] -rotate-90 shrink-0" />
                     </div>
 
-                    <p className="inter text-[10px] font-semibold text-[#BFBFBF] leading-none px-2 w-full">
+                    <p className="inter text-[clamp(8px,0.9vh,12px)] font-semibold text-[#BFBFBF] leading-none px-2 w-full">
                         © 2026 OTULIA · All rights reserved.
                     </p>
                 </div>
             </div>
 
             {/* MAIN CONTENT AREA */}
-            <div className="flex-1 ml-[clamp(180px,12vw,280px)] transition-colors duration-300 bg-[#F9FAFB]">
+            <div className="flex-1 ml-[clamp(180px,14vw,320px)] transition-colors duration-300 bg-[#F9FAFB]">
 
                 {/* TOP HEADER BAR */}
-                <header className="h-[8vh] min-h-[50px] border-b flex items-center justify-between px-[2vw] sticky top-0 z-[40] transition-colors duration-300 bg-white border-gray-100">
-                    <div className="flex items-center gap-4">
+                <header className="h-[clamp(50px,8vh,80px)] border-b flex items-center justify-between px-[clamp(12px,2vw,40px)] sticky top-0 z-[40] transition-colors duration-300 bg-white border-gray-100">
+                    <div className="flex items-center gap-[clamp(8px,1vw,20px)]">
                         <div className="flex flex-col">
-                            <h2 className="text-[18px] font-bold text-gray-900 flex items-center gap-2 leading-none inter">
+                            <h2 className="text-[clamp(16px,2.2vh,28px)] font-bold text-gray-900 flex items-center gap-[clamp(4px,0.5vw,12px)] leading-none inter">
                                 {activeTab === 'settings' ? 'Profile & Company Settings' : navItems.find(n => n.id === activeTab)?.label}
                                 {activeTab === 'inventory' && (
-                                    <span className="text-[11px] font-medium text-gray-400 montserrat ml-1">
+                                    <span className="text-[clamp(10px,1.4vh,18px)] font-medium text-gray-400 montserrat ml-1">
                                         ({data?.inventory?.length || 0}/{user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5} used)
                                     </span>
                                 )}
                             </h2>
                             {activeTab === 'dashboard' && (
-                                <p className="text-[10px] font-normal text-[#999999] inter leading-none mt-1 flex items-center gap-1">
+                                <p className="text-[clamp(9px,1.2vh,16px)] font-normal text-[#999999] inter leading-none mt-[clamp(2px,0.4vh,6px)] flex items-center gap-1">
                                     Welcome back, {user?.name?.split(' ')[0] || user?.name || 'Md Riyaz'} 
-                                    <img src={wavingHand} alt="👋" className="w-3 h-3 object-contain" />
+                                    <img src={wavingHand} alt="👋" className="w-[clamp(10px,1.5vh,18px)] h-[clamp(10px,1.5vh,18px)] object-contain" />
                                 </p>
                             )}
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-[clamp(12px,1.5vw,32px)]">
                         {activeTab === 'dashboard' && (
                             <>
                                 {/* Last 30 Days Dropdown */}
-                                <div className="relative w-[148px] h-[34px]">
-                                    <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999] text-xs pointer-events-none" />
-                                    <select className="w-full h-full appearance-none bg-white border border-gray-100 rounded-lg pl-8 pr-8 text-[11px] font-normal text-[#999999] inter focus:outline-none focus:border-[#D48D2A] cursor-pointer leading-none">
+                                <div className="relative w-[clamp(120px,10vw,180px)] h-[clamp(30px,4vh,44px)]">
+                                    <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999] text-[clamp(10px,1.2vh,16px)] pointer-events-none" />
+                                    <select className="w-full h-full appearance-none bg-white border border-gray-100 rounded-[clamp(4px,0.8vh,10px)] pl-8 pr-8 text-[clamp(10px,1.4vh,18px)] font-normal text-[#999999] inter focus:outline-none focus:border-[#D48D2A] cursor-pointer leading-none">
                                         <option>Last 30 days</option>
                                         <option>Last 7 days</option>
                                         <option>Last 90 days</option>
                                         <option>This year</option>
                                     </select>
-                                    <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none text-[10px]" />
+                                    <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none text-[clamp(9px,1.2vh,16px)]" />
                                 </div>
 
                                 {/* Day/Week/Month Tabs */}
-                                <div className="flex items-center rounded-lg bg-gray-50 p-1 h-[34px]">
+                                <div className="flex items-center rounded-[clamp(4px,0.8vh,10px)] bg-gray-50 p-[clamp(2px,0.4vh,6px)] h-[clamp(30px,4vh,44px)]">
                                     {['Day', 'Week', 'Month'].map((t) => (
                                         <button
                                             key={t}
                                             onClick={() => setTimeframe(t)}
-                                            className={`px-5 h-full flex items-center justify-center text-[11px] font-normal inter leading-none transition-all rounded-md ${timeframe === t
+                                            className={`px-[clamp(12px,1.5vw,24px)] h-full flex items-center justify-center text-[clamp(10px,1.4vh,18px)] font-normal inter leading-none transition-all rounded-[clamp(3px,0.6vh,8px)] ${timeframe === t
                                                 ? 'bg-black text-white shadow-sm'
                                                 : 'text-[#999999] hover:text-gray-900'}`}
                                         >
@@ -824,29 +824,29 @@ const Inventory = () => {
                             <div className="relative">
                                 <button
                                     onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
-                                    className="w-[4.5vh] h-[4.5vh] rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-all focus:outline-none border border-gray-100"
+                                    className="w-[clamp(32px,4.5vh,60px)] h-[clamp(32px,4.5vh,60px)] rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-all focus:outline-none border border-gray-100"
                                 >
-                                    <FiBell className="text-gray-400 text-[2vh]" />
+                                    <FiBell className="text-gray-400 text-[clamp(16px,2vh,30px)]" />
                                     {data?.notifications?.length > 0 && (
-                                        <span className="absolute top-[0.8vh] right-[0.8vh] w-[1vh] h-[1vh] bg-red-500 rounded-full border border-white" />
+                                        <span className="absolute top-[15%] right-[15%] w-[clamp(6px,1vh,12px)] h-[clamp(6px,1vh,12px)] bg-red-500 rounded-full border border-white" />
                                     )}
                                 </button>
 
                                 {/* Notification Dropdown */}
                                 {isNotificationDropdownOpen && (
                                     <div
-                                        className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 py-3 animate-in fade-in slide-in-from-top-2 duration-200 z-[60]"
+                                        className="absolute right-0 top-full mt-2 w-[clamp(280px,25vw,400px)] bg-white rounded-xl shadow-xl border border-gray-100 py-3 animate-in fade-in slide-in-from-top-2 duration-200 z-[60]"
                                         onMouseLeave={() => setIsNotificationDropdownOpen(false)}
                                     >
                                         <div className="px-4 pb-2 border-b border-gray-50 flex justify-between items-center">
-                                            <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Recent Notifications</h4>
-                                            <span className="text-[10px] font-bold text-[#D48D2A]">{data?.notifications?.length || 0} New</span>
+                                            <h4 className="text-[clamp(10px,1.2vh,14px)] font-bold text-gray-900 uppercase tracking-widest">Recent Notifications</h4>
+                                            <span className="text-[clamp(9px,1.1vh,13px)] font-bold text-[#D48D2A]">{data?.notifications?.length || 0} New</span>
                                         </div>
                                         <div className="max-h-80 overflow-y-auto custom-scrollbar">
                                             {(!data?.notifications || data.notifications.length === 0) ? (
                                                 <div className="py-8 px-4 text-center">
                                                     <FiBell className="mx-auto text-gray-200 text-3xl mb-2" />
-                                                    <p className="text-xs text-gray-400 font-medium">No new lead notifications</p>
+                                                    <p className="text-[clamp(11px,1.4vh,16px)] text-gray-400 font-medium">No new lead notifications</p>
                                                 </div>
                                             ) : (
                                                 data.notifications.map((notif) => (
@@ -868,8 +868,8 @@ const Inventory = () => {
                                                                 <FiUsers className="text-sm" />
                                                             </div>
                                                             <div>
-                                                                <p className="text-xs font-bold text-gray-900 leading-tight mb-1">{notif.message}</p>
-                                                                <p className="text-[10px] text-gray-400 font-medium">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Click to view</p>
+                                                                <p className="text-[clamp(11px,1.4vh,16px)] font-bold text-gray-900 leading-tight mb-1">{notif.message}</p>
+                                                                <p className="text-[clamp(9px,1.2vh,14px)] text-gray-400 font-medium">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Click to view</p>
                                                             </div>
                                                         </div>
                                                         <button
@@ -892,7 +892,7 @@ const Inventory = () => {
                                                         setActiveTab('leads');
                                                         setIsNotificationDropdownOpen(false);
                                                     }}
-                                                    className="text-[10px] font-bold text-gray-400 hover:text-[#D48D2A] uppercase tracking-widest transition-colors"
+                                                    className="text-[clamp(9px,1.2vh,14px)] font-bold text-gray-400 hover:text-[#D48D2A] uppercase tracking-widest transition-colors"
                                                 >
                                                     View Lead Management
                                                 </button>
@@ -908,49 +908,49 @@ const Inventory = () => {
                             <button
                                 onClick={() => setIsHeaderDropdownOpen(!isHeaderDropdownOpen)}
                                 onBlur={() => setTimeout(() => setIsHeaderDropdownOpen(false), 200)}
-                                className="flex items-center gap-3 hover:opacity-80 transition-opacity focus:outline-none"
+                                className="flex items-center gap-[clamp(8px,1vw,16px)] hover:opacity-80 transition-opacity focus:outline-none"
                             >
-                                <img src={user?.profilePicture || '/assets/user.png'} className="w-[36px] h-[36px] rounded-full border border-gray-200 object-cover" alt="Profile" />
+                                <img src={user?.profilePicture || '/assets/user.png'} className="w-[clamp(30px,4vh,54px)] h-[clamp(30px,4vh,54px)] rounded-full border border-gray-200 object-cover" alt="Profile" />
                                 <div className="text-left">
-                                    <p className="text-[11px] font-semibold text-gray-900 inter leading-none mb-1">{user?.name || 'Prestige Motors'}</p>
-                                    <p className="text-[9px] text-[#999999] font-normal inter leading-none">{user?.plan || 'Professional'} Plan</p>
+                                    <p className="text-[clamp(10px,1.4vh,18px)] font-semibold text-gray-900 inter leading-none mb-1">{user?.name || 'Prestige Motors'}</p>
+                                    <p className="text-[clamp(8px,1vh,14px)] text-[#999999] font-normal inter leading-none">{user?.plan || 'Professional'} Plan</p>
                                 </div>
-                                <FiChevronDown className={`text-gray-400 text-sm transition-transform duration-200 ${isHeaderDropdownOpen ? 'rotate-180' : ''}`} />
+                                <FiChevronDown className={`text-gray-400 text-[clamp(10px,1.2vh,18px)] transition-transform duration-200 ${isHeaderDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
 
                             {/* Dropdown Menu */}
                             {isHeaderDropdownOpen && (
-                                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                                <div className="absolute right-0 top-full mt-2 w-[clamp(200px,18vw,280px)] bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
                                     <div className="px-4 py-3 border-b border-gray-50">
-                                        <p className="text-[13px] font-bold text-gray-900 inter leading-none mb-1">{user?.name || 'Prestige Motors'}</p>
-                                        <p className="text-[11px] text-[#999999] inter truncate leading-none">{user?.email || 'contact@prestigemotors.com'}</p>
+                                        <p className="text-[clamp(12px,1.6vh,18px)] font-bold text-gray-900 inter leading-none mb-1">{user?.name || 'Prestige Motors'}</p>
+                                        <p className="text-[clamp(10px,1.4vh,16px)] text-[#999999] inter truncate leading-none">{user?.email || 'contact@prestigemotors.com'}</p>
                                     </div>
                                     <div className="py-1">
                                         <button
                                             onClick={() => navigate('/profile')}
-                                            className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
+                                            className="w-full text-left px-4 py-2.5 text-[clamp(12px,1.6vh,18px)] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
                                         >
-                                            <FiUser className="text-lg" /> My Profile
+                                            <FiUser className="text-[clamp(16px,2.2vh,24px)]" /> My Profile
                                         </button>
                                         {user?.role === 'admin' && (
                                             <button
                                                 onClick={() => navigate('/admin')}
-                                                className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
+                                                className="w-full text-left px-4 py-2.5 text-[clamp(12px,1.6vh,18px)] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
                                             >
-                                                <FiShield className="text-lg" /> Admin Dashboard
+                                                <FiShield className="text-[clamp(16px,2.2vh,24px)]" /> Admin Dashboard
                                             </button>
                                         )}
                                         <button
                                             onClick={() => setActiveTab('subscription')}
-                                            className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
+                                            className="w-full text-left px-4 py-2.5 text-[clamp(12px,1.6vh,18px)] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
                                         >
-                                            <FiCreditCard className="text-lg" /> Subscription
+                                            <FiCreditCard className="text-[clamp(16px,2.2vh,24px)]" /> Subscription
                                         </button>
                                         <button
                                             onClick={() => setActiveTab('settings')}
-                                            className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
+                                            className="w-full text-left px-4 py-2.5 text-[clamp(12px,1.6vh,18px)] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
                                         >
-                                            <FiSettings className="text-lg" /> Settings
+                                            <FiSettings className="text-[clamp(16px,2.2vh,24px)]" /> Settings
                                         </button>
                                     </div>
                                     <div className="border-t border-gray-50 py-1">
@@ -959,9 +959,9 @@ const Inventory = () => {
                                                 logout();
                                                 navigate('/login');
                                             }}
-                                            className="w-full text-left px-4 py-2.5 text-[13px] font-medium text-red-600 inter hover:bg-red-50 flex items-center gap-2 transition-colors"
+                                            className="w-full text-left px-4 py-2.5 text-[clamp(12px,1.6vh,18px)] font-medium text-red-600 inter hover:bg-red-50 flex items-center gap-2 transition-colors"
                                         >
-                                            <FiLogOut className="text-lg" /> Sign Out
+                                            <FiLogOut className="text-[clamp(16px,2.2vh,24px)]" /> Sign Out
                                         </button>
                                     </div>
                                 </div>
@@ -977,22 +977,24 @@ const Inventory = () => {
                     {activeTab === 'dashboard' && (
                         <div className="flex flex-col gap-[1vh] h-full animate-in fade-in duration-700 pb-[1vh]">
                             {/* Top 4 KPI Cards */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-[1vh] flex-none lg:flex-[0.7] min-h-0">
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-[clamp(8px,1vh,20px)] flex-none lg:flex-[0.7] min-h-0">
                                 {/* Card 1: Total Views */}
-                                <div className="bg-white rounded-[1.5vh] p-[1.2vh] lg:p-[1.5vh] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
+                                <div className="bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
-                                            <span className="inter text-[clamp(8px,0.9vh,14px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Views</span>
-                                            <span className="text-[clamp(16px,2.2vh,32px)] font-bold text-gray-900 leading-none mt-[0.5vh] kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.views?.current || 0)}</span>
-                                            <span className={`inter text-[clamp(7px,0.85vh,12px)] font-bold ${Number(data?.stats?.trends?.views?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[0.5vh]`}>
-                                                {Number(data?.stats?.trends?.views?.change) >= 0 ? <FiTrendingUp className="text-[1.1vh]" /> : <FiTrendingDown className="text-[1.1vh]" />} 
+                                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Views</span>
+                                            <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.5vh,10px)] kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.views?.current || 0)}</span>
+                                            <span className={`inter text-[clamp(8px,1.2vh,18px)] font-bold ${Number(data?.stats?.trends?.views?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[clamp(4px,0.5vh,10px)]`}>
+                                                {Number(data?.stats?.trends?.views?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.4vh,20px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.4vh,20px)]" />} 
                                                 {Math.abs(data?.stats?.trends?.views?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium hidden sm:inline">vs last 30 days</span>
                                             </span>
                                         </div>
-                                        <div className="w-[3vh] h-[3vh] lg:w-[4vh] lg:h-[4vh] rounded-[1vh] bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0"><FiEye className="text-[1.5vh] lg:text-[1.8vh]" /></div>
+                                        <div className="w-[clamp(24px,4vh,60px)] h-[clamp(24px,4vh,60px)] rounded-[clamp(6px,1vh,16px)] bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0">
+                                            <FiEye className="text-[clamp(14px,2vh,32px)]" />
+                                        </div>
                                     </div>
-                                    <div className="absolute bottom-[0.5vh] lg:bottom-[1vh] left-0 right-0 px-[1.5vh] h-[3vh] lg:h-[4vh] select-none pointer-events-none opacity-80">
+                                    <div className="absolute bottom-[clamp(4px,1vh,16px)] left-0 right-0 px-[clamp(8px,1.5vh,24px)] h-[clamp(20px,4vh,60px)] select-none pointer-events-none opacity-80">
                                         <svg className="w-full h-full" viewBox="0 0 100 20" preserveAspectRatio="none">
                                             <path d={generateSparkline(data?.stats?.dailyTrends, 'views')} fill="none" stroke="#D48D2A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(212, 141, 42, 0.4))' }} />
                                         </svg>
@@ -1000,20 +1002,22 @@ const Inventory = () => {
                                 </div>
 
                                 {/* Card 2: Total Leads */}
-                                <div className="bg-white rounded-[1.5vh] p-[1.2vh] lg:p-[1.5vh] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
+                                <div className="bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
-                                            <span className="inter text-[clamp(8px,0.9vh,14px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Leads</span>
-                                            <span className="text-[clamp(16px,2.2vh,32px)] font-bold text-gray-900 leading-none mt-[0.5vh] kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.leads?.current || 0)}</span>
-                                            <span className={`inter text-[clamp(7px,0.85vh,12px)] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[0.5vh]`}>
-                                                {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[1.1vh]" /> : <FiTrendingDown className="text-[1.1vh]" />} 
+                                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Leads</span>
+                                            <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.5vh,10px)] kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.leads?.current || 0)}</span>
+                                            <span className={`inter text-[clamp(8px,1.2vh,18px)] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[clamp(4px,0.5vh,10px)]`}>
+                                                {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.4vh,20px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.4vh,20px)]" />} 
                                                 {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium hidden sm:inline">vs last 30 days</span>
                                             </span>
                                         </div>
-                                        <div className="w-[3vh] h-[3vh] lg:w-[4vh] lg:h-[4vh] rounded-[1vh] bg-blue-50 text-blue-600 justify-center flex items-center shrink-0"><FiUser className="text-[1.5vh] lg:text-[1.8vh]" /></div>
+                                        <div className="w-[clamp(24px,4vh,60px)] h-[clamp(24px,4vh,60px)] rounded-[clamp(6px,1vh,16px)] bg-blue-50 text-blue-600 justify-center flex items-center shrink-0">
+                                            <FiUser className="text-[clamp(14px,2vh,32px)]" />
+                                        </div>
                                     </div>
-                                    <div className="absolute bottom-[0.5vh] lg:bottom-[1vh] left-0 right-0 px-[1.5vh] h-[3vh] lg:h-[4vh] select-none pointer-events-none opacity-80">
+                                    <div className="absolute bottom-[clamp(4px,1vh,16px)] left-0 right-0 px-[clamp(8px,1.5vh,24px)] h-[clamp(20px,4vh,60px)] select-none pointer-events-none opacity-80">
                                         <svg className="w-full h-full" viewBox="0 0 100 20" preserveAspectRatio="none">
                                             <path d={generateSparkline(data?.stats?.dailyTrends, 'leads')} fill="none" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(37, 99, 235, 0.4))' }} />
                                         </svg>
@@ -1021,20 +1025,22 @@ const Inventory = () => {
                                 </div>
 
                                 {/* Card 3: Saved / Shortlisted */}
-                                <div className="bg-white rounded-[1.5vh] p-[1.2vh] lg:p-[1.5vh] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
+                                <div className="bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
-                                            <span className="inter text-[clamp(8px,0.9vh,14px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Saved / Shortlisted</span>
-                                            <span className="text-[clamp(16px,2.2vh,32px)] font-bold text-gray-900 leading-none mt-[0.5vh] kaisei tracking-tight">{data?.stats?.trends?.saved?.current || 0}</span>
-                                            <span className={`inter text-[clamp(7px,0.85vh,12px)] font-bold ${Number(data?.stats?.trends?.saved?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[0.5vh]`}>
-                                                {Number(data?.stats?.trends?.saved?.change) >= 0 ? <FiTrendingUp className="text-[1.1vh]" /> : <FiTrendingDown className="text-[1.1vh]" />} 
+                                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Saved / Shortlisted</span>
+                                            <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.5vh,10px)] kaisei tracking-tight">{data?.stats?.trends?.saved?.current || 0}</span>
+                                            <span className={`inter text-[clamp(8px,1.2vh,18px)] font-bold ${Number(data?.stats?.trends?.saved?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[clamp(4px,0.5vh,10px)]`}>
+                                                {Number(data?.stats?.trends?.saved?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.4vh,20px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.4vh,20px)]" />} 
                                                 {Math.abs(data?.stats?.trends?.saved?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium hidden sm:inline">vs last 30 days</span>
                                             </span>
                                         </div>
-                                        <div className="w-[3vh] h-[3vh] lg:w-[4vh] lg:h-[4vh] rounded-[1vh] bg-emerald-50 text-emerald-600 justify-center flex items-center shrink-0"><FiHeart className="text-[1.5vh] lg:text-[1.8vh]" /></div>
+                                        <div className="w-[clamp(24px,4vh,60px)] h-[clamp(24px,4vh,60px)] rounded-[clamp(6px,1vh,16px)] bg-emerald-50 text-emerald-600 justify-center flex items-center shrink-0">
+                                            <FiHeart className="text-[clamp(14px,2vh,32px)]" />
+                                        </div>
                                     </div>
-                                    <div className="absolute bottom-[0.5vh] lg:bottom-[1vh] left-0 right-0 px-[1.5vh] h-[3vh] lg:h-[4vh] select-none pointer-events-none opacity-80">
+                                    <div className="absolute bottom-[clamp(4px,1vh,16px)] left-0 right-0 px-[clamp(8px,1.5vh,24px)] h-[clamp(20px,4vh,60px)] select-none pointer-events-none opacity-80">
                                         <svg className="w-full h-full" viewBox="0 0 100 20" preserveAspectRatio="none">
                                             <path d={generateSparkline(data?.stats?.dailyTrends, 'saved')} fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(16, 185, 129, 0.4))' }} />
                                         </svg>
@@ -1042,20 +1048,22 @@ const Inventory = () => {
                                 </div>
 
                                 {/* Card 4: Est. Lead Value */}
-                                <div className="bg-white rounded-[1.5vh] p-[1.2vh] lg:p-[1.5vh] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
+                                <div className="bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
                                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                                         <div className="flex flex-col">
-                                            <span className="inter text-[clamp(8px,0.9vh,14px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Est. Lead Value</span>
-                                            <span className="text-[clamp(16px,2.2vh,32px)] font-bold text-gray-900 leading-none mt-[0.5vh] kaisei tracking-tight">${((data?.stats?.trends?.value?.current || 0)/1000000).toFixed(2)}M</span>
-                                            <span className={`inter text-[clamp(7px,0.85vh,12px)] font-bold ${Number(data?.stats?.trends?.value?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[0.5vh]`}>
-                                                {Number(data?.stats?.trends?.value?.change) >= 0 ? <FiTrendingUp className="text-[1.1vh]" /> : <FiTrendingDown className="text-[1.1vh]" />} 
+                                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Est. Lead Value</span>
+                                            <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.5vh,10px)] kaisei tracking-tight">${((data?.stats?.trends?.value?.current || 0)/1000000).toFixed(2)}M</span>
+                                            <span className={`inter text-[clamp(8px,1.2vh,18px)] font-bold ${Number(data?.stats?.trends?.value?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[clamp(4px,0.5vh,10px)]`}>
+                                                {Number(data?.stats?.trends?.value?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.4vh,20px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.4vh,20px)]" />} 
                                                 {Math.abs(data?.stats?.trends?.value?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium hidden sm:inline">vs last 30 days</span>
                                             </span>
                                         </div>
-                                        <div className="w-[3vh] h-[3vh] lg:w-[4vh] lg:h-[4vh] rounded-[1vh] bg-purple-50 text-purple-600 justify-center flex items-center shrink-0"><FiTrendingUp className="text-[1.5vh] lg:text-[1.8vh]" /></div>
+                                        <div className="w-[clamp(24px,4vh,60px)] h-[clamp(24px,4vh,60px)] rounded-[clamp(6px,1vh,16px)] bg-purple-50 text-purple-600 justify-center flex items-center shrink-0">
+                                            <FiTrendingUp className="text-[clamp(14px,2vh,32px)]" />
+                                        </div>
                                     </div>
-                                    <div className="absolute bottom-[0.5vh] lg:bottom-[1vh] left-0 right-0 px-[1.5vh] h-[3vh] lg:h-[4vh] select-none pointer-events-none opacity-80">
+                                    <div className="absolute bottom-[clamp(4px,1vh,16px)] left-0 right-0 px-[clamp(8px,1.5vh,24px)] h-[clamp(20px,4vh,60px)] select-none pointer-events-none opacity-80">
                                         <svg className="w-full h-full" viewBox="0 0 100 20" preserveAspectRatio="none">
                                             <path d={generateSparkline(data?.stats?.dailyTrends, 'value')} fill="none" stroke="#8B5CF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0px 6px 8px rgba(139, 92, 246, 0.4))' }} />
                                         </svg>
@@ -1064,40 +1072,40 @@ const Inventory = () => {
                             </div>
 
                             {/* Middle Row */}
-                            <div className="flex flex-col lg:flex-row gap-[1vh] flex-none lg:flex-[1.4] min-h-0">
+                            <div className="flex flex-col lg:flex-row gap-[clamp(8px,1vh,20px)] flex-none lg:flex-[1.4] min-h-0">
                                 {/* Left Line Chart */}
-                                <div className="flex-[2] bg-white rounded-[1.5vh] p-[1vh] lg:p-[1.5vh] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden min-h-0">
-                                    <div className="flex justify-between items-center mb-[0.5vh] shrink-0 relative z-10">
-                                        <div className="flex flex-col gap-[0.2vh]">
-                                            <h4 className="inter text-[clamp(10px,1.3vh,18px)] font-semibold text-gray-900 leading-none tracking-normal">Views vs Leads Over Time</h4>
-                                            <div className="flex gap-[1vh] lg:gap-[1.5vh]">
-                                                <div className="flex items-center gap-[0.5vh]"><div className="w-[1.2vh] h-[0.2vh] rounded-full bg-[#D48D2A]"></div><span className="inter text-[clamp(7px,0.85vh,14px)] font-normal text-gray-500 capitalize leading-none tracking-normal">Views</span></div>
-                                                <div className="flex items-center gap-[0.5vh]"><div className="w-[1.2vh] h-[0.2vh] rounded-full bg-[#1E3B70]"></div><span className="inter text-[clamp(7px,0.85vh,14px)] font-normal text-gray-500 capitalize leading-none tracking-normal">Leads</span></div>
+                                <div className="flex-[2] bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden min-h-0">
+                                    <div className="flex justify-between items-center mb-[clamp(8px,1vh,16px)] shrink-0 relative z-10">
+                                        <div className="flex flex-col gap-[clamp(2px,0.4vh,6px)]">
+                                            <h4 className="inter text-[clamp(12px,1.6vh,24px)] font-semibold text-gray-900 leading-none tracking-normal">Views vs Leads Over Time</h4>
+                                            <div className="flex gap-[clamp(8px,1.5vh,24px)]">
+                                                <div className="flex items-center gap-[clamp(4px,0.6vh,10px)]"><div className="w-[clamp(8px,1.2vh,20px)] h-[clamp(2px,0.3vh,4px)] rounded-full bg-[#D48D2A]"></div><span className="inter text-[clamp(9px,1.2vh,16px)] font-normal text-gray-500 capitalize leading-none tracking-normal">Views</span></div>
+                                                <div className="flex items-center gap-[clamp(4px,0.6vh,10px)]"><div className="w-[clamp(8px,1.2vh,20px)] h-[clamp(2px,0.3vh,4px)] rounded-full bg-[#1E3B70]"></div><span className="inter text-[clamp(9px,1.2vh,16px)] font-normal text-gray-500 capitalize leading-none tracking-normal">Leads</span></div>
                                             </div>
                                         </div>
                                         <div className="relative">
                                             <select 
                                                 value={chartInterval} 
                                                 onChange={(e) => setChartInterval(e.target.value)}
-                                                className="inter text-[clamp(7px,0.85vh,14px)] font-normal text-gray-600 bg-white border border-gray-200 rounded-[0.8vh] pl-[1vh] pr-[3vh] py-[0.3vh] outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[6vh] lg:min-w-[8vh]"
+                                                className="inter text-[clamp(9px,1.2vh,16px)] font-normal text-gray-600 bg-white border border-gray-200 rounded-[clamp(4px,0.8vh,12px)] pl-[clamp(8px,1vh,16px)] pr-[clamp(24px,3vh,40px)] py-[clamp(4px,0.6vh,10px)] outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[clamp(60px,8vh,120px)]"
                                             >
                                                 <option value="Day">Day</option>
                                                 <option value="Week">Week</option>
                                                 <option value="Month">Month</option>
                                             </select>
-                                            <FiChevronDown className="absolute right-[0.8vh] top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[1vh]" />
+                                            <FiChevronDown className="absolute right-[clamp(8px,1vh,16px)] top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[clamp(10px,1.4vh,20px)]" />
                                         </div>
                                         </div>
 
                                         <div className="flex-1 relative mt-0 min-h-0 w-full">
-                                            <div className="absolute inset-0 pb-[2vh] pl-[3vh] lg:pl-[4vh] flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-[1vh]">
+                                            <div className="absolute inset-0 pb-[clamp(16px,2vh,32px)] pl-[clamp(24px,3.5vh,56px)] flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-[clamp(8px,1vh,16px)]">
                                                 {[100, 75, 50, 25, 0].map((val, i) => (
                                                     <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
-                                                        <span className="absolute -left-[3vh] lg:-left-[3.5vh] inter text-[clamp(7px,0.85vh,14px)] text-gray-400 font-normal w-[2.5vh] lg:w-[3vh] text-right mt-0 bg-white leading-none tracking-normal">{val}</span>
+                                                        <span className="absolute -left-[clamp(24px,3.5vh,56px)] inter text-[clamp(9px,1.2vh,16px)] text-gray-400 font-normal w-[clamp(20px,3vh,48px)] text-right mt-0 bg-white leading-none tracking-normal">{val}</span>
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="absolute inset-x-0 bottom-0 pl-[4vh] lg:pl-[5vh] pr-[2vh] h-[2vh] flex justify-between items-end inter text-[clamp(7px,0.85vh,14px)] font-normal text-gray-400 pb-[0.2vh] tracking-normal leading-none">
+                                            <div className="absolute inset-x-0 bottom-0 pl-[clamp(32px,4.5vh,72px)] pr-[clamp(12px,2vh,32px)] h-[clamp(16px,2vh,32px)] flex justify-between items-end inter text-[clamp(9px,1.2vh,16px)] font-normal text-gray-400 pb-[clamp(2px,0.3vh,6px)] tracking-normal leading-none">
                                                 {(() => {
                                                     const rawData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
                                                     const points = [];
@@ -1113,7 +1121,7 @@ const Inventory = () => {
                                                     ));
                                                 })()}
                                             </div>
-                                            <div className="absolute inset-0 pb-[2.5vh] pl-[4vh] lg:pl-[5vh] pr-[2vh] mt-[0.5vh] lg:mt-[1vh]">
+                                            <div className="absolute inset-0 pb-[clamp(20px,2.5vh,40px)] pl-[clamp(32px,4.5vh,72px)] pr-[clamp(12px,2vh,32px)] mt-[clamp(4px,0.5vh,12px)]">
                                                 <svg className="w-full h-full overflow-visible" viewBox="0 0 300 100" preserveAspectRatio="none">
                                                     {(() => {
                                                         const rawData = (data?.stats?.dailyTrends || []).slice(chartInterval === 'Day' ? -3 : chartInterval === 'Week' ? -7 : -30);
@@ -1144,11 +1152,11 @@ const Inventory = () => {
                                         </div>                                </div>
                                 
                                 {/* Right Donut */}
-                                <div className="flex-1 bg-white rounded-[1.5vh] p-[1vh] lg:p-[1.5vh] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-w-[30%] min-h-0">
-                                    <h4 className="inter text-[clamp(10px,1.3vh,18px)] font-semibold text-gray-900 leading-none tracking-normal mb-[1vh] shrink-0">Leads by Asset Category</h4>
-                                    <div className="flex-1 flex items-center justify-center gap-[1.5vh] lg:gap-[3vh] min-h-0 pl-[0.5vh] pr-[1vh]">
-                                        <div className="w-[12vh] md:w-[14vh] lg:w-[16vh] xl:w-[20vh] aspect-square flex items-center justify-center relative shrink-0">
-                                            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                                <div className="flex-1 bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-w-[30%] min-h-0">
+                                    <h4 className="inter text-[clamp(12px,1.6vh,24px)] font-semibold text-gray-900 leading-none tracking-normal mb-[clamp(8px,1vh,20px)] shrink-0">Leads by Asset Category</h4>
+                                    <div className="flex-1 flex items-center justify-center gap-[clamp(8px,1.5vh,32px)] lg:gap-[clamp(16px,3vh,60px)] min-h-0 pl-[clamp(4px,0.5vh,12px)] pr-[clamp(8px,1vh,24px)]">
+                                        <div className="w-[clamp(80px,12vh,240px)] md:w-[clamp(100px,14vh,280px)] lg:w-[clamp(120px,20vh,360px)] aspect-square flex items-center justify-center relative shrink-0">
+                                            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90 overflow-visible">
                                                 <circle cx="50" cy="50" r="38" fill="none" stroke="#F3F4F6" strokeWidth="14" />
                                                 {(() => {
                                                     const items = data?.analytics?.leadsByCategory || [];
@@ -1166,60 +1174,60 @@ const Inventory = () => {
                                                     });
                                                 })()}
                                             </svg>
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pt-[0.2vh]">
-                                                <span className="text-[clamp(12px,2vh,32px)] font-medium text-gray-900 leading-none kaisei">{data?.stats?.totalLeads || 0}</span>
-                                                <span className="inter text-[clamp(6px,0.75vh,14px)] capitalize text-gray-500 font-medium tracking-wide mt-[0.2vh] lg:mt-[0.5vh]">Total Leads</span>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pt-[clamp(2px,0.2vh,8px)]">
+                                                <span className="text-[clamp(14px,2.4vh,40px)] font-bold text-gray-900 leading-none kaisei">{data?.stats?.totalLeads || 0}</span>
+                                                <span className="inter text-[clamp(8px,0.9vh,16px)] capitalize text-gray-500 font-semibold tracking-wide mt-[clamp(2px,0.3vh,8px)] lg:mt-[clamp(4px,0.5vh,12px)]">Total Leads</span>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col justify-center gap-[0.8vh] lg:gap-[1.2vh] w-[10vh] lg:w-[14vh]">
+                                        <div className="flex flex-col justify-center gap-[clamp(7.5px,1vh,20px)] lg:gap-[clamp(10px,1.5vh,30px)] w-[clamp(100px,12.5vh,200px)] lg:w-[clamp(150px,20vh,300px)]">
                                             {(data?.analytics?.leadsByCategory || []).map((r, i) => {
                                                 const colors = ['#D48D2A', '#1E3B70', '#10B981', '#9CA3AF'];
                                                 return (
-                                                    <div key={i} className="flex items-center justify-between inter text-[clamp(7px,0.85vh,14px)] font-medium text-gray-600">
-                                                        <span className="flex items-center gap-[0.5vh] lg:gap-[0.8vh] truncate"><span className="w-[1vh] h-[1vh] rounded-full shrink-0" style={{ backgroundColor: colors[i] }}></span>{r.label}</span>
-                                                        <span className="text-gray-900 truncate pl-[0.5vh] flex gap-[0.5vh]"><span className="w-[2vh] text-right">{r.count}</span> <span className="text-gray-400 font-normal w-[4vh] lg:w-[5vh] text-right">({r.p})</span></span>
+                                                    <div key={i} className="flex items-center justify-between inter text-[clamp(10.6px,1.27vh,21.25px)] font-bold text-gray-600">
+                                                        <span className="flex items-center gap-[clamp(5px,0.625vh,15px)] lg:gap-[clamp(7.5px,1vh,22.5px)] truncate"><span className="w-[clamp(7.5px,1.25vh,20px)] h-[clamp(7.5px,1.25vh,20px)] rounded-full shrink-0" style={{ backgroundColor: colors[i] }}></span>{r.label}</span>
+                                                        <span className="text-gray-900 truncate pl-[clamp(5px,0.625vh,15px)] flex gap-[clamp(5px,0.625vh,15px)]"><span className="w-[clamp(20px,2.5vh,40px)] text-right">{r.count}</span> <span className="text-gray-400 font-medium w-[clamp(37.5px,5vh,100px)] lg:w-[clamp(50px,7.5vh,125px)] text-right">({r.p})</span></span>
                                                     </div>
                                                 );
                                             })}
                                         </div>
                                     </div>
-                                    <div className="flex justify-end pt-[0.2vh] shrink-0">
-                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[clamp(8px,1vh,16px)] font-medium text-[#D48D2A] hover:text-[#B37622] transition-colors flex items-center gap-[0.5vh] tracking-normal">
-                                            View Full Report <FiArrowRight className="text-[1.1vh]" />
+                                    <div className="flex justify-end pt-[clamp(2px,0.2vh,8px)] shrink-0">
+                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[clamp(10px,1.2vh,18px)] font-semibold text-[#D48D2A] hover:text-[#B37622] transition-colors flex items-center gap-[clamp(4px,0.5vh,12px)] tracking-normal">
+                                            View Full Report <FiArrowRight className="text-[clamp(10px,1.1vh,18px)]" />
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Third Row */}
-                            <div className="flex flex-col lg:flex-row gap-[1vh] flex-none lg:flex-[1.1] min-h-0">
+                            <div className="flex flex-col lg:flex-row gap-[clamp(8px,1vh,20px)] flex-none lg:flex-[1.1] min-h-0">
                                 {/* Top Assets Table */}
-                                <div className="flex-[1.2] min-h-0 bg-white rounded-[1.5vh] p-[1.2vh] lg:p-[1.5vh] px-[1.5vh] lg:px-[2vh] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
-                                    <div className="flex justify-between items-center mb-[0.8vh] lg:mb-[1.2vh]">
-                                        <h4 className="inter text-[clamp(10px,1.3vh,18px)] font-bold text-gray-900 leading-none tracking-normal">Top Performing Assets</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[clamp(7px,0.85vh,14px)] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
+                                <div className="flex-[1.2] min-h-0 bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                                    <div className="flex justify-between items-center mb-[clamp(8px,1vh,16px)]">
+                                        <h4 className="inter text-[clamp(12px,1.6vh,24px)] font-bold text-gray-900 leading-none tracking-normal">Top Performing Assets</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[clamp(9px,1.2vh,16px)] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
                                     </div>
-                                    <div className="flex-1 overflow-hidden -mx-[0.5vh] px-[0.5vh]">
+                                    <div className="flex-1 overflow-hidden">
                                         <table className="w-full text-left table-fixed">
                                             <thead className="sticky top-0 bg-white z-10 w-full">
                                                 <tr>
-                                                    <th className="pb-[0.5vh] inter text-[clamp(7px,0.85vh,14px)] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-7/12">Asset</th>
-                                                    <th className="pb-[0.5vh] inter text-[clamp(7px,0.85vh,14px)] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-2/12 text-center">Views</th>
-                                                    <th className="pb-[0.5vh] inter text-[clamp(7px,0.85vh,14px)] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right">Change</th>
+                                                    <th className="pb-[clamp(4px,0.6vh,12px)] inter text-[clamp(9px,1.1vh,16px)] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-7/12">Asset</th>
+                                                    <th className="pb-[clamp(4px,0.6vh,12px)] inter text-[clamp(9px,1.1vh,16px)] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-2/12 text-center">Views</th>
+                                                    <th className="pb-[clamp(4px,0.6vh,12px)] inter text-[clamp(9px,1.1vh,16px)] font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 w-3/12 text-right">Change</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-gray-100 text-[clamp(8px,0.95vh,16px)] font-bold text-gray-600">
+                                            <tbody className="divide-y divide-gray-50 text-[clamp(10px,1.3vh,18px)] font-bold text-gray-600">
                                                 {(data?.stats?.topAssets || []).slice(0, 3).map((item, i) => (
                                                     <tr key={i} className="hover:bg-gray-50/30 transition-colors">
-                                                        <td className="py-[0.5vh] lg:py-[0.8vh] flex items-center gap-[0.8vh] lg:gap-[1.2vh] truncate">
-                                                            <div className="w-[3vh] md:w-[3.5vh] lg:w-[4vh] h-[2.2vh] md:h-[2.6vh] lg:h-[3vh] rounded-[0.8vh] bg-[#F3EBE3] shrink-0 flex items-center justify-center overflow-hidden">
-                                                                {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <FiImage className="text-gray-300 text-[1vh] lg:text-[1.8vh]" />}
+                                                        <td className="py-[clamp(6px,1.2vh,20px)] flex items-center gap-[clamp(6px,0.8vh,16px)] truncate">
+                                                            <div className="w-[clamp(28px,4vh,60px)] h-[clamp(18px,2.5vh,40px)] rounded-[clamp(4px,0.6vh,12px)] bg-[#F3EBE3] shrink-0 flex items-center justify-center overflow-hidden">
+                                                                {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <FiImage className="text-gray-300 text-[clamp(10px,1.5vh,24px)]" />}
                                                             </div>
-                                                            <span className="inter text-gray-900 truncate overflow-hidden whitespace-nowrap text-[clamp(8px,1vh,16px)] font-medium leading-none tracking-normal">{item.name}</span>
+                                                            <span className="inter text-gray-900 truncate overflow-hidden whitespace-nowrap text-[clamp(10px,1.3vh,18px)] font-medium leading-none tracking-normal">{item.name}</span>
                                                         </td>
-                                                        <td className="py-[0.5vh] lg:py-[0.8vh] text-center text-gray-700 font-medium text-[clamp(8px,1vh,16px)] kaisei leading-none tracking-normal">{numberWithCommas(item.views)}</td>
-                                                        <td className={`py-[0.5vh] lg:py-[0.8vh] text-right font-medium tracking-tight inter text-[clamp(8px,1vh,16px)] ${item.change.includes('-') ? 'text-red-500' : 'text-[#10B981]'}`}>
-                                                            {!item.change.includes('-') && <span className="mr-0.2vh">↑</span>}
+                                                        <td className="py-[clamp(6px,1.2vh,20px)] text-center text-gray-700 font-medium text-[clamp(10px,1.3vh,18px)] kaisei leading-none tracking-normal">{numberWithCommas(item.views)}</td>
+                                                        <td className={`py-[clamp(6px,1.2vh,20px)] text-right font-medium tracking-tight inter text-[clamp(10px,1.3vh,18px)] ${item.change.includes('-') ? 'text-red-500' : 'text-[#10B981]'}`}>
+                                                            {!item.change.includes('-') && <span className="mr-1">↑</span>}
                                                             {item.change.startsWith('+') ? item.change : (item.change.includes('-') ? item.change : `+${item.change}`)}
                                                         </td>
                                                     </tr>
@@ -1230,14 +1238,14 @@ const Inventory = () => {
                                 </div>
 
                                 {/* Leads Source Donut */}
-                                <div className="flex-1 min-w-0 bg-white rounded-[1.5vh] p-[1.2vh] lg:p-[1.5vh] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden min-h-0">
-                                    <div className="flex justify-between items-center mb-0">
-                                        <h4 className="inter text-[clamp(10px,1.3vh,18px)] font-semibold text-gray-900 leading-none tracking-normal">Leads Source</h4>
-                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[clamp(7px,0.85vh,14px)] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
+                                <div className="flex-1 min-w-0 bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden min-h-0">
+                                    <div className="flex justify-between items-center mb-[clamp(4px,0.5vh,12px)] shrink-0">
+                                        <h4 className="inter text-[clamp(12px,1.6vh,24px)] font-semibold text-gray-900 leading-none tracking-normal">Leads Source</h4>
+                                        <button onClick={() => setActiveTab('analytics')} className="inter text-[clamp(9px,1.2vh,16px)] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
                                     </div>
-                                    <div className="flex-1 flex items-center justify-between z-10 px-0 mt-[0.2vh] min-h-0">
-                                        <div className="w-[12vh] md:w-[14vh] lg:w-[16vh] xl:w-[20vh] aspect-square flex items-center justify-center relative shrink-0 -ml-[1vh] lg:-ml-[2vh]">
-                                            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                                    <div className="flex-1 flex items-center justify-between z-10 px-0 mt-[clamp(2px,0.3vh,8px)] min-h-0">
+                                        <div className="w-[clamp(80px,12vh,240px)] md:w-[clamp(100px,14vh,280px)] lg:w-[clamp(120px,18vh,360px)] aspect-square flex items-center justify-center relative shrink-0 -ml-[clamp(4px,0.5vh,12px)] lg:-ml-[clamp(8px,1vh,24px)]">
+                                            <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90 overflow-visible">
                                                 <circle cx="50" cy="50" r="35" fill="none" stroke="#F3F4F6" strokeWidth="20" />
                                                 {(() => {
                                                     const items = data?.analytics?.leadsBySource || [];
@@ -1256,13 +1264,13 @@ const Inventory = () => {
                                                 })()}
                                             </svg>
                                         </div>
-                                        <div className="w-1/2 flex flex-col justify-center gap-[0.8vh] lg:gap-[1.2vh] pl-[1.5vh] z-10 pb-[0.5vh]">
+                                        <div className="w-1/2 flex flex-col justify-center gap-[clamp(7.5px,1vh,20px)] lg:gap-[clamp(10px,1.5vh,30px)] pl-[clamp(10px,1.25vh,25px)] z-10 pb-[0.5vh]">
                                             {(data?.analytics?.leadsBySource || []).map((r, i) => {
                                                 const colors = ['#D48D2A', '#1E3B70', '#10B981', '#8B5CF6'];
                                                 return (
-                                                    <div key={i} className="flex items-center justify-between text-[clamp(7px,0.85vh,14px)] font-bold text-gray-600 w-full lg:w-[14vh]">
-                                                        <span className="flex items-center gap-[0.5vh] lg:gap-[0.8vh] truncate mr-[0.5vh]" title={r.label}><span className="w-[1vh] h-[1vh] rounded-full shrink-0" style={{ backgroundColor: colors[i] }}></span><span className="truncate inter font-normal">{r.label}</span></span>
-                                                        <span className="text-gray-900 text-right flex shrink-0 whitespace-nowrap"><span className="w-[1.5vh] md:w-[1.8vh] lg:w-[2vh] inter font-normal">{r.count}</span> <span className="text-gray-400 font-normal w-[4vh] lg:w-[5vh] tracking-tight text-right inter">({r.p})</span></span>
+                                                    <div key={i} className="flex items-center justify-between text-[clamp(10.6px,1.27vh,21.25px)] font-bold text-gray-600 w-full lg:w-[clamp(125px,17.5vh,275px)]">
+                                                        <span className="flex items-center gap-[clamp(5px,0.625vh,15px)] lg:gap-[clamp(7.5px,1vh,22.5px)] truncate mr-[0.5vh]" title={r.label}><span className="w-[clamp(7.5px,1.25vh,20px)] h-[clamp(7.5px,1.25vh,20px)] rounded-full shrink-0" style={{ backgroundColor: colors[i] }}></span><span className="truncate inter font-semibold">{r.label}</span></span>
+                                                        <span className="text-gray-900 text-right flex shrink-0 whitespace-nowrap"><span className="w-[clamp(15px,1.875vh,40px)] inter font-semibold">{r.count}</span> <span className="text-gray-400 font-medium w-[clamp(37.5px,5vh,100px)] lg:w-[clamp(50px,7.5vh,125px)] tracking-tight text-right inter">({r.p})</span></span>
                                                     </div>
                                                 );
                                             })}
@@ -1271,13 +1279,13 @@ const Inventory = () => {
                                 </div>
 
                                 {/* Conversion Rate Bars */}
-                                <div className="flex-[1.2] min-w-0 bg-white rounded-[1.5vh] p-[1.2vh] lg:p-[1.5vh] xl:p-[2vh] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-h-0">
-                                    <div className="flex justify-between items-start mb-[0.2vh] shrink-0">
+                                <div className="flex-[1.2] min-w-0 bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden min-h-0">
+                                    <div className="flex justify-between items-start mb-[clamp(4px,0.5vh,12px)] shrink-0">
                                         <div className="flex flex-col">
-                                            <h4 className="inter text-[clamp(10px,1.3vh,18px)] font-semibold text-gray-900 leading-none tracking-normal">Conversion Rate</h4>
-                                            <span className="text-[clamp(16px,2.2vh,36px)] font-medium text-gray-900 mt-[0.3vh] tracking-tight leading-none kaisei">{data?.stats?.avgConversion || '0.00'}%</span>
-                                            <span className={`inter text-[clamp(7px,0.85vh,14px)] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} mt-[0.3vh] flex items-center gap-[0.5vh]`}>
-                                                {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[1.1vh]" /> : <FiTrendingDown className="text-[1.1vh]" />} 
+                                            <h4 className="inter text-[clamp(12px,1.6vh,24px)] font-semibold text-gray-900 leading-none tracking-normal">Conversion Rate</h4>
+                                            <span className="text-[clamp(18px,2.8vh,40px)] font-bold text-gray-900 mt-[clamp(2px,0.3vh,8px)] tracking-tight leading-none kaisei">{data?.stats?.avgConversion || '0.00'}%</span>
+                                            <span className={`inter text-[clamp(8px,1.1vh,16px)] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} mt-[clamp(2px,0.3vh,8px)] flex items-center gap-[clamp(2px,0.3vh,6px)]`}>
+                                                {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.3vh,18px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.3vh,18px)]" />} 
                                                 {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
                                                 <span className="inter text-gray-400 font-medium hidden sm:inline">vs last 30 days</span>
                                             </span>
@@ -1286,27 +1294,26 @@ const Inventory = () => {
                                             <select 
                                                 value={convInterval}
                                                 onChange={(e) => setConvInterval(e.target.value)}
-                                                className="inter text-[clamp(7px,0.85vh,14px)] font-normal text-gray-600 bg-white border border-gray-200 rounded-[0.8vh] pl-[1vh] pr-[3vh] py-[0.3vh] outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none min-w-[6vh] lg:min-w-[8vh]"
+                                                className="inter text-[clamp(8px,1.1vh,15px)] font-normal text-gray-600 bg-white border border-gray-100 rounded-[clamp(4px,0.6vh,10px)] pl-[clamp(4px,0.6vh,12px)] pr-[clamp(16px,2.2vh,32px)] py-[clamp(2px,0.3vh,6px)] outline-none shadow-sm cursor-pointer hover:bg-gray-50 leading-none tracking-normal appearance-none"
                                             >
                                                 <option value="Day">Day</option>
                                                 <option value="Week">Week</option>
                                                 <option value="Month">Month</option>
                                             </select>
-                                            <FiChevronDown className="absolute right-[0.8vh] top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[1vh]" />
+                                            <FiChevronDown className="absolute right-[clamp(4px,0.6vh,10px)] top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[clamp(8px,1.1vh,15px)]" />
                                         </div>
                                     </div>
-                                    <div className="flex-1 flex flex-col mt-[0.5vh] relative min-h-0">
-                                        {/* Grid and Y-Axis */}
-                                        <div className="absolute inset-0 pb-[1.5vh] md:pb-[2vh] pl-[3vh] lg:pl-[4vh] flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-[1vh]">
+                                    
+                                    <div className="flex-1 flex flex-col mt-[clamp(4px,0.5vh,12px)] relative min-h-0">
+                                        <div className="absolute inset-0 pb-[clamp(12px,1.8vh,32px)] pl-[clamp(24px,3.5vh,64px)] flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-[clamp(4px,0.5vh,12px)]">
                                             {[100, 75, 50, 25, 0].map((val, i) => (
                                                 <div key={i} className="w-full border-t border-gray-50 flex items-center h-0 relative">
-                                                    <span className="absolute -left-[3vh] lg:-left-[3.5vh] inter text-[clamp(7px,0.85vh,14px)] text-gray-400 font-normal w-[2.5vh] lg:w-[3vh] text-right bg-white leading-none tracking-normal z-10">{val}%</span>
+                                                    <span className="absolute -left-[clamp(24px,3.5vh,64px)] inter text-[clamp(8px,1.1vh,15px)] text-gray-400 font-normal w-[clamp(20px,3vh,56px)] text-right bg-white leading-none tracking-normal z-10">{val}%</span>
                                                 </div>
                                             ))}
                                         </div>
 
-                                        {/* X-Axis Labels */}
-                                        <div className="absolute inset-x-0 bottom-0 pl-[3vh] lg:pl-[4vh] pr-[0.5vh] h-[2vh] flex justify-between items-end inter text-[clamp(6px,0.75vh,14px)] font-normal text-gray-400 pb-[0.2vh] tracking-normal leading-none z-20">
+                                        <div className="absolute inset-x-0 bottom-0 pl-[clamp(24px,3.5vh,64px)] pr-[clamp(4px,0.5vh,12px)] h-[clamp(12px,1.8vh,32px)] flex justify-between items-end inter text-[clamp(7px,0.9vh,14px)] font-normal text-gray-400 pb-[clamp(2px,0.3vh,6px)] tracking-normal leading-none z-20">
                                             {(() => {
                                                 const rawData = (data?.stats?.dailyTrends || []).slice(convInterval === 'Day' ? -3 : convInterval === 'Week' ? -7 : -30);
                                                 const trendData = [];
@@ -1322,8 +1329,7 @@ const Inventory = () => {
                                             })()}
                                         </div>
 
-                                        {/* Bars Container */}
-                                        <div className="flex-1 flex justify-between items-end h-full ml-[3vh] lg:ml-[4vh] pb-[1.5vh] md:pb-[2vh] pt-[1vh] relative z-10 gap-[0.3vh] md:gap-[0.5vh] lg:gap-[1vh]">
+                                        <div className="flex-1 flex justify-between items-end h-full ml-[clamp(24px,3.5vh,64px)] pb-[clamp(12px,1.8vh,32px)] pt-[clamp(8px,1vh,20px)] relative z-10 gap-[clamp(2px,0.4vh,12px)]">
                                             {(() => {
                                                 const rawData = (data?.stats?.dailyTrends || []).slice(convInterval === 'Day' ? -3 : convInterval === 'Week' ? -7 : -30);
                                                 const trendData = [];
@@ -1334,7 +1340,7 @@ const Inventory = () => {
                                                     }
                                                 }
 
-                                                if (trendData.length === 0) return <div className="flex-1 h-full flex items-center justify-center text-gray-300 inter text-[0.85vh]">No trend data</div>;
+                                                if (trendData.length === 0) return <div className="flex-1 h-full flex items-center justify-center text-gray-300 inter text-[clamp(10px,1.4vh,20px)]">No trend data</div>;
                                                 
                                                 return trendData.map((d, i) => {
                                                     const conv = d.views > 0 ? (d.leads / d.views) * 100 : 0;
@@ -1344,15 +1350,15 @@ const Inventory = () => {
                                                     
                                                     return (
                                                         <div key={i} className="flex-1 flex flex-col items-center justify-end h-full group cursor-default relative">
-                                                            {(isLast || i === 5) && (
-                                                                <div className="absolute -top-[1.5vh] bg-gray-900 text-white inter text-[clamp(5px,0.65vh,12px)] px-[0.5vh] py-[0.1vh] rounded-[0.4vh] font-bold shadow-md z-20 whitespace-nowrap">
+                                                            {isHighlighted && (
+                                                                <div className="absolute -top-[clamp(12px,1.8vh,32px)] bg-gray-900 text-white inter text-[clamp(6px,0.8vh,12px)] px-[clamp(4px,0.6vh,10px)] py-[clamp(1px,0.2vh,4px)] rounded-[clamp(2px,0.3vh,6px)] font-bold shadow-md z-20 whitespace-nowrap">
                                                                     {conv.toFixed(1)}%
                                                                 </div>
                                                             )}
                                                             <div 
-                                                                className={`w-full max-w-[3vh] rounded-full group-hover:opacity-80 transition-all relative z-10 ${isHighlighted ? 'bg-[#D48D2A]' : 'bg-[#F3EBE3]'}`} 
+                                                                className={`w-[clamp(12px,1.8vh,36px)] rounded-t-[clamp(2px,0.3vh,6px)] transition-all duration-300 ${isLast ? 'bg-[#D48D2A]' : 'bg-[#FFF8F0] hover:bg-[#F2E8DB]'}`}
                                                                 style={{ height: `${h}%` }}
-                                                            ></div>
+                                                            />
                                                         </div>
                                                     );
                                                 });
@@ -1363,47 +1369,50 @@ const Inventory = () => {
                             </div>
 
                             {/* Fourth Row: Recent Activity & Assets Overview */}
-                            <div className="flex flex-col lg:flex-row gap-[1vh] flex-none lg:flex-[0.7] min-h-0">
-                                <div className="flex-1 bg-white rounded-[1.5vh] p-[1vh] lg:p-[1.5vh] px-[1.5vh] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden min-h-0">
-                                    <div className="flex justify-between items-center mb-[0.2vh] pb-[0.2vh]">
-                                        <h4 className="inter text-[clamp(10px,1.3vh,18px)] font-semibold text-gray-900 leading-none tracking-normal mt-[0.5vh]">Recent Activity</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[clamp(7px,0.85vh,14px)] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal mt-[0.5vh]">View all</button>
+                            <div className="flex flex-col lg:flex-row gap-[clamp(8px,1vh,20px)] flex-none lg:flex-[0.7] min-h-0">
+                                <div className="flex-1 bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden min-h-0">
+                                    <div className="flex justify-between items-center mb-[clamp(4px,0.5vh,12px)]">
+                                        <h4 className="inter text-[clamp(12px,1.6vh,24px)] font-semibold text-gray-900 leading-none tracking-normal">Recent Activity</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[clamp(9px,1.2vh,16px)] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">View all</button>
                                     </div>
-                                    <div className="space-y-[0.4vh] lg:space-y-[0.6vh] flex-1 overflow-auto custom-scrollbar pr-[1vh] mt-[0.5vh] lg:mt-[1vh]">
+                                    <div className="space-y-[clamp(4px,0.6vh,12px)] flex-1 overflow-auto custom-scrollbar mt-[clamp(4px,0.5vh,12px)]">
                                         {(data?.notifications || []).slice(0, 3).map((notif, idx) => (
-                                            <div key={idx} className="flex justify-between items-center text-[clamp(8px,1vh,16px)] group hover:bg-gray-50 -mx-[0.5vh] px-[0.5vh] py-[0.3vh] rounded-[0.5vh] transition-colors">
-                                                <div className="flex items-center gap-[0.5vh] lg:gap-[1vh] text-gray-600 truncate"><FiActivity className="text-[#D48D2A] shrink-0 text-[1.1vh] lg:text-[1.3vh]" /> <span className="font-normal text-gray-800 truncate inter">{notif.message}</span></div>
-                                                <span className="text-gray-400 font-normal inter shrink-0 ml-[1vh]">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                            <div key={idx} className="flex justify-between items-center text-[clamp(9px,1.2vh,16px)] group hover:bg-gray-50 px-[clamp(4px,0.5vh,12px)] py-[clamp(4px,0.5vh,10px)] rounded-[clamp(4px,0.5vh,10px)] transition-colors">
+                                                <div className="flex items-center gap-[clamp(6px,0.8vh,16px)] text-gray-600 truncate">
+                                                    <FiActivity className="text-[#D48D2A] shrink-0 text-[clamp(10px,1.4vh,20px)]" /> 
+                                                    <span className="font-normal text-gray-800 truncate inter">{notif.message}</span>
+                                                </div>
+                                                <span className="text-gray-400 font-normal inter shrink-0 ml-[clamp(8px,1vh,20px)]">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
 
-                                <div className="flex-[1.8] min-w-0 bg-white rounded-[1.5vh] p-[1vh] lg:p-[1.5vh] px-[1.5vh] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden min-h-0">
-                                    <div className="flex justify-between items-center mb-[0.2vh] pb-[0.2vh] mt-[0.2vh]">
-                                        <h4 className="inter text-[clamp(10px,1.3vh,18px)] font-semibold text-gray-900 leading-none tracking-normal">Assets Overview</h4>
-                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[clamp(7px,0.85vh,14px)] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">Manage Assets</button>
+                                <div className="flex-[1.8] min-w-0 bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] justify-between relative overflow-hidden min-h-0">
+                                    <div className="flex justify-between items-center mb-[clamp(4px,0.5vh,12px)]">
+                                        <h4 className="inter text-[clamp(12px,1.6vh,24px)] font-semibold text-gray-900 leading-none tracking-normal">Assets Overview</h4>
+                                        <button onClick={() => setActiveTab('inventory')} className="inter text-[clamp(9px,1.2vh,16px)] font-normal text-[#D48D2A] hover:opacity-80 transition-opacity leading-none tracking-normal">Manage Assets</button>
                                     </div>
-                                    <div className="flex justify-between items-start mt-[1vh] md:mt-[1.5vh] lg:mt-[2vh] px-[1vh] pb-[0.5vh]">
-                                        <div className="flex flex-col text-left flex-1 border-r border-gray-100 pr-[1.5vh]">
-                                            <span className="inter text-[clamp(6px,0.75vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[0.3vh] whitespace-nowrap">Total Assets</span>
-                                            <span className="text-[clamp(14px,2.2vh,36px)] font-bold text-gray-900 leading-none kaisei">{data?.stats?.totalAssets || 0}</span>
-                                            <span className="inter text-[clamp(7px,0.85vh,14px)] font-bold text-emerald-500 flex items-center gap-[0.5vh] mt-[0.5vh] lg:mt-[1vh] tracking-tight"><FiTrendingUp className="text-[8px] md:text-[9px]" /> {data?.stats?.trends?.views?.current > 0 ? 'Active' : 'Idle'}</span>
+                                    <div className="flex justify-between items-start mt-[clamp(8px,1.5vh,24px)] px-[clamp(8px,1vh,24px)] pb-[clamp(4px,0.5vh,12px)]">
+                                        <div className="flex flex-col text-left flex-1 border-r border-gray-100 pr-[clamp(8px,1.5vh,24px)]">
+                                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[clamp(2px,0.3vh,8px)] whitespace-nowrap">Total Assets</span>
+                                            <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none kaisei">{data?.stats?.totalAssets || 0}</span>
+                                            <span className="inter text-[clamp(8px,1.1vh,16px)] font-bold text-emerald-500 flex items-center gap-[clamp(2px,0.3vh,6px)] mt-[clamp(4px,0.6vh,12px)] tracking-tight"><FiTrendingUp className="text-[clamp(9px,1.2vh,18px)]" /> {data?.stats?.trends?.views?.current > 0 ? 'Active' : 'Idle'}</span>
                                         </div>
-                                        <div className="flex flex-col text-left flex-1 pl-[2vh] lg:pl-[3vh] border-r border-gray-100 pr-[1.5vh]">
-                                            <span className="inter text-[clamp(6px,0.75vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[0.3vh] whitespace-nowrap">Live Assets</span>
-                                            <span className="text-[clamp(14px,2.2vh,36px)] font-bold text-gray-900 leading-none mt-[0.5vh] lg:mt-[1vh] kaisei">{data?.stats?.activeCount || 0}</span>
-                                            <div className="w-[1vh] lg:w-[1.2vh] h-[1vh] lg:h-[1.2vh] rounded-full bg-emerald-500 mt-[0.8vh] lg:mt-[1.5vh] shadow-sm shadow-emerald-500/20"></div>
+                                        <div className="flex flex-col text-left flex-1 pl-[clamp(12px,2vh,32px)] border-r border-gray-100 pr-[clamp(8px,1.5vh,24px)]">
+                                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[clamp(2px,0.3vh,8px)] whitespace-nowrap">Live Assets</span>
+                                            <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.6vh,12px)] kaisei">{data?.stats?.activeCount || 0}</span>
+                                            <div className="w-[clamp(6px,1vh,12px)] h-[clamp(6px,1vh,12px)] rounded-full bg-emerald-500 mt-[clamp(8px,1.5vh,24px)] shadow-sm shadow-emerald-500/20"></div>
                                         </div>
-                                        <div className="flex flex-col text-left flex-[0.8] pl-[2vh] lg:pl-[3vh] border-r border-gray-100 pr-[1.5vh]">
-                                            <span className="inter text-[clamp(6px,0.75vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[0.3vh]">Drafts</span>
-                                            <span className="text-[clamp(14px,2.2vh,36px)] font-bold text-gray-900 leading-none mt-[0.5vh] lg:mt-[1vh] kaisei">0</span>
-                                            <div className="w-[1vh] lg:w-[1.2vh] h-[1vh] lg:h-[1.2vh] rounded-full bg-[#D48D2A] mt-[0.8vh] lg:mt-[1.5vh] shadow-sm shadow-[#D48D2A]/20"></div>
+                                        <div className="flex flex-col text-left flex-[0.8] pl-[clamp(12px,2vh,32px)] border-r border-gray-100 pr-[clamp(8px,1.5vh,24px)]">
+                                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[clamp(2px,0.3vh,8px)]">Drafts</span>
+                                            <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.6vh,12px)] kaisei">0</span>
+                                            <div className="w-[clamp(6px,1vh,12px)] h-[clamp(6px,1vh,12px)] rounded-full bg-[#D48D2A] mt-[clamp(8px,1.5vh,24px)] shadow-sm shadow-[#D48D2A]/20"></div>
                                         </div>
-                                        <div className="flex flex-col text-left flex-[0.8] pl-[2vh] lg:pl-[3vh]">
-                                            <span className="inter text-[clamp(6px,0.75vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[0.3vh]">Sold</span>
-                                            <span className="text-[clamp(14px,2.2vh,36px)] font-bold text-gray-900 leading-none mt-[0.5vh] lg:mt-[1vh] kaisei">{data?.stats?.closedCount || 0}</span>
-                                            <div className="w-[1vh] lg:w-[1.2vh] h-[1vh] lg:h-[1.2vh] rounded-full bg-gray-300 mt-[0.8vh] lg:mt-[1.5vh] border border-gray-200"></div>
+                                        <div className="flex flex-col text-left flex-[0.8] pl-[clamp(12px,2vh,32px)]">
+                                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[clamp(2px,0.3vh,8px)]">Sold</span>
+                                            <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.6vh,12px)] kaisei">{data?.stats?.closedCount || 0}</span>
+                                            <div className="w-[clamp(6px,1vh,12px)] h-[clamp(6px,1vh,12px)] rounded-full bg-gray-300 mt-[clamp(8px,1.5vh,24px)] border border-gray-200"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -1663,62 +1672,62 @@ const Inventory = () => {
                             </div>
 
                             {/* 4 KPI Cards */}
-                            <div className="grid grid-cols-4 gap-4 shrink-0 h-[85px]">
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-[clamp(8px,1vh,16px)] shrink-0 min-h-0">
                                 {/* Total Leads */}
-                                <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                <div className="bg-white rounded-[clamp(8px,1.2vh,16px)] p-[clamp(10px,1.5vh,20px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Total Leads</span>
-                                            <span className="text-2xl font-bold text-gray-900 kaisei leading-none mt-1">{numberWithCommas(data?.stats?.totalLeads || 0)}</span>
+                                            <span className="text-[clamp(8px,0.9vh,12px)] font-black uppercase tracking-widest text-gray-400">Total Leads</span>
+                                            <span className="text-[clamp(18px,2.4vh,32px)] font-bold text-gray-900 kaisei leading-none mt-1">{numberWithCommas(data?.stats?.totalLeads || 0)}</span>
                                         </div>
-                                        <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUsers className="text-sm" /></div>
+                                        <div className="w-[clamp(24px,3.5vh,48px)] h-[clamp(24px,3.5vh,48px)] rounded-[clamp(6px,1vh,12px)] bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUsers className="text-[clamp(12px,1.8vh,24px)]" /></div>
                                     </div>
-                                    <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-auto tracking-wide`}>
-                                        {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[10px]" /> : <FiTrendingDown className="text-[10px]" />} 
+                                    <span className={`inter text-[clamp(8px,1.1vh,14px)] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-[clamp(8px,1vh,16px)] tracking-wide`}>
+                                        {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.3vh,18px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.3vh,18px)]" />} 
                                         {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
                                         <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span>
                                     </span>
                                 </div>
                                 {/* New Leads */}
-                                <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                <div className="bg-white rounded-[clamp(8px,1.2vh,16px)] p-[clamp(10px,1.5vh,20px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">New Leads</span>
-                                            <span className="text-2xl font-bold text-gray-900 kaisei leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='New').length}</span>
+                                            <span className="text-[clamp(8px,0.9vh,12px)] font-black uppercase tracking-widest text-gray-400">New Leads</span>
+                                            <span className="text-[clamp(18px,2.4vh,32px)] font-bold text-gray-900 kaisei leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='New').length}</span>
                                         </div>
-                                        <div className="w-8 h-8 rounded-lg bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUser className="text-sm" /></div>
+                                        <div className="w-[clamp(24px,3.5vh,48px)] h-[clamp(24px,3.5vh,48px)] rounded-[clamp(6px,1vh,12px)] bg-[#FFF8F0] justify-center text-[#D48D2A] flex items-center shrink-0 border border-[#F2E8DB]"><FiUser className="text-[clamp(12px,1.8vh,24px)]" /></div>
                                     </div>
-                                    <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-auto tracking-wide`}>
-                                        {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[10px]" /> : <FiTrendingDown className="text-[10px]" />} 
+                                    <span className={`inter text-[clamp(8px,1.1vh,14px)] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-[clamp(8px,1vh,16px)] tracking-wide`}>
+                                        {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.3vh,18px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.3vh,18px)]" />} 
                                         {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
                                         <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span>
                                     </span>
                                 </div>
                                 {/* Qualified Leads */}
-                                <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                <div className="bg-white rounded-[clamp(8px,1.2vh,16px)] p-[clamp(10px,1.5vh,20px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Qualified Leads</span>
-                                            <span className="text-2xl font-bold text-gray-900 kaisei leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='Qualified').length}</span>
+                                            <span className="text-[clamp(8px,0.9vh,12px)] font-black uppercase tracking-widest text-gray-400">Qualified Leads</span>
+                                            <span className="text-[clamp(18px,2.4vh,32px)] font-bold text-gray-900 kaisei leading-none mt-1">{(data?.leads || []).filter(l=>l.status==='Qualified').length}</span>
                                         </div>
-                                        <div className="w-8 h-8 rounded-lg bg-emerald-50 justify-center text-emerald-600 flex items-center shrink-0 border border-emerald-100"><FiCheckCircle className="text-sm" /></div>
+                                        <div className="w-[clamp(24px,3.5vh,48px)] h-[clamp(24px,3.5vh,48px)] rounded-[clamp(6px,1vh,12px)] bg-emerald-50 justify-center text-emerald-600 flex items-center shrink-0 border border-emerald-100"><FiCheckCircle className="text-[clamp(12px,1.8vh,24px)]" /></div>
                                     </div>
-                                    <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-auto tracking-wide`}>
+                                    <span className={`inter text-[clamp(8px,1.1vh,14px)] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-[clamp(8px,1vh,16px)] tracking-wide`}>
                                         {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[10px]" /> : <FiTrendingDown className="text-[10px]" />} 
                                         {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
                                         <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span>
                                     </span>
                                 </div>
                                 {/* Conversion Rate */}
-                                <div className="bg-white rounded-[1rem] p-3.5 flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                <div className="bg-white rounded-[clamp(8px,1.2vh,16px)] p-[clamp(10px,1.5vh,20px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                                     <div className="flex justify-between items-start">
                                         <div className="flex flex-col">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Conversion Rate</span>
-                                            <span className="text-2xl font-bold text-gray-900 canela leading-none mt-1">{data?.stats?.avgConversion || '0.0'}%</span>
+                                            <span className="text-[clamp(8px,0.9vh,12px)] font-black uppercase tracking-widest text-gray-400">Conversion Rate</span>
+                                            <span className="text-[clamp(18px,2.4vh,32px)] font-bold text-gray-900 canela leading-none mt-1">{data?.stats?.avgConversion || '0.0'}%</span>
                                         </div>
-                                        <div className="w-8 h-8 rounded-lg bg-purple-50 justify-center text-purple-600 flex items-center shrink-0 border border-purple-100"><FiActivity className="text-sm" /></div>
+                                        <div className="w-[clamp(24px,3.5vh,48px)] h-[clamp(24px,3.5vh,48px)] rounded-[clamp(6px,1vh,12px)] bg-purple-50 justify-center text-purple-600 flex items-center shrink-0 border border-purple-100"><FiActivity className="text-[clamp(12px,1.8vh,24px)]" /></div>
                                     </div>
-                                    <span className={`inter text-[10px] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-auto tracking-wide`}>
+                                    <span className={`inter text-[clamp(8px,1.1vh,14px)] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-1 mt-[clamp(8px,1vh,16px)] tracking-wide`}>
                                         {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[10px]" /> : <FiTrendingDown className="text-[10px]" />} 
                                         {Math.abs(data?.stats?.trends?.leads?.change || 0)}% 
                                         <span className="text-gray-400 font-medium whitespace-nowrap">vs last 30 days</span>

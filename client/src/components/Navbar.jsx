@@ -32,12 +32,12 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
   // Override if forceTransparent is on
   const isDarkText = (!isHeroPage || isScrolled) && !forceTransparent;
 
-  const navClasses = `fixed ${isScrolled ? 'top-0' : 'top-6'} left-0 h-[40px] md:h-[80px] w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${forceTransparent
+  const navClasses = `fixed ${isScrolled ? 'top-0' : 'top-[clamp(12px,2vh,24px)]'} left-0 h-[clamp(50px,8vh,80px)] w-screen z-50 transition-all duration-200 flex items-center justify-between px-[clamp(12px,2vw,40px)] py-[clamp(8px,1vh,16px)] ${forceTransparent
       ? "bg-transparent text-white"
       : !isHeroPage
-        ? "bg-white text-black"
+        ? "bg-white text-black shadow-sm"
         : isScrolled
-          ? "bg-white text-black"
+          ? "bg-white text-black shadow-md"
           : "bg-transparent text-white"
     }`;
 
@@ -46,13 +46,13 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
   const logoSrc = (isScrolled || !isHeroPage)?"/logos/logo_inverted.png":"/logos/logo.png";
 
   return (
-    <nav className={`${navClasses} px-[2%]`}>
+    <nav className={navClasses}>
       <div className="w-full flex items-center justify-between relative">
         {/* 1. Logo - Left Column */}
         <div className="flex-1 flex justify-start">
           <NavLink to={"/"}>
             <img
-              className="w-[100px] md:w-[130px] lg:w-[150px] h-auto object-contain transition-all"
+              className="w-[clamp(100px,10vw,160px)] h-auto object-contain transition-all"
               alt="logo"
               src={logoSrc}
               title="Otulia"
@@ -61,29 +61,29 @@ const Navbar = ({ hideSearch = false, hideLogin = false, forceTransparent = fals
         </div>
 
         {/* 2. DESKTOP MENU - Center Column (Absolute centered) */}
-        <ul className="hidden lg:flex items-center justify-center gap-6 xl:gap-12 absolute left-1/2 -translate-x-1/2 w-auto">
+        <ul className="hidden lg:flex items-center justify-center gap-[clamp(16px,3vw,48px)] absolute left-1/2 -translate-x-1/2 w-auto">
           <li>
-            <NavLink to="/shop" className={({ isActive }) => `text-[10px] xl:text-[11px] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
+            <NavLink to="/shop" className={({ isActive }) => `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
               SHOP ALL
             </NavLink>
           </li>
           <li>
-            <NavLink to="/rent" className={({ isActive }) => `text-[10px] xl:text-[11px] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
+            <NavLink to="/rent" className={({ isActive }) => `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
               RENT
             </NavLink>
           </li>
           <li>
-            <NavLink to="/pricing" className={({ isActive }) => `text-[10px] xl:text-[11px] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
+            <NavLink to="/pricing" className={({ isActive }) => `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? 'text-[#D48D2A]' : isDarkText ? 'text-black hover:text-black/70' : 'text-white hover:text-white/70'}`}>
               PLAN & PRICE
             </NavLink>
           </li>
         </ul>
 
         {/* 3. RIGHT ACTIONS - Right Column */}
-        <div className="flex-1 flex items-center justify-end gap-2 md:gap-4 lg:gap-6">
+        <div className="flex-1 flex items-center justify-end gap-[clamp(8px,1vw,24px)]">
           <NavLink 
             to="/listings" 
-            className={`hidden lg:block px-6 py-2.5 rounded-full border text-[10px] tracking-[0.2em] font-medium montserrat transition-all duration-500 whitespace-nowrap backdrop-blur-md shadow-lg active:scale-95 ${
+            className={`hidden lg:block px-[clamp(12px,1.5vw,24px)] py-[clamp(6px,1vh,12px)] rounded-full border text-[clamp(9px,1.1vh,13px)] tracking-[0.2em] font-medium montserrat transition-all duration-500 whitespace-nowrap backdrop-blur-md shadow-lg active:scale-95 ${
               isDarkText 
               ? 'border-black/10 bg-black/5 text-black hover:bg-black hover:text-white hover:border-black hover:shadow-black/10' 
               : 'border-white/20 bg-white/10 text-white hover:bg-white hover:text-black hover:border-white hover:shadow-white/20'
