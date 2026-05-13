@@ -180,9 +180,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 }
             }
 
-            const spec = editData.specification || {};
-            const keySpec = editData.keySpecifications || {};
-
             // Extract existing highlights if available to populate fields (best effort)
             const parseNumber = (val) => {
                 if (!val) return '';
