@@ -2196,7 +2196,7 @@ const Inventory = () => {
                 </div>
 
                 {/* Asset Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pb-3 max-w-[1040px] mx-auto w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pb-32 max-w-[1040px] w-full">
                   {(() => {
                     const filtered = (data.inventory || []).filter((item) => {
                       const matchesCategory =
@@ -2250,7 +2250,7 @@ const Inventory = () => {
                           className="bg-white rounded-xl border border-[#E9ECF1] shadow-[0_1px_4px_rgba(17,24,39,0.04)] overflow-hidden group hover:border-[#D4A63A]/30 transition-all flex flex-col w-full max-w-[340px] mx-auto"
                         >
                           {/* Card Image Header */}
-                          <div className="relative h-[138px] bg-gray-100 w-full overflow-hidden rounded-t-xl">
+                          <div className="relative h-[230px] bg-gray-100 w-full overflow-hidden rounded-t-xl">
                             <img
                               src={
                                 item.images?.[0] || "/assets/placeholder.jpg"
@@ -2428,7 +2428,7 @@ const Inventory = () => {
                     Math.ceil(filtered.length / itemsPerPage) || 1;
 
                   return (
-                    <div className="sticky bottom-0 z-30 grid grid-cols-[1fr_auto_1fr] items-center gap-3 py-4 mt-1 border-t border-[#E9ECF1] bg-[#F9FAFB]/95 backdrop-blur-sm -mx-8 px-8 shadow-[0_-4px_16px_rgba(15,23,42,0.04)]">
+                    <div className="fixed bottom-0 left-64 right-0 z-30 grid grid-cols-[1fr_auto_1fr] items-center gap-3 py-4 border-t border-[#E9ECF1] bg-[#F9FAFB]/95 backdrop-blur-sm px-8 shadow-[0_-4px_16px_rgba(15,23,42,0.04)]">
                       <div />
                       <div className="flex justify-center">
                         <div className="inline-flex items-center gap-0.5 bg-white rounded-full border border-[#E9ECF1] shadow-[0_1px_4px_rgba(17,24,39,0.05)] px-1.5 py-1 inter">
