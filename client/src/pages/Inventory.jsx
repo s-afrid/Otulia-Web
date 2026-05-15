@@ -1570,7 +1570,8 @@ const Inventory = () => {
                           <div className="relative h-[138px] bg-gray-100 w-full overflow-hidden rounded-t-xl">
                             <img
                               src={
-                                item.images?.[0] || "/assets/placeholder.jpg"
+                                item.images?.[0] || "https://placehold.co/400x400?text=No+Image"
+
                               }
                               className="w-full h-full object-cover object-center group-hover:scale-[1.015] transition-transform duration-700"
                               alt={item.title}
@@ -1999,7 +2000,7 @@ const Inventory = () => {
                                                 }
                                                 if (leadSearchQuery) {
                                                     const q = leadSearchQuery.toLowerCase();
-                                                    leads = leads.filter(l => (l.buyerName && l.buyerName.toLowerCase().includes(q)) || (l.buyerPhone && l.buyerPhone.toLowerCase().includes(q)) || (l.customerContact && l.customerContact.toLowerCase().includes(q)));
+                                                    leads = leads.filter(l => (l.name && l.name.toLowerCase().includes(q)) || (l.phone && l.phone.toLowerCase().includes(q)) || (l.email && l.email.toLowerCase().includes(q)));
                                                 }
 
                                                 if (leads.length === 0) {
@@ -2010,7 +2011,13 @@ const Inventory = () => {
                                                         <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A]"/></td>
                                                         <td className="px-2 py-2.5">
                                                             <div className="flex items-center gap-2">
-                                                                <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0"><img src="/assets/placeholder.jpg" className="w-full h-full object-cover"/></div>
+                                                                <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0">
+                                                                    <img 
+                                                                        src={lead.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(lead.name)}&background=random`} 
+                                                                        className="w-full h-full object-cover"
+                                                                        onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(lead.name)}&background=random`; }}
+                                                                    />
+                                                                </div>
                                                                 <div className="flex flex-col truncate">
                                                                     <span className="text-gray-900 font-bold truncate">{lead.name}</span>
                                                                     <span className="text-gray-400 font-medium text-[9px] truncate">{lead.email}</span>
@@ -2022,13 +2029,16 @@ const Inventory = () => {
                                                             <div className="flex items-center gap-2">
                                                                 {(() => {
                                                                     const asset = (data?.inventory || []).find(a => a._id === lead.assetId || a.id === lead.assetId);
-                                                                    const assetName = asset ? (asset.propertyName || asset.yachtName || asset.name || asset.title || `${asset.make || ''} ${asset.model || ''}`.trim() || 'Unnamed Asset') : 'Unknown Asset';
+                                                                    const assetName = lead.assetName || (asset ? (asset.propertyName || asset.yachtName || asset.name || asset.title || `${asset.make || ''} ${asset.model || ''}`.trim()) : null) || 'Unknown Asset';
                                                                     const assetPrice = (lead.assetPrice || asset?.price) ? `$${numberWithCommas(lead.assetPrice || asset?.price)}` : 'Price on request';
                                                                     const assetImage = lead.assetImage || asset?.images?.[0];
                                                                     return (
                                                                         <>
                                                                             <div className="w-8 h-8 rounded shrink-0 bg-gray-100 border border-gray-200/50 overflow-hidden shadow-sm flex items-center justify-center">
-                                                                                {assetImage ? <img src={assetImage} className="w-full h-full object-cover"/> : <img src="/assets/placeholder.jpg" className="w-full h-full object-cover opacity-50"/>}
+                                                                                {assetImage ? 
+                                                                                    <img src={assetImage} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://placehold.co/400x400?text=No+Image"; }}/> : 
+                                                                                    <img src="https://placehold.co/400x400?text=No+Image" className="w-full h-full object-cover opacity-50"/>
+                                                                                }
                                                                             </div>
                                                                             <div className="flex flex-col truncate">
                                                                                 <span className="text-gray-900 truncate font-bold">{assetName}</span>
@@ -2052,7 +2062,11 @@ const Inventory = () => {
                                                             </div>
                                                         </td>
                                                         <td className="px-2 py-2.5 text-gray-900 font-black">
-                                                            {(lead.assetPrice) ? `$${(lead.assetPrice / 1000000).toFixed(1)}M` : '$6.6M'}
+                                                            {(() => {
+                                                                const price = lead.assetPrice || (data?.inventory || []).find(a => a._id === lead.assetId || a.id === lead.assetId)?.price;
+                                                                if (!price) return 'N/A';
+                                                                return price >= 1000000 ? `$${(price / 1000000).toFixed(1)}M` : `$${numberWithCommas(price)}`;
+                                                            })()}
                                                         </td>
                                                         <td className="px-2 py-2.5">
                                                             <div className="flex flex-col text-gray-600">
@@ -3017,7 +3031,7 @@ const Inventory = () => {
                                             <div className="flex flex-col gap-1.5 w-[30%]">
                                                 <label className="text-[9px] font-bold text-gray-700 capitalize tracking-wide">Profile Photo</label>
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden shrink-0"><img src={agentInfo.photo || user?.profilePicture || "/assets/placeholder.jpg"} className="w-full h-full object-cover"/></div>
+                                                    <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden shrink-0"><img src={agentInfo.photo || user?.profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(agentInfo.name || user?.name || "User")}&background=random`} className="w-full h-full object-cover"/></div>
                                                     <div className="flex flex-col justify-center">
                                                         <label className="px-3 py-1.5 cursor-pointer bg-white border border-gray-200 rounded-lg text-[9px] font-bold text-gray-700 flex items-center gap-1 whitespace-nowrap hover:bg-gray-50 shadow-sm">
                                                             <FiUpload/> Upload Photo

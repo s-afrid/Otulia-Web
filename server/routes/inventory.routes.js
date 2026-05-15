@@ -165,31 +165,39 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         const leadsTable = [
             ...currentLeads.map(l => ({
                 id: l._id,
-                buyerName: l.sender?.name || l.name || 'Anonymous Client',
-                buyerPhoto: l.sender?.profilePicture,
-                buyerPhone: l.sender?.phone || l.phone || 'No Phone Provided',
+                name: l.sender?.name || l.name || 'Anonymous Client',
+                photo: l.sender?.profilePicture,
+                phone: l.sender?.phone || l.phone || 'No Phone Provided',
+                email: user.plan === 'Business VIP' || user.plan === 'Enterprise Elite' ? (l.sender?.email || l.email) : 'Upgrade to VIP to view contact',
+                assetId: l.assetId,
                 assetName: l.assetTitle || 'Untitled Asset',
+                assetPrice: l.assetPrice,
+                assetImage: l.assetImage,
                 category: l.assetModel || 'General',
                 date: l.createdAt,
                 status: l.status || 'New',
                 message: l.message,
                 isActivity: false,
-                customerContact: user.plan === 'Business VIP' || user.plan === 'Enterprise Elite' ? (l.sender?.email || l.email) : 'Upgrade to VIP to view contact'
+                source: l.source || 'Website'
             })),
             ...currentActivities.filter(a => a.activityType !== 'VIEW').map(act => {
                 const asset = detailedItems.find(i => i.id.toString() === act.assetId.toString());
                 return {
                     id: act._id,
-                    buyerName: act.userId?.name || 'Anonymous Client',
-                    buyerPhoto: act.userId?.profilePicture,
-                    buyerPhone: act.userId?.phone || 'No Phone Provided',
+                    name: act.userId?.name || 'Anonymous Client',
+                    photo: act.userId?.profilePicture,
+                    phone: act.userId?.phone || 'No Phone Provided',
+                    email: user.plan === 'Business VIP' || user.plan === 'Enterprise Elite' ? act.userId?.email : 'Upgrade to VIP to view contact',
+                    assetId: act.assetId,
                     assetName: asset?.title || 'Untitled Asset',
+                    assetPrice: asset?.price,
+                    assetImage: asset?.images?.[0],
                     category: asset?.category || 'General',
                     date: act.createdAt,
                     status: act.status || 'New',
                     message: 'Activity: ' + act.activityType,
                     isActivity: true,
-                    customerContact: user.plan === 'Business VIP' || user.plan === 'Enterprise Elite' ? act.userId?.email : 'Upgrade to VIP to view contact'
+                    source: 'Website'
                 };
             })
         ].sort((a, b) => new Date(b.date) - new Date(a.date));
