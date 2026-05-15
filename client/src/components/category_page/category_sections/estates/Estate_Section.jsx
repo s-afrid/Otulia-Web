@@ -231,7 +231,10 @@ const Estate_Section = () => {
                   </div>
                   <div className="flex flex-1 items-end justify-between px-4 py-2">
                     <div className="flex flex-col gap-6 md:gap-9">
-                      <h3 className="canela text-lg text-black font-medium leading-tight">
+                      <h3
+                        className="canela text-lg text-black font-medium leading-tight"
+                        style={{ fontFamily: "'Kaisei Decol', serif" }}
+                      >
                         {item.location}
                       </h3>
                       <span className="text-[10px] font-sans text-gray-400 font-bold uppercase tracking-widest">

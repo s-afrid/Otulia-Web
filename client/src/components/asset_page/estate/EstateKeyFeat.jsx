@@ -1,22 +1,22 @@
-import React from 'react';
-import bedroomIcon from '../../../assets/productpage/bed icon.webp';
-import bathroomIcon from '../../../assets/productpage/bathroom icon.webp';
-import sqftIcon from '../../../assets/productpage/sqft.webp';
-import landIcon from '../../../assets/productpage/land area.webp';
-import floorIcon from '../../../assets/productpage/floor.webp';
-import garageIcon from '../../../assets/productpage/garage iconn.webp';
+import React from "react";
+import bedroomIcon from "../../../assets/productpage/bed icon.webp";
+import bathroomIcon from "../../../assets/productpage/bathroom icon.webp";
+import sqftIcon from "../../../assets/productpage/sqft.webp";
+import landIcon from "../../../assets/productpage/land area.webp";
+import floorIcon from "../../../assets/productpage/floor.webp";
+import garageIcon from "../../../assets/productpage/garage iconn.webp";
 
 const EstateKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
 
   const specItems = [
-    { label: 'Bedrooms', value: kSpecs.bedrooms, icon: bedroomIcon },
-    { label: 'Bathrooms', value: kSpecs.bathrooms, icon: bathroomIcon },
-    { label: 'Built Area', value: kSpecs.builtUpArea, icon: sqftIcon },
-    { label: 'Land Area', value: kSpecs.landArea, icon: landIcon },
-    { label: 'Floors', value: kSpecs.floors, icon: floorIcon },
-    { label: 'Garage', value: kSpecs.garageCapacity, icon: garageIcon }
-  ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
+    { label: "Bedrooms", value: kSpecs.bedrooms, icon: bedroomIcon },
+    { label: "Bathrooms", value: kSpecs.bathrooms, icon: bathroomIcon },
+    { label: "Built Area", value: kSpecs.builtUpArea, icon: sqftIcon },
+    { label: "Land Area", value: kSpecs.landArea, icon: landIcon },
+    { label: "Floors", value: kSpecs.floors, icon: floorIcon },
+    { label: "Garage", value: kSpecs.garageCapacity, icon: garageIcon },
+  ].filter((spec) => spec.value && spec.value !== "0" && spec.value !== "-");
 
   if (specItems.length === 0) return null;
 
@@ -25,12 +25,20 @@ const EstateKeyFeatures = ({ item }) => {
     <div className="flex items-center gap-4 w-[300px] h-[100px] bg-[#FCFBF9] border border-[#E8E3DD] rounded-[8px] px-5 py-[12px] shadow-none hover:shadow-sm transition-shadow cursor-default">
       {/* Icon Container */}
       <div className="flex justify-center items-center shrink-0">
-        <img src={icon} alt={label} className="w-[70px] h-[70px] object-contain" />
+        <img
+          src={icon}
+          alt={label}
+          className="w-[70px] h-[70px] object-contain mix-blend-multiply"
+        />
       </div>
       {/* Text Content */}
       <div className="flex flex-col gap-[2px] justify-center">
-        <span className="text-[9px] font-semibold text-[#9D8F84] uppercase tracking-[1.8px] leading-[11px] montserrat">{label}</span>
-        <span className="text-[18px] font-semibold text-[#1E1E1E] leading-[22px] font-cormorant">{value}</span>
+        <span className="text-[9px] font-semibold text-[#9D8F84] uppercase tracking-[1.8px] leading-[11px] montserrat">
+          {label}
+        </span>
+        <span className="text-[18px] font-semibold text-[#1E1E1E] leading-[22px] font-cormorant">
+          {value}
+        </span>
       </div>
     </div>
   );
@@ -39,7 +47,9 @@ const EstateKeyFeatures = ({ item }) => {
     <div className="w-full px-[4%] py-16 bg-white">
       {/* Header Box - Line with Centered Text */}
       <div className="relative flex items-center justify-center mb-16">
-        <span className="absolute left-0 text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em] bg-white z-10 pr-4">HIGHLIGHTS</span>
+        <span className="absolute left-0 text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em] bg-white z-10 pr-4">
+          HIGHLIGHTS
+        </span>
         <div className="w-full h-px bg-gray-200"></div>
         <div className="absolute bg-white px-10 flex flex-col items-center">
           <h2 className="text-3xl md:text-4xl font-normal canela text-black whitespace-nowrap">
