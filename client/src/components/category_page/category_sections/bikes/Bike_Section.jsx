@@ -183,7 +183,7 @@ const Bike_Section = () => {
                     src={item.logo}
                     alt={item.name}
                     onClick={() => handleBrandClick(item.name)}
-                    className="h-16 md:h-20 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-pointer mix-blend-multiply"
+                    className="h-16 md:h-20 w-auto object-contain cursor-pointer mix-blend-multiply"
                   />
                 </div>
               ))}

@@ -1,33 +1,37 @@
-import React from 'react'
-import heroUrl from '../../../../assets/hero_banners/hero_yacht.webp'
-import Yacht_Search from './Yacht_Search'
+import React from "react";
+import heroUrl from "../../../../assets/hero_banners/hero_yacht.webp";
+import Yacht_Search from "./Yacht_Search";
 
 const Yacht_Hero = () => {
   return (
-    <div className='relative flex flex-col hero-banner h-screen w-full z-20'>
+    <div className="relative flex flex-col hero-banner h-screen w-full z-20">
       {/* Background Image */}
-      <img className='absolute top-0 left-0 -z-10 h-full w-full object-cover' src={heroUrl} alt='hero_yacht' />
-      
-      {/* Clearer Overlay */}
-      <div className='absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent -z-5' />
+      <img
+        className="absolute top-0 left-0 -z-10 h-full w-full object-cover"
+        src={heroUrl}
+        alt="hero_yacht"
+      />
 
-      <div className='relative h-full w-full flex flex-col justify-center px-[6%] md:px-[8%] z-10 pt-20'>
-        <div className='max-w-2xl flex flex-col gap-6 mb-16'>
-          <h1 className='text-white canela text-2xl md:text-[3.25rem] font-light leading-[1.05] drop-shadow-sm'>
+      {/* Clearer Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent -z-5" />
+
+      <div className="relative h-full w-full flex flex-col justify-center pl-8 md:pl-10 pr-[6%] z-10 pt-20">
+        <div className="max-w-2xl flex flex-col gap-6 mb-16">
+          <h1 className="text-white canela text-2xl md:text-[3.25rem] font-light leading-[1.05] drop-shadow-sm">
             Discover Your Dream <br /> Yachts With Us
           </h1>
-          <div className='w-24 h-[2px] bg-[#D48D2A]'></div>
-          <p className='text-white/90 montserrat text-lg md:text-xl font-normal tracking-wide'>
+          <div className="w-24 h-[2px] bg-[#D48D2A]"></div>
+          <p className="text-white/90 montserrat text-lg md:text-xl font-normal tracking-wide">
             Unrivaled luxury, boundless freedom.
           </p>
         </div>
 
-        <div className='w-full max-w-4xl'>
+        <div className="w-full max-w-4xl">
           <Yacht_Search />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Yacht_Hero
+export default Yacht_Hero;

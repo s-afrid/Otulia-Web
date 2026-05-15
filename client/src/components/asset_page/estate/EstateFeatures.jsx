@@ -15,19 +15,27 @@ const EstateFeatures = ({ item }) => {
   const keySpecs = item?.keySpecifications || {};
 
   // 2. Helper function to check if a value is valid
-  const isValid = (value) => value && value !== "-" && value !== 0 && value !== "0";
+  const isValid = (value) =>
+    value && value !== "-" && value !== 0 && value !== "0";
 
   // 3. Collect all valid specifications into an array
   const allSpecs = [
     { label: "Property Name:", value: item?.propertyName || item?.title },
-    { label: "Property Type:", value: specs.propertyType || keySpecs.propertyType },
+    {
+      label: "Property Type:",
+      value: specs.propertyType || keySpecs.propertyType,
+    },
     { label: "Listing Type:", value: item?.type },
     { label: "Year Built:", value: specs.yearOfConstruction },
     {
       label: "Location:",
-      value: item?.location || (specs.city && specs.country ? `${specs.city}, ${specs.country}` : null),
+      value:
+        item?.location ||
+        (specs.city && specs.country
+          ? `${specs.city}, ${specs.country}`
+          : null),
       isLink: true,
-      icon: null
+      icon: null,
     },
     { label: "Address:", value: specs.address },
     { label: "Neighborhood:", value: specs.areaNeighborhood },
@@ -36,7 +44,10 @@ const EstateFeatures = ({ item }) => {
     { label: "Configuration:", value: specs.configuration },
     { label: "Condition:", value: specs.condition },
     { label: "Usage Status:", value: specs.usageStatus },
-    { label: "Built-up Area:", value: specs.builtUpArea || keySpecs.builtUpArea },
+    {
+      label: "Built-up Area:",
+      value: specs.builtUpArea || keySpecs.builtUpArea,
+    },
     { label: "Land Area:", value: specs.landArea || keySpecs.landArea },
     { label: "Bedrooms:", value: specs.bedrooms || keySpecs.bedrooms },
     { label: "Bathrooms:", value: specs.bathrooms || keySpecs.bathrooms },
@@ -47,24 +58,40 @@ const EstateFeatures = ({ item }) => {
     { label: "Interior Color Theme:", value: specs.interiorColorTheme },
     { label: "Exterior Finish:", value: specs.exteriorFinish },
     { label: "Climate Control:", value: specs.climateControl },
-  ].filter(spec => isValid(spec.value));
+  ].filter((spec) => isValid(spec.value));
 
   // Add Amenities
-  const amenitiesList = ['Pool', 'Garden', 'Parking', 'Security', 'Smart Home', 'Gym', 'Wine Cellar', 'Home Theater', 'Elevator'].filter(a => item?.amenities?.includes(a));
-  amenitiesList.forEach(amenity => {
+  const amenitiesList = [
+    "Pool",
+    "Garden",
+    "Parking",
+    "Security",
+    "Smart Home",
+    "Gym",
+    "Wine Cellar",
+    "Home Theater",
+    "Elevator",
+  ].filter((a) => item?.amenities?.includes(a));
+  amenitiesList.forEach((amenity) => {
     allSpecs.push({ label: amenity, value: "Yes" });
   });
 
   // Add Smart Tech & Views
-  const smartHomeList = ['Lighting', 'Climate', 'Entertainment', 'Voice Assistant', 'Blinds'].filter(s => item?.smartHomeSystems?.includes(s));
-  smartHomeList.forEach(tech => {
+  const smartHomeList = [
+    "Lighting",
+    "Climate",
+    "Entertainment",
+    "Voice Assistant",
+    "Blinds",
+  ].filter((s) => item?.smartHomeSystems?.includes(s));
+  smartHomeList.forEach((tech) => {
     allSpecs.push({ label: `${tech} Control:`, value: "Yes" });
   });
 
   if (item?.viewTypes?.length > 0) {
     allSpecs.push({
       label: "View Type:",
-      value: item.viewTypes.map(v => `${v} View`).join(', ')
+      value: item.viewTypes.map((v) => `${v} View`).join(", "),
     });
   }
 
@@ -86,8 +113,11 @@ const EstateFeatures = ({ item }) => {
       <div className="flex items-center gap-2 text-right">
         {icon && <span>{icon}</span>}
         <span
-          className={`text-sm md:text-base font-medium text-black ${isLink ? 'underline decoration-gray-400 cursor-pointer hover:text-gray-600' : ''
-            }`}
+          className={`text-sm md:text-base font-medium text-black ${
+            isLink
+              ? "underline decoration-gray-400 cursor-pointer hover:text-gray-600"
+              : ""
+          }`}
         >
           {value}
         </span>
@@ -98,7 +128,9 @@ const EstateFeatures = ({ item }) => {
   return (
     <div className="w-full px-[2%] py-10 bg-white montserrat">
       <div className="flex justify-between items-end mb-10">
-        <h3 className="text-2xl md:text-3xl font-normal canela text-black">Property Specifications</h3>
+        <h3 className="text-2xl md:text-3xl font-normal canela text-black">
+          Property Specifications
+        </h3>
         {allSpecs.length > LIMIT * 2 && (
           <button
             onClick={() => setIsModalOpen(true)}
@@ -128,8 +160,13 @@ const EstateFeatures = ({ item }) => {
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
             <div className="flex justify-between items-center p-6 border-b border-gray-100">
-              <h2 className="text-2xl font-bold canela">All Property Specifications</h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <h2 className="text-2xl font-bold canela">
+                All Property Specifications
+              </h2>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
                 <FiX className="text-2xl" />
               </button>
             </div>
@@ -151,20 +188,33 @@ const EstateFeatures = ({ item }) => {
           <h2 className="text-3xl font-bold canela flex items-center gap-2 mb-2">
             Features
           </h2>
-          <p className="text-gray-500 mb-8 montserrat text-sm">Discover the finest amenities and luxury features this property has to offer.</p>
+          <p className="text-gray-500 mb-8 montserrat text-sm">
+            Discover the finest amenities and luxury features this property has
+            to offer.
+          </p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {item.amenities.slice(0, 20).map((amenity, idx) => (
-              <div key={idx} className="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-[#D48D2A] transition-all">
-                <span className="text-[#D48D2A] text-lg shrink-0 flex items-center justify-center">{getFeatureIcon(amenity)}</span>
-                <span className="text-xs md:text-sm font-medium text-gray-800 montserrat truncate">{amenity}</span>
+              <div
+                key={idx}
+                className="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-[#D48D2A] transition-all"
+              >
+                <span className="text-[#D48D2A] text-lg shrink-0 flex items-center justify-center ">
+                  {getFeatureIcon(amenity)}
+                </span>
+                <span className="text-xs md:text-sm font-bold text-gray-800 montserrat truncate">
+                  {amenity}
+                </span>
               </div>
             ))}
           </div>
           {item.amenities.length > 20 && (
             <div className="mt-6">
-               <button onClick={() => setIsFeaturesModalOpen(true)} className="underline font-bold text-gray-800 hover:text-[#D48D2A] transition-colors montserrat text-sm border-b-2 border-black inline-block pb-1">
-                 View all {item.amenities.length} features
-               </button>
+              <button
+                onClick={() => setIsFeaturesModalOpen(true)}
+                className="underline font-bold text-gray-800 hover:text-[#D48D2A] transition-colors montserrat text-sm border-b-2 border-black inline-block pb-1"
+              >
+                View all {item.amenities.length} features
+              </button>
             </div>
           )}
         </div>
@@ -176,10 +226,17 @@ const EstateFeatures = ({ item }) => {
           <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
               <div>
-                <h2 className="text-2xl font-bold canela mb-1 flex items-center gap-2">Features</h2>
-                <span className="text-xs text-gray-500 uppercase tracking-widest montserrat font-bold">{item?.amenities?.length || 0} Amenities</span>
+                <h2 className="text-2xl font-bold canela mb-1 flex items-center gap-2">
+                  Features
+                </h2>
+                <span className="text-xs text-gray-500 uppercase tracking-widest montserrat font-bold">
+                  {item?.amenities?.length || 0} Amenities
+                </span>
               </div>
-              <button onClick={() => setIsFeaturesModalOpen(false)} className="p-3 hover:bg-gray-100 rounded-full transition-colors">
+              <button
+                onClick={() => setIsFeaturesModalOpen(false)}
+                className="p-3 hover:bg-gray-100 rounded-full transition-colors"
+              >
                 <FiX className="text-2xl text-gray-700" />
               </button>
             </div>
@@ -187,9 +244,16 @@ const EstateFeatures = ({ item }) => {
             <div className="p-6 md:p-8 overflow-y-auto bg-[#fafafa]">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {item?.amenities?.map((amenity, idx) => (
-                  <div key={idx} className="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-sm hover:border-[#D48D2A] transition-all hover:-translate-y-0.5">
-                    <span className="text-[#D48D2A] text-lg shrink-0 flex items-center justify-center opacity-80">{getFeatureIcon(amenity)}</span>
-                    <span className="text-xs md:text-sm font-bold text-gray-800 montserrat">{amenity}</span>
+                  <div
+                    key={idx}
+                    className="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-sm hover:border-[#D48D2A] transition-all hover:-translate-y-0.5"
+                  >
+                    <span className="text-[#D48D2A] text-lg shrink-0 flex items-center justify-center opacity-80">
+                      {getFeatureIcon(amenity)}
+                    </span>
+                    <span className="text-xs md:text-sm font-bold text-gray-800 montserrat">
+                      {amenity}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -197,7 +261,6 @@ const EstateFeatures = ({ item }) => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
