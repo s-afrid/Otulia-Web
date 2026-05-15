@@ -255,31 +255,34 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         ];
 
         res.json({
-            plan: user.plan,
-            userProfile: {
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                profilePicture: user.profilePicture,
+            success: true,
+            data: {
                 plan: user.plan,
-                memberSince: user.createdAt,
-                isVerified: user.isVerified,
-                company: user.company
-            },
-            stats,
-            inventory: detailedItems,
-            leads: leadsTable,
-            notifications: user.notifications || [],
-            analytics: {
-                performanceTrend: performanceHistory,
-                leadsByCategory,
-                leadsByLocation,
-                leadsBySource: [
-                    { label: 'Direct', count: Math.floor(stats.totalLeads * 0.4), p: '40%' },
-                    { label: 'Website', count: Math.floor(stats.totalLeads * 0.3), p: '30%' },
-                    { label: 'Marketplace', count: Math.floor(stats.totalLeads * 0.2), p: '20%' },
-                    { label: 'Social', count: Math.floor(stats.totalLeads * 0.1), p: '10%' }
-                ]
+                userProfile: {
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    profilePicture: user.profilePicture,
+                    plan: user.plan,
+                    memberSince: user.createdAt,
+                    isVerified: user.isVerified,
+                    company: user.company
+                },
+                stats,
+                inventory: detailedItems,
+                leads: leadsTable,
+                notifications: user.notifications || [],
+                analytics: {
+                    performanceTrend: performanceHistory,
+                    leadsByCategory,
+                    leadsByLocation,
+                    leadsBySource: [
+                        { label: 'Direct', count: Math.floor(stats.totalLeads * 0.4), p: '40%' },
+                        { label: 'Website', count: Math.floor(stats.totalLeads * 0.3), p: '30%' },
+                        { label: 'Marketplace', count: Math.floor(stats.totalLeads * 0.2), p: '20%' },
+                        { label: 'Social', count: Math.floor(stats.totalLeads * 0.1), p: '10%' }
+                    ]
+                }
             }
         });
 
