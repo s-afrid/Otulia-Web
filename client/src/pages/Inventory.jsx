@@ -167,12 +167,17 @@ const Inventory = () => {
     const fetchDashboardData = async () => {
         setIsLoading(true);
         try {
+            console.log(`[Inventory] Fetching data with timeframe=${timeframe}, interval=${chartInterval}...`);
             const response = await fetch(`/api/inventory/dashboard?timeframe=${timeframe}&interval=${chartInterval}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             const result = await response.json();
+            console.log('[Inventory] API Result:', result);
             if (result.success) {
                 setData(result.data);
+                console.log('[Inventory] State updated with:', result.data.inventory?.length, 'assets');
+            } else {
+                console.error('[Inventory] API Error:', result.error);
             }
         } catch (error) {
             console.error('Fetch error:', error);

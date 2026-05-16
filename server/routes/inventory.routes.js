@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/auth.middleware');
 const User = require('../models/User.model');
+const Listing = require('../models/Listing.model');
 const CarAsset = require('../models/CarAsset.model');
 const EstateAsset = require('../models/EstateAsset.model');
 const BikeAsset = require('../models/BikeAsset.model');
@@ -14,23 +15,62 @@ const Lead = require('../models/Lead.model');
  * Advanced features gated by plan: Premium Basic vs Business VIP
  */
 router.get('/dashboard', authMiddleware, async (req, res) => {
+    console.log('>>> [INVENTORY_DEBUG] Dashboard route hit for user:', req.user.id);
     try {
         const userId = req.user.id;
         const { timeframe = 'Week', interval = 'Week' } = req.query;
         
-        const user = await User.findById(userId).populate('myListings.item');
+        // 1. Fetch user and their listings
+        let user = await User.findById(userId).populate('myListings.item');
 
-        if (!user) return res.status(404).json({ error: 'User not found' });
+        if (!user) {
+            console.log('>>> [INVENTORY_DEBUG] User not found');
+            return res.status(404).json({ error: 'User not found' });
+        }
 
         // Gating for Freemium
         if (user.plan === 'Freemium') {
+            console.log('>>> [INVENTORY_DEBUG] User is Freemium, blocked');
             return res.status(403).json({ error: 'INSUFFICIENT_PLAN', message: 'Please upgrade to access the Inventory Management System.' });
         }
 
-        const listings = user.myListings.filter(l => l.item && typeof l.item.toObject === 'function');
-        const assetIds = listings.map(l => l.item._id);
+        // 2. Robust Population Check & Fallback
+        let listings = user.myListings.filter(l => l.item && typeof l.item.toObject === 'function');
+        
+        if (listings.length === 0 && user.myListings.length > 0) {
+            console.log(`>>> [INVENTORY_DEBUG] Dynamic population failed for user ${userId}. Attempting manual fallback for ${user.myListings.length} items.`);
+            // Manual population fallback
+            const populatedListings = await Promise.all(user.myListings.map(async (l) => {
+                if (!l.item) return null;
+                if (typeof l.item.toObject === 'function') return l; 
+                
+                try {
+                    let Model;
+                    if (l.itemModel === 'CarAsset') Model = CarAsset;
+                    else if (l.itemModel === 'EstateAsset') Model = EstateAsset;
+                    else if (l.itemModel === 'YachtAsset') Model = YachtAsset;
+                    else if (l.itemModel === 'BikeAsset') Model = BikeAsset;
+                    else Model = Listing;
 
-        // 1. Time Ranges for Trends
+                    const item = await Model.findById(l.item);
+                    if (item) {
+                        console.log(`>>> [INVENTORY_DEBUG] Manually populated item: ${item.title || item._id}`);
+                        return { ...l.toObject(), item };
+                    }
+                    console.log(`>>> [INVENTORY_DEBUG] Failed to find item ${l.item} in model ${l.itemModel}`);
+                    return null;
+                } catch (e) {
+                    console.error(`>>> [INVENTORY_DEBUG] Manual population error:`, e.message);
+                    return null;
+                }
+            }));
+            listings = populatedListings.filter(Boolean);
+        }
+
+        const assetIds = listings.map(l => l.item._id);
+        console.log(`>>> [INVENTORY_DEBUG] Returning ${listings.length} items.`);
+
+        // 3. Time Ranges for Trends
         const now = new Date();
         let days = 7;
         if (timeframe === 'Month' || interval === 'Week') days = 30;
@@ -40,28 +80,30 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 
         const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
         const prevRangeStart = new Date(now.getTime() - days * 2 * 24 * 60 * 60 * 1000);
+        const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+        const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-        // 2. Fetch All Relevant Data for Stat Calculation
+        // 4. Fetch All Relevant Data for Stat Calculation
         const currentActivities = await UserActivity.find({
             assetId: { $in: assetIds },
-            createdAt: { $gte: prevRangeStart }
+            createdAt: { $gte: sixtyDaysAgo }
         });
 
         const currentLeads = await Lead.find({
             agentId: userId,
-            createdAt: { $gte: prevRangeStart }
+            createdAt: { $gte: sixtyDaysAgo }
         }).populate('sender', 'name email phone profilePicture');
 
         // Views calculation
         const viewsCurrent = currentActivities.filter(a => a.activityType === 'VIEW' && a.createdAt >= rangeStart).length;
-        const viewsPrev = currentActivities.filter(a => a.activityType === 'VIEW' && a.createdAt < rangeStart).length;
+        const viewsPrev = currentActivities.filter(a => a.activityType === 'VIEW' && a.createdAt < rangeStart && a.createdAt >= prevRangeStart).length;
         const viewsChange = viewsPrev > 0 ? (((viewsCurrent - viewsPrev) / viewsPrev) * 100).toFixed(1) : (viewsCurrent > 0 ? 100 : 0);
 
         // Leads calculation
         const leadsCurrent = (currentActivities.filter(a => a.activityType !== 'VIEW' && a.createdAt >= rangeStart).length) +
                          (currentLeads.filter(l => l.createdAt >= rangeStart).length);
-        const leadsPrev = (currentActivities.filter(a => a.activityType !== 'VIEW' && a.createdAt < rangeStart).length) +
-                             (currentLeads.filter(l => l.createdAt < rangeStart).length);
+        const leadsPrev = (currentActivities.filter(a => a.activityType !== 'VIEW' && a.createdAt < rangeStart && a.createdAt >= prevRangeStart).length) +
+                             (currentLeads.filter(l => l.createdAt < rangeStart && l.createdAt >= prevRangeStart).length);
         const leadsChange = leadsPrev > 0 ? (((leadsCurrent - leadsPrev) / leadsPrev) * 100).toFixed(1) : (leadsCurrent > 0 ? 100 : 0);
 
         // Saved calculation
@@ -86,8 +128,11 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         listings.forEach(l => {
             const item = l.item;
             const price = item.price || 0;
-            if (leadAssetIdsCurrent.has(item._id.toString())) estValueCurrent += price;
-            if (leadAssetIdsPrev.has(item._id.toString())) estValuePrev += price;
+            const itemId = item._id ? item._id.toString() : null;
+            if (itemId) {
+                if (leadAssetIdsCurrent.has(itemId)) estValueCurrent += price;
+                if (leadAssetIdsPrev.has(itemId)) estValuePrev += price;
+            }
         });
         const valueChange = estValuePrev > 0 ? (((estValueCurrent - estValuePrev) / estValuePrev) * 100).toFixed(1) : (estValueCurrent > 0 ? 100 : 0);
 
@@ -96,8 +141,8 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             totalViews: viewsCurrent,
             totalLeads: leadsCurrent,
             avgConversion: viewsCurrent > 0 ? ((leadsCurrent / viewsCurrent) * 100).toFixed(2) : 0,
-            activeCount: listings.filter(l => l.item.status === 'Active').length,
-            closedCount: listings.filter(l => l.item.status !== 'Active').length,
+            activeCount: listings.filter(l => l.item && l.item.status === 'Active').length,
+            closedCount: listings.filter(l => l.item && l.item.status !== 'Active').length,
             savedCount: savedCurrent,
             estLeadValue: estValueCurrent,
             trends: {
@@ -108,9 +153,15 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             }
         };
 
-        const detailedItems = listings.map(l => {
+        const detailedItems = listings.map((l, index) => {
             const item = l.item;
-            const assetId = item._id.toString();
+            if (!item) {
+                console.log(`>>> [INVENTORY_DEBUG] Item at index ${index} is null`);
+                return null;
+            }
+
+            const assetId = item._id ? item._id.toString() : 'unknown';
+            console.log(`>>> [INVENTORY_DEBUG] Mapping item ${index}: id=${assetId}, model=${l.itemModel}, title=${item.title || item.propertyName || 'MISSING'}`);
             
             // Calculate leads for this specific asset
             const assetLeads = [
@@ -118,7 +169,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 ...currentActivities.filter(act => act.assetId?.toString() === assetId && act.activityType !== 'VIEW')
             ].length;
 
-            const itemObj = item.toObject();
+            const itemObj = item.toObject ? item.toObject() : item;
 
             return {
                 ...itemObj,
@@ -145,7 +196,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 location: item.location || item.specification?.carLocation || item.specification?.yachtLocation || item.specification?.city,
                 description: item.description
             };
-        });
+        }).filter(Boolean);
 
         // Daily Trends for Sparklines
         const dailyTrends = [];
@@ -337,6 +388,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 
         res.json({
             success: true,
+            _v: Date.now(), // Version tag for debugging
             data: {
                 plan: user.plan,
                 userProfile: {
