@@ -254,7 +254,7 @@ const DashboardTab = ({ data, generateSparkline, chartInterval, setChartInterval
                                             </div>
                                             <span className="inter text-gray-900 truncate overflow-hidden whitespace-nowrap text-[clamp(10px,1.3vh,18px)] font-medium leading-none tracking-normal">{item.name}</span>
                                         </td>
-                                        <td className="py-[clamp(6px,1.2vh,20px)] text-center text-gray-700 font-medium text-[clamp(10px,1.3vh,18px)] kaisei leading-none tracking-normal">{numberWithCommas(item.views)}</td>
+                                        <td className="py-[clamp(6px,1.2vh,20px)] text-center text-gray-700 font-medium text-[clamp(10px,1.3vh,18px)] kaisei leading-none tracking-normal">{numberWithCommas(item.views || 0)}</td>
                                         <td className={`py-[clamp(6px,1.2vh,20px)] text-right font-medium tracking-tight inter text-[clamp(10px,1.3vh,18px)] ${item.change.includes('-') ? 'text-red-500' : 'text-[#10B981]'}`}>
                                             {!item.change.includes('-') && <span className="mr-1">↑</span>}
                                             {item.change.startsWith('+') ? item.change : (item.change.includes('-') ? item.change : `+${item.change}`)}

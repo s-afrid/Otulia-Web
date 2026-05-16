@@ -25,7 +25,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             return res.status(403).json({ error: 'INSUFFICIENT_PLAN', message: 'Please upgrade to access the Inventory Management System.' });
         }
 
-        const listings = user.myListings.filter(l => l.item);
+        const listings = user.myListings.filter(l => l.item && typeof l.item.toObject === 'function');
         const assetIds = listings.map(l => l.item._id);
 
         // 1. Time Ranges for Trends
@@ -102,18 +102,40 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 
         const detailedItems = listings.map(l => {
             const item = l.item;
+            const assetId = item._id.toString();
+            
+            // Calculate leads for this specific asset
+            const assetLeads = [
+                ...currentLeads.filter(lead => lead.assetId?.toString() === assetId),
+                ...currentActivities.filter(act => act.assetId?.toString() === assetId && act.activityType !== 'VIEW')
+            ].length;
+
+            const itemObj = item.toObject();
+
             return {
-                ...item.toObject ? item.toObject() : item,
-                id: item._id,
+                ...itemObj,
+                id: assetId,
                 itemModel: l.itemModel,
-                title: item.title,
-                price: item.price,
-                status: item.status,
+                title: item.title || item.propertyName || item.yachtName || item.name || "Unnamed Asset",
+                price: item.price || 0,
+                status: item.status || 'Draft',
                 views: item.views || 0,
+                leads: assetLeads,
                 type: item.type,
-                images: item.images,
+                images: item.images || [],
                 createdAt: item.createdAt,
-                category: l.itemModel
+                category: l.itemModel,
+                // Ensure specific fields are at the top level for easy access
+                propertyName: item.propertyName,
+                yachtName: item.yachtName,
+                name: item.name,
+                make: item.make || item.brand || item.builder,
+                model: item.model || item.specification?.model,
+                fuelType: item.fuelType || item.specification?.fuel || item.specification?.fuelType,
+                transmission: item.transmission || item.specification?.transmission,
+                year: item.year || item.specification?.yearOfConstruction,
+                location: item.location || item.specification?.carLocation || item.specification?.yachtLocation || item.specification?.city,
+                description: item.description
             };
         });
 

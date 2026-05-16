@@ -245,8 +245,8 @@ const LeadsTab = ({
                                         <td className="px-2 py-2.5 text-gray-900 font-black">
                                             {(() => {
                                                 const price = lead.assetPrice || (data?.inventory || []).find(a => a._id === lead.assetId || a.id === lead.assetId)?.price;
-                                                if (!price) return 'N/A';
-                                                return price >= 1000000 ? `$${(price / 1000000).toFixed(1)}M` : `$${numberWithCommas(price)}`;
+                                                if (!price || isNaN(price)) return 'Price on request';
+                                                return Number(price) >= 1000000 ? `$${(Number(price) / 1000000).toFixed(1)}M` : `$${numberWithCommas(price)}`;
                                             })()}
                                         </td>
                                         <td className="px-2 py-2.5">

@@ -189,16 +189,16 @@ const InventoryTab = ({
                                     </h3>
                                     <div className="shrink-0 text-right pl-1">
                                         <p className="text-[14px] font-medium text-[#111827] inter leading-none tabular-nums">
-                                            ${numberWithCommas(item.price)}
+                                            ${numberWithCommas(item.price || 0)}
                                         </p>
                                         <p className="text-[9px] font-normal text-[#667085] inter mt-0.5">Est. Value</p>
                                     </div>
                                 </div>
 
-                                <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full w-fit mb-2 border inter ${item.status === "Active" ? "bg-[#ECFDF5] border-[#D1FAE5]/80" : "bg-[#F9FAFB] border-[#E9ECF1]"}`}>
-                                    <div className={`w-[5px] h-[5px] rounded-full shrink-0 ${item.status === "Active" ? "bg-[#22C55E]" : "bg-[#94A3B8]"}`}></div>
+                                <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full w-fit mb-2 border inter ${(item.status === "Active" || item.status === "Live") ? "bg-[#ECFDF5] border-[#D1FAE5]/80" : "bg-[#F9FAFB] border-[#E9ECF1]"}`}>
+                                    <div className={`w-[5px] h-[5px] rounded-full shrink-0 ${(item.status === "Active" || item.status === "Live") ? "bg-[#22C55E]" : "bg-[#94A3B8]"}`}></div>
                                     <span className="text-[10px] font-medium text-[#111827] leading-none">
-                                        {item.status === "Active" ? "Live" : item.status}
+                                        {(item.status === "Active" || item.status === "Live") ? "Live" : (item.status || "Draft")}
                                     </span>
                                 </div>
 
@@ -218,14 +218,14 @@ const InventoryTab = ({
                                     <div className="flex items-center gap-1 text-[12px] font-medium text-[#667085]">Public</div>
                                     <div
                                         onClick={() => handleTogglePublic(item)}
-                                        className={`w-[34px] h-[18px] rounded-full relative cursor-pointer shrink-0 transition-colors duration-300 ${item.status === "Active" ? "bg-[#D4A63A]" : "bg-[#E9ECF1]"}`}
+                                        className={`w-[34px] h-[18px] rounded-full relative cursor-pointer shrink-0 transition-colors duration-300 ${(item.status === "Active" || item.status === "Live") ? "bg-[#D4A63A]" : "bg-[#E9ECF1]"}`}
                                     >
-                                        {updatingId === item.id ? (
+                                        {updatingId && item.id && String(updatingId) === String(item.id) ? (
                                             <div className="absolute inset-0 flex items-center justify-center">
                                                 <div className="w-2 h-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                                             </div>
                                         ) : (
-                                            <div className={`absolute top-[2px] w-3.5 h-3.5 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.1)] transition-all duration-300 ${item.status === "Active" ? "left-[18px]" : "left-[2px]"}`}></div>
+                                            <div className={`absolute top-[2px] w-3.5 h-3.5 bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.1)] transition-all duration-300 ${(item.status === "Active" || item.status === "Live") ? "left-[18px]" : "left-[2px]"}`}></div>
                                         )}
                                     </div>
                                 </div>

@@ -201,13 +201,17 @@ const Inventory = () => {
         setUpdatingId(item.id);
         const isPublic = item.status !== 'Active';
         try {
-            const response = await fetch(`/api/inventory/sync-public/${item.id}`, {
+            const response = await fetch('/api/inventory/toggle-visibility', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify({ isPublic })
+                body: JSON.stringify({ 
+                    itemId: item.id, 
+                    model: item.category, 
+                    isPublic 
+                })
             });
             const result = await response.json();
             if (result.success) {
