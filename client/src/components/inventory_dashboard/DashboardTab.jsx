@@ -11,7 +11,7 @@ const DashboardTab = ({ data, generateSparkline, chartInterval, setChartInterval
                 <div className="bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                         <div className="flex flex-col">
-                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Views</span>
+                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-gray-700">Total Views</span>
                             <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.5vh,10px)] kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.views?.current || 0)}</span>
                             <span className={`inter text-[clamp(8px,1.2vh,18px)] font-bold ${Number(data?.stats?.trends?.views?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[clamp(4px,0.5vh,10px)]`}>
                                 {Number(data?.stats?.trends?.views?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.4vh,20px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.4vh,20px)]" />} 
@@ -34,7 +34,7 @@ const DashboardTab = ({ data, generateSparkline, chartInterval, setChartInterval
                 <div className="bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                         <div className="flex flex-col">
-                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Total Leads</span>
+                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-gray-700">Total Leads</span>
                             <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.5vh,10px)] kaisei tracking-tight">{numberWithCommas(data?.stats?.trends?.leads?.current || 0)}</span>
                             <span className={`inter text-[clamp(8px,1.2vh,18px)] font-bold ${Number(data?.stats?.trends?.leads?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[clamp(4px,0.5vh,10px)]`}>
                                 {Number(data?.stats?.trends?.leads?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.4vh,20px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.4vh,20px)]" />} 
@@ -57,7 +57,7 @@ const DashboardTab = ({ data, generateSparkline, chartInterval, setChartInterval
                 <div className="bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                         <div className="flex flex-col">
-                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Saved / Shortlisted</span>
+                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-gray-700">Saved / Shortlisted</span>
                             <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.5vh,10px)] kaisei tracking-tight">{data?.stats?.trends?.saved?.current || 0}</span>
                             <span className={`inter text-[clamp(8px,1.2vh,18px)] font-bold ${Number(data?.stats?.trends?.saved?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[clamp(4px,0.5vh,10px)]`}>
                                 {Number(data?.stats?.trends?.saved?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.4vh,20px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.4vh,20px)]" />} 
@@ -80,7 +80,7 @@ const DashboardTab = ({ data, generateSparkline, chartInterval, setChartInterval
                 <div className="bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(10px,1.5vh,24px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group min-h-0">
                     <div className="flex justify-between items-start z-10 w-full hover:-translate-y-0.5 transition-transform">
                         <div className="flex flex-col">
-                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-[#9CA3AF]">Est. Lead Value</span>
+                            <span className="inter text-[clamp(9px,1.1vh,16px)] font-semibold uppercase tracking-[0.08em] leading-none text-gray-700">Est. Lead Value</span>
                             <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.5vh,10px)] kaisei tracking-tight">${((data?.stats?.trends?.value?.current || 0)/1000000).toFixed(2)}M</span>
                             <span className={`inter text-[clamp(8px,1.2vh,18px)] font-bold ${Number(data?.stats?.trends?.value?.change) >= 0 ? 'text-emerald-500' : 'text-red-500'} flex items-center gap-[0.5vh] mt-[clamp(4px,0.5vh,10px)]`}>
                                 {Number(data?.stats?.trends?.value?.change) >= 0 ? <FiTrendingUp className="text-[clamp(10px,1.4vh,20px)]" /> : <FiTrendingDown className="text-[clamp(10px,1.4vh,20px)]" />} 
@@ -424,22 +424,22 @@ const DashboardTab = ({ data, generateSparkline, chartInterval, setChartInterval
                     </div>
                     <div className="flex justify-between items-start mt-[clamp(8px,1.5vh,24px)] px-[clamp(8px,1vh,24px)] pb-[clamp(4px,0.5vh,12px)]">
                         <div className="flex flex-col text-left flex-1 border-r border-gray-100 pr-[clamp(8px,1.5vh,24px)]">
-                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[clamp(2px,0.3vh,8px)] whitespace-nowrap">Total Assets</span>
+                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-gray-700 mb-[clamp(2px,0.3vh,8px)] whitespace-nowrap">Total Assets</span>
                             <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none kaisei">{data?.stats?.totalAssets || 0}</span>
                             <span className="inter text-[clamp(8px,1.1vh,16px)] font-bold text-emerald-500 flex items-center gap-[clamp(2px,0.3vh,6px)] mt-[clamp(4px,0.6vh,12px)] tracking-tight"><FiTrendingUp className="text-[clamp(9px,1.2vh,18px)]" /> {data?.stats?.trends?.views?.current > 0 ? 'Active' : 'Idle'}</span>
                         </div>
                         <div className="flex flex-col text-left flex-1 pl-[clamp(12px,2vh,32px)] border-r border-gray-100 pr-[clamp(8px,1.5vh,24px)]">
-                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[clamp(2px,0.3vh,8px)] whitespace-nowrap">Live Assets</span>
+                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-gray-700 mb-[clamp(2px,0.3vh,8px)] whitespace-nowrap">Live Assets</span>
                             <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.6vh,12px)] kaisei">{data?.stats?.activeCount || 0}</span>
                             <div className="w-[clamp(6px,1vh,12px)] h-[clamp(6px,1vh,12px)] rounded-full bg-emerald-500 mt-[clamp(8px,1.5vh,24px)] shadow-sm shadow-emerald-500/20"></div>
                         </div>
                         <div className="flex flex-col text-left flex-[0.8] pl-[clamp(12px,2vh,32px)] border-r border-gray-100 pr-[clamp(8px,1.5vh,24px)]">
-                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[clamp(2px,0.3vh,8px)]">Drafts</span>
+                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-gray-700 mb-[clamp(2px,0.3vh,8px)]">Drafts</span>
                             <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.6vh,12px)] kaisei">0</span>
                             <div className="w-[clamp(6px,1vh,12px)] h-[clamp(6px,1vh,12px)] rounded-full bg-[#D48D2A] mt-[clamp(8px,1.5vh,24px)] shadow-sm shadow-[#D48D2A]/20"></div>
                         </div>
                         <div className="flex flex-col text-left flex-[0.8] pl-[clamp(12px,2vh,32px)]">
-                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-[#9CA3AF] mb-[clamp(2px,0.3vh,8px)]">Sold</span>
+                            <span className="inter text-[clamp(7px,0.9vh,14px)] font-black uppercase tracking-[0.08em] text-gray-700 mb-[clamp(2px,0.3vh,8px)]">Sold</span>
                             <span className="text-[clamp(18px,2.8vh,48px)] font-bold text-gray-900 leading-none mt-[clamp(4px,0.6vh,12px)] kaisei">{data?.stats?.closedCount || 0}</span>
                             <div className="w-[clamp(6px,1vh,12px)] h-[clamp(6px,1vh,12px)] rounded-full bg-gray-300 mt-[clamp(8px,1.5vh,24px)] border border-gray-200"></div>
                         </div>

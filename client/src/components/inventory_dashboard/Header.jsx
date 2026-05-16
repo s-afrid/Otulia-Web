@@ -16,7 +16,9 @@ const Header = ({
     isHeaderDropdownOpen, 
     setIsHeaderDropdownOpen, 
     navigate, 
-    logout 
+    logout,
+    chartInterval,
+    setChartInterval
 }) => {
     return (
         <header className="h-[clamp(50px,8vh,80px)] border-b flex items-center justify-between px-[clamp(12px,2vw,40px)] sticky top-0 z-[40] transition-colors duration-300 bg-white border-gray-100">
@@ -44,14 +46,17 @@ const Header = ({
                     <>
                         {/* Last 30 Days Dropdown */}
                         <div className="relative w-[clamp(120px,10vw,180px)] h-[clamp(30px,4vh,44px)]">
-                            <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999] text-[clamp(10px,1.2vh,16px)] pointer-events-none" />
-                            <select className="w-full h-full appearance-none bg-white border border-gray-100 rounded-[clamp(4px,0.8vh,10px)] pl-8 pr-8 text-[clamp(10px,1.4vh,18px)] font-normal text-[#999999] inter focus:outline-none focus:border-[#D48D2A] cursor-pointer leading-none">
-                                <option>Last 30 days</option>
-                                <option>Last 7 days</option>
-                                <option>Last 90 days</option>
-                                <option>This year</option>
+                            <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 text-[clamp(10px,1.2vh,16px)] pointer-events-none" />
+                            <select 
+                                value={chartInterval}
+                                onChange={(e) => setChartInterval(e.target.value)}
+                                className="w-full h-full appearance-none bg-white border border-gray-100 rounded-[clamp(4px,0.8vh,10px)] pl-8 pr-8 text-[clamp(10px,1.4vh,18px)] font-bold text-gray-700 inter focus:outline-none focus:border-[#D48D2A] cursor-pointer leading-none"
+                            >
+                                <option value="Month">Last 30 days</option>
+                                <option value="Week">Last 7 days</option>
+                                <option value="Year">This year</option>
                             </select>
-                            <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none text-[clamp(9px,1.2vh,16px)]" />
+                            <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 pointer-events-none text-[clamp(9px,1.2vh,16px)]" />
                         </div>
 
                         {/* Day/Week/Month Tabs */}
@@ -60,15 +65,50 @@ const Header = ({
                                 <button
                                     key={t}
                                     onClick={() => setTimeframe(t)}
-                                    className={`px-[clamp(12px,1.5vw,24px)] h-full flex items-center justify-center text-[clamp(10px,1.4vh,18px)] font-normal inter leading-none transition-all rounded-[clamp(3px,0.6vh,8px)] ${timeframe === t
+                                    className={`px-[clamp(12px,1.5vw,24px)] h-full flex items-center justify-center text-[clamp(10px,1.4vh,18px)] font-bold inter leading-none transition-all rounded-[clamp(3px,0.6vh,8px)] ${timeframe === t
                                         ? 'bg-black text-white shadow-sm'
-                                        : 'text-[#999999] hover:text-gray-900'}`}
+                                        : 'text-gray-700 hover:text-gray-900'}`}
                                 >
                                     {t}
                                 </button>
                             ))}
                         </div>
                     </>
+                )}
+
+                {activeTab === 'analytics' && (
+                    <div className="flex items-center gap-[clamp(8px,1vw,20px)]">
+                        {/* Date Range Picker Placeholder */}
+                        <div className="flex items-center gap-2 px-[clamp(10px,1.2vh,20px)] h-[clamp(30px,4vh,44px)] bg-white border border-gray-100 rounded-[clamp(8px,1vh,12px)] shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
+                            <FiCalendar className="text-gray-500 text-[clamp(12px,1.6vh,24px)]" />
+                            <span className="inter text-[clamp(10px,1.3vh,18px)] font-semibold text-gray-700">24 Apr - 24 May 2026</span>
+                            <FiChevronDown className="text-gray-400 text-[clamp(10px,1.2vh,18px)]" />
+                        </div>
+
+                        {/* Timeframe Selectors */}
+                        <div className="flex items-center bg-white border border-gray-100 rounded-[clamp(8px,1vh,12px)] shadow-sm h-[clamp(30px,4vh,44px)] p-[clamp(2px,0.4vh,6px)] gap-1">
+                            {[
+                                { label: '7D', value: 'Day' },
+                                { label: '30D', value: 'Week' },
+                                { label: '90D', value: 'Month' },
+                                { label: '1Y', value: 'Year' }
+                            ].map((item) => (
+                                <button
+                                    key={item.label}
+                                    onClick={() => setChartInterval(item.value)}
+                                    className={`px-[clamp(8px,1vh,16px)] h-full flex items-center justify-center text-[clamp(10px,1.3vh,18px)] font-bold inter rounded-[clamp(4px,0.6vh,8px)] transition-all ${chartInterval === item.value 
+                                        ? 'bg-[#FFB75E] text-white shadow-sm' 
+                                        : 'text-gray-500 hover:bg-gray-50'}`}
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
+                            <div className="w-px h-4 bg-gray-100 mx-1" />
+                            <button className="flex items-center gap-1 px-[clamp(8px,1vh,16px)] h-full text-[clamp(10px,1.3vh,18px)] font-bold text-gray-700 hover:bg-gray-50 rounded-[clamp(4px,0.6vh,8px)] transition-all">
+                                Custom <FiChevronDown className="text-gray-400 text-[clamp(10px,1.2vh,18px)]" />
+                            </button>
+                        </div>
+                    </div>
                 )}
 
                 {/* Icons Section */}

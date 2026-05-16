@@ -112,7 +112,7 @@ const userSchema = new mongoose.Schema(
 
     favorites: [
       {
-        assetId: { type: mongoose.Schema.Types.ObjectId, refPath: "favorites.assetModel" },
+        assetId: { type: mongoose.Schema.Types.ObjectId, refPath: "assetModel" },
         assetModel: { type: String, enum: ["Listing", "CarAsset", "EstateAsset", "YachtAsset", "BikeAsset"] },
         addedAt: { type: Date, default: Date.now }
       }
@@ -120,14 +120,14 @@ const userSchema = new mongoose.Schema(
 
     myListings: [
       {
-        item: { type: mongoose.Schema.Types.ObjectId, refPath: "myListings.itemModel" },
+        item: { type: mongoose.Schema.Types.ObjectId, refPath: "itemModel" },
         itemModel: { type: String, enum: ["Listing", "CarAsset", "EstateAsset", "YachtAsset", "BikeAsset"], default: "Listing" }
       }
     ],
 
     boughtHistory: [
       {
-        item: { type: mongoose.Schema.Types.ObjectId, refPath: "boughtHistory.itemModel" },
+        item: { type: mongoose.Schema.Types.ObjectId, refPath: "itemModel" },
         itemModel: { type: String, enum: ["Listing", "CarAsset", "EstateAsset", "YachtAsset", "BikeAsset"], default: "Listing" },
         date: { type: Date, default: Date.now },
         price: Number,
@@ -137,7 +137,7 @@ const userSchema = new mongoose.Schema(
 
     rentedHistory: [
       {
-        item: { type: mongoose.Schema.Types.ObjectId, refPath: "rentedHistory.itemModel" },
+        item: { type: mongoose.Schema.Types.ObjectId, refPath: "itemModel" },
         itemModel: { type: String, enum: ["Listing", "CarAsset", "EstateAsset", "YachtAsset", "BikeAsset"], default: "Listing" },
         startDate: Date,
         endDate: Date,

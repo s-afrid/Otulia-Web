@@ -162,12 +162,12 @@ const Inventory = () => {
 
     useEffect(() => {
         fetchDashboardData();
-    }, []);
+    }, [timeframe, chartInterval]);
 
     const fetchDashboardData = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch('/api/inventory/dashboard', {
+            const response = await fetch(`/api/inventory/dashboard?timeframe=${timeframe}&interval=${chartInterval}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             const result = await response.json();
@@ -500,6 +500,8 @@ const Inventory = () => {
                     wavingHand={wavingHand}
                     timeframe={timeframe}
                     setTimeframe={setTimeframe}
+                    chartInterval={chartInterval}
+                    setChartInterval={setChartInterval}
                     isNotificationDropdownOpen={isNotificationDropdownOpen}
                     setIsNotificationDropdownOpen={setIsNotificationDropdownOpen}
                     handleRemoveNotification={handleRemoveNotification}
@@ -568,7 +570,15 @@ const Inventory = () => {
                         />
                     )}
 
-                    {activeTab === 'analytics' && <AnalyticsTab data={data} />}
+                    {activeTab === 'analytics' && (
+                        <AnalyticsTab 
+                            data={data} 
+                            generateSparkline={generateSparkline}
+                            getSparklineData={getSparklineData}
+                            chartInterval={chartInterval}
+                            setChartInterval={setChartInterval}
+                        />
+                    )}
 
                     {activeTab === 'marketplace' && (
                         <MarketplaceTab 
