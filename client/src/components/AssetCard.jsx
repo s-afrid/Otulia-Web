@@ -224,12 +224,12 @@ const AssetCard = ({ item }) => {
               {/* TITLE */}
               <div>
                 <h4
-                  className="line-clamp-1 pb-1"
+                  className="truncate translate-y-px"
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
                     fontWeight: 500,
                     fontSize: "17px" /* fontSize: "15px" */,
-                    lineHeight: "100%",
+                    lineHeight: 1.15,
                     color: "#2A2A2A",
                   }}
                 >
