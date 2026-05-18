@@ -67,9 +67,9 @@ const WorldMap = ({ data = [] }) => {
                 {worldPaths.map((path, idx) => {
                     const style = countryStyles[path.id] || {
                         opacity: 0.05,
-                        fill: "#F3F4F6", // Faint gray for countries without leads
+                        fill: "#EAB308", // Yellow for all countries
                         stroke: "#E5E7EB",
-                        strokeWidth: "0.2"
+                        strokeWidth: "0.1"
                     };
 
                     return (
