@@ -226,7 +226,7 @@ const AnalyticsTab = ({
             </div>
 
             {/* Bottom Row: Leads By Source & Leads By Location */}
-            <div className="flex flex-col lg:flex-row gap-[clamp(8px,1vh,20px)] flex-none lg:flex-[1.2] min-h-0">
+            <div className="flex flex-col lg:flex-row gap-[clamp(8px,1vh,20px)] flex-none lg:flex-[1.8] min-h-0">
                 {/* Leads By Source Donut Section */}
                 <div className="flex-[1.2] bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(12px,1.8vh,30px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-h-0">
                     <div className="flex justify-between items-center mb-[clamp(10px,1.5vh,24px)] shrink-0">
