@@ -1,5 +1,11 @@
 import React from 'react';
 import { FiCalendar, FiChevronDown, FiPlus, FiUsers, FiTrendingUp, FiTrendingDown, FiUser, FiCheckCircle, FiActivity, FiSearch, FiFilter, FiGlobe, FiMessageSquare, FiEye, FiMoreVertical } from 'react-icons/fi';
+import facebookIcon from '../../assets/icons/social/facebook.svg';
+import instagramIcon from '../../assets/icons/social/instagram.svg';
+import linkedinIcon from '../../assets/icons/social/linkedin.svg';
+import xIcon from '../../assets/icons/social/x.svg';
+import youtubeIcon from '../../assets/icons/social/youtube.svg';
+import whatsappIcon from '../../assets/icons/social/whatsapp.svg';
 import numberWithCommas from '../../modules/numberwithcomma';
 
 const LeadsTab = ({ 
@@ -19,6 +25,17 @@ const LeadsTab = ({
     handleStatusChange, 
     setViewLead 
 }) => {
+    const getSourceIcon = (source) => {
+        const s = source?.toLowerCase() || '';
+        if (s.includes('facebook')) return <img src={facebookIcon} alt="Facebook" className="w-2.5 h-2.5" />;
+        if (s.includes('instagram')) return <img src={instagramIcon} alt="Instagram" className="w-2.5 h-2.5" />;
+        if (s.includes('linkedin')) return <img src={linkedinIcon} alt="LinkedIn" className="w-2.5 h-2.5" />;
+        if (s.includes('whatsapp')) return <img src={whatsappIcon} alt="WhatsApp" className="w-2.5 h-2.5" />;
+        if (s.includes('x.com') || s === 'x' || s.includes('twitter')) return <img src={xIcon} alt="X" className="w-2.5 h-2.5" />;
+        if (s.includes('youtube')) return <img src={youtubeIcon} alt="YouTube" className="w-2.5 h-2.5" />;
+        return <FiGlobe className="text-[10px]"/>;
+    };
+
     let leads = (data?.leads || []);
     if (leadStatusFilter !== 'All Status') leads = leads.filter(l => l.status === leadStatusFilter);
     if (leadSourceFilter !== 'All Source') {

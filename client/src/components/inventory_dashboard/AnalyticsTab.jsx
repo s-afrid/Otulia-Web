@@ -7,7 +7,7 @@ import {
 
 import facebookIcon from '../../assets/icons/social/facebook.svg';
 import instagramIcon from '../../assets/icons/social/instagram.svg';
-import whatsappIcon from '../../assets/icons/social/whatsapp.svg'
+import whatsappIcon from '../../assets/icons/social/whatsapp.svg';
 import numberWithCommas from '../../modules/numberwithcomma';
 import WorldMap from './WorldMap';
 
