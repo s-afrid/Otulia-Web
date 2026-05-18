@@ -232,8 +232,8 @@ const LeadsTab = ({
                                         </td>
                                         <td className="px-2 py-2.5">
                                             <div className="flex flex-col gap-1">
-                                                <span className="flex items-center gap-1.5 text-gray-700 capitalize font-medium"><FiGlobe className="text-[10px]"/> {lead.source || 'Website'}</span>
-                                                <span className="flex items-center gap-1.5 text-emerald-500 font-medium"><FiMessageSquare className="text-[10px]"/> WhatsApp</span>
+                                                <span className="flex items-center gap-1.5 text-gray-700 capitalize font-medium">{getSourceIcon(lead.source)} {lead.source || 'Website'}</span>
+                                                <span className="flex items-center gap-1.5 text-emerald-500 font-medium"><img src={whatsappIcon} alt="WhatsApp" className="w-2.5 h-2.5" /> WhatsApp</span>
                                             </div>
                                         </td>
                                         <td className="px-2 py-2.5">

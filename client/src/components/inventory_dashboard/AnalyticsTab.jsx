@@ -1,9 +1,13 @@
 import React from 'react';
 import { 
     FiEye, FiUsers, FiTrendingUp, FiCreditCard, FiTrendingDown, 
-    FiGlobe, FiInstagram, FiFacebook, FiChevronDown, FiActivity,
+    FiGlobe, FiChevronDown, FiActivity,
     FiMessageSquare, FiMapPin, FiArrowRight, FiMoreHorizontal
 } from 'react-icons/fi';
+
+import facebookIcon from '../../assets/icons/social/facebook.svg';
+import instagramIcon from '../../assets/icons/social/instagram.svg';
+import whatsappIcon from '../../assets/icons/social/whatsapp.svg'
 import numberWithCommas from '../../modules/numberwithcomma';
 import WorldMap from './WorldMap';
 
@@ -278,16 +282,20 @@ const AnalyticsTab = ({
                         {/* Legend */}
                         <div className="flex flex-col justify-center gap-[clamp(8px,1vh,20px)] flex-1">
                             {[
-                                { label: 'Whatsapp', count: 458, pct: '36.7%', color: '#22C55E', icon: FiMessageSquare },
+                                { label: 'Whatsapp', count: 458, pct: '36.7%', color: '#22C55E', icon: whatsappIcon, isCustom: true },
                                 { label: 'Website', count: 458, pct: '36.7%', color: '#3B82F6', icon: FiGlobe },
-                                { label: 'Facebook', count: 458, pct: '36.7%', color: '#1E3B70', icon: FiFacebook },
-                                { label: 'Instagram', count: 458, pct: '36.7%', color: '#E1306C', icon: FiInstagram },
+                                { label: 'Facebook', count: 458, pct: '36.7%', color: '#1E3B70', icon: facebookIcon, isCustom: true },
+                                { label: 'Instagram', count: 458, pct: '36.7%', color: '#E1306C', icon: instagramIcon, isCustom: true },
                                 { label: 'Others', count: 458, pct: '36.7%', color: '#9CA3AF', icon: FiMoreHorizontal }
                             ].map((src, idx) => (
                                 <div key={idx} className="flex items-center justify-between group">
                                     <div className="flex items-center gap-3">
                                         <div className="w-[clamp(24px,3.2vh,48px)] h-[clamp(24px,3.2vh,48px)] rounded-full flex items-center justify-center shrink-0 border border-gray-50/50 group-hover:scale-110 transition-transform" style={{ backgroundColor: `${src.color}15`, color: src.color }}>
-                                            <src.icon className="text-[clamp(12px,1.6vh,24px)]" />
+                                            {src.isCustom ? (
+                                                <img src={src.icon} alt={src.label} className="w-[clamp(12px,1.8vh,24px)] h-[clamp(12px,1.8vh,24px)] object-contain" />
+                                            ) : (
+                                                <src.icon className="text-[clamp(12px,1.6vh,24px)]" />
+                                            )}
                                         </div>
                                         <span className="inter text-[clamp(10px,1.3vh,18px)] font-bold text-gray-800 group-hover:text-black transition-colors">{src.label}</span>
                                     </div>
@@ -354,7 +362,7 @@ const AnalyticsTab = ({
                         </div>
                         {/* Map Visualization */}
                         <div className="flex-1 relative flex items-center justify-center h-full min-h-[220px]">
-                            <div className="w-full h-full max-w-[600px] max-h-[300px] relative">
+                            <div className="w-full h-full relative">
                                 <WorldMap data={data?.analytics?.leadsByLocation || []} />
                             </div>
                         </div>
@@ -364,5 +372,7 @@ const AnalyticsTab = ({
         </div>
     );
 };
+
+
 
 export default AnalyticsTab;

@@ -1,10 +1,16 @@
 import React from 'react';
 import { 
     FiUpload, FiBriefcase, FiLink, FiMapPin, FiMail, FiPhone, FiCheck, 
-    FiChevronDown, FiSettings, FiEdit2, FiInstagram, FiFacebook, FiLinkedin, 
-    FiYoutube, FiShield, FiFilter, FiLock, FiCheckCircle, FiMonitor, 
+    FiChevronDown, FiSettings, FiEdit2, FiShield, FiFilter, FiLock, FiCheckCircle, FiMonitor, 
     FiChevronRight, FiMessageSquare, FiCalendar 
 } from 'react-icons/fi';
+
+import facebookIcon from '../../assets/icons/social/facebook.svg';
+import instagramIcon from '../../assets/icons/social/instagram.svg';
+import linkedinIcon from '../../assets/icons/social/linkedin.svg';
+import whatsappIcon from '../../assets/icons/social/whatsapp.svg';
+import xIcon from '../../assets/icons/social/x.svg';
+import youtubeIcon from '../../assets/icons/social/youtube.svg';
 
 const SettingsTab = ({ 
     agentInfo, 
@@ -23,6 +29,13 @@ const SettingsTab = ({
     handleSaveCompanyDetails,
     setIsVerificationModalOpen
 }) => {
+    const getContactIcon = (method) => {
+        if (method === 'WhatsApp') return <img src={whatsappIcon} alt="WhatsApp" className="w-3.5 h-3.5" />;
+        if (method === 'Email') return <FiMail className="text-blue-500" />;
+        if (method === 'Phone Call') return <FiPhone className="text-gray-500" />;
+        return <FiMessageSquare className="text-emerald-500" />;
+    };
+
     return (
         <div className="h-[calc(100vh-6rem-1rem)] flex flex-col gap-3 animate-in fade-in duration-700">
             {/* 2 Main Columns */}
@@ -112,7 +125,7 @@ const SettingsTab = ({
                             <div>
                                 <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Preferred Contact Method</label>
                                 <div className="relative w-full">
-                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-emerald-500 pointer-events-none text-xs"><FiMessageSquare/></div>
+                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-xs">{getContactIcon(agentInfo.contactMethod)}</div>
                                     <select value={agentInfo.contactMethod} onChange={e => setAgentInfo(p => ({...p, contactMethod: e.target.value}))} className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-8 text-[10px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer">
                                         <option value="WhatsApp">WhatsApp</option>
                                         <option value="Email">Email</option>
@@ -159,19 +172,19 @@ const SettingsTab = ({
                             <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Social Profiles <span className="text-gray-400 font-medium normal-case">(Optional)</span></label>
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="relative w-full">
-                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-pink-500 pointer-events-none text-[10px]"><FiInstagram/></div>
+                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={instagramIcon} alt="Instagram" className="w-3.5 h-3.5" /></div>
                                     <input type="text" value={agentInfo.social.instagram} onChange={e => setAgentInfo(p => ({...p, social: {...p.social, instagram: e.target.value}}))} placeholder="instagram.com/username" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
                                 </div>
                                 <div className="relative w-full">
-                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-600 pointer-events-none text-[10px]"><FiLinkedin/></div>
+                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={linkedinIcon} alt="LinkedIn" className="w-3.5 h-3.5" /></div>
                                     <input type="text" value={agentInfo.social.linkedin} onChange={e => setAgentInfo(p => ({...p, social: {...p.social, linkedin: e.target.value}}))} placeholder="linkedin.com/in/username" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
                                 </div>
                                 <div className="relative w-full">
-                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-gray-800 pointer-events-none text-[10px] font-serif font-black">X</div>
+                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px] font-serif font-black"><img src={xIcon} alt="X" className="w-3 h-3" /></div>
                                     <input type="text" value={agentInfo.social.x} onChange={e => setAgentInfo(p => ({...p, social: {...p.social, x: e.target.value}}))} placeholder="x.com/username" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
                                 </div>
                                 <div className="relative w-full">
-                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-500 pointer-events-none text-[10px]"><FiFacebook/></div>
+                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={facebookIcon} alt="Facebook" className="w-3.5 h-3.5" /></div>
                                     <input type="text" value={agentInfo.social.facebook} onChange={e => setAgentInfo(p => ({...p, social: {...p.social, facebook: e.target.value}}))} placeholder="facebook.com/username" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
                                 </div>
                             </div>
@@ -297,19 +310,19 @@ const SettingsTab = ({
                             <label className="block text-[9px] font-bold text-gray-700 capitalize tracking-wide mb-1.5">Company Social Media <span className="text-gray-400 font-medium normal-case">(Optional)</span></label>
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="relative w-full">
-                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-pink-500 pointer-events-none text-[10px]"><FiInstagram/></div>
+                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={instagramIcon} alt="Instagram" className="w-3.5 h-3.5" /></div>
                                     <input type="text" value={companyInfo.social.instagram} onChange={e => setCompanyInfo(p => ({...p, social: {...p.social, instagram: e.target.value}}))} placeholder="instagram.com/username" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
                                 </div>
                                 <div className="relative w-full">
-                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-600 pointer-events-none text-[10px]"><FiLinkedin/></div>
+                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={linkedinIcon} alt="LinkedIn" className="w-3.5 h-3.5" /></div>
                                     <input type="text" value={companyInfo.social.linkedin} onChange={e => setCompanyInfo(p => ({...p, social: {...p.social, linkedin: e.target.value}}))} placeholder="linkedin.com/company/username" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
                                 </div>
                                 <div className="relative w-full">
-                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-blue-500 pointer-events-none text-[10px]"><FiFacebook/></div>
+                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={facebookIcon} alt="Facebook" className="w-3.5 h-3.5" /></div>
                                     <input type="text" value={companyInfo.social.facebook} onChange={e => setCompanyInfo(p => ({...p, social: {...p.social, facebook: e.target.value}}))} placeholder="facebook.com/username" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
                                 </div>
                                 <div className="relative w-full">
-                                    <div className="absolute inset-y-0 left-2.5 flex items-center text-red-600 pointer-events-none text-[10px]"><FiYoutube/></div>
+                                    <div className="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-[10px]"><img src={youtubeIcon} alt="YouTube" className="w-3.5 h-3.5" /></div>
                                     <input type="text" value={companyInfo.social.youtube} onChange={e => setCompanyInfo(p => ({...p, social: {...p.social, youtube: e.target.value}}))} placeholder="youtube.com/@username" className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 pl-7 text-[9px] font-medium focus:border-[#D48D2A] outline-none shadow-sm" />
                                 </div>
                             </div>
