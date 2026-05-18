@@ -5,6 +5,7 @@ import {
     FiMessageSquare, FiMapPin, FiArrowRight, FiMoreHorizontal
 } from 'react-icons/fi';
 import numberWithCommas from '../../modules/numberwithcomma';
+import WorldMap from './WorldMap';
 
 const AnalyticsTab = ({ 
     data, 
@@ -352,49 +353,9 @@ const AnalyticsTab = ({
                             ))}
                         </div>
                         {/* Map Visualization */}
-                        <div className="flex-1 relative flex items-center justify-center h-full">
-                            <img 
-                                src="https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg" 
-                                className="w-full h-auto opacity-10 object-contain absolute" 
-                                alt="World Map Background" 
-                            />
-                            <div className="relative w-full h-full flex items-center justify-center p-4">
-                                <svg viewBox="0 0 1000 500" className="w-full h-full">
-                                    {(() => {
-                                        const countryCoords = {
-                                            'United States': { x: 220, y: 180 },
-                                            'UAE': { x: 580, y: 230 },
-                                            'United Kingdom': { x: 480, y: 140 },
-                                            'India': { x: 680, y: 240 },
-                                            'Canada': { x: 220, y: 140 },
-                                            'South Korea': { x: 820, y: 190 },
-                                            'France': { x: 485, y: 170 },
-                                            'Germany': { x: 505, y: 160 },
-                                            'Saudi Arabia': { x: 575, y: 250 },
-                                            'Australia': { x: 850, y: 400 }
-                                        };
-
-                                        return (data?.analytics?.leadsByLocation || []).map((loc, idx) => {
-                                            const coords = countryCoords[loc.country];
-                                            if (!coords) return null;
-
-                                            // Calculate density based on leads/total
-                                            const maxLeads = data.analytics.leadsByLocation[0]?.leads || 1;
-                                            const density = loc.leads / maxLeads;
-                                            const radius = 8 + (density * 12);
-                                            const opacity = 0.2 + (density * 0.6);
-
-                                            return (
-                                                <g key={idx}>
-                                                    <circle cx={coords.x} cy={coords.y} r={radius} fill="#D4A63A" opacity={opacity}>
-                                                        <animate attributeName="r" values={`${radius};${radius + 3};${radius}`} dur={`${3 + idx * 0.5}s`} repeatCount="indefinite" />
-                                                    </circle>
-                                                    <circle cx={coords.x} cy={coords.y} r="3" fill="#D4A63A" />
-                                                </g>
-                                            );
-                                        });
-                                    })()}
-                                </svg>
+                        <div className="flex-1 relative flex items-center justify-center h-full min-h-[220px]">
+                            <div className="w-full h-full max-w-[600px] max-h-[300px] relative">
+                                <WorldMap data={data?.analytics?.leadsByLocation || []} />
                             </div>
                         </div>
                     </div>
