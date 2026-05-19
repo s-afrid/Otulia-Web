@@ -1,5 +1,10 @@
 import React from 'react';
-import { FiCalendar, FiChevronDown, FiPlus, FiUsers, FiTrendingUp, FiTrendingDown, FiUser, FiCheckCircle, FiActivity, FiSearch, FiFilter, FiGlobe, FiMessageSquare, FiEye, FiMoreVertical } from 'react-icons/fi';
+import { 
+    FiCalendar, FiChevronDown, FiPlus, FiUsers, FiTrendingUp, FiTrendingDown, 
+    FiUser, FiCheckCircle, FiActivity, FiSearch, FiFilter, FiGlobe, 
+    FiMessageSquare, FiEye, FiMoreVertical, FiStar, FiPhone, FiMail, 
+    FiMessageCircle, FiClock, FiSmartphone 
+} from 'react-icons/fi';
 import facebookIcon from '../../assets/icons/social/facebook.svg';
 import instagramIcon from '../../assets/icons/social/instagram.svg';
 import linkedinIcon from '../../assets/icons/social/linkedin.svg';
@@ -52,8 +57,20 @@ const LeadsTab = ({
         leads = leads.filter(l => (l.name && l.name.toLowerCase().includes(q)) || (l.phone && l.phone.toLowerCase().includes(q)) || (l.email && l.email.toLowerCase().includes(q)));
     }
 
+    const getStatusStyles = (status) => {
+        switch(status) {
+            case 'New': return 'bg-[#EEF2FF] text-[#4F46E5]';
+            case 'Contacted': return 'bg-[#E0F2FE] text-[#0284C7]';
+            case 'Qualified': return 'bg-[#FFF7ED] text-[#EA580C]';
+            case 'Proposal Sent': return 'bg-[#F5F3FF] text-[#7C3AED]';
+            case 'Negotiating': return 'bg-[#FEF3C7] text-[#D97706]';
+            case 'Closed': return 'bg-[#ECFDF5] text-[#059669]';
+            default: return 'bg-gray-100 text-gray-600';
+        }
+    };
+
     return (
-        <div className="h-[calc(100vh-6rem-5rem)] flex flex-col gap-4 animate-in fade-in duration-700 pb-2">
+        <div className="h-full flex flex-col gap-4 animate-in fade-in duration-700">
             {/* Header Row */}
             <div className="flex justify-between items-end shrink-0 mb-1">
                 <div className="flex items-center gap-2 text-[11px] font-bold text-gray-700 bg-white border border-gray-200 rounded-xl px-4 py-2 hover:bg-gray-50 cursor-pointer shadow-sm">
@@ -183,141 +200,148 @@ const LeadsTab = ({
                 </div>
             </div>
 
-            {/* Table Area */}
-            <div className="bg-white rounded-[1.25rem] border border-gray-100 shadow-sm overflow-hidden flex-1 flex flex-col relative">
-                <div className="overflow-auto flex-1 custom-scrollbar">
-                    <table className="w-full text-left table-fixed min-w-[1000px]">
-                        <thead className="sticky top-0 bg-white z-20 border-b border-gray-50 shadow-[0_4px_10px_-4px_rgba(0,0,0,0.02)]">
-                            <tr>
-                                <th className="w-10 px-4 py-3"><input type="checkbox" className="rounded border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A]"/></th>
-                                <th className="w-2/12 px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">LEAD</th>
-                                <th className="w-[18%] px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">ASSET INTERESTED</th>
-                                <th className="w-2/12 px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">SOURCE</th>
-                                <th className="w-1/12 px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">STATUS</th>
-                                <th className="w-1/12 px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">VALUE</th>
-                                <th className="w-[12%] px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">DATE ADDED <FiChevronDown className="inline ml-0.5"/></th>
-                                <th className="w-[18%] px-2 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest">MESSAGE</th>
-                                <th className="w-20 px-4 py-3 inter text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">ACTIONS</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-50 text-[10px] font-bold">
-                            {leads.length === 0 ? (
-                                <tr><td colSpan="9" className="py-8 text-center text-xs text-gray-400">No leads found</td></tr>
-                            ) : (
-                                leads.slice(0, 10).map((lead, i) => (
-                                    <tr key={i} className="hover:bg-gray-50/50 group bg-white">
-                                        <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A]"/></td>
-                                        <td className="px-2 py-2.5">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0">
+            {/* List Area */}
+            <div className="flex-1 flex flex-col min-h-0">
+                <div className="flex-1 overflow-auto custom-scrollbar pr-1">
+                    <div className="flex flex-col gap-3 pb-4">
+                        {leads.length === 0 ? (
+                            <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center text-gray-400 font-medium">No leads found matching your criteria.</div>
+                        ) : (
+                            leads.map((lead, i) => {
+                                const asset = (data?.inventory || []).find(a => a._id === lead.assetId || a.id === lead.assetId);
+                                const assetName = lead.assetName || (asset ? (asset.propertyName || asset.yachtName || asset.name || asset.title || `${asset.make || ''} ${asset.model || ''}`.trim()) : null) || 'Unknown Asset';
+                                const assetCategory = asset?.category?.replace('Asset', '') || 'Asset';
+                                const assetPrice = (lead.assetPrice || asset?.price) ? `$${numberWithCommas(lead.assetPrice || asset?.price)}` : 'Price on request';
+                                const assetImage = lead.assetImage || asset?.images?.[0];
+                                
+                                return (
+                                    <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-6 group relative">
+                                        {/* Lead Profile Section */}
+                                        <div className="flex items-start gap-4 flex-[1.2] min-w-0">
+                                            <div className="relative shrink-0">
+                                                <div className="w-14 h-14 rounded-full bg-gray-100 border-2 border-white shadow-sm overflow-hidden">
                                                     <img 
                                                         src={lead.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(lead.name)}&background=random`} 
                                                         className="w-full h-full object-cover"
                                                         onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(lead.name)}&background=random`; }}
                                                     />
                                                 </div>
-                                                <div className="flex flex-col truncate">
-                                                    <span className="text-gray-900 font-bold truncate">{lead.name}</span>
-                                                    <span className="text-gray-400 font-medium text-[9px] truncate">{lead.email}</span>
-                                                    <span className="text-gray-400 font-medium text-[9px] truncate">{lead.phone}</span>
+                                                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white shadow-sm border border-gray-50 flex items-center justify-center overflow-hidden">
+                                                    <img src="https://flagcdn.com/w20/us.png" className="w-3 h-2 object-contain" alt="Country" />
+                                                </div>
+                                                <div className="absolute top-0 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"></div>
+                                            </div>
+                                            <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[13px] font-bold text-gray-900 truncate">{lead.name}</span>
+                                                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${getStatusStyles(lead.status)}`}>
+                                                        {lead.status}
+                                                    </span>
+                                                    <FiStar className="text-gray-300 text-xs cursor-pointer hover:text-amber-400 transition-colors" />
+                                                </div>
+                                                <div className="flex items-center gap-4 text-[10px] text-gray-500 font-medium">
+                                                    <span className="flex items-center gap-1.5 truncate"><FiMail className="text-gray-400 shrink-0" /> {lead.email}</span>
+                                                    <span className="flex items-center gap-1.5 shrink-0"><FiPhone className="text-gray-400 shrink-0" /> {lead.phone} <img src={whatsappIcon} className="w-2.5 h-2.5 ml-0.5" alt="WA" /></span>
+                                                </div>
+                                                <div className="bg-[#FFF8F1] rounded-xl px-3 py-2 mt-1">
+                                                    <p className="text-[10px] text-gray-700 font-medium line-clamp-1 leading-relaxed">
+                                                        {lead.message || "I'm interested in this vehicle. Is it still available? Can we schedule a test drive?"}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-4 mt-1 text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                                                    <span className="flex items-center gap-1.5"><FiClock className="text-gray-300" /> {lead.date ? new Date(lead.date).toLocaleDateString() : '01/15/2024'} @ {lead.date ? new Date(lead.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '04:00 PM'}</span>
+                                                    <span>Source: {lead.source || 'Website'}</span>
+                                                    <div className="flex items-center gap-1.5 ml-auto">
+                                                        <span>Lead Score</span>
+                                                        <span className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] border border-emerald-100">85</span>
+                                                        <svg className="w-10 h-4 text-emerald-400" viewBox="0 0 40 16">
+                                                            <path d="M0 12 L8 8 L16 10 L24 4 L32 8 L40 2" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                                        </svg>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td className="px-2 py-2.5">
-                                            <div className="flex items-center gap-2">
-                                                {(() => {
-                                                    const asset = (data?.inventory || []).find(a => a._id === lead.assetId || a.id === lead.assetId);
-                                                    const assetName = lead.assetName || (asset ? (asset.propertyName || asset.yachtName || asset.name || asset.title || `${asset.make || ''} ${asset.model || ''}`.trim()) : null) || 'Unknown Asset';
-                                                    const assetPrice = (lead.assetPrice || asset?.price) ? `$${numberWithCommas(lead.assetPrice || asset?.price)}` : 'Price on request';
-                                                    const assetImage = lead.assetImage || asset?.images?.[0];
-                                                    return (
-                                                        <>
-                                                            <div className="w-8 h-8 rounded shrink-0 bg-gray-100 border border-gray-200/50 overflow-hidden shadow-sm flex items-center justify-center">
-                                                                {assetImage ? 
-                                                                    <img src={assetImage} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://placehold.co/400x400?text=No+Image"; }}/> : 
-                                                                    <img src="https://placehold.co/400x400?text=No+Image" className="w-full h-full object-cover opacity-50"/>
-                                                                }
-                                                            </div>
-                                                            <div className="flex flex-col truncate">
-                                                                <span className="text-gray-900 truncate font-bold">{assetName}</span>
-                                                                <span className="text-gray-400 font-medium text-[9px] truncate">{assetPrice}</span>
-                                                            </div>
-                                                        </>
-                                                    );
-                                                })()}
+                                        </div>
+
+                                        {/* Asset Section */}
+                                        <div className="flex items-center gap-4 flex-1 border-x border-gray-50 px-6">
+                                            <div className="w-24 h-16 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
+                                                {assetImage ? 
+                                                    <img src={assetImage} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://placehold.co/400x400?text=No+Image"; }}/> : 
+                                                    <img src="https://placehold.co/400x400?text=No+Image" className="w-full h-full object-cover opacity-30"/>
+                                                }
                                             </div>
-                                        </td>
-                                        <td className="px-2 py-2.5">
-                                            <div className="flex flex-col gap-1">
-                                                <span className="flex items-center gap-1.5 text-gray-700 capitalize font-medium">{getSourceIcon(lead.source)} {lead.source || 'Website'}</span>
-                                                <span className="flex items-center gap-1.5 text-emerald-500 font-medium"><img src={whatsappIcon} alt="WhatsApp" className="w-2.5 h-2.5" /> WhatsApp</span>
+                                            <div className="flex flex-col gap-0.5 truncate">
+                                                <span className="text-[12px] font-bold text-gray-900 truncate">{assetName}</span>
+                                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{assetCategory}</span>
+                                                <span className="text-[13px] font-black text-gray-900 mt-0.5">{assetPrice}</span>
                                             </div>
-                                        </td>
-                                        <td className="px-2 py-2.5">
-                                            <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full ${lead.status === 'New' ? 'bg-emerald-50' : lead.status === 'Contacted' ? 'bg-blue-50' : lead.status === 'Qualified' ? 'bg-[#FFF8F0]' : 'bg-purple-50'}`}>
-                                                <div className={`w-1.5 h-1.5 rounded-full ${lead.status === 'New' ? 'bg-emerald-500' : lead.status === 'Contacted' ? 'bg-blue-500' : lead.status === 'Qualified' ? 'bg-[#D48D2A]' : 'bg-purple-500'}`}></div>
-                                                <span className={`text-[10px] font-bold ${lead.status === 'New' ? 'text-emerald-600' : lead.status === 'Contacted' ? 'text-blue-600' : lead.status === 'Qualified' ? 'text-[#D48D2A]' : 'text-purple-600'}`}>{lead.status}</span>
+                                        </div>
+
+                                        {/* Actions Section */}
+                                        <div className="flex flex-col gap-2 w-44 shrink-0">
+                                            <button className="w-full py-1.5 rounded-lg bg-[#0F172A] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+                                                <FiMessageSquare className="text-[12px]" /> Send Message
+                                            </button>
+                                            <button className="w-full py-1.5 rounded-lg bg-[#15803D] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+                                                <FiPhone className="text-[12px]" /> Call Now
+                                            </button>
+                                            <button className="w-full py-1.5 rounded-lg bg-[#C2410C] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+                                                <FiCalendar className="text-[12px]" /> Schedule
+                                            </button>
+                                            
+                                            <div className="relative mt-1">
+                                                <button 
+                                                    onClick={() => setActiveLeadDropdown(activeLeadDropdown === lead.id ? null : lead.id)}
+                                                    className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg border border-gray-200 text-[10px] font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+                                                >
+                                                    {lead.status} <FiChevronDown className="text-gray-400" />
+                                                </button>
+                                                {activeLeadDropdown === lead.id && (
+                                                    <div className="absolute bottom-full left-0 mb-1 w-full bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-gray-100 py-2 z-[100]">
+                                                        {['New', 'Contacted', 'Qualified', 'Proposal Sent', 'Negotiating', 'Closed'].map(s => (
+                                                            <button 
+                                                                key={s} 
+                                                                onClick={() => { handleStatusChange(lead.id, s, lead.isActivity); setActiveLeadDropdown(null); }} 
+                                                                className={`w-full text-left px-4 py-1.5 text-[10px] font-bold ${lead.status === s ? 'text-[#D48D2A] bg-[#FFF8F0]' : 'text-gray-600 hover:bg-gray-50'}`}
+                                                            >
+                                                                {s}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
-                                        </td>
-                                        <td className="px-2 py-2.5 text-gray-900 font-black">
-                                            {(() => {
-                                                const price = lead.assetPrice || (data?.inventory || []).find(a => a._id === lead.assetId || a.id === lead.assetId)?.price;
-                                                if (!price || isNaN(price)) return 'Price on request';
-                                                return Number(price) >= 1000000 ? `$${(Number(price) / 1000000).toFixed(1)}M` : `$${numberWithCommas(price)}`;
-                                            })()}
-                                        </td>
-                                        <td className="px-2 py-2.5">
-                                            <div className="flex flex-col text-gray-600">
-                                                <span>{lead.date ? new Date(lead.date).toLocaleDateString() : 'Unknown Date'}</span>
-                                                <span className="text-[9px] text-gray-400 font-medium">{lead.date ? new Date(lead.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-2 py-2.5">
-                                            <p className="text-[9px] text-gray-500 font-medium line-clamp-2 leading-snug w-full whitespace-normal">
-                                                {lead.message || "I'm interested in this asset. Is it available?"}
-                                            </p>
-                                        </td>
-                                        <td className="px-4 py-2.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <div className="flex items-center justify-end gap-2 relative">
-                                                <button onClick={() => setViewLead(lead)} className="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:text-[#D48D2A] hover:bg-[#FFF8F0] transition-colors shadow-sm bg-white"><FiEye className="text-[10px]"/></button>
-                                                <div className="relative">
-                                                    <button onClick={() => setActiveLeadDropdown(activeLeadDropdown === lead.id ? null : lead.id)} className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${activeLeadDropdown === lead.id ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-900'}`}><FiMoreVertical/></button>
-                                                    {activeLeadDropdown === lead.id && (
-                                                        <div className="absolute right-0 mt-1 w-32 bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-gray-100 py-1 z-[100]">
-                                                            {['New', 'Contacted', 'Qualified', 'Proposal Sent', 'Negotiating', 'Closed'].map(s => (
-                                                                <button key={s} onClick={() => { handleStatusChange(lead.id, s, lead.isActivity); setActiveLeadDropdown(null); }} className={`w-full text-left px-4 py-1.5 text-[10px] font-bold ${lead.status === s ? 'text-[#D48D2A] bg-[#FFF8F0]' : 'text-gray-600 hover:bg-gray-50'}`}>{s}</button>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                                        </div>
+
+                                        {/* More Options */}
+                                        <button className="p-2 text-gray-400 hover:text-gray-900 transition-colors absolute top-4 right-2">
+                                            <FiMoreVertical />
+                                        </button>
+                                    </div>
+                                );
+                            })
+                        )}
+                    </div>
                 </div>
 
                 {/* Pagination */}
-                <div className="h-10 border-t border-gray-100 flex justify-between items-center px-4 shrink-0 bg-white">
+                <div className="py-2 border-t border-gray-100 flex justify-between items-center bg-transparent">
                     <span className="text-[10px] font-bold text-gray-400">Showing 1 to 5 of {(data?.leads || []).length} leads</span>
-                    <div className="flex items-center gap-1.5 justify-center">
-                        <button className="w-6 h-6 rounded flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors">&lt;</button>
-                        <button className="w-6 h-6 rounded flex items-center justify-center font-bold text-[10px] text-[#D48D2A] bg-[#FFF8F0] border border-[#F2E8DB] shadow-sm">1</button>
-                        <button className="w-6 h-6 rounded flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 border border-transparent">2</button>
-                        <button className="w-6 h-6 rounded flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 border border-transparent">3</button>
-                        <span className="text-gray-300 font-bold px-1 text-[10px]">...</span>
-                        <button className="w-6 h-6 rounded flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 border border-transparent">29</button>
-                        <button className="w-6 h-6 rounded flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors">&gt;</button>
+                    <div className="flex items-center gap-1 justify-center">
+                        <button className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-white border border-transparent hover:border-gray-200 transition-all">&lt;</button>
+                        <button className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] text-white bg-[#D48D2A] shadow-sm">1</button>
+                        <button className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 bg-white border border-gray-200 shadow-sm transition-all">2</button>
+                        <button className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 bg-white border border-gray-200 shadow-sm transition-all">3</button>
+                        <span className="text-gray-300 font-bold px-2 text-[10px]">...</span>
+                        <button className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 bg-white border border-gray-200 shadow-sm transition-all">29</button>
+                        <button className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-white border border-transparent hover:border-gray-200 transition-all">&gt;</button>
                     </div>
                     <div className="relative">
-                        <select className="appearance-none bg-white border border-gray-200 rounded-lg py-1 pl-3 pr-8 text-[10px] font-bold text-gray-600 focus:outline-none hover:border-gray-300 shadow-sm cursor-pointer">
+                        <select className="appearance-none bg-white border border-gray-200 rounded-xl py-2 pl-4 pr-10 text-[10px] font-bold text-gray-600 focus:outline-none hover:border-gray-300 shadow-sm cursor-pointer">
                             <option>10 per page</option>
                             <option>20 per page</option>
                             <option>50 per page</option>
                         </select>
-                        <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[9px]" />
+                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
                     </div>
                 </div>
             </div>

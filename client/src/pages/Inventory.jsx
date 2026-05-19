@@ -517,7 +517,7 @@ const Inventory = () => {
                     logout={logout}
                 />
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-[clamp(12px,2vw,32px)] pt-4 pb-12 transition-all">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-[clamp(12px,2vw,32px)] pt-4 pb-0 transition-all">
                     {activeTab === 'dashboard' && (
                         <DashboardTab 
                             data={data}
