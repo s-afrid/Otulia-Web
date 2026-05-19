@@ -409,12 +409,29 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                     performanceTrend: performanceHistory,
                     leadsByCategory,
                     leadsByLocation,
-                    leadsBySource: [
-                        { label: 'Direct', count: Math.floor(stats.totalLeads * 0.4), p: '40%' },
-                        { label: 'Website', count: Math.floor(stats.totalLeads * 0.3), p: '30%' },
-                        { label: 'Marketplace', count: Math.floor(stats.totalLeads * 0.2), p: '20%' },
-                        { label: 'Social', count: Math.floor(stats.totalLeads * 0.1), p: '10%' }
-                    ]
+                    leadsBySource: (() => {
+                        const sourceCounts = { 'WhatsApp': 0, 'Website': 0, 'Facebook': 0, 'Instagram': 0, 'Others': 0 };
+                        [...currentLeads, ...currentActivities.filter(a => a.activityType !== 'VIEW')].forEach(l => {
+                            const src = l.source || 'Website';
+                            if (sourceCounts.hasOwnProperty(src)) {
+                                sourceCounts[src]++;
+                            } else if (src === 'Direct' || src === 'Marketplace') {
+                                sourceCounts['Website']++;
+                            } else if (src === 'Social') {
+                                sourceCounts['Instagram']++;
+                            } else if (src === 'Whatsapp') {
+                                sourceCounts['WhatsApp']++;
+                            } else {
+                                sourceCounts['Others']++;
+                            }
+                        });
+
+                        return Object.entries(sourceCounts).map(([label, count]) => ({
+                            label,
+                            count,
+                            p: stats.totalLeads > 0 ? ((count / stats.totalLeads) * 100).toFixed(1) + '%' : '0%'
+                        })).sort((a, b) => b.count - a.count);
+                    })()
                 }
             }
         });

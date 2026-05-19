@@ -205,10 +205,10 @@ const AnalyticsTab = ({
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50/50">
-                                {(data?.inventory || []).slice(0, 4).map((item, i) => {
-                                    const views = Math.floor(Math.random() * 5000) + 1000;
-                                    const leads = Math.floor(views * (0.02 + Math.random() * 0.05));
-                                    const conv = ((leads / views) * 100).toFixed(2);
+                                {(data?.inventory || []).sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 4).map((item, i) => {
+                                    const views = item.views || 0;
+                                    const leads = item.leads || 0;
+                                    const conv = views > 0 ? ((leads / views) * 100).toFixed(2) : '0.00';
                                     return (
                                         <tr key={i} className="group hover:bg-gray-50/30 transition-colors">
                                             <td className="py-[clamp(6px,0.8vh,16px)] flex items-center gap-3">
@@ -243,20 +243,37 @@ const AnalyticsTab = ({
                             <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90 overflow-visible">
                                 <circle cx="50" cy="50" r="40" fill="none" stroke="#F3F4F6" strokeWidth="12" />
                                 {(() => {
-                                    const sources = [
-                                        { label: 'WhatsApp', count: 458, color: '#22C55E' },
-                                        { label: 'Website', count: 458, color: '#3B82F6' },
-                                        { label: 'Facebook', count: 458, color: '#1E3B70' },
-                                        { label: 'Instagram', count: 458, color: '#E1306C' },
-                                        { label: 'Others', count: 458, color: '#9CA3AF' }
+                                    const sources = data?.analytics?.leadsBySource || [
+                                        { label: 'WhatsApp', count: 0, color: '#22C55E' },
+                                        { label: 'Website', count: 0, color: '#3B82F6' },
+                                        { label: 'Facebook', count: 0, color: '#1E3B70' },
+                                        { label: 'Instagram', count: 0, color: '#E1306C' },
+                                        { label: 'Others', count: 0, color: '#9CA3AF' }
                                     ];
-                                    const total = sources.reduce((s, i) => s + i.count, 0) || 1;
+                                    
+                                    // Map backend labels to colors
+                                    const colorMap = {
+                                        'WhatsApp': '#22C55E',
+                                        'Whatsapp': '#22C55E',
+                                        'Website': '#3B82F6',
+                                        'Facebook': '#1E3B70',
+                                        'Instagram': '#E1306C',
+                                        'Others': '#9CA3AF',
+                                        'Direct': '#3B82F6',
+                                        'Marketplace': '#D48D2A',
+                                        'Social': '#E1306C'
+                                    };
+
+                                    const total = sources.reduce((s, i) => s + (i.count || 0), 0) || 1;
                                     let cumulativeOffset = 0;
                                     return sources.map((src, idx) => {
-                                        const pct = src.count / total;
+                                        const count = src.count || 0;
+                                        const pct = count / total;
                                         const dashArray = 251.2; // 2 * pi * r
                                         const offset = cumulativeOffset;
                                         cumulativeOffset += pct;
+                                        const color = src.color || colorMap[src.label] || '#9CA3AF';
+                                        
                                         return (
                                             <circle 
                                                 key={idx} 
@@ -264,7 +281,7 @@ const AnalyticsTab = ({
                                                 cy="50" 
                                                 r="40" 
                                                 fill="none" 
-                                                stroke={src.color} 
+                                                stroke={color} 
                                                 strokeWidth="12" 
                                                 strokeDasharray={dashArray} 
                                                 strokeDashoffset={dashArray * (1 - pct)} 
@@ -275,33 +292,58 @@ const AnalyticsTab = ({
                                 })()}
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center text-center pt-2">
-                                <span className="text-[clamp(18px,2.8vh,40px)] font-bold text-gray-900 leading-none kaisei">{numberWithCommas(data?.stats?.totalLeads || 1248)}</span>
+                                <span className="text-[clamp(18px,2.8vh,40px)] font-bold text-gray-900 leading-none kaisei">{numberWithCommas(data?.stats?.totalLeads || 0)}</span>
                                 <span className="inter text-[clamp(8px,1vh,16px)] font-bold text-gray-400 uppercase tracking-[0.05em] mt-1">Total Leads</span>
                             </div>
                         </div>
                         {/* Legend */}
                         <div className="flex flex-col justify-center gap-[clamp(8px,1vh,20px)] flex-1">
-                            {[
-                                { label: 'Whatsapp', count: 458, pct: '36.7%', color: '#22C55E', icon: whatsappIcon, isCustom: true },
-                                { label: 'Website', count: 458, pct: '36.7%', color: '#3B82F6', icon: FiGlobe },
-                                { label: 'Facebook', count: 458, pct: '36.7%', color: '#1E3B70', icon: facebookIcon, isCustom: true },
-                                { label: 'Instagram', count: 458, pct: '36.7%', color: '#E1306C', icon: instagramIcon, isCustom: true },
-                                { label: 'Others', count: 458, pct: '36.7%', color: '#9CA3AF', icon: FiMoreHorizontal }
-                            ].map((src, idx) => (
-                                <div key={idx} className="flex items-center justify-between group">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-[clamp(24px,3.2vh,48px)] h-[clamp(24px,3.2vh,48px)] rounded-full flex items-center justify-center shrink-0 border border-gray-50/50 group-hover:scale-110 transition-transform" style={{ backgroundColor: `${src.color}15`, color: src.color }}>
-                                            {src.isCustom ? (
-                                                <img src={src.icon} alt={src.label} className="w-[clamp(12px,1.8vh,24px)] h-[clamp(12px,1.8vh,24px)] object-contain" />
-                                            ) : (
-                                                <src.icon className="text-[clamp(12px,1.6vh,24px)]" />
-                                            )}
+                            {(() => {
+                                const sources = data?.analytics?.leadsBySource || [];
+                                const colorMap = {
+                                    'WhatsApp': '#22C55E',
+                                    'Whatsapp': '#22C55E',
+                                    'Website': '#3B82F6',
+                                    'Facebook': '#1E3B70',
+                                    'Instagram': '#E1306C',
+                                    'Others': '#9CA3AF',
+                                    'Direct': '#3B82F6',
+                                    'Marketplace': '#D48D2A',
+                                    'Social': '#E1306C'
+                                };
+                                const iconMap = {
+                                    'WhatsApp': { icon: whatsappIcon, isCustom: true },
+                                    'Whatsapp': { icon: whatsappIcon, isCustom: true },
+                                    'Website': { icon: FiGlobe, isCustom: false },
+                                    'Facebook': { icon: facebookIcon, isCustom: true },
+                                    'Instagram': { icon: instagramIcon, isCustom: true },
+                                    'Others': { icon: FiMoreHorizontal, isCustom: false },
+                                    'Direct': { icon: FiGlobe, isCustom: false },
+                                    'Marketplace': { icon: FiArrowRight, isCustom: false },
+                                    'Social': { icon: instagramIcon, isCustom: true }
+                                };
+
+                                return sources.map((src, idx) => {
+                                    const color = src.color || colorMap[src.label] || '#9CA3AF';
+                                    const iconInfo = iconMap[src.label] || { icon: FiMoreHorizontal, isCustom: false };
+                                    
+                                    return (
+                                        <div key={idx} className="flex items-center justify-between group">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-[clamp(24px,3.2vh,48px)] h-[clamp(24px,3.2vh,48px)] rounded-full flex items-center justify-center shrink-0 border border-gray-50/50 group-hover:scale-110 transition-transform" style={{ backgroundColor: `${color}15`, color: color }}>
+                                                    {iconInfo.isCustom ? (
+                                                        <img src={iconInfo.icon} alt={src.label} className="w-[clamp(12px,1.8vh,24px)] h-[clamp(12px,1.8vh,24px)] object-contain" />
+                                                    ) : (
+                                                        <iconInfo.icon className="text-[clamp(12px,1.6vh,24px)]" />
+                                                    )}
+                                                </div>
+                                                <span className="inter text-[clamp(10px,1.3vh,18px)] font-bold text-gray-800 group-hover:text-black transition-colors">{src.label}</span>
+                                            </div>
+                                            <span className="inter text-[clamp(10px,1.3vh,18px)] font-bold text-gray-900 tabular-nums">{src.count} <span className="text-gray-700 font-bold ml-1">({src.p || src.pct})</span></span>
                                         </div>
-                                        <span className="inter text-[clamp(10px,1.3vh,18px)] font-bold text-gray-800 group-hover:text-black transition-colors">{src.label}</span>
-                                    </div>
-                                    <span className="inter text-[clamp(10px,1.3vh,18px)] font-bold text-gray-900 tabular-nums">{src.count} <span className="text-gray-700 font-bold ml-1">({src.pct})</span></span>
-                                </div>
-                            ))}
+                                    );
+                                });
+                            })()}
                         </div>
                     </div>
                 </div>
