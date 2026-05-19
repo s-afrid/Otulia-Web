@@ -62,7 +62,7 @@ const WorldMap = ({ data = [] }) => {
             <svg 
                 viewBox="30 240 790 460" 
                 className="w-full h-full drop-shadow-sm" 
-                preserveAspectRatio="xMidYMid contain"
+                preserveAspectRatio="xMidYMid meet"
             >
                 {worldPaths.map((path, idx) => {
                     const style = countryStyles[path.id] || {
