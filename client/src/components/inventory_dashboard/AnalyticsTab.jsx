@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
     FiEye, FiUsers, FiTrendingUp, FiCreditCard, FiTrendingDown, 
     FiGlobe, FiChevronDown, FiActivity,
@@ -10,6 +10,7 @@ import instagramIcon from '../../assets/icons/social/instagram.svg';
 import whatsappIcon from '../../assets/icons/social/whatsapp.svg';
 import numberWithCommas from '../../modules/numberwithcomma';
 import WorldMap from './WorldMap';
+import MapModal from './MapModal';
 
 const AnalyticsTab = ({ 
     data, 
@@ -18,6 +19,8 @@ const AnalyticsTab = ({
     setChartInterval, 
     getSparklineData 
 }) => {
+    const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+
     // Top KPI Cards Data
     const kpiCards = [
         { 
@@ -373,7 +376,12 @@ const AnalyticsTab = ({
                                     </div>
                                 </div>
                             )}
-                            <button className="px-4 py-1.5 rounded-lg border border-gray-100 text-[clamp(10px,1.2vh,18px)] font-bold text-gray-800 hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors uppercase tracking-[0.05em]"><FiMapPin className="text-gray-700"/> View Map</button>
+                            <button 
+                                onClick={() => setIsMapModalOpen(true)}
+                                className="px-4 py-1.5 rounded-lg border border-gray-100 text-[clamp(10px,1.2vh,18px)] font-bold text-gray-800 hover:bg-gray-50 flex items-center gap-2 shadow-sm transition-colors uppercase tracking-[0.05em]"
+                            >
+                                <FiMapPin className="text-gray-700"/> View Map
+                            </button>
                         </div>
                     </div>
                     
@@ -411,6 +419,13 @@ const AnalyticsTab = ({
                     </div>
                 </div>
             </div>
+
+            {/* Map Modal */}
+            <MapModal 
+                isOpen={isMapModalOpen} 
+                onClose={() => setIsMapModalOpen(false)} 
+                data={data?.analytics?.leadsByLocation || []} 
+            />
         </div>
     );
 };
