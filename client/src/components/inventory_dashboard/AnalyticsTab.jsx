@@ -17,7 +17,8 @@ const AnalyticsTab = ({
     generateSparkline, 
     chartInterval, 
     setChartInterval, 
-    getSparklineData 
+    getSparklineData,
+    setActiveTab
 }) => {
     const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
@@ -195,7 +196,12 @@ const AnalyticsTab = ({
                 <div className="flex-1 bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(12px,1.8vh,30px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-h-0 min-w-[30%]">
                     <div className="flex justify-between items-center mb-[clamp(10px,1.5vh,24px)] shrink-0">
                         <h4 className="inter text-[clamp(14px,1.8vh,28px)] font-bold text-gray-900 tracking-tight leading-none">Top Performing Assets</h4>
-                        <button className="px-4 py-1.5 rounded-lg border border-gray-100 text-[clamp(10px,1.2vh,18px)] font-semibold text-gray-500 hover:bg-gray-50 transition-colors">View All</button>
+                        <button 
+                            onClick={() => setActiveTab('inventory')}
+                            className="px-4 py-1.5 rounded-lg border border-gray-100 text-[clamp(10px,1.2vh,18px)] font-semibold text-gray-500 hover:bg-gray-50 transition-colors"
+                        >
+                            View All
+                        </button>
                     </div>
                     <div className="flex-1 overflow-hidden">
                         <table className="w-full text-left table-fixed">

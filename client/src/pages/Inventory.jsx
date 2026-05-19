@@ -576,15 +576,15 @@ const Inventory = () => {
                     )}
 
                     {activeTab === 'analytics' && (
-                        <AnalyticsTab 
-                            data={data} 
+                        <AnalyticsTab
+                            data={data}
                             generateSparkline={generateSparkline}
                             getSparklineData={getSparklineData}
                             chartInterval={chartInterval}
                             setChartInterval={setChartInterval}
+                            setActiveTab={setActiveTab}
                         />
                     )}
-
                     {activeTab === 'marketplace' && (
                         <MarketplaceTab 
                             data={data} 
