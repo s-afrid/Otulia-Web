@@ -11,6 +11,7 @@ import whatsappIcon from '../../assets/icons/social/whatsapp.svg';
 import numberWithCommas from '../../modules/numberwithcomma';
 import WorldMap from './WorldMap';
 import MapModal from './MapModal';
+import SourceReportModal from './SourceReportModal';
 
 const AnalyticsTab = ({ 
     data, 
@@ -21,6 +22,7 @@ const AnalyticsTab = ({
     setActiveTab
 }) => {
     const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+    const [isSourceModalOpen, setIsSourceModalOpen] = useState(false);
 
     // Top KPI Cards Data
     const kpiCards = [
@@ -244,7 +246,12 @@ const AnalyticsTab = ({
                 <div className="flex-[1.2] bg-white rounded-[clamp(8px,1.5vh,24px)] p-[clamp(12px,1.8vh,30px)] flex flex-col border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-h-0">
                     <div className="flex justify-between items-center mb-[clamp(10px,1.5vh,24px)] shrink-0">
                         <h4 className="inter text-[clamp(14px,1.8vh,28px)] font-bold text-gray-900 tracking-tight leading-none">Leads By Source</h4>
-                        <button className="px-4 py-1.5 rounded-lg text-[clamp(10px,1.2vh,18px)] font-bold text-[#D48D2A] bg-[#FFF8F0] hover:bg-[#F2E8DB] transition-colors border border-[#F2E8DB]/50 shadow-sm">View Report</button>
+                        <button 
+                            onClick={() => setIsSourceModalOpen(true)}
+                            className="px-4 py-1.5 rounded-lg text-[clamp(10px,1.2vh,18px)] font-bold text-[#D48D2A] bg-[#FFF8F0] hover:bg-[#F2E8DB] transition-colors border border-[#F2E8DB]/50 shadow-sm"
+                        >
+                            View Report
+                        </button>
                     </div>
                     <div className="flex-1 flex items-center justify-center gap-[clamp(12px,2vw,48px)] min-h-0 px-2">
                         {/* Donut Chart SVG */}
@@ -431,6 +438,13 @@ const AnalyticsTab = ({
                 isOpen={isMapModalOpen} 
                 onClose={() => setIsMapModalOpen(false)} 
                 data={data?.analytics?.leadsByLocation || []} 
+            />
+            {/* Source Report Modal */}
+            <SourceReportModal
+                isOpen={isSourceModalOpen}
+                onClose={() => setIsSourceModalOpen(false)}
+                data={data?.analytics?.leadsBySource || []}
+                totalLeads={data?.stats?.totalLeads || 0}
             />
         </div>
     );
