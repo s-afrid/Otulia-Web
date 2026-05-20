@@ -130,13 +130,19 @@ router.put("/status/:id", authMiddleware, async (req, res) => {
  */
 router.post("/schedule-meeting", authMiddleware, async (req, res) => {
     try {
-        const { leadId, date, time, leadName, leadEmail, assetTitle, listingReference, agentName } = req.body;
+        const { leadId, date, time, leadName, leadEmail, assetTitle, assetImage, listingReference, agentName } = req.body;
 
         if (!leadEmail || leadEmail === 'Upgrade to VIP to view contact') {
             return res.status(400).json({ error: "VALID_EMAIL_REQUIRED" });
         }
 
         const njmId = listingReference ? ` (Ref: ${listingReference})` : "";
+        const imageHtml = assetImage ? `
+            <div style="margin: 20px 0; text-align: center;">
+                <img src="${assetImage}" alt="${assetTitle}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #eee;">
+            </div>
+        ` : "";
+
         const mailOptions = {
             from: `"Otulia Concierge" <${process.env.EMAIL_USER}>`,
             to: leadEmail,
@@ -146,6 +152,7 @@ router.post("/schedule-meeting", authMiddleware, async (req, res) => {
                     <h2 style="color: #D48D2A; margin-top: 0;">Meeting Request</h2>
                     <p>Hello <strong>${leadName}</strong>,</p>
                     <p>I hope you are doing well. I'm reaching out regarding your interest in <strong>${assetTitle}${njmId}</strong> on Otulia.</p>
+                    ${imageHtml}
                     <p>I would like to propose a meeting to discuss this further and answer any questions you may have.</p>
                     <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin: 20px 0;">
                         <p style="margin: 0; font-size: 14px; color: #666;">Proposed Schedule:</p>
