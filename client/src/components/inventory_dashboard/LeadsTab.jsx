@@ -69,6 +69,23 @@ const LeadsTab = ({
         }
     };
 
+    const handleWhatsApp = (lead, assetName) => {
+        const phoneNumber = lead.phone;
+        if (!phoneNumber || phoneNumber === 'No Phone Provided') {
+            alert("Lead phone number not available.");
+            return;
+        }
+
+        const text = `Hello ${lead.name}, thank you for your interest in ${assetName} on Otulia. I'm reaching out to discuss this further with you. When would be a good time to connect?`;
+
+        let cleanPhone = phoneNumber.replace(/[^\d+]/g, "");
+        if (!cleanPhone.startsWith("+") && cleanPhone.length > 0) {
+            cleanPhone = "+" + cleanPhone;
+        }
+        const waUrl = `https://wa.me/${cleanPhone.replace('+', '')}?text=${encodeURIComponent(text)}`;
+        window.open(waUrl, "_blank");
+    };
+
     return (
         <div className="h-full flex flex-col gap-4 animate-in fade-in duration-700">
             {/* Header Row */}
@@ -219,21 +236,20 @@ const LeadsTab = ({
                                         {/* Lead Profile Section */}
                                         <div className="flex items-start gap-4 flex-[1.2] min-w-0">
                                             <div className="relative shrink-0">
-                                                <div className="w-14 h-14 rounded-full bg-gray-100 border-2 border-white shadow-sm overflow-hidden">
+                                                <div className="w-20 h-20 rounded-full bg-gray-100 shadow-sm overflow-hidden">
                                                     <img 
                                                         src={lead.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(lead.name)}&background=random`} 
                                                         className="w-full h-full object-cover"
                                                         onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(lead.name)}&background=random`; }}
                                                     />
                                                 </div>
-                                                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white shadow-sm border border-gray-50 flex items-center justify-center overflow-hidden">
-                                                    <img src="https://flagcdn.com/w20/us.png" className="w-3 h-2 object-contain" alt="Country" />
+                                                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-white shadow-sm border border-gray-50 flex items-center justify-center overflow-hidden">
+                                                    <img src={`https://flagcdn.com/w20/${lead.countryCode || 'us'}.png`} className="w-4 h-3 object-contain" alt="Country" />
                                                 </div>
-                                                <div className="absolute top-0 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white"></div>
                                             </div>
                                             <div className="flex flex-col gap-1.5 min-w-0 flex-1">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-[13px] font-bold text-gray-900 truncate">{lead.name}</span>
+                                                    <span className="text-[14px] font-bold text-gray-900 truncate">{lead.name}</span>
                                                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${getStatusStyles(lead.status)}`}>
                                                         {lead.status}
                                                     </span>
@@ -263,24 +279,27 @@ const LeadsTab = ({
                                         </div>
 
                                         {/* Asset Section */}
-                                        <div className="flex items-center gap-4 flex-1 border-x border-gray-50 px-6">
-                                            <div className="w-24 h-16 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
+                                        <div className="flex items-center gap-6 flex-1 border-x border-gray-50 px-6">
+                                            <div className="w-44 h-28 rounded-xl overflow-hidden shrink-0">
                                                 {assetImage ? 
                                                     <img src={assetImage} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://placehold.co/400x400?text=No+Image"; }}/> : 
                                                     <img src="https://placehold.co/400x400?text=No+Image" className="w-full h-full object-cover opacity-30"/>
                                                 }
                                             </div>
-                                            <div className="flex flex-col gap-0.5 truncate">
-                                                <span className="text-[12px] font-bold text-gray-900 truncate">{assetName}</span>
-                                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{assetCategory}</span>
-                                                <span className="text-[13px] font-black text-gray-900 mt-0.5">{assetPrice}</span>
+                                            <div className="flex flex-col gap-1 truncate">
+                                                <span className="text-[14px] font-bold text-gray-900 truncate">{assetName}</span>
+                                                <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{assetCategory}</span>
+                                                <span className="text-[15px] font-black text-gray-900 mt-1">{assetPrice}</span>
                                             </div>
                                         </div>
 
                                         {/* Actions Section */}
                                         <div className="flex flex-col gap-2 w-44 shrink-0">
-                                            <button className="w-full py-1.5 rounded-lg bg-[#0F172A] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
-                                                <FiMessageSquare className="text-[12px]" /> Send Message
+                                            <button 
+                                                onClick={() => handleWhatsApp(lead, assetName)}
+                                                className="w-full py-1.5 rounded-lg bg-[#0F172A] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                                            >
+                                                <img src={whatsappIcon} className="w-3 h-3 brightness-0 invert" alt="WA" /> Send Message
                                             </button>
                                             <button className="w-full py-1.5 rounded-lg bg-[#15803D] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
                                                 <FiPhone className="text-[12px]" /> Call Now

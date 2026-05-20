@@ -94,6 +94,36 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             createdAt: { $gte: sixtyDaysAgo }
         }).populate('sender', 'name email phone profilePicture');
 
+        // Country detection helper
+        const phoneToCountry = {
+            '971': { name: 'UAE', code: 'ae' },
+            '1': { name: 'United States', code: 'us' },
+            '44': { name: 'United Kingdom', code: 'gb' },
+            '91': { name: 'India', code: 'in' },
+            '33': { name: 'France', code: 'fr' },
+            '49': { name: 'Germany', code: 'de' },
+            '81': { name: 'Japan', code: 'jp' },
+            '82': { name: 'South Korea', code: 'kr' },
+            '86': { name: 'China', code: 'cn' },
+            '7': { name: 'Russia', code: 'ru' },
+            '61': { name: 'Australia', code: 'au' },
+            '966': { name: 'Saudi Arabia', code: 'sa' },
+            '974': { name: 'Qatar', code: 'qa' },
+            '965': { name: 'Kuwait', code: 'kw' },
+            '968': { name: 'Oman', code: 'om' },
+            '973': { name: 'Bahrain', code: 'bh' }
+        };
+
+        const getCountryInfo = (phone) => {
+            if (!phone) return { name: 'Others', code: 'us' }; // Default to US or generic
+            const cleanPhone = phone.replace(/\D/g, '');
+            const sortedPrefixes = Object.keys(phoneToCountry).sort((a, b) => b.length - a.length);
+            for (const prefix of sortedPrefixes) {
+                if (cleanPhone.startsWith(prefix)) return phoneToCountry[prefix];
+            }
+            return { name: 'Others', code: 'us' };
+        };
+
         // Views calculation
         const viewsCurrent = currentActivities.filter(a => a.activityType === 'VIEW' && a.createdAt >= rangeStart).length;
         const viewsPrev = currentActivities.filter(a => a.activityType === 'VIEW' && a.createdAt < rangeStart && a.createdAt >= prevRangeStart).length;
@@ -244,30 +274,38 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 
         // Leads Table
         const leadsTable = [
-            ...currentLeads.map(l => ({
-                id: l._id,
-                name: l.sender?.name || l.name || 'Anonymous Client',
-                photo: l.sender?.profilePicture,
-                phone: l.sender?.phone || l.phone || 'No Phone Provided',
-                email: user.plan === 'Business VIP' || user.plan === 'Enterprise Elite' ? (l.sender?.email || l.email) : 'Upgrade to VIP to view contact',
-                assetId: l.assetId,
-                assetName: l.assetTitle || 'Untitled Asset',
-                assetPrice: l.assetPrice,
-                assetImage: l.assetImage,
-                category: l.assetModel || 'General',
-                date: l.createdAt,
-                status: l.status || 'New',
-                message: l.message,
-                isActivity: false,
-                source: l.source || 'Website'
-            })),
+            ...currentLeads.map(l => {
+                const phone = l.sender?.phone || l.phone;
+                const country = getCountryInfo(phone);
+                return {
+                    id: l._id,
+                    name: l.sender?.name || l.name || 'Anonymous Client',
+                    photo: l.sender?.profilePicture,
+                    phone: phone || 'No Phone Provided',
+                    countryCode: country.code,
+                    email: user.plan === 'Business VIP' || user.plan === 'Enterprise Elite' ? (l.sender?.email || l.email) : 'Upgrade to VIP to view contact',
+                    assetId: l.assetId,
+                    assetName: l.assetTitle || 'Untitled Asset',
+                    assetPrice: l.assetPrice,
+                    assetImage: l.assetImage,
+                    category: l.assetModel || 'General',
+                    date: l.createdAt,
+                    status: l.status || 'New',
+                    message: l.message,
+                    isActivity: false,
+                    source: l.source || 'Website'
+                };
+            }),
             ...currentActivities.filter(a => a.activityType !== 'VIEW').map(act => {
                 const asset = detailedItems.find(i => i.id.toString() === act.assetId.toString());
+                const phone = act.userId?.phone;
+                const country = getCountryInfo(phone);
                 return {
                     id: act._id,
                     name: act.userId?.name || 'Anonymous Client',
                     photo: act.userId?.profilePicture,
-                    phone: act.userId?.phone || 'No Phone Provided',
+                    phone: phone || 'No Phone Provided',
+                    countryCode: country.code,
                     email: user.plan === 'Business VIP' || user.plan === 'Enterprise Elite' ? act.userId?.email : 'Upgrade to VIP to view contact',
                     assetId: act.assetId,
                     assetName: asset?.title || 'Untitled Asset',
@@ -327,51 +365,25 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         ];
 
         // Leads by Location (Determined from lead phone numbers or user profile)
-        const countryCodes = {
-            '971': 'UAE',
-            '1': 'United States',
-            '44': 'United Kingdom',
-            '91': 'India',
-            '33': 'France',
-            '49': 'Germany',
-            '81': 'Japan',
-            '82': 'South Korea',
-            '86': 'China',
-            '7': 'Russia',
-            '61': 'Australia',
-            '1-416': 'Canada', // Simple Canada check
-            '966': 'Saudi Arabia',
-            '974': 'Qatar',
-            '965': 'Kuwait'
-        };
-
         const locationStats = {};
 
         [...currentLeads, ...currentActivities.filter(a => a.activityType !== 'VIEW')].forEach(l => {
             const phone = l.phone || l.sender?.phone || l.userId?.phone;
-            let country = 'Others';
-            
-            if (phone) {
-                const cleanPhone = phone.replace(/\D/g, '');
-                for (const [code, name] of Object.entries(countryCodes)) {
-                    if (cleanPhone.startsWith(code)) {
-                        country = name;
-                        break;
-                    }
-                }
-            }
+            const countryInfo = getCountryInfo(phone);
+            const country = countryInfo.name;
+            const countryCode = countryInfo.code;
 
             if (!locationStats[country]) {
-                locationStats[country] = { leads: 0, views: 0, conversions: 0 };
+                locationStats[country] = { leads: 0, views: 0, conversions: 0, code: countryCode };
             }
             locationStats[country].leads += 1;
             locationStats[country].conversions += 1;
         });
 
-        // Add views to location stats (Views often don't have phone, so we might need to distribute them or mock for now if no IP-country logic)
+        // Add views to location stats
         currentActivities.filter(a => a.activityType === 'VIEW').forEach(a => {
-            const country = 'Others'; // Placeholder for IP-based country
-            if (!locationStats[country]) locationStats[country] = { leads: 0, views: 0, conversions: 0 };
+            const country = 'Others'; 
+            if (!locationStats[country]) locationStats[country] = { leads: 0, views: 0, conversions: 0, code: 'us' };
             locationStats[country].views += 1;
         });
 
@@ -382,6 +394,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 leads: counts.leads,
                 views: counts.views,
                 conversions: counts.conversions,
+                code: counts.code,
                 pct: stats.totalLeads > 0 ? ((counts.leads / stats.totalLeads) * 100).toFixed(1) : 0
             }))
             .sort((a, b) => b.leads - a.leads);
