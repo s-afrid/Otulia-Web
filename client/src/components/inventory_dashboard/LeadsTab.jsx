@@ -332,9 +332,6 @@ const LeadsTab = ({
                                         </div>
 
                                         {/* More Options */}
-                                        <button className="p-2 text-gray-400 hover:text-gray-900 transition-colors absolute top-4 right-2">
-                                            <FiMoreVertical />
-                                        </button>
                                     </div>
                                 );
                             })

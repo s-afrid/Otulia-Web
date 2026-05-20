@@ -109,16 +109,12 @@ router.post("/google-login", async (req, res) => {
     );
 
     console.log(`[Google Login] JWT issued for user: ${user.email} (role: ${user.role})`);
+    const userObj = user.toObject();
+    delete userObj.password;
+
     res.json({
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        plan: user.plan,
-        profilePicture: user.profilePicture
-      },
+      user: userObj,
     });
   } catch (err) {
     console.error("[Google Login] Unexpected error:", err.message);
@@ -166,16 +162,12 @@ router.post("/register", async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    const userObj = user.toObject();
+    delete userObj.password;
+
     res.status(201).json({
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        plan: user.plan,
-        profilePicture: user.profilePicture
-      },
+      user: userObj,
     });
   } catch (err) {
     res.status(500).json({
@@ -231,16 +223,12 @@ router.post("/login", async (req, res) => {
     );
 
     console.log(`[Login] Success for user: ${email} (role: ${user.role})`);
+    const userObj = user.toObject();
+    delete userObj.password;
+
     res.json({
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        plan: user.plan,
-        profilePicture: user.profilePicture
-      },
+      user: userObj,
     });
   } catch (err) {
     console.error(`[Login] Unexpected error:`, err.message);
@@ -434,24 +422,32 @@ router.post("/upgrade-plan", authMiddleware, async (req, res) => {
  */
 router.put("/update-profile", authMiddleware, async (req, res) => {
   try {
-    const { name, phone, whatsapp, jobTitle, language, timezone, preferredContact, agentDescription, social, profilePicture, company } = req.body;
+    const { 
+      name, phone, phoneCode, whatsapp, whatsappCode, 
+      jobTitle, language, timezone, contactMethod, preferredContact,
+      agentDescription, social, profilePicture, company 
+    } = req.body;
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
 
     if (name) user.name = name;
     if (phone) user.phone = phone;
+    if (phoneCode) user.phoneCode = phoneCode;
     if (whatsapp) user.whatsapp = whatsapp;
+    if (whatsappCode) user.whatsappCode = whatsappCode;
     if (jobTitle) user.jobTitle = jobTitle;
     if (language) user.language = language;
     if (timezone) user.timezone = timezone;
-    if (preferredContact) user.preferredContact = preferredContact;
+    if (contactMethod || preferredContact) user.contactMethod = contactMethod || preferredContact;
     if (agentDescription) user.agentDescription = agentDescription;
+    
     if (social) {
       user.social = {
         ...user.social,
         ...social
       };
+      user.markModified('social');
     }
     if (profilePicture) user.profilePicture = profilePicture;
     if (req.body.leadEmailNotifications !== undefined) {
@@ -459,11 +455,16 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     }
     
     if (company) {
-      user.company = {
+      const companyData = {
         ...user.company,
         ...company,
+        email: company.companyEmail || company.email || user.company?.email,
+        companyName: company.companyName || company.name || user.company?.companyName,
         social: company.social ? { ...user.company?.social, ...company.social } : user.company?.social
       };
+
+      user.company = companyData;
+      user.markModified('company');
     }
 
     await user.save();

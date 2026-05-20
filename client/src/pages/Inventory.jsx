@@ -20,6 +20,7 @@ import CreateListingModal from '../components/CreateListingModal';
 import VerificationModal from '../components/VerificationModal';
 import ContactModal from '../components/ContactModal';
 import UpgradeModal from '../components/UpgradeModal';
+import AddLeadModal from '../components/inventory/AddLeadModal';
 
 const Inventory = () => {
     const { user, logout, updateUserLocal } = useAuth();
@@ -63,6 +64,7 @@ const Inventory = () => {
     const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
     const [upgradePlan, setUpgradePlan] = useState(null);
     const [viewLead, setViewLead] = useState(null);
+    const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
 
     // Settings States
     const [agentInfo, setAgentInfo] = useState({
@@ -126,14 +128,14 @@ const Inventory = () => {
                 social: {
                     instagram: user.social?.instagram || '',
                     linkedin: user.social?.linkedin || '',
-                    x: user.social?.x || '',
+                    x: user.social?.twitter || '',
                     facebook: user.social?.facebook || ''
                 }
             });
             setCompanyInfo({
                 name: user.company?.companyName || '',
                 website: user.company?.website || '',
-                email: user.company?.companyEmail || '',
+                email: user.company?.email || '',
                 businessType: user.company?.businessType || 'Luxury Cars & Supercars Dealer',
                 establishedYear: user.company?.establishedYear || '',
                 address: user.company?.address || '',
@@ -340,7 +342,7 @@ const Inventory = () => {
                     company: {
                         companyName: companyInfo.name,
                         website: companyInfo.website,
-                        companyEmail: companyInfo.email,
+                        email: companyInfo.email,
                         businessType: companyInfo.businessType,
                         establishedYear: companyInfo.establishedYear,
                         address: companyInfo.address,
@@ -558,7 +560,7 @@ const Inventory = () => {
                     {activeTab === 'leads' && (
                         <LeadsTab 
                             data={data}
-                            setIsAddLeadModalOpen={() => {}} // Not implemented in original but added for completeness
+                            setIsAddLeadModalOpen={setIsAddLeadModalOpen}
                             handleExportCSV={handleExportCSV}
                             leadSearchQuery={leadSearchQuery}
                             setLeadSearchQuery={setLeadSearchQuery}
@@ -643,6 +645,13 @@ const Inventory = () => {
                 isOpen={isUpgradeModalOpen} 
                 onClose={() => setIsUpgradeModalOpen(false)} 
                 plan={upgradePlan} 
+            />
+            <AddLeadModal
+                isOpen={isAddLeadModalOpen}
+                onClose={() => setIsAddLeadModalOpen(false)}
+                onCreated={() => fetchDashboardData()}
+                token={localStorage.getItem('token')}
+                inventory={data.inventory}
             />
         </div>
     );

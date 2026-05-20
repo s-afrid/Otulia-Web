@@ -87,18 +87,18 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         const currentActivities = await UserActivity.find({
             assetId: { $in: assetIds },
             createdAt: { $gte: sixtyDaysAgo }
-        });
+        }).populate('userId', 'name email phone phoneCode profilePicture');
 
         const currentLeads = await Lead.find({
             agentId: userId,
             createdAt: { $gte: sixtyDaysAgo }
-        }).populate('sender', 'name email phone profilePicture');
+        }).populate('sender', 'name email phone phoneCode profilePicture');
 
         // Country detection helper
         const phoneToCountry = {
             '971': { name: 'UAE', code: 'ae' },
-            '1': { name: 'United States', code: 'us' },
-            '44': { name: 'United Kingdom', code: 'gb' },
+            '1': { name: 'USA/Canada', code: 'us' },
+            '44': { name: 'UK', code: 'gb' },
             '91': { name: 'India', code: 'in' },
             '33': { name: 'France', code: 'fr' },
             '49': { name: 'Germany', code: 'de' },
@@ -111,16 +111,55 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             '974': { name: 'Qatar', code: 'qa' },
             '965': { name: 'Kuwait', code: 'kw' },
             '968': { name: 'Oman', code: 'om' },
-            '973': { name: 'Bahrain', code: 'bh' }
+            '973': { name: 'Bahrain', code: 'bh' },
+            '20': { name: 'Egypt', code: 'eg' },
+            '90': { name: 'Turkey', code: 'tr' },
+            '39': { name: 'Italy', code: 'it' },
+            '34': { name: 'Spain', code: 'es' },
+            '41': { name: 'Switzerland', code: 'ch' },
+            '31': { name: 'Netherlands', code: 'nl' },
+            '32': { name: 'Belgium', code: 'be' },
+            '43': { name: 'Austria', code: 'at' },
+            '46': { name: 'Sweden', code: 'se' },
+            '47': { name: 'Norway', code: 'no' },
+            '45': { name: 'Denmark', code: 'dk' },
+            '351': { name: 'Portugal', code: 'pt' },
+            '30': { name: 'Greece', code: 'gr' },
+            '972': { name: 'Israel', code: 'il' },
+            '961': { name: 'Lebanon', code: 'lb' },
+            '962': { name: 'Jordan', code: 'jo' },
+            '65': { name: 'Singapore', code: 'sg' },
+            '60': { name: 'Malaysia', code: 'my' },
+            '66': { name: 'Thailand', code: 'th' },
+            '62': { name: 'Indonesia', code: 'id' },
+            '63': { name: 'Philippines', code: 'ph' },
+            '84': { name: 'Vietnam', code: 'vn' },
+            '27': { name: 'South Africa', code: 'za' },
+            '212': { name: 'Morocco', code: 'ma' },
+            '234': { name: 'Nigeria', code: 'ng' },
+            '55': { name: 'Brazil', code: 'br' },
+            '52': { name: 'Mexico', code: 'mx' },
+            '54': { name: 'Argentina', code: 'ar' },
+            '56': { name: 'Chile', code: 'cl' },
+            '57': { name: 'Colombia', code: 'co' }
         };
 
         const getCountryInfo = (phone) => {
-            if (!phone) return { name: 'Others', code: 'us' }; // Default to US or generic
-            const cleanPhone = phone.replace(/\D/g, '');
+            if (!phone || typeof phone !== 'string') return { name: 'Others', code: 'us' };
+            
+            // Remove all non-digits
+            let cleanPhone = phone.replace(/\D/g, '');
+            
+            // Handle leading 00 as international prefix
+            if (phone.startsWith('00')) {
+                cleanPhone = cleanPhone.substring(2);
+            }
+
             const sortedPrefixes = Object.keys(phoneToCountry).sort((a, b) => b.length - a.length);
             for (const prefix of sortedPrefixes) {
                 if (cleanPhone.startsWith(prefix)) return phoneToCountry[prefix];
             }
+            
             return { name: 'Others', code: 'us' };
         };
 
@@ -275,7 +314,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         // Leads Table
         const leadsTable = [
             ...currentLeads.map(l => {
-                const phone = l.sender?.phone || l.phone;
+                const phone = l.sender ? ((l.sender.phoneCode || "") + (l.sender.phone || "")) : l.phone;
                 const country = getCountryInfo(phone);
                 return {
                     id: l._id,
@@ -298,7 +337,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             }),
             ...currentActivities.filter(a => a.activityType !== 'VIEW').map(act => {
                 const asset = detailedItems.find(i => i.id.toString() === act.assetId.toString());
-                const phone = act.userId?.phone;
+                const phone = act.userId ? ((act.userId.phoneCode || "") + (act.userId.phone || "")) : (act.phone || "No Phone Provided");
                 const country = getCountryInfo(phone);
                 return {
                     id: act._id,
@@ -368,7 +407,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         const locationStats = {};
 
         [...currentLeads, ...currentActivities.filter(a => a.activityType !== 'VIEW')].forEach(l => {
-            const phone = l.phone || l.sender?.phone || l.userId?.phone;
+            const phone = l.sender ? ((l.sender.phoneCode || "") + (l.sender.phone || "")) : (l.userId ? ((l.userId.phoneCode || "") + (l.userId.phone || "")) : (l.phone || ""));
             const countryInfo = getCountryInfo(phone);
             const country = countryInfo.name;
             const countryCode = countryInfo.code;

@@ -29,6 +29,32 @@ const SettingsTab = ({
     handleSaveCompanyDetails,
     setIsVerificationModalOpen
 }) => {
+    const countryCodes = [
+        { code: '+971', flag: '🇦🇪', name: 'UAE' },
+        { code: '+91', flag: '🇮🇳', name: 'India' },
+        { code: '+1', flag: '🇺🇸', name: 'USA' },
+        { code: '+44', flag: '🇬🇧', name: 'UK' },
+        { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
+        { code: '+974', flag: '🇶🇦', name: 'Qatar' },
+        { code: '+965', flag: '🇰🇼', name: 'Kuwait' },
+        { code: '+968', flag: '🇴🇲', name: 'Oman' },
+        { code: '+973', flag: '🇧🇭', name: 'Bahrain' },
+        { code: '+20', flag: '🇪🇬', name: 'Egypt' },
+        { code: '+33', flag: '🇫🇷', name: 'France' },
+        { code: '+49', flag: '🇩🇪', name: 'Germany' },
+        { code: '+39', flag: '🇮🇹', name: 'Italy' },
+        { code: '+34', flag: '🇪🇸', name: 'Spain' },
+        { code: '+41', flag: '🇨🇭', name: 'Switzerland' },
+        { code: '+7', flag: '🇷🇺', name: 'Russia' },
+        { code: '+81', flag: '🇯🇵', name: 'Japan' },
+        { code: '+86', flag: '🇨🇳', name: 'China' },
+        { code: '+61', flag: '🇦🇺', name: 'Australia' },
+        { code: '+65', flag: '🇸🇬', name: 'Singapore' },
+        { code: '+27', flag: '🇿🇦', name: 'South Africa' },
+        { code: '+55', flag: '🇧🇷', name: 'Brazil' },
+        { code: '+90', flag: '🇹🇷', name: 'Turkey' },
+    ];
+
     const getContactIcon = (method) => {
         if (method === 'WhatsApp') return <img src={whatsappIcon} alt="WhatsApp" className="w-3.5 h-3.5" />;
         if (method === 'Email') return <FiMail className="text-blue-500" />;
@@ -97,10 +123,9 @@ const SettingsTab = ({
                                 <div className="flex border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A]">
                                     <div className="flex items-center px-2 bg-gray-50 border-r border-gray-200 text-[10px] relative">
                                         <select value={agentInfo.phoneCode} onChange={e => setAgentInfo(p => ({...p, phoneCode: e.target.value}))} className="appearance-none bg-transparent outline-none pr-4 cursor-pointer font-bold">
-                                            <option value="+971">🇦🇪 +971</option>
-                                            <option value="+91">🇮🇳 +91</option>
-                                            <option value="+1">🇺🇸 +1</option>
-                                            <option value="+44">🇬🇧 +44</option>
+                                            {countryCodes.map(c => (
+                                                <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                                            ))}
                                         </select>
                                         <FiChevronDown className="absolute right-1 text-[8px] text-gray-500 pointer-events-none"/>
                                     </div>
@@ -112,10 +137,9 @@ const SettingsTab = ({
                                 <div className="flex border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A]">
                                     <div className="flex items-center px-2 bg-gray-50 border-r border-gray-200 text-[10px] relative">
                                         <select value={agentInfo.whatsappCode} onChange={e => setAgentInfo(p => ({...p, whatsappCode: e.target.value}))} className="appearance-none bg-transparent outline-none pr-4 cursor-pointer font-bold">
-                                            <option value="+971">🇦🇪 +971</option>
-                                            <option value="+91">🇮🇳 +91</option>
-                                            <option value="+1">🇺🇸 +1</option>
-                                            <option value="+44">🇬🇧 +44</option>
+                                            {countryCodes.map(c => (
+                                                <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                                            ))}
                                         </select>
                                         <FiChevronDown className="absolute right-1 text-[8px] text-gray-500 pointer-events-none"/>
                                     </div>
@@ -286,10 +310,9 @@ const SettingsTab = ({
                                 <div className="flex border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A]">
                                     <div className="flex items-center px-2 bg-gray-50 border-r border-gray-200 text-[10px] relative">
                                         <select value={companyInfo.phoneCode} onChange={e => setCompanyInfo(p => ({...p, phoneCode: e.target.value}))} className="appearance-none bg-transparent outline-none pr-4 cursor-pointer font-bold">
-                                            <option value="+971">🇦🇪 +971</option>
-                                            <option value="+91">🇮🇳 +91</option>
-                                            <option value="+1">🇺🇸 +1</option>
-                                            <option value="+44">🇬🇧 +44</option>
+                                            {countryCodes.map(c => (
+                                                <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                                            ))}
                                         </select>
                                         <FiChevronDown className="absolute right-1 text-[8px] text-gray-500 pointer-events-none"/>
                                     </div>

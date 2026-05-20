@@ -47,12 +47,13 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
-
+    phoneCode: String,
     whatsapp: String,
+    whatsappCode: String,
     jobTitle: String,
     language: String,
     timezone: String,
-    preferredContact: String,
+    contactMethod: String,
     agentDescription: String,
     social: {
       instagram: String,
@@ -74,6 +75,9 @@ const userSchema = new mongoose.Schema(
       businessType: String,
       establishedYear: String,
       phone: String,
+      phoneCode: String,
+      whatsapp: String,
+      whatsappCode: String,
       email: String,
       social: {
         instagram: String,

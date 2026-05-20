@@ -61,10 +61,10 @@ router.post("/send", authMiddleware, async (req, res) => {
  */
 router.post("/manual", authMiddleware, async (req, res) => {
     try {
-        const { name, email, phone, source, assetId, assetModel, assetTitle, assetPrice, assetImage, message, status } = req.body;
+        const { name, email, phone, phoneCode, source, assetId, assetModel, assetTitle, assetPrice, assetImage, message, status } = req.body;
 
         const lead = new Lead({
-            name, email, phone, source, agentId: req.user.id, assetId, assetModel, assetTitle, assetPrice, assetImage, message, status: status || 'New'
+            name, email, phone, phoneCode, source, agentId: req.user.id, assetId, assetModel, assetTitle, assetPrice, assetImage, message, status: status || 'New'
         });
 
         await lead.save();

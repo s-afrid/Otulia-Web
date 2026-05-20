@@ -9,6 +9,7 @@ const leadSchema = new mongoose.Schema(
         },
         name: { type: String },
         email: { type: String },
+        phoneCode: { type: String },
         phone: { type: String },
         source: { type: String, default: 'Manual' },
         agentId: {
