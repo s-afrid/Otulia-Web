@@ -21,6 +21,7 @@ import VerificationModal from '../components/VerificationModal';
 import ContactModal from '../components/ContactModal';
 import UpgradeModal from '../components/UpgradeModal';
 import AddLeadModal from '../components/inventory/AddLeadModal';
+import ScheduleMeetingModal from '../components/inventory/ScheduleMeetingModal';
 
 const Inventory = () => {
     const { user, logout, updateUserLocal } = useAuth();
@@ -65,6 +66,8 @@ const Inventory = () => {
     const [upgradePlan, setUpgradePlan] = useState(null);
     const [viewLead, setViewLead] = useState(null);
     const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
+    const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+    const [selectedLeadForSchedule, setSelectedLeadForSchedule] = useState(null);
 
     // Settings States
     const [agentInfo, setAgentInfo] = useState({
@@ -561,6 +564,8 @@ const Inventory = () => {
                         <LeadsTab 
                             data={data}
                             setIsAddLeadModalOpen={setIsAddLeadModalOpen}
+                            setIsScheduleModalOpen={setIsScheduleModalOpen}
+                            setSelectedLeadForSchedule={setSelectedLeadForSchedule}
                             handleExportCSV={handleExportCSV}
                             leadSearchQuery={leadSearchQuery}
                             setLeadSearchQuery={setLeadSearchQuery}
@@ -652,6 +657,13 @@ const Inventory = () => {
                 onCreated={() => fetchDashboardData()}
                 token={localStorage.getItem('token')}
                 inventory={data.inventory}
+            />
+            <ScheduleMeetingModal
+                isOpen={isScheduleModalOpen}
+                onClose={() => { setIsScheduleModalOpen(false); setSelectedLeadForSchedule(null); }}
+                lead={selectedLeadForSchedule}
+                agentName={user?.name}
+                token={localStorage.getItem('token')}
             />
         </div>
     );

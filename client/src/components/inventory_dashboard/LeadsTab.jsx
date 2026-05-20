@@ -28,8 +28,12 @@ const LeadsTab = ({
     activeLeadDropdown, 
     setActiveLeadDropdown, 
     handleStatusChange, 
-    setViewLead 
+    setViewLead,
+    setIsScheduleModalOpen,
+    setSelectedLeadForSchedule
 }) => {
+    const [revealedPhones, setRevealedPhones] = React.useState({});
+
     const getSourceIcon = (source) => {
         const s = source?.toLowerCase() || '';
         if (s.includes('facebook')) return <img src={facebookIcon} alt="Facebook" className="w-2.5 h-2.5" />;
@@ -301,10 +305,25 @@ const LeadsTab = ({
                                             >
                                                 <img src={whatsappIcon} className="w-3 h-3 brightness-0 invert" alt="WA" /> Send Message
                                             </button>
-                                            <button className="w-full py-1.5 rounded-lg bg-[#15803D] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
-                                                <FiPhone className="text-[12px]" /> Call Now
-                                            </button>
-                                            <button className="w-full py-1.5 rounded-lg bg-[#C2410C] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+                                            {revealedPhones[lead.id] ? (
+                                                <a 
+                                                    href={`tel:${lead.phone}`}
+                                                    className="w-full py-1.5 rounded-lg bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                                                >
+                                                    <FiPhone className="text-[12px]" /> {lead.phone}
+                                                </a>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => setRevealedPhones(prev => ({...prev, [lead.id]: true}))}
+                                                    className="w-full py-1.5 rounded-lg bg-[#15803D] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                                                >
+                                                    <FiPhone className="text-[12px]" /> Call Now
+                                                </button>
+                                            )}
+                                            <button 
+                                                onClick={() => { setSelectedLeadForSchedule(lead); setIsScheduleModalOpen(true); }}
+                                                className="w-full py-1.5 rounded-lg bg-[#C2410C] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                                            >
                                                 <FiCalendar className="text-[12px]" /> Schedule
                                             </button>
                                             
