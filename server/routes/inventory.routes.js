@@ -263,7 +263,8 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 transmission: item.transmission || item.specification?.transmission,
                 year: item.year || item.specification?.yearOfConstruction,
                 location: item.location || item.specification?.carLocation || item.specification?.yachtLocation || item.specification?.city,
-                description: item.description
+                description: item.description,
+                listingReference: item.listingReference
             };
         }).filter(Boolean);
 
@@ -316,6 +317,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             ...currentLeads.map(l => {
                 const phone = l.sender ? ((l.sender.phoneCode || "") + (l.sender.phone || "")) : l.phone;
                 const country = getCountryInfo(phone);
+                const asset = detailedItems.find(i => i.id.toString() === l.assetId?.toString());
                 return {
                     id: l._id,
                     name: l.sender?.name || l.name || 'Anonymous Client',
@@ -327,6 +329,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                     assetName: l.assetTitle || 'Untitled Asset',
                     assetPrice: l.assetPrice,
                     assetImage: l.assetImage,
+                    listingReference: asset?.listingReference || l.listingReference,
                     category: l.assetModel || 'General',
                     date: l.createdAt,
                     status: l.status || 'New',
@@ -350,6 +353,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                     assetName: asset?.title || 'Untitled Asset',
                     assetPrice: asset?.price,
                     assetImage: asset?.images?.[0],
+                    listingReference: asset?.listingReference,
                     category: asset?.category || 'General',
                     date: act.createdAt,
                     status: act.status || 'New',

@@ -30,6 +30,7 @@ const ScheduleMeetingModal = ({ isOpen, onClose, lead, agentName, token }) => {
                     leadName: lead.name,
                     leadEmail: lead.email,
                     assetTitle: lead.assetName,
+                    listingReference: lead.listingReference,
                     agentName: agentName
                 })
             });

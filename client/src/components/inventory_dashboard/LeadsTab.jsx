@@ -90,7 +90,8 @@ const LeadsTab = ({
             return;
         }
 
-        const text = `Hello ${lead.name}, thank you for your interest in ${assetName} on Otulia. I'm reaching out to discuss this further with you. When would be a good time to connect?`;
+        const njmId = lead.listingReference ? ` (Ref: ${lead.listingReference})` : "";
+        const text = `Hello ${lead.name}, thank you for your interest in ${assetName}${njmId} on Otulia. I'm reaching out to discuss this further with you. When would be a good time to connect?`;
 
         let cleanPhone = phoneNumber.replace(/[^\d+]/g, "");
         if (!cleanPhone.startsWith("+") && cleanPhone.length > 0) {
