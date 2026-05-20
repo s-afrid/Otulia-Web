@@ -224,11 +224,11 @@ const AssetCard = ({ item }) => {
               {/* TITLE */}
               <div>
                 <h4
-                  className="truncate translate-y-px"
+                  className="truncate translate-y-px pb-1"
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
                     fontWeight: 500,
-                    fontSize: "17px" /* fontSize: "15px" */,
+                    fontSize: "16px" /* fontSize: "15px" */,
                     lineHeight: 1.15,
                     color: "#2A2A2A",
                   }}
@@ -380,8 +380,8 @@ const AssetCard = ({ item }) => {
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
                     fontWeight: 500,
-                    fontSize: "2.5cqi" /* fontSize: "15px" */,
-                    lineHeight: "100%",
+                    fontSize: "16px" /* fontSize: "15px" */,
+                    lineHeight: "1.15",
                     color: "#2A2A2A",
                     paddingBottom: 2,
                   }}
