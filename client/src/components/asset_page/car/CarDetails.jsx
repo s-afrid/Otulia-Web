@@ -313,7 +313,7 @@ Reference ID: #${refId}
                 PRICE
               </span>
               <h2
-                className="text-3xl md:text-4xl font-medium text-black"
+                className="text-3xl md:text-3xl font-normal text-black"
                 style={{
                   fontFamily: 'Canela, "Times New Roman", Times, serif',
                 }}
