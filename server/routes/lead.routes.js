@@ -137,9 +137,18 @@ router.post("/schedule-meeting", authMiddleware, async (req, res) => {
         }
 
         const njmId = listingReference ? ` (Ref: ${listingReference})` : "";
-        const imageHtml = assetImage ? `
+        
+        // Ensure image URL is absolute for email clients
+        let absoluteImageUrl = assetImage;
+        if (assetImage && !assetImage.startsWith('http')) {
+            const protocol = req.protocol;
+            const host = req.get('host');
+            absoluteImageUrl = `${protocol}://${host}${assetImage.startsWith('/') ? '' : '/'}${assetImage}`;
+        }
+
+        const imageHtml = absoluteImageUrl ? `
             <div style="margin: 20px 0; text-align: center;">
-                <img src="${assetImage}" alt="${assetTitle}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #eee;">
+                <img src="${absoluteImageUrl}" alt="${assetTitle}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #eee;">
             </div>
         ` : "";
 

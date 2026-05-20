@@ -333,7 +333,11 @@ const LeadsTab = ({
                                                 </button>
                                             )}
                                             <button 
-                                                onClick={() => { setSelectedLeadForSchedule(lead); setIsScheduleModalOpen(true); }}
+                                                onClick={() => { 
+                                                    const enrichedLead = { ...lead, assetImage: assetImage, assetName: assetName };
+                                                    setSelectedLeadForSchedule(enrichedLead); 
+                                                    setIsScheduleModalOpen(true); 
+                                                }}
                                                 className="w-full py-1.5 rounded-lg bg-[#C2410C] text-white text-[10px] font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                                             >
                                                 <FiCalendar className="text-[12px]" /> Schedule
