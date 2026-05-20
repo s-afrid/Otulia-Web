@@ -50,11 +50,18 @@ const Inventory = () => {
     const [inventoryStatusFilter, setInventoryStatusFilter] = useState('All Status');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [leadCurrentPage, setLeadCurrentPage] = useState(1);
+    const [leadItemsPerPage, setLeadItemsPerPage] = useState(10);
     const [leadSearchQuery, setLeadSearchQuery] = useState('');
     const [leadStatusFilter, setLeadStatusFilter] = useState('All Status');
     const [leadSourceFilter, setLeadSourceFilter] = useState('All Source');
     const [leadAssetFilter, setLeadAssetFilter] = useState('All Assets');
     const [activeLeadDropdown, setActiveLeadDropdown] = useState(null);
+
+    // Reset lead pagination when filters change
+    useEffect(() => {
+        setLeadCurrentPage(1);
+    }, [leadSearchQuery, leadStatusFilter, leadSourceFilter, leadAssetFilter, leadItemsPerPage]);
 
     // Modal States
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -579,6 +586,10 @@ const Inventory = () => {
                             setActiveLeadDropdown={setActiveLeadDropdown}
                             handleStatusChange={handleStatusChange}
                             setViewLead={setViewLead}
+                            leadCurrentPage={leadCurrentPage}
+                            setLeadCurrentPage={setLeadCurrentPage}
+                            leadItemsPerPage={leadItemsPerPage}
+                            setLeadItemsPerPage={setLeadItemsPerPage}
                         />
                     )}
 

@@ -30,7 +30,11 @@ const LeadsTab = ({
     handleStatusChange, 
     setViewLead,
     setIsScheduleModalOpen,
-    setSelectedLeadForSchedule
+    setSelectedLeadForSchedule,
+    leadCurrentPage,
+    setLeadCurrentPage,
+    leadItemsPerPage,
+    setLeadItemsPerPage
 }) => {
     const [revealedPhones, setRevealedPhones] = React.useState({});
 
@@ -45,21 +49,27 @@ const LeadsTab = ({
         return <FiGlobe className="text-[10px]"/>;
     };
 
-    let leads = (data?.leads || []);
-    if (leadStatusFilter !== 'All Status') leads = leads.filter(l => l.status === leadStatusFilter);
+    let filteredLeads = (data?.leads || []);
+    if (leadStatusFilter !== 'All Status') filteredLeads = filteredLeads.filter(l => l.status === leadStatusFilter);
     if (leadSourceFilter !== 'All Source') {
-        leads = leads.filter(l => {
+        filteredLeads = filteredLeads.filter(l => {
             const source = l.source || 'Website';
             return source.toLowerCase().includes(leadSourceFilter.toLowerCase());
         });
     }
     if (leadAssetFilter !== 'All Assets') {
-        leads = leads.filter(l => l.category === leadAssetFilter);
+        filteredLeads = filteredLeads.filter(l => l.category === leadAssetFilter);
     }
     if (leadSearchQuery) {
         const q = leadSearchQuery.toLowerCase();
-        leads = leads.filter(l => (l.name && l.name.toLowerCase().includes(q)) || (l.phone && l.phone.toLowerCase().includes(q)) || (l.email && l.email.toLowerCase().includes(q)));
+        filteredLeads = filteredLeads.filter(l => (l.name && l.name.toLowerCase().includes(q)) || (l.phone && l.phone.toLowerCase().includes(q)) || (l.email && l.email.toLowerCase().includes(q)));
     }
+
+    // Pagination Logic
+    const totalLeads = filteredLeads.length;
+    const totalPages = Math.ceil(totalLeads / leadItemsPerPage);
+    const startIndex = (leadCurrentPage - 1) * leadItemsPerPage;
+    const paginatedLeads = filteredLeads.slice(startIndex, startIndex + leadItemsPerPage);
 
     const getStatusStyles = (status) => {
         switch(status) {
@@ -225,10 +235,10 @@ const LeadsTab = ({
             <div className="flex-1 flex flex-col min-h-0">
                 <div className="flex-1 overflow-auto custom-scrollbar pr-1">
                     <div className="flex flex-col gap-3 pb-4">
-                        {leads.length === 0 ? (
+                        {paginatedLeads.length === 0 ? (
                             <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center text-gray-400 font-medium">No leads found matching your criteria.</div>
                         ) : (
-                            leads.map((lead, i) => {
+                            paginatedLeads.map((lead, i) => {
                                 const asset = (data?.inventory || []).find(a => a._id === lead.assetId || a.id === lead.assetId);
                                 const assetName = lead.assetName || (asset ? (asset.propertyName || asset.yachtName || asset.name || asset.title || `${asset.make || ''} ${asset.model || ''}`.trim()) : null) || 'Unknown Asset';
                                 const assetCategory = asset?.category?.replace('Asset', '') || 'Asset';
@@ -360,21 +370,65 @@ const LeadsTab = ({
 
                 {/* Pagination */}
                 <div className="py-2 border-t border-gray-100 flex justify-between items-center bg-transparent">
-                    <span className="text-[10px] font-bold text-gray-400">Showing 1 to 5 of {(data?.leads || []).length} leads</span>
+                    <span className="text-[10px] font-bold text-gray-400">
+                        Showing {totalLeads > 0 ? startIndex + 1 : 0} to {Math.min(startIndex + leadItemsPerPage, totalLeads)} of {totalLeads} leads
+                    </span>
                     <div className="flex items-center gap-1 justify-center">
-                        <button className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-white border border-transparent hover:border-gray-200 transition-all">&lt;</button>
-                        <button className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] text-white bg-[#D48D2A] shadow-sm">1</button>
-                        <button className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 bg-white border border-gray-200 shadow-sm transition-all">2</button>
-                        <button className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 bg-white border border-gray-200 shadow-sm transition-all">3</button>
-                        <span className="text-gray-300 font-bold px-2 text-[10px]">...</span>
-                        <button className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] text-gray-500 hover:text-gray-900 bg-white border border-gray-200 shadow-sm transition-all">29</button>
-                        <button className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-white border border-transparent hover:border-gray-200 transition-all">&gt;</button>
+                        <button 
+                            disabled={leadCurrentPage === 1}
+                            onClick={() => setLeadCurrentPage(p => Math.max(1, p - 1))}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-white border border-transparent hover:border-gray-200 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                            &lt;
+                        </button>
+                        
+                        {[...Array(totalPages)].map((_, i) => {
+                            const p = i + 1;
+                            // Basic dynamic page numbers logic (can be improved with dots for many pages)
+                            if (totalPages > 7) {
+                                if (p === 1 || p === totalPages || (p >= leadCurrentPage - 1 && p <= leadCurrentPage + 1)) {
+                                    return (
+                                        <button 
+                                            key={p} 
+                                            onClick={() => setLeadCurrentPage(p)}
+                                            className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] transition-all ${leadCurrentPage === p ? 'text-white bg-[#D48D2A] shadow-sm' : 'text-gray-500 hover:text-gray-900 bg-white border border-gray-200 shadow-sm'}`}
+                                        >
+                                            {p}
+                                        </button>
+                                    );
+                                }
+                                if (p === leadCurrentPage - 2 || p === leadCurrentPage + 2) return <span key={p} className="text-gray-300 font-bold px-1 text-[10px]">...</span>;
+                                return null;
+                            }
+
+                            return (
+                                <button 
+                                    key={p} 
+                                    onClick={() => setLeadCurrentPage(p)}
+                                    className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] transition-all ${leadCurrentPage === p ? 'text-white bg-[#D48D2A] shadow-sm' : 'text-gray-500 hover:text-gray-900 bg-white border border-gray-200 shadow-sm'}`}
+                                >
+                                    {p}
+                                </button>
+                            );
+                        })}
+
+                        <button 
+                            disabled={leadCurrentPage === totalPages || totalPages === 0}
+                            onClick={() => setLeadCurrentPage(p => Math.min(totalPages, p + 1))}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-white border border-transparent hover:border-gray-200 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                            &gt;
+                        </button>
                     </div>
                     <div className="relative">
-                        <select className="appearance-none bg-white border border-gray-200 rounded-xl py-2 pl-4 pr-10 text-[10px] font-bold text-gray-600 focus:outline-none hover:border-gray-300 shadow-sm cursor-pointer">
-                            <option>10 per page</option>
-                            <option>20 per page</option>
-                            <option>50 per page</option>
+                        <select 
+                            value={leadItemsPerPage} 
+                            onChange={e => { setLeadItemsPerPage(Number(e.target.value)); setLeadCurrentPage(1); }}
+                            className="appearance-none bg-white border border-gray-200 rounded-xl py-2 pl-4 pr-10 text-[10px] font-bold text-gray-600 focus:outline-none hover:border-gray-300 shadow-sm cursor-pointer"
+                        >
+                            <option value={10}>10 per page</option>
+                            <option value={20}>20 per page</option>
+                            <option value={50}>50 per page</option>
                         </select>
                         <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px]" />
                     </div>
