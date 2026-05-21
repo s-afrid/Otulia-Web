@@ -487,7 +487,7 @@ const Inventory = () => {
         return (
             <div className="w-full h-screen flex items-center justify-center bg-white">
                 <div className="flex flex-col items-center gap-4">
-                    <img src="/logos/O_logo.png" className="w-12 h-12 animate-pulse" alt="Loading" />
+                    <img src="/logos/O_logo_inverted.png" className="w-12 h-12 animate-pulse" alt="Loading" />
                     <div className="w-48 h-1 bg-gray-100 rounded-full overflow-hidden">
                         <div className="h-full bg-[#D48D2A] animate-progress-fast"></div>
                     </div>
