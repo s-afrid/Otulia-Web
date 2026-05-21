@@ -248,9 +248,9 @@ const LeadsTab = ({
                                 const assetImage = lead.assetImage || asset?.images?.[0];
                                 
                                 return (
-                                    <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-shadow flex items-center gap-6 group relative">
+                                    <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-shadow grid grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_176px] gap-6 items-center group relative">
                                         {/* Lead Profile Section */}
-                                        <div className="flex items-start gap-4 flex-[1.2] min-w-0">
+                                        <div className="flex items-start gap-4 min-w-0">
                                             <div className="relative shrink-0">
                                                 <div className="w-20 h-20 rounded-full bg-gray-100 shadow-sm overflow-hidden">
                                                     <img 
@@ -295,7 +295,7 @@ const LeadsTab = ({
                                         </div>
 
                                         {/* Asset Section */}
-                                        <div className="flex items-center gap-6 flex-1 border-x border-gray-50 px-6">
+                                        <div className="flex items-center gap-6 border-x border-gray-50 px-6 min-w-0">
                                             <div className="w-44 h-28 rounded-xl overflow-hidden shrink-0">
                                                 {assetImage ? 
                                                     <img src={assetImage} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://placehold.co/400x400?text=No+Image"; }}/> : 
