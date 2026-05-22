@@ -11,7 +11,7 @@ const leadSchema = new mongoose.Schema(
         email: { type: String },
         phoneCode: { type: String },
         phone: { type: String },
-        source: { type: String, default: 'Manual' },
+        source: { type: String, default: 'Website' },
         agentId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

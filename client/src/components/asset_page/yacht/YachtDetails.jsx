@@ -78,12 +78,38 @@ const YachtDetails = ({ item, modelName = 'YachtAsset' }) => {
     }
   };
 
-  const handleWhatsapp = () => {
+  const handleWhatsapp = async () => {
     const phoneNumber = agent?.phone;
     if (!phoneNumber) {
       alert("Agent phone number not available.");
       return;
     }
+
+    // Generate Lead in background
+    if (isAuthenticated) {
+      try {
+        await fetch("/api/leads/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            agentId: agent.id,
+            assetId: _id,
+            assetModel: modelName,
+            assetTitle: title,
+            message: "Inquiry via WhatsApp click",
+            agentEmail: agent.email,
+            agentName: agent.name,
+            source: "WhatsApp",
+          }),
+        });
+      } catch (error) {
+        console.error("Failed to generate WhatsApp lead:", error);
+      }
+    }
+
     const currentUrl = window.location.href;
     const refId = item?.listingReference || "N/A";
     const dealerName = agent?.name || "the agent";

@@ -471,7 +471,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                             const src = l.source || 'Website';
                             if (sourceCounts.hasOwnProperty(src)) {
                                 sourceCounts[src]++;
-                            } else if (src === 'Direct' || src === 'Marketplace') {
+                            } else if (src === 'Direct' || src === 'Marketplace' || src === 'Manual') {
                                 sourceCounts['Website']++;
                             } else if (src === 'Social') {
                                 sourceCounts['Instagram']++;

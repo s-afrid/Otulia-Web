@@ -21,7 +21,7 @@ const transporter = nodemailer.createTransport({
  */
 router.post("/send", authMiddleware, async (req, res) => {
     try {
-        const { agentId, assetId, assetModel, assetTitle, message, agentEmail, agentName } = req.body;
+        const { agentId, assetId, assetModel, assetTitle, message, agentEmail, agentName, source } = req.body;
 
         const lead = new Lead({
             sender: req.user.id,
@@ -30,6 +30,7 @@ router.post("/send", authMiddleware, async (req, res) => {
             assetModel,
             assetTitle,
             message,
+            source: source || 'Website' // Use provided source or default to Website
         });
 
         await lead.save();
