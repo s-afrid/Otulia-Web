@@ -15,11 +15,11 @@ const Sidebar = ({ activeTab, setActiveTab, user, navigate, logout, isProfileDro
     return (
         <div className="w-[clamp(180px,14vw,320px)] h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0 z-[50] transition-all duration-300 overflow-hidden">
             {/* Logo Area */}
-            <div className="h-[clamp(50px,8vh,80px)] flex items-center px-[clamp(12px,1.5vw,24px)] border-b border-gray-50">
-                <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-[clamp(20px,2.5vh,40px)] object-contain cursor-pointer" onClick={() => navigate('/')} />
+            <div className="h-[clamp(80px,12vh,130px)] flex items-center px-[clamp(16px,2vw,32px)] border-b border-gray-50">
+                <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-[clamp(45px,6vh,95px)] object-contain cursor-pointer" onClick={() => navigate('/')} />
             </div>
 
-            <nav className="flex-1 px-[clamp(8px,1vw,16px)] space-y-[clamp(4px,0.8vh,8px)] overflow-y-auto custom-scrollbar pb-8">
+            <nav className="flex-1 px-[clamp(10px,1vw,20px)] space-y-[clamp(6px,1vh,12px)] overflow-y-auto custom-scrollbar pb-8">
                 {navItems.map((item) => (
                     <button
                         key={item.id}
@@ -28,8 +28,8 @@ const Sidebar = ({ activeTab, setActiveTab, user, navigate, logout, isProfileDro
                             ? 'bg-[#FFF8F0] text-[#D48D2A]' 
                             : 'text-gray-500 hover:bg-gray-50'}`}
                     >
-                        <item.icon className={`text-[clamp(14px,1.8vh,24px)] ${activeTab === item.id ? 'text-[#D48D2A]' : 'text-gray-400 group-hover:text-gray-600'}`} />
-                        <span className="inter text-[clamp(10px,1.5vh,20px)] font-semibold tracking-tight">{item.label}</span>
+                        <item.icon className={`text-[clamp(14.28px,1.83vh,24.48px)] ${activeTab === item.id ? 'text-[#D48D2A]' : 'text-gray-400 group-hover:text-gray-600'}`} />
+                        <span className="inter text-[clamp(10.2px,1.53vh,20.4px)] font-semibold tracking-tight">{item.label}</span>
                         {activeTab === item.id && (
                             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[clamp(2px,0.3vw,6px)] h-[clamp(12px,2vh,30px)] bg-[#D48D2A] rounded-l-full" />
                         )}
