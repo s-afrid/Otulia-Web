@@ -5,8 +5,8 @@ import numberWithCommas from '../../modules/numberwithcomma';
 const MarketplaceTab = ({ data, handleTogglePublic }) => {
     return (
         <div className="h-[calc(100vh-6rem)] overflow-hidden flex flex-col p-2 gap-4 animate-in fade-in duration-700">
-            {/* Top Row: Visibility & Performance */}
-            <div className="flex gap-4 shrink-0 h-[38%] min-h-[220px]">
+            {/* Visibility & Performance */}
+            <div className="flex-1 flex gap-4 min-h-0">
                 {/* Visibility Controls */}
                 <div className="flex-[3] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-h-0 relative">
                     <div className="flex justify-between items-start mb-4 shrink-0">
@@ -100,80 +100,6 @@ const MarketplaceTab = ({ data, handleTogglePublic }) => {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            {/* Bottom Row: Public Preview */}
-            <div className="flex-1 flex flex-col bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] min-h-0">
-                <div className="flex justify-between items-center mb-6 shrink-0">
-                    <div>
-                        <h3 className="inter text-[15px] font-semibold text-gray-900 mb-1 leading-none tracking-normal">Marketplace Listing Preview</h3>
-                        <p className="inter text-[10px] text-gray-400 font-medium">How your assets appear to potential buyers</p>
-                    </div>
-                    <button className="inter text-[10px] font-bold text-[#D48D2A] hover:text-[#b5751c] flex items-center gap-2 transition-colors uppercase tracking-widest">Full Marketplace View <FiEye/></button>
-                </div>
-                
-                <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
-                    {(data?.inventory || []).filter(i => i.status === 'Active').slice(0, 3).map((item, i) => {
-                        const assetName = item.propertyName || item.yachtName || item.name || item.title || `${item.make || ''} ${item.model || ''}`.trim() || 'Unnamed Asset';
-                        return (
-                            <div key={item.id} className="group border border-gray-100 rounded-3xl p-4 hover:border-[#D48D2A]/30 transition-all flex gap-6 hover:shadow-md relative bg-white">
-                                <div className="absolute top-4 right-4 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-emerald-100">Live on Otulia</div>
-                                <div className="w-[180px] h-[120px] rounded-2xl overflow-hidden shrink-0 shadow-sm border border-gray-100">
-                                    <img src={item.images?.[0] || "https://placehold.co/400x400?text=No+Image"} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                </div>
-                                <div className="flex flex-col flex-1 py-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className="px-2.5 py-1 bg-gray-50 border border-gray-100 rounded-lg text-[9px] font-black text-[#D48D2A] uppercase tracking-widest">{item.category?.replace('Asset', '')}</div>
-                                        <span className="text-gray-300 font-light">•</span>
-                                        <span className="text-[16px] font-bold text-gray-900 kaisei">${numberWithCommas(item.price || 0)}</span>
-                                    </div>
-                                    <h4 className="text-[18px] font-bold text-gray-900 canela leading-tight mb-3 group-hover:text-[#D48D2A] transition-colors">{assetName}</h4>
-                                    
-                                    <div className="flex gap-6 mb-4">
-                                        <div className="flex gap-2 items-center pr-4 border-r border-gray-50">
-                                            <FiDroplet className="text-gray-400 text-[14px]"/>
-                                            <div className="flex flex-col mt-0.5">
-                                                <span className="text-[11px] font-bold text-gray-900 leading-none">{item.fuelType || 'Petrol'}</span>
-                                                <span className="text-[9px] text-gray-400 mt-0.5">Fuel Type</span>
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-2 items-center">
-                                            <FiSettings className="text-gray-400 text-[14px]"/>
-                                            <div className="flex flex-col mt-0.5">
-                                                <span className="text-[11px] font-bold text-gray-900 leading-none">{item.transmission || 'Auto'}</span>
-                                                <span className="text-[9px] text-gray-400 mt-0.5">Transmission</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <p className="text-[11px] text-gray-500 mb-4 leading-relaxed line-clamp-2">
-                                        {item.description || `Experience the perfect blend of power, innovation, and design. The ${assetName} delivers unmatched performance and luxury across all aspects of ownership.`}
-                                    </p>
-
-                                    <div className="flex flex-wrap gap-2 mt-auto">
-                                        {(item.tags || ['Hybrid', '4.0L V8', '2 Seater', 'AWD']).map((tag, tIdx) => (
-                                            <span key={tIdx} className="bg-[#FFF8F0] text-[#D48D2A] px-3 py-1 rounded-[6px] text-[9px] font-bold border border-[#F2E8DB]">{tag}</span>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="flex-1 pl-6 flex flex-col justify-center">
-                                    <h4 className="text-[13px] font-bold text-gray-900 canela mb-0.5">Interested in this asset?</h4>
-                                    <p className="text-[9px] text-gray-400 font-medium mb-3 border-b border-gray-50 pb-3">Contact the seller directly.</p>
-
-                                    <div className="space-y-2.5">
-                                        <button className="w-full py-2.5 bg-[#D48D2A] hover:bg-[#b5751c] text-white rounded-[0.75rem] font-bold text-[9px] uppercase tracking-widest shadow-[0_4px_15px_rgba(212,141,42,0.3)] transition-colors flex items-center justify-center gap-2"><FiMessageSquare className="text-sm"/> Send Inquiry</button>
-                                        <button className="w-full py-2.5 bg-white border border-gray-200 text-gray-700 hover:border-[#D48D2A] hover:text-[#D48D2A] rounded-[0.75rem] font-bold text-[9px] uppercase tracking-widest shadow-sm transition-colors flex items-center justify-center gap-2"><FiHeart className="text-[12px] text-gray-400"/> Save Asset</button>
-                                        <button className="w-full py-2.5 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-[0.75rem] font-bold text-[9px] uppercase tracking-widest shadow-sm transition-colors flex items-center justify-center gap-2"><FiShare2 className="text-[12px] text-gray-400"/> Share</button>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })}
-                    {(!data?.inventory || data.inventory.filter(i => i.status === 'Active').length === 0) && (
-                        <div className="text-center py-6 text-[11px] font-medium text-gray-400 bg-gray-50/50 border border-gray-100 rounded-3xl p-4 shadow-sm italic">No active public assets available. Set assets to Public to preview them here.</div>
-                    )}
                 </div>
             </div>
         </div>
