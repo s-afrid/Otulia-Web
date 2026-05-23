@@ -21,11 +21,13 @@ const sellerRoutes = require("./routes/seller.routes.js");
 const activityRoutes = require("./routes/activity.routes.js");
 const paymentRoutes = require("./routes/payment.routes.js");
 const createListingRoutes = require("./routes/create_listing.routes.js");
+const uploadRoutes = require("./routes/upload.routes.js");
 const inventoryRoutes = require("./routes/inventory.routes.js");
 const leadRoutes = require("./routes/lead.routes.js");
 const couponRoutes = require("./routes/coupon.routes.js");
 const contactRoutes = require("./routes/contact.routes.js");
 const sitemapRoutes = require("./routes/sitemap.routes.js");
+const carRankingRoutes = require("./routes/car-ranking.routes.js");
 
 const app = express();
 app.use(compression());
@@ -85,10 +87,12 @@ app.use("/api/seller", sellerRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/inventory", inventoryRoutes);
+app.use("/api/upload", uploadRoutes);
 app.use("/api/leads", leadRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/admin", require("./routes/admin.routes.js"));
+app.use("/api/car-ranking", carRankingRoutes);
 
 app.get("/health", (req, res) => {
   res.json({
