@@ -231,7 +231,10 @@ const Estate_Section = () => {
                   </div>
                   <div className="flex flex-1 items-end justify-between px-4 py-2">
                     <div className="flex flex-col gap-6 md:gap-9">
-                      <h3 className="canela text-lg text-black font-medium leading-tight">
+                      <h3
+                        className="canela text-lg text-black font-medium leading-tight"
+                        style={{ fontFamily: "'Kaisei Decol', serif" }}
+                      >
                         {item.location}
                       </h3>
                       <span className="text-[10px] font-sans text-gray-400 font-bold uppercase tracking-widest">
@@ -278,7 +281,7 @@ const Estate_Section = () => {
           ref={featuredListRef}
           className="w-full bg-[#f9f9f9] py-16 mt-4"
         >
-          <div className="w-full px-2">
+          <div className="w-full px-2 md:px-9">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div>
                 <h2 className="text-3xl md:text-5xl font-normal canela text-black mb-2">
@@ -288,13 +291,13 @@ const Estate_Section = () => {
                   Browse our exclusive collection of luxury properties.
                 </p>
               </div>
-                <SortDropdown
-                  onSortChange={handleSortChange}
-                  currentSort={currentSort}
-                />
+              <SortDropdown
+                onSortChange={handleSortChange}
+                currentSort={currentSort}
+              />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {list.length > 0 ? (
                 list.map((item, idx) => (
                   <AssetCard key={item._id} item={item} idx={idx} />

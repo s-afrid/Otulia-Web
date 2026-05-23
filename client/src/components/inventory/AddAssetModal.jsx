@@ -1,33 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import {
-    FiX, FiArrowLeft, FiImage, FiPlus,
-    FiTrash2, FiVideo, FiCheck, FiChevronRight,
-    FiCheckCircle, FiInfo, FiMapPin, FiUploadCloud,
-    FiChevronDown, FiWifi, FiDroplet, FiWind, FiSun, FiAnchor, FiShield, 
-    FiLock, FiCamera, FiZap, FiBox, FiCoffee, FiKey, 
-    FiHome, FiStar, FiGrid, FiMusic, FiUsers, FiActivity, FiSearch, 
-    FiHeart, FiSpeaker, FiTv, FiRadio, FiMic, FiFeather, 
-    FiSmile, FiCompass, FiCpu, FiCast, FiCloud, FiThermometer, FiTool,
-    FiScissors 
-} from 'react-icons/fi';
 import { 
-  MdOutlinePool, MdOutlineFitnessCenter, MdOutlineSpa, MdOutlineHotTub, 
-  MdOutlineCasino, MdOutlineWineBar, MdOutlineLocalBar, MdOutlineOutdoorGrill, 
-  MdOutlineChildCare, MdOutlinePets, MdOutlineElevator, MdOutlineLocalParking, 
-  MdOutlineEvStation, MdOutlineLocalLaundryService, MdOutlineStorage, MdOutlineRoomService,
-  MdOutlineNetworkWifi, MdOutlineWaves, MdOutlineLandscape, MdOutlineLocationCity, 
-  MdOutlineWbSunny, MdOutlineGolfCourse, MdOutlineDeck, MdOutlineFireplace, 
-  MdOutlineVideocam, MdOutlineFace, MdOutlineSensors, MdOutlineSettingsVoice, 
-  MdOutlineLightbulb, MdOutlineThermostat, MdOutlineAcUnit, MdOutlineDashboard, 
-  MdOutlineSmartphone, MdOutlineToggleOn, MdOutlineSmartToy, MdOutlineCellWifi, 
-  MdOutlineRouter, MdOutlineCameraIndoor, MdOutlineCastle, MdOutlineDirectionsBoat, 
-  MdOutlinePark, MdOutlineNaturePeople, MdOutlineDirectionsCar, MdOutlineStairs, 
-  MdOutlineWindow, MdOutlineHouseSiding, MdOutlineSecurity, MdOutlineMeetingRoom,
-  MdOutlineBed, MdOutlineLocalDining, MdOutlineTerrain, MdOutlineBathtub
-} from "react-icons/md";
-import { BiCameraMovie, BiTargetLock, BiFingerprint } from "react-icons/bi";
-import { FaInfinity, FaHorse, FaHelicopter, FaShip } from "react-icons/fa";
-import { GiTennisRacket, GiCigar, GiGrapes, GiBowlingStrike, GiWineBottle, GiDiamondTrophy } from "react-icons/gi";
+  FiX, FiArrowLeft, FiImage, FiPlus, FiTrash2, FiVideo, FiCheck, 
+  FiChevronRight, FiCheckCircle, FiInfo, FiMapPin, FiUploadCloud, 
+  FiChevronDown, FiStar, FiGrid, FiSearch, FiHeart, FiSpeaker, 
+  FiTv, FiRadio, FiFeather, FiCpu, FiCast, FiCloud, FiThermometer, FiTool
+} from 'react-icons/fi';
+import { getAmenityIcon } from '../../utils/assetIcons';
 import { useAuth } from '../../contexts/AuthContext';
 import carIcon from '../../assets/icons/car_icon.png'
 import estateIcon from '../../assets/icons/estate_icon.png'
@@ -40,117 +18,7 @@ const ESTATE_VIEWS_OUTDOOR = ["Sea View", "Oceanfront", "Lake View", "River View
 const ESTATE_SMART_SECURITY = ["Smart Door Lock", "Video Doorbell", "Face Recognition Entry", "Motion Sensors", "Smart Surveillance", "24/7 Security", "Gated Community Access", "Voice Control", "Smart Lighting", "Automated Curtains", "Smart Thermostat", "Climate Control", "Central Control Panel", "Mobile App Control", "Smart Switches", "AI Assistant Integration", "High-Speed Internet Ready", "Fiber Connection", "Smart Intercom"];
 const ESTATE_ULTRA_LUXURY = ["Private Island", "Private Beach Access", "Waterfront Estate", "Gated Estate", "Helipad", "Private Dock / Yacht Berth", "Vineyard / Orchard", "Equestrian Facilities", "Multi-Car Garage (10+)", "Car Showroom Garage", "Underground Garage", "Car Lift System", "Private Car Gallery", "EV Fleet Charging", "Private Cinema", "Bowling Alley", "Casino Room", "Wine Cellar", "Cigar Lounge", "Private Bar", "Ballroom / Event Hall", "Private Library", "Private Spa Suite", "Ice Bath", "Indoor Lap Pool", "Meditation Room", "Yoga Pavilion", "Massage Room", "Double-Height Ceilings", "Grand Staircase", "Floating Staircase", "Floor-to-Ceiling Glass", "Sky Bridge", "Smart Glass"];
 
-const getAmenityIcon = (name) => {
-    switch(name) {
-        // Lifestyle
-        case "Swimming Pool": return <MdOutlinePool className="w-5 h-5" />;
-        case "Infinity Pool": return <FaInfinity className="w-4 h-4" />;
-        case "Gym / Fitness Center": return <MdOutlineFitnessCenter className="w-5 h-5" />;
-        case "Spa & Wellness Center": return <MdOutlineSpa className="w-5 h-5" />;
-        case "Sauna / Steam Room": return <MdOutlineHotTub className="w-5 h-5" />;
-        case "Jacuzzi": return <MdOutlineBathtub className="w-5 h-5" />;
-        case "Clubhouse": return <MdOutlineCastle className="w-5 h-5" />;
-        case "Private Theater": return <BiCameraMovie className="w-5 h-5" />;
-        case "Game Room": return <GiTennisRacket className="w-5 h-5" />;
-        case "Bar / Lounge": return <MdOutlineLocalBar className="w-5 h-5" />;
-        case "BBQ Area": return <MdOutlineOutdoorGrill className="w-5 h-5" />;
-        case "Outdoor Dining Area": return <MdOutlineLocalDining className="w-5 h-5" />;
-        case "Kids Play Area": return <MdOutlineChildCare className="w-5 h-5" />;
-        case "Pet Friendly": return <MdOutlinePets className="w-5 h-5" />;
-        case "Jogging Track": return <FiActivity className="w-5 h-5" />;
-        case "Garden / Lawn": return <MdOutlineNaturePeople className="w-5 h-5" />;
-        case "Landscaped Gardens": return <MdOutlinePark className="w-5 h-5" />;
-        case "Elevator": return <MdOutlineElevator className="w-5 h-5" />;
-        case "Private Parking": return <MdOutlineDirectionsCar className="w-5 h-5" />;
-        case "EV Charging": return <MdOutlineEvStation className="w-5 h-5" />;
-        case "Laundry Room": return <MdOutlineLocalLaundryService className="w-5 h-5" />;
-        case "Storage Room": return <MdOutlineStorage className="w-5 h-5" />;
-        case "Servant Quarters": return <MdOutlineRoomService className="w-5 h-5" />;
-        case "Smart Entry": return <FiKey className="w-5 h-5" />;
-        case "High-Speed WiFi": return <FiWifi className="w-5 h-5" />;
 
-        // Views
-        case "Sea View": return <MdOutlineWaves className="w-5 h-5" />;
-        case "Oceanfront": return <FiAnchor className="w-5 h-5" />;
-        case "Lake View": return <FiDroplet className="w-5 h-5" />;
-        case "River View": return <MdOutlineWaves className="w-5 h-5" />;
-        case "Mountain View": return <MdOutlineTerrain className="w-5 h-5" />;
-        case "Forest View": return <MdOutlinePark className="w-5 h-5" />;
-        case "Garden View": return <MdOutlineNaturePeople className="w-5 h-5" />;
-        case "Park View": return <MdOutlinePark className="w-5 h-5" />;
-        case "City Skyline View": return <MdOutlineLocationCity className="w-5 h-5" />;
-        case "Panoramic View": return <FiCompass className="w-5 h-5" />;
-        case "Sunset View": return <MdOutlineWbSunny className="w-5 h-5" />;
-        case "Sunrise View": return <FiSun className="w-5 h-5" />;
-        case "Pool View": return <MdOutlinePool className="w-5 h-5" />;
-        case "Golf Course View": return <MdOutlineGolfCourse className="w-5 h-5" />;
-        case "Marina View": return <FaShip className="w-5 h-5" />;
-        case "Private Beach Access": return <MdOutlineWaves className="w-5 h-5" />;
-        case "Waterfront Property": return <MdOutlineHouseSiding className="w-5 h-5" />;
-        case "Rooftop Terrace": return <MdOutlineDeck className="w-5 h-5" />;
-        case "Balcony with View": return <MdOutlineWindow className="w-5 h-5" />;
-        case "Outdoor Lounge": return <MdOutlineDeck className="w-5 h-5" />;
-        case "Fire Pit Area": return <MdOutlineFireplace className="w-5 h-5" />;
-        case "Outdoor Entertainment Area": return <FiMusic className="w-5 h-5" />;
-
-        // Security
-        case "Smart Door Lock": return <FiLock className="w-5 h-5" />;
-        case "Video Doorbell": return <MdOutlineMeetingRoom className="w-5 h-5" />;
-        case "Face Recognition Entry": return <MdOutlineFace className="w-5 h-5" />;
-        case "Motion Sensors": return <MdOutlineSensors className="w-5 h-5" />;
-        case "Smart Surveillance": return <MdOutlineVideocam className="w-5 h-5" />;
-        case "24/7 Security": return <MdOutlineSecurity className="w-5 h-5" />;
-        case "Gated Community Access": return <FiShield className="w-5 h-5" />;
-        case "Voice Control": return <MdOutlineSettingsVoice className="w-5 h-5" />;
-        case "Smart Lighting": return <MdOutlineLightbulb className="w-5 h-5" />;
-        case "Automated Curtains": return <MdOutlineWindow className="w-5 h-5" />;
-        case "Smart Thermostat": return <MdOutlineThermostat className="w-5 h-5" />;
-        case "Climate Control": return <MdOutlineAcUnit className="w-5 h-5" />;
-        case "Central Control Panel": return <MdOutlineDashboard className="w-5 h-5" />;
-        case "Mobile App Control": return <MdOutlineSmartphone className="w-5 h-5" />;
-        case "Smart Switches": return <MdOutlineToggleOn className="w-5 h-5" />;
-        case "AI Assistant Integration": return <MdOutlineSmartToy className="w-5 h-5" />;
-        case "High-Speed Internet Ready": return <MdOutlineNetworkWifi className="w-5 h-5" />;
-        case "Fiber Connection": return <FiScissors className="w-5 h-5" />;
-        case "Smart Intercom": return <FiMic className="w-5 h-5" />;
-
-        // Ultra Luxury
-        case "Private Island": return <FiMapPin className="w-5 h-5" />;
-        case "Private Dock / Yacht Berth": return <FiAnchor className="w-5 h-5" />;
-        case "Vineyard / Orchard": return <GiGrapes className="w-5 h-5" />;
-        case "Equestrian Facilities": return <FaHorse className="w-5 h-5" />;
-        case "Multi-Car Garage (10+)": return <MdOutlineDirectionsCar className="w-5 h-5" />;
-        case "Car Showroom Garage": return <MdOutlineDirectionsCar className="w-5 h-5" />;
-        case "Underground Garage": return <MdOutlineDirectionsCar className="w-5 h-5" />;
-        case "Car Lift System": return <MdOutlineElevator className="w-5 h-5" />;
-        case "Private Car Gallery": return <MdOutlineDirectionsCar className="w-5 h-5" />;
-        case "EV Fleet Charging": return <MdOutlineEvStation className="w-5 h-5" />;
-        case "Private Cinema": return <BiCameraMovie className="w-5 h-5" />;
-        case "Bowling Alley": return <GiBowlingStrike className="w-5 h-5" />;
-        case "Casino Room": return <MdOutlineCasino className="w-5 h-5" />;
-        case "Wine Cellar": return <GiWineBottle className="w-5 h-5" />;
-        case "Cigar Lounge": return <GiCigar className="w-5 h-5" />;
-        case "Private Bar": return <MdOutlineWineBar className="w-5 h-5" />;
-        case "Ballroom / Event Hall": return <GiDiamondTrophy className="w-5 h-5" />;
-        case "Private Library": return <MdOutlineHouseSiding className="w-5 h-5" />;
-        case "Private Spa Suite": return <MdOutlineSpa className="w-5 h-5" />;
-        case "Ice Bath": return <MdOutlineHotTub className="w-5 h-5" />;
-        case "Indoor Lap Pool": return <MdOutlinePool className="w-5 h-5" />;
-        case "Meditation Room": return <FiSmile className="w-5 h-5" />;
-        case "Yoga Pavilion": return <FiActivity className="w-5 h-5" />;
-        case "Massage Room": return <MdOutlineSpa className="w-5 h-5" />;
-        case "Double-Height Ceilings": return <MdOutlineStairs className="w-5 h-5" />;
-        case "Grand Staircase": return <MdOutlineStairs className="w-5 h-5" />;
-        case "Floating Staircase": return <MdOutlineStairs className="w-5 h-5" />;
-        case "Floor-to-Ceiling Glass": return <MdOutlineWindow className="w-5 h-5" />;
-        case "Sky Bridge": return <MdOutlineTerrain className="w-5 h-5" />;
-        case "Smart Glass": return <MdOutlineWindow className="w-5 h-5" />;
-        case "Waterfront Estate": return <MdOutlineHouseSiding className="w-5 h-5" />;
-        case "Gated Estate": return <MdOutlineCastle className="w-5 h-5" />;
-        case "Helipad": return <FaHelicopter className="w-5 h-5" />;
-        default: return <FiStar className="w-5 h-5" />;
-    };
-};
 
 const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const { token, user } = useAuth();
@@ -283,13 +151,20 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             let type = 'Car';
             const model = editData.itemModel || '';
             const cat = editData.category || '';
+            const spec = editData.specification || {};
+            const keySpec = editData.keySpecifications || {};
 
-            // Check for exact category match (e.g., 'CarAsset', 'YachtAsset', 'EstateAsset', 'BikeAsset')
+            // 1. Check for exact category match (Most reliable)
             if (cat === 'CarAsset' || model === 'CarAsset' || cat === 'vehicles') type = 'Car';
             else if (cat === 'YachtAsset' || model === 'YachtAsset' || cat === 'yachts') type = 'Yacht';
             else if (cat === 'EstateAsset' || model === 'EstateAsset' || cat === 'estates') type = 'Estate';
             else if (cat === 'BikeAsset' || model === 'BikeAsset' || cat === 'bikes') type = 'Bike';
-            // Fallback to string contains check for backwards compatibility
+            // 2. Structural checks (fallback if category/model is generic or missing)
+            else if (editData.propertyName || spec.propertyType || keySpec.propertyType) type = 'Estate';
+            else if (editData.yachtName || spec.yachtName || spec.brandBuilder || editData.builder) type = 'Yacht';
+            else if (spec.engineCapacityCC || spec.maxPower || spec.maxTorque || spec.mileageKM) type = 'Bike';
+            else if (editData.brand || spec.brand || spec.model || spec.horsepower) type = 'Car';
+            // 3. Fallback to string contains check for backwards compatibility
             else if (model.toLowerCase().includes('car') || cat.toLowerCase().includes('car')) type = 'Car';
             else if (model.toLowerCase().includes('bike') || cat.toLowerCase().includes('bike')) type = 'Bike';
             else if (model.toLowerCase().includes('yacht') || cat.toLowerCase().includes('yacht')) type = 'Yacht';
@@ -304,9 +179,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                     setGalleryImages(images.slice(1));
                 }
             }
-
-            const spec = editData.specification || {};
-            const keySpec = editData.keySpecifications || {};
 
             // Extract existing highlights if available to populate fields (best effort)
             const parseNumber = (val) => {
@@ -358,7 +230,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 accidentHistory: spec.accidentHistory || '',
 
                 // Car Specific
-                horsepower: spec.power || '',
+                horsepower: spec.power || spec.horsepower || '',
                 cylinderCapacity: spec.cylinderCapacity || '',
                 topSpeed: spec.topSpeed || '',
                 steering: spec.steering || '',
@@ -376,7 +248,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 longitude: spec.longitude || '',
 
                 // Yacht Specific
-                yachtName: editData.title || spec.yachtName || '',
+                yachtName: editData.yachtName || (type === 'Yacht' ? editData.title : '') || '',
                 builder: editData.builder || spec.brandBuilder || spec.builder || '',
                 length: spec.length || '',
                 beam: spec.beam || '',
@@ -390,7 +262,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 hullMaterial: spec.hullMaterial || '',
 
                 // Estate Specific
-                propertyName: editData.propertyName || editData.title || '',
+                propertyName: editData.propertyName || (type === 'Estate' ? editData.title : '') || '',
                 propertyType: spec.propertyType || keySpec.propertyType || '',
                 builtUpArea: spec.builtUpArea || '',
                 landArea: spec.landArea || '',

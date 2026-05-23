@@ -239,7 +239,7 @@ const Cars_Section = () => {
                     src={item.logo}
                     alt={item.name}
                     onClick={() => handleBrandClick(item.name)}
-                    className="h-16 md:h-20 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-pointer mix-blend-multiply"
+                    className="h-16 md:h-20 w-auto object-contain cursor-pointer mix-blend-multiply"
                   />
                 </div>
               ))}
@@ -264,7 +264,7 @@ const Cars_Section = () => {
           ref={featuredListRef}
           className="w-full bg-[#f9f9f9] py-16 mt-4"
         >
-          <div className="w-full px-2 md:px-4">
+          <div className="w-full px-2 md:px-9">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div>
                 <h2 className="text-3xl md:text-5xl font-normal canela text-black mb-2">
@@ -274,13 +274,13 @@ const Cars_Section = () => {
                   Browse our exclusive collection of luxury vehicles.
                 </p>
               </div>
-                <SortDropdown
-                  onSortChange={handleSortChange}
-                  currentSort={currentSort}
-                />
+              <SortDropdown
+                onSortChange={handleSortChange}
+                currentSort={currentSort}
+              />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
               {list.length > 0 ? (
                 list.map((item, idx) => (
                   <AssetCard key={item._id} item={item} idx={idx} />

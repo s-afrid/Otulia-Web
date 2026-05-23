@@ -1,10 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { FiX, FiSend } from 'react-icons/fi';
+import { FiX, FiSend, FiChevronDown } from 'react-icons/fi';
 
 const AddLeadModal = ({ isOpen, onClose, onCreated, token, inventory }) => {
+    const countryCodes = [
+        { code: '+971', flag: '🇦🇪', name: 'UAE' },
+        { code: '+91', flag: '🇮🇳', name: 'India' },
+        { code: '+1', flag: '🇺🇸', name: 'USA' },
+        { code: '+44', flag: '🇬🇧', name: 'UK' },
+        { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
+        { code: '+974', flag: '🇶🇦', name: 'Qatar' },
+        { code: '+965', flag: '🇰🇼', name: 'Kuwait' },
+        { code: '+968', flag: '🇴🇲', name: 'Oman' },
+        { code: '+973', flag: '🇧🇭', name: 'Bahrain' },
+        { code: '+20', flag: '🇪🇬', name: 'Egypt' },
+        { code: '+33', flag: '🇫🇷', name: 'France' },
+        { code: '+49', flag: '🇩🇪', name: 'Germany' },
+        { code: '+39', flag: '🇮🇹', name: 'Italy' },
+        { code: '+34', flag: '🇪🇸', name: 'Spain' },
+        { code: '+41', flag: '🇨🇭', name: 'Switzerland' },
+        { code: '+7', flag: '🇷🇺', name: 'Russia' },
+        { code: '+81', flag: '🇯🇵', name: 'Japan' },
+        { code: '+86', flag: '🇨🇳', name: 'China' },
+        { code: '+61', flag: '🇦🇺', name: 'Australia' },
+        { code: '+65', flag: '🇸🇬', name: 'Singapore' },
+        { code: '+27', flag: '🇿🇦', name: 'South Africa' },
+        { code: '+55', flag: '🇧🇷', name: 'Brazil' },
+        { code: '+90', flag: '🇹🇷', name: 'Turkey' },
+    ];
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        phoneCode: '+971',
         phone: '',
         source: 'Website',
         assetId: '',
@@ -16,7 +43,7 @@ const AddLeadModal = ({ isOpen, onClose, onCreated, token, inventory }) => {
     useEffect(() => {
         if (isOpen) {
             setFormData({
-                name: '', email: '', phone: '', source: 'Website', assetId: '', message: '', status: 'New'
+                name: '', email: '', phone: '', phoneCode: '+971', source: 'Website', assetId: '', message: '', status: 'New'
             });
         }
     }, [isOpen]);
@@ -62,7 +89,7 @@ const AddLeadModal = ({ isOpen, onClose, onCreated, token, inventory }) => {
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-[2rem] w-full max-w-lg p-8 relative animate-in fade-in zoom-in duration-300 shadow-2xl">
+            <div className="bg-white rounded-[2rem] w-full max-w-lg p-8 relative animate-in fade-in zoom-in duration-300 shadow-2xl overflow-y-auto max-h-[95vh]">
                 <button onClick={onClose} className="absolute top-6 right-6 p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors">
                     <FiX className="text-xl text-gray-500" />
                 </button>
@@ -85,7 +112,17 @@ const AddLeadModal = ({ isOpen, onClose, onCreated, token, inventory }) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">Phone Number</label>
-                            <input type="text" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-[#D48D2A] transition-all font-medium" placeholder="+1 (555) 123-4567" />
+                            <div className="flex border border-gray-200 rounded-xl bg-gray-50 overflow-hidden focus-within:border-[#D48D2A] transition-all">
+                                <div className="flex items-center px-2 bg-gray-100 border-r border-gray-200 text-xs relative">
+                                    <select value={formData.phoneCode} onChange={e => setFormData(p => ({...p, phoneCode: e.target.value}))} className="appearance-none bg-transparent outline-none pr-4 cursor-pointer font-bold text-[10px]">
+                                        {countryCodes.map(c => (
+                                            <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                                        ))}
+                                    </select>
+                                    <FiChevronDown className="absolute right-1 text-[8px] text-gray-500 pointer-events-none"/>
+                                </div>
+                                <input type="text" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className="w-full bg-transparent px-4 py-2.5 text-xs outline-none font-medium" placeholder="50 123 4567" />
+                            </div>
                         </div>
                         <div>
                             <label className="block text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-1.5">Source</label>

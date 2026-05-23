@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@500&family=Konkhmer+Sleokchher&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;500;700&family=Konkhmer+Sleokchher&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
@@ -135,6 +135,10 @@ html {
   font-family: "Canela", serif;
 }
 
+.inter {
+  font-family: "Inter", sans-serif;
+}
+
 .font-playfair {
   font-family: "Playfair Display", serif;
 }
@@ -157,13 +161,15 @@ html {
   font-family: "PT Serif", serif;
 }
 
+.kaisei {
+  font-family: "Kaisei Decol", serif;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}e-in {
   animation: fadeIn 0.3s ease-out forwards;
 }

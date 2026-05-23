@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { FiUploadCloud, FiX, FiCheck, FiFile } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 
-const VerificationModal = ({ onClose, onUploadSuccess }) => {
+const VerificationModal = ({ isOpen, onClose, onUploadSuccess }) => {
+    if (!isOpen) return null;
+
     const { token } = useAuth();
     const [files, setFiles] = useState({});
     const [uploading, setUploading] = useState(false);

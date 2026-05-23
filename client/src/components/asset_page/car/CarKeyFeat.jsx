@@ -1,17 +1,25 @@
-import React from 'react';
-import powerIcon from '../../../assets/productpage/power.webp';
-import speedIcon from '../../../assets/productpage/speed.webp';
-import engineIcon from '../../../assets/productpage/engine.webp';
+import React from "react";
+import powerIcon from "../../../assets/productpage/power.webp";
+import speedIcon from "../../../assets/productpage/speed.webp";
+import engineIcon from "../../../assets/productpage/engine.webp";
 
 const CarKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
   const specs = item?.specification || {};
-  
+
   const specItems = [
-    { label: 'Power', value: kSpecs.power || specs.power, icon: powerIcon },
-    { label: 'Top Speed', value: kSpecs.topSpeed || specs.topSpeed, icon: speedIcon },
-    { label: 'Engine', value: kSpecs.engineType || specs.engineType || specs.engine, icon: engineIcon }
-  ].filter(spec => spec.value && spec.value !== "0" && spec.value !== "-");
+    { label: "Power", value: kSpecs.power || specs.power, icon: powerIcon },
+    {
+      label: "Top Speed",
+      value: kSpecs.topSpeed || specs.topSpeed,
+      icon: speedIcon,
+    },
+    {
+      label: "Engine",
+      value: kSpecs.engineType || specs.engineType || specs.engine,
+      icon: engineIcon,
+    },
+  ].filter((spec) => spec.value && spec.value !== "0" && spec.value !== "-");
 
   if (specItems.length === 0) return null;
 
@@ -20,22 +28,31 @@ const CarKeyFeatures = ({ item }) => {
     <div className="flex items-center gap-4 w-[300px] h-[100px] bg-[#FCFBF9] border border-[#E8E3DD] rounded-[8px] px-5 py-[12px] shadow-none hover:shadow-sm transition-shadow cursor-default">
       {/* Icon Container */}
       <div className="flex justify-center items-center shrink-0">
-        <img src={icon} alt={label} className="w-[70px] h-[70px] object-contain" />
+        <img
+          src={icon}
+          alt={label}
+          className="w-[70px] h-[70px] object-contain mix-blend-multiply"
+        />
       </div>
       {/* Text Content */}
       <div className="flex flex-col gap-[2px] justify-center">
-         <span className="text-[9px] font-semibold text-[#9D8F84] uppercase tracking-[1.8px] leading-[11px] montserrat">{label}</span>
-         <span className="text-[18px] font-semibold text-[#1E1E1E] leading-[22px] font-cormorant">{value}</span>
+        <span className="text-[9px] font-semibold text-[#9D8F84] uppercase tracking-[1.8px] leading-[11px] montserrat">
+          {label}
+        </span>
+        <span className="text-[18px] font-semibold text-[#1E1E1E] leading-[22px] font-cormorant">
+          {value}
+        </span>
       </div>
     </div>
   );
 
   return (
     <div className="w-full px-[4%] py-16 bg-white">
-      
       {/* Header Box - Line with Centered Text */}
       <div className="relative flex items-center justify-center mb-16">
-        <span className="absolute left-0 text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em] bg-white z-10 pr-4">HIGHLIGHTS</span>
+        <span className="absolute left-0 text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em] bg-white z-10 pr-4">
+          HIGHLIGHTS
+        </span>
         <div className="w-full h-px bg-gray-200"></div>
         <div className="absolute bg-white px-10 flex flex-col items-center">
           <h2 className="text-3xl md:text-4xl font-normal canela text-black whitespace-nowrap">
@@ -48,7 +65,7 @@ const CarKeyFeatures = ({ item }) => {
       {/* Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1000px] mx-auto justify-items-center">
         {specItems.map((spec, index) => (
-          <FeatureCard 
+          <FeatureCard
             key={index}
             label={spec.label}
             value={spec.value}
@@ -56,7 +73,6 @@ const CarKeyFeatures = ({ item }) => {
           />
         ))}
       </div>
-
     </div>
   );
 };

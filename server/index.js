@@ -4,6 +4,8 @@ const express = require("express");
 const compression = require("compression");
 const connectDB = require("./db.js");
 const path = require("path");
+const dns = require("dns");
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 // middleware import
 const corsMiddleware = require("./middleware/cors.middleware.js");
@@ -125,12 +127,10 @@ app.use((err, req, res, next) => {
 
   // Generic error fallback
   console.error(`[Internal Error]`, err);
-  res
-    .status(500)
-    .json({
-      error: "INTERNAL_SERVER_ERROR",
-      message: "An unexpected error occurred.",
-    });
+  res.status(500).json({
+    error: "INTERNAL_SERVER_ERROR",
+    message: "An unexpected error occurred.",
+  });
 });
 
 app.listen(PORT, "0.0.0.0", () => {

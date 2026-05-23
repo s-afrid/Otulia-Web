@@ -15,15 +15,56 @@ const AssetSlider = ({ title, items }) => {
   if (!items || items.length === 0) return null;
 
   return (
-    <section className="relative w-full max-w-[90%] mx-auto px-4 md:px-8 py-8 bg-white group">
+    <section className="relative w-full px-8 md:px-12 py-8 bg-white group">
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl md:text-3xl font-bold canela text-black">
           {title}
         </h2>
+        {/* Buttons for Slider */}
+        <div className="flex items-center gap-3 hidden md:flex">
+          <button
+            onClick={() => scroll("left")}
+            className="bg-white text-black p-3.5 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] hover:bg-gray-50 transition-colors focus:outline-none cursor-pointer border border-gray-100"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"
+              />
+            </svg>
+          </button>
+          <button
+            onClick={() => scroll("right")}
+            className="bg-white text-black p-3.5 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.05)] hover:bg-gray-50 transition-colors focus:outline-none cursor-pointer border border-gray-100"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div className="relative">
-        {/* LEFT ARROW */}
+        {/* LEFT ARROW
         <button
           onClick={() => scroll("left")}
           className="absolute cursor-pointer -left-4 md:-left-10 top-1/2 -translate-y-1/2 z-10 bg-white text-black p-3 rounded-full shadow-lg hover:scale-110 transition-transform focus:outline-none hidden md:block border border-gray-100"
@@ -43,7 +84,7 @@ const AssetSlider = ({ title, items }) => {
               d="M15.75 19.5L8.25 12l7.5-7.5"
             />
           </svg>
-        </button>
+        </button> */}
 
         {/* SCROLLABLE LIST */}
         <div
@@ -52,14 +93,17 @@ const AssetSlider = ({ title, items }) => {
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {items.map((item, idx) => (
-            <div key={item._id || idx} className="flex-none w-[280px] sm:w-[320px] md:w-[350px]">
+            <div
+              key={item._id || idx}
+              className="flex-none w-full sm:w-[48%] md:w-[calc((100%-2rem)/3)]"
+            >
               <AssetCard item={item} idx={idx} />
             </div>
           ))}
         </div>
 
         {/* RIGHT ARROW */}
-        <button
+        {/* <button
           onClick={() => scroll("right")}
           className="absolute cursor-pointer -right-4 md:-right-10 top-1/2 -translate-y-1/2 z-10 bg-white text-black p-3 rounded-full shadow-lg hover:scale-110 transition-transform focus:outline-none hidden md:block border border-gray-100"
           aria-label="Next"
@@ -78,7 +122,7 @@ const AssetSlider = ({ title, items }) => {
               d="M8.25 4.5l7.5 7.5-7.5 7.5"
             />
           </svg>
-        </button>
+        </button> */}
       </div>
     </section>
   );

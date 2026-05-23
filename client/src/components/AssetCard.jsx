@@ -132,12 +132,12 @@ const AssetCard = ({ item }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative bg-white flex flex-col"
-      style={{ 
+      style={{
         width: "100%",
         maxWidth: "595px",
-        borderRadius: "1px", 
+        borderRadius: "1px",
         border: "1px solid rgba(0, 0, 0, 0.12)",
-        containerType: "inline-size"
+        containerType: "inline-size",
       }}
     >
       {/* IMAGE AREA */}
@@ -149,35 +149,41 @@ const AssetCard = ({ item }) => {
         />
 
         {/* TOP LEFT BADGES */}
-        <div 
+        <div
           className="absolute z-10 flex flex-col"
-          style={{ 
-            top: "2.7cqi" /* top: 4 (16px) */, 
-            left: "2.7cqi" /* left: 4 (16px) */, 
-            gap: "1.3cqi" /* gap: 2 (8px) */ 
+          style={{
+            top: "2.7cqi" /* top: 4 (16px) */,
+            left: "2.7cqi" /* left: 4 (16px) */,
+            gap: "1.3cqi" /* gap: 2 (8px) */,
           }}
         >
           {item.type === "Rent" && (
-            <div 
+            <div
               className="bg-[#1a1a1a] text-white font-bold rounded-md uppercase tracking-[0.1em] shadow-lg text-center"
-              style={{ 
-                fontSize: "1.5cqi" /* text-[9px] */, 
-                padding: "1cqi 1.7cqi" /* px-2.5 py-1.5 */ 
+              style={{
+                fontSize: "1.5cqi" /* text-[9px] */,
+                padding: "1cqi 1.7cqi" /* px-2.5 py-1.5 */,
               }}
             >
               FOR RENT
             </div>
           )}
           {item.videoUrl && (
-            <div 
+            <div
               className="bg-[#1a1a1a] text-white font-bold rounded-md uppercase tracking-[0.1em] shadow-lg flex items-center"
-              style={{ 
-                fontSize: "1.5cqi" /* text-[9px] */, 
+              style={{
+                fontSize: "1.5cqi" /* text-[9px] */,
                 padding: "1cqi 1.7cqi" /* px-2.5 py-1.5 */,
-                gap: "0.7cqi" /* gap-1 (4px) */
+                gap: "0.7cqi" /* gap-1 (4px) */,
               }}
             >
-              <FiPlay className="fill-white" style={{ width: "1.35cqi", height: "1.35cqi" /* w-2 h-2 (8px) */ }} />
+              <FiPlay
+                className="fill-white"
+                style={{
+                  width: "1.35cqi",
+                  height: "1.35cqi" /* w-2 h-2 (8px) */,
+                }}
+              />
               VIDEO
             </div>
           )}
@@ -187,10 +193,10 @@ const AssetCard = ({ item }) => {
         <button
           onClick={handleHeartClick}
           className="absolute z-10 bg-white rounded-full shadow-md hover:bg-gray-50 transition-all transform hover:scale-110 flex items-center justify-center"
-          style={{ 
-            top: "2.7cqi" /* top: 4 (16px) */, 
+          style={{
+            top: "2.7cqi" /* top: 4 (16px) */,
             right: "2.7cqi" /* right: 4 (16px) */,
-            padding: "1.35cqi" /* p-2 (8px) */
+            padding: "1.35cqi" /* p-2 (8px) */,
           }}
         >
           <FiHeart
@@ -201,15 +207,15 @@ const AssetCard = ({ item }) => {
       </div>
 
       {/* CONTENT AREA */}
-      <div 
-        className="flex flex-col flex-1 bg-white" 
-        style={{ 
+      <div
+        className="flex flex-col flex-1 bg-white"
+        style={{
           width: "100%",
-          padding: "3.4cqi 4cqi 1.2cqi" /* Reduced bottom padding */
+          padding: "3.4cqi 4cqi 1.2cqi" /* Reduced bottom padding */,
         }}
       >
         {/* Conditional Layout for Cars: Title above Price */}
-        <div 
+        <div
           className="flex flex-col pb-[5px]"
           style={{ gap: "1.6cqi" /* Uniform gap */ }}
         >
@@ -217,14 +223,14 @@ const AssetCard = ({ item }) => {
             <>
               {/* TITLE */}
               <div>
-                <h4 
-                  className="line-clamp-1"
-                  style={{ 
-                    fontFamily: "'Kaisei Decol', serif", 
-                    fontWeight: 500, 
-                    fontSize: "2.5cqi" /* fontSize: "15px" */, 
-                    lineHeight: "100%", 
-                    color: "#2A2A2A" 
+                <h4
+                  className="truncate translate-y-px pb-1"
+                  style={{
+                    fontFamily: "'Kaisei Decol', serif",
+                    fontWeight: 500,
+                    fontSize: "16px" /* fontSize: "15px" */,
+                    lineHeight: 1.15,
+                    color: "#2A2A2A",
                   }}
                 >
                   {item.title}
@@ -233,25 +239,25 @@ const AssetCard = ({ item }) => {
 
               {/* PRICE */}
               <div>
-                <h3 
+                <h3
                   className="text-[#1a1a1a] tracking-tight lining-nums"
-                  style={{ 
-                    fontFamily: "'Konkhmer Sleokchher', cursive", 
-                    fontWeight: 400, 
+                  style={{
+                    fontFamily: "'Konkhmer Sleokchher', cursive",
+                    fontWeight: 200,
                     lineHeight: "100%",
-                    fontSize: "4cqi" /* text-[24px] */
+                    fontSize: "4cqi" /* text-[24px] */,
                   }}
                 >
                   {item.isPriceOnRequest
                     ? "Price on Demand"
                     : `$${numberWithCommas(item.price)}`}
                   {item.type === "Rent" && !item.isPriceOnRequest && (
-                    <span 
-                      className="text-gray-500 font-normal montserrat" 
-                      style={{ 
-                        fontFamily: 'Montserrat, sans-serif',
+                    <span
+                      className="text-gray-500 font-normal montserrat"
+                      style={{
+                        fontFamily: "Montserrat, sans-serif",
                         fontSize: "1.85cqi" /* text-[11px] */,
-                        marginLeft: "1cqi" /* ml-1.5 (6px) */
+                        marginLeft: "1cqi" /* ml-1.5 (6px) */,
                       }}
                     >
                       / day
@@ -262,15 +268,15 @@ const AssetCard = ({ item }) => {
 
               {/* PROPERTY DETAILS */}
               <div>
-                <div 
+                <div
                   className="flex items-center tracking-[0.1px]"
-                  style={{ 
-                    fontFamily: "'Inter', sans-serif", 
-                    fontWeight: 400, 
-                    fontSize: "2.35cqi" /* fontSize: "14px" */, 
-                    lineHeight: "1.4", 
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: 400,
+                    fontSize: "2.35cqi" /* fontSize: "14px" */,
+                    lineHeight: "1.4",
                     color: "#999999",
-                    gap: "1.35cqi" /* gap-2 (8px) */
+                    gap: "1.35cqi" /* gap-2 (8px) */,
                   }}
                 >
                   {specs_list.length > 0 ? (
@@ -278,12 +284,22 @@ const AssetCard = ({ item }) => {
                       <React.Fragment key={index}>
                         <div>{spec}</div>
                         {index < specs_list.length - 1 && (
-                          <div style={{ color: "#999999", fontWeight: "bold", opacity: 0.5 }}>·</div>
+                          <div
+                            style={{
+                              color: "#999999",
+                              fontWeight: "bold",
+                              opacity: 0.5,
+                            }}
+                          >
+                            ·
+                          </div>
                         )}
                       </React.Fragment>
                     ))
                   ) : (
-                    <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
+                    <div>
+                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                    </div>
                   )}
                 </div>
               </div>
@@ -292,25 +308,25 @@ const AssetCard = ({ item }) => {
             <>
               {/* PRICE */}
               <div>
-                <h3 
+                <h3
                   className="text-[#1a1a1a] tracking-tight lining-nums"
-                  style={{ 
-                    fontFamily: "'Konkhmer Sleokchher', cursive", 
-                    fontWeight: 400, 
+                  style={{
+                    fontFamily: "'Konkhmer Sleokchher', cursive",
+                    fontWeight: 400,
                     lineHeight: "100%",
-                    fontSize: "4cqi" /* text-[24px] */
+                    fontSize: "4cqi" /* text-[24px] */,
                   }}
                 >
                   {item.isPriceOnRequest
                     ? "Price on Demand"
                     : `$${numberWithCommas(item.price)}`}
                   {item.type === "Rent" && !item.isPriceOnRequest && (
-                    <span 
-                      className="text-gray-500 font-normal montserrat" 
-                      style={{ 
-                        fontFamily: 'Montserrat, sans-serif',
+                    <span
+                      className="text-gray-500 font-normal montserrat"
+                      style={{
+                        fontFamily: "Montserrat, sans-serif",
                         fontSize: "1.85cqi" /* text-[11px] */,
-                        marginLeft: "1cqi" /* ml-1.5 (6px) */
+                        marginLeft: "1cqi" /* ml-1.5 (6px) */,
                       }}
                     >
                       / day
@@ -321,15 +337,15 @@ const AssetCard = ({ item }) => {
 
               {/* PROPERTY DETAILS */}
               <div>
-                <div 
+                <div
                   className="flex items-center tracking-[0.1px]"
-                  style={{ 
-                    fontFamily: "'Inter', sans-serif", 
-                    fontWeight: 400, 
-                    fontSize: "2.35cqi" /* fontSize: "14px" */, 
-                    lineHeight: "1.4", 
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: 400,
+                    fontSize: "2.35cqi" /* fontSize: "14px" */,
+                    lineHeight: "1.4",
                     color: "#999999",
-                    gap: "1.35cqi" /* gap-2 (8px) */
+                    gap: "1.35cqi" /* gap-2 (8px) */,
                   }}
                 >
                   {specs_list.length > 0 ? (
@@ -337,26 +353,37 @@ const AssetCard = ({ item }) => {
                       <React.Fragment key={index}>
                         <div>{spec}</div>
                         {index < specs_list.length - 1 && (
-                          <div style={{ color: "#999999", fontWeight: "bold", opacity: 0.5 }}>·</div>
+                          <div
+                            style={{
+                              color: "#999999",
+                              fontWeight: "bold",
+                              opacity: 0.5,
+                            }}
+                          >
+                            ·
+                          </div>
                         )}
                       </React.Fragment>
                     ))
                   ) : (
-                    <div>{category.charAt(0).toUpperCase() + category.slice(1)}</div>
+                    <div>
+                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                    </div>
                   )}
                 </div>
               </div>
 
               {/* TITLE */}
               <div>
-                <h4 
-                  className="line-clamp-1"
-                  style={{ 
-                    fontFamily: "'Kaisei Decol', serif", 
-                    fontWeight: 500, 
-                    fontSize: "2.5cqi" /* fontSize: "15px" */, 
-                    lineHeight: "100%", 
-                    color: "#2A2A2A" 
+                <h4
+                  className="truncate translate-y-px"
+                  style={{
+                    fontFamily: "'Kaisei Decol', serif",
+                    fontWeight: 500,
+                    fontSize: "16px" /* fontSize: "15px" */,
+                    lineHeight: "1.15",
+                    color: "#2A2A2A",
+                    paddingBottom: 2,
                   }}
                 >
                   {item.title}
@@ -367,14 +394,14 @@ const AssetCard = ({ item }) => {
 
           {/* LOCATION */}
           <div>
-            <span 
+            <span
               className="truncate block"
-              style={{ 
-                fontFamily: "'Inter', sans-serif", 
-                fontWeight: 400, 
-                fontSize: "1.93cqi" /* fontSize: "11.5px" */, 
-                lineHeight: "100%", 
-                color: "#888888" 
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 400,
+                fontSize: "1.93cqi" /* fontSize: "11.5px" */,
+                lineHeight: "100%",
+                color: "#888888",
               }}
             >
               {item.location}
@@ -383,10 +410,10 @@ const AssetCard = ({ item }) => {
         </div>
 
         {/* FOOTER */}
-        <div 
+        <div
           className="mt-auto border-t border-[#eeeeee] flex items-center justify-between"
-          style={{ 
-            paddingTop: "1.6cqi" 
+          style={{
+            paddingTop: "1.6cqi",
           }}
         >
           {/* Logo / Initials */}
@@ -399,7 +426,7 @@ const AssetCard = ({ item }) => {
                 style={{ height: "4.7cqi" /* h-7 (28px) */ }}
               />
             ) : (
-              <div 
+              <div
                 className="font-normal tracking-tight text-[#2a2a2a] canela"
                 style={{ fontSize: "3.36cqi" /* text-[20px] */ }}
               >
@@ -409,15 +436,15 @@ const AssetCard = ({ item }) => {
           </div>
 
           {/* Agent Section */}
-          <div 
+          <div
             className="flex items-center"
             style={{ gap: "1.7cqi" /* gap-[10px] (10px) */ }}
           >
-            <span 
+            <span
               className="font-normal text-[#9a9a9a] montserrat truncate"
-              style={{ 
+              style={{
                 fontSize: "1.68cqi" /* text-[10px] (10px) */,
-                maxWidth: "20cqi" /* max-w-[120px] */
+                maxWidth: "20cqi" /* max-w-[120px] */,
               }}
             >
               Listed by{" "}
@@ -425,11 +452,11 @@ const AssetCard = ({ item }) => {
                 {item.agent?.name?.split(" ")[0] || "Marshall"}
               </span>
             </span>
-            <div 
+            <div
               className="rounded-full overflow-hidden border border-gray-50 shadow-sm shrink-0"
-              style={{ 
-                width: "7.9cqi" /* w-[47px] (47px) */, 
-                height: "7.9cqi" /* h-[47px] (47px) */ 
+              style={{
+                width: "7.9cqi" /* w-[47px] (47px) */,
+                height: "7.9cqi" /* h-[47px] (47px) */,
               }}
             >
               <img
