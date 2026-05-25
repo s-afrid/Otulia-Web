@@ -16,7 +16,7 @@ import SubscriptionTab from '../components/inventory_dashboard/SubscriptionTab';
 import SettingsTab from '../components/inventory_dashboard/SettingsTab';
 
 // Modals & Utils
-import CreateListingModal from '../components/CreateListingModal';
+import AddAssetModal from '../components/inventory/AddAssetModal';
 import VerificationModal from '../components/VerificationModal';
 import ContactModal from '../components/ContactModal';
 import UpgradeModal from '../components/UpgradeModal';
@@ -643,10 +643,11 @@ const Inventory = () => {
             </main>
 
             {/* Modals */}
-            <CreateListingModal 
+            <AddAssetModal 
                 isOpen={isAddModalOpen} 
-                onClose={() => { setIsAddModalOpen(false); setEditingItem(null); fetchDashboardData(); }} 
-                editingItem={editingItem} 
+                onClose={() => { setIsAddModalOpen(false); setEditingItem(null); }} 
+                onCreated={() => { setIsAddModalOpen(false); setEditingItem(null); fetchDashboardData(); }}
+                editData={editingItem} 
             />
             <VerificationModal 
                 isOpen={isVerificationModalOpen} 

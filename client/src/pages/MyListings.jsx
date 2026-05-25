@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import Navbar from "../components/Navbar";
 import AssetCard from "../components/AssetCard";
-import CreateListingModal from "../components/CreateListingModal";
+import AddAssetModal from "../components/inventory/AddAssetModal";
 import ConfirmationModal from "../components/ConfirmationModal";
 import DealerVerificationModal from "../components/inventory/DealerVerificationModal";
 import {
@@ -243,14 +243,18 @@ const MyListings = () => {
         description="Manage your luxury asset listings on Otulia."
       />
       <Navbar />
-      <CreateListingModal
+      <AddAssetModal
         isOpen={isModalOpen}
         editData={editingListing}
         onClose={() => {
           setIsModalOpen(false);
           setEditingListing(null);
         }}
-        onCreated={handleListingCreated}
+        onCreated={(item, isUpdate) => {
+          handleListingCreated(item, isUpdate);
+          setIsModalOpen(false);
+          setEditingListing(null);
+        }}
       />
 
       <UpgradeModal
