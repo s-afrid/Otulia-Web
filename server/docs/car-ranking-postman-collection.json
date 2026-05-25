@@ -1,0 +1,56 @@
+{
+  "info": {
+    "name": "Car Ranking API",
+    "_postman_id": "b7f1c0f0-0000-4000-8000-000000000000",
+    "description": "Collection to test the car ranking endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create/Update Profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"temp-car-ranking\",\n  \"isActive\": true,\n  \"windowDays\": 30,\n  \"maxFreshnessDays\": 90,\n  \"weights\": {\n    \"views\": 10,\n    \"likes\": 20,\n    \"inquiries\": 30,\n    \"freshness\": 20,\n    \"completeness\": 20\n  }\n}"
+        },
+        "url": { "raw": "http://localhost:5000/api/car-ranking/profile", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api","car-ranking","profile"] }
+      }
+    },
+    {
+      "name": "Rebuild Ranking",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"windowDays\": 30 }" },
+        "url": { "raw": "http://localhost:5000/api/car-ranking/rebuild", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api","car-ranking","rebuild"] }
+      }
+    },
+    {
+      "name": "Get Top Ranked Cars",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:5000/api/car-ranking/top?limit=10&forceRebuild=false&brand=Toyota&minPrice=5000&maxPrice=20000&location=Delhi&model=Corolla", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api","car-ranking","top"], "query": [ { "key": "limit", "value": "10" }, { "key": "forceRebuild", "value": "false" }, { "key": "brand", "value": "Toyota" }, { "key": "minPrice", "value": "5000" }, { "key": "maxPrice", "value": "20000" }, { "key": "location", "value": "Delhi" }, { "key": "model", "value": "Corolla" } ] }
+      }
+    },
+    {
+      "name": "Get Top Ranked Cars (filters only)",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:5000/api/car-ranking/top?brand=Toyota&minPrice=5000&maxPrice=20000&location=Delhi&model=Corolla&limit=20", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api","car-ranking","top"], "query": [ { "key": "brand", "value": "Toyota" }, { "key": "minPrice", "value": "5000" }, { "key": "maxPrice", "value": "20000" }, { "key": "location", "value": "Delhi" }, { "key": "model", "value": "Corolla" }, { "key": "limit", "value": "20" } ] }
+      }
+    },
+    {
+      "name": "Get Car Rank Detail",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:5000/api/car-ranking/car/{{carId}}", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api","car-ranking","car", "{{carId}}"] }
+      }
+    }
+  ]
+}
