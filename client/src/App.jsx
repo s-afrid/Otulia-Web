@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 // Standard import for Home to ensure fast initial paint
@@ -34,6 +34,7 @@ const Favorites = lazy(() => import("./pages/Favorites"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const DocumentViewer = lazy(() => import("./pages/DocumentViewer"));
 const DealerProfile = lazy(() => import("./pages/DealerProfile"));
+const SellWithUs = lazy(() => import("./pages/SellWithUs"));
 
 // Policy pages
 const Terms = lazy(() => import("./pages/policies/Terms"));
@@ -43,42 +44,76 @@ const Returns = lazy(() => import("./pages/policies/Returns"));
 const CookiePolicy = lazy(() => import("./pages/policies/CookiePolicy"));
 
 // Cities & Regions Pages (10)
-const PrivateIslandsPage = lazy(() => import("./pages/listings/cities/PrivateIslandsPage"));      
-const BalearicIslandsPage = lazy(() => import("./pages/listings/cities/BalearicIslandsPage"));
-const CostaDelSolPage = lazy(() => import("./pages/listings/cities/CostaDelSolPage"));
-const FrenchRivieraPage = lazy(() => import("./pages/listings/cities/FrenchRivieraPage"));
+const PrivateIslandsPage = lazy(
+  () => import("./pages/listings/cities/PrivateIslandsPage"),
+);
+const BalearicIslandsPage = lazy(
+  () => import("./pages/listings/cities/BalearicIslandsPage"),
+);
+const CostaDelSolPage = lazy(
+  () => import("./pages/listings/cities/CostaDelSolPage"),
+);
+const FrenchRivieraPage = lazy(
+  () => import("./pages/listings/cities/FrenchRivieraPage"),
+);
 const TuscanyPage = lazy(() => import("./pages/listings/cities/TuscanyPage"));
-const AmsterdamPage = lazy(() => import("./pages/listings/cities/AmsterdamPage"));
+const AmsterdamPage = lazy(
+  () => import("./pages/listings/cities/AmsterdamPage"),
+);
 const AtlantaPage = lazy(() => import("./pages/listings/cities/AtlantaPage"));
 const AustinPage = lazy(() => import("./pages/listings/cities/AustinPage"));
-const BenehavisPage = lazy(() => import("./pages/listings/cities/BenehavisPage"));
-const BeverlyHillsPage = lazy(() => import("./pages/listings/cities/BeverlyHillsPage"));
+const BenehavisPage = lazy(
+  () => import("./pages/listings/cities/BenehavisPage"),
+);
+const BeverlyHillsPage = lazy(
+  () => import("./pages/listings/cities/BeverlyHillsPage"),
+);
 
 // Countries Pages (10)
-const AustraliaPage = lazy(() => import("./pages/listings/countries/AustraliaPage"));
-const BritishVirginIslandsPage = lazy(() => import("./pages/listings/countries/BritishVirginIslandsPage"));
+const AustraliaPage = lazy(
+  () => import("./pages/listings/countries/AustraliaPage"),
+);
+const BritishVirginIslandsPage = lazy(
+  () => import("./pages/listings/countries/BritishVirginIslandsPage"),
+);
 const CanadaPage = lazy(() => import("./pages/listings/countries/CanadaPage"));
-const CaymanIslandsPage = lazy(() => import("./pages/listings/countries/CaymanIslandsPage"));
+const CaymanIslandsPage = lazy(
+  () => import("./pages/listings/countries/CaymanIslandsPage"),
+);
 const FrancePage = lazy(() => import("./pages/listings/countries/FrancePage"));
-const GermanyPage = lazy(() => import("./pages/listings/countries/GermanyPage"));
+const GermanyPage = lazy(
+  () => import("./pages/listings/countries/GermanyPage"),
+);
 const GreecePage = lazy(() => import("./pages/listings/countries/GreecePage"));
 const IndiaPage = lazy(() => import("./pages/listings/countries/IndiaPage"));
-const IrelandPage = lazy(() => import("./pages/listings/countries/IrelandPage"));
+const IrelandPage = lazy(
+  () => import("./pages/listings/countries/IrelandPage"),
+);
 const MonacoPage = lazy(() => import("./pages/listings/countries/MonacoPage"));
 
 // Car Pages (10)
 const FerrariPage = lazy(() => import("./pages/listings/cars/FerrariPage"));
-const AstonMartinPage = lazy(() => import("./pages/listings/cars/AstonMartinPage"));
-const KoenigseggPage = lazy(() => import("./pages/listings/cars/KoenigseggPage"));
-const LamborghiniPage = lazy(() => import("./pages/listings/cars/LamborghiniPage"));
+const AstonMartinPage = lazy(
+  () => import("./pages/listings/cars/AstonMartinPage"),
+);
+const KoenigseggPage = lazy(
+  () => import("./pages/listings/cars/KoenigseggPage"),
+);
+const LamborghiniPage = lazy(
+  () => import("./pages/listings/cars/LamborghiniPage"),
+);
 const BugattiPage = lazy(() => import("./pages/listings/cars/BugattiPage"));
 const MaseratiPage = lazy(() => import("./pages/listings/cars/MaseratiPage"));
 const PaganiPage = lazy(() => import("./pages/listings/cars/PaganiPage"));
 const PorschePage = lazy(() => import("./pages/listings/cars/PorschePage"));
-const RollsRoycePage = lazy(() => import("./pages/listings/cars/RollsRoycePage"));
-const BugattiChironPage = lazy(() => import("./pages/listings/cars/BugattiChironPage"));
+const RollsRoycePage = lazy(
+  () => import("./pages/listings/cars/RollsRoycePage"),
+);
+const BugattiChironPage = lazy(
+  () => import("./pages/listings/cars/BugattiChironPage"),
+);
 
-import Footer from "./components/Footer"
+import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollTop";
 import SplashScreen from "./components/SplashScreen";
 import { CartProvider } from "./contexts/CartContext";
@@ -88,8 +123,16 @@ const PageLoader = () => <div className="w-full h-screen bg-white"></div>;
 
 function App() {
   const location = useLocation();
-  const hideFooterRoutes = ['/admin', '/admin/view-document', '/login', '/signup', '/inventory'];
-  const shouldShowFooter = !hideFooterRoutes.some(path => location.pathname.startsWith(path));
+  const hideFooterRoutes = [
+    "/admin",
+    "/admin/view-document",
+    "/login",
+    "/signup",
+    "/inventory",
+  ];
+  const shouldShowFooter = !hideFooterRoutes.some((path) =>
+    location.pathname.startsWith(path),
+  );
 
   const [showSplash, setShowSplash] = React.useState(true);
 
@@ -119,7 +162,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/faq" element={<FAQ />} />
-          
+
           {/* User routes */}
           <Route path="/profile" element={<Profile />} />
           <Route path="/success" element={<Success />} />
@@ -129,6 +172,7 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/view-document" element={<DocumentViewer />} />
           <Route path="/dealer/:email" element={<DealerProfile />} />
+          <Route path="/SellWithUs" element={<SellWithUs />} />
 
           {/* Policy Routes */}
           <Route path="/terms" element={<Terms />} />
@@ -139,22 +183,40 @@ function App() {
           <Route path="/contact" element={<ContactSales />} />
 
           {/* Cities & Regions Routes */}
-          <Route path="/listings/private-islands" element={<PrivateIslandsPage />} />
-          <Route path="/listings/balearic-islands" element={<BalearicIslandsPage />} />
+          <Route
+            path="/listings/private-islands"
+            element={<PrivateIslandsPage />}
+          />
+          <Route
+            path="/listings/balearic-islands"
+            element={<BalearicIslandsPage />}
+          />
           <Route path="/listings/costa-del-sol" element={<CostaDelSolPage />} />
-          <Route path="/listings/french-riviera" element={<FrenchRivieraPage />} />
+          <Route
+            path="/listings/french-riviera"
+            element={<FrenchRivieraPage />}
+          />
           <Route path="/listings/tuscany" element={<TuscanyPage />} />
           <Route path="/listings/amsterdam" element={<AmsterdamPage />} />
           <Route path="/listings/atlanta" element={<AtlantaPage />} />
           <Route path="/listings/austin" element={<AustinPage />} />
           <Route path="/listings/benahavis" element={<BenehavisPage />} />
-          <Route path="/listings/beverly-hills" element={<BeverlyHillsPage />} />
+          <Route
+            path="/listings/beverly-hills"
+            element={<BeverlyHillsPage />}
+          />
 
           {/* Countries Routes */}
           <Route path="/listings/australia" element={<AustraliaPage />} />
-          <Route path="/listings/british-virgin-islands" element={<BritishVirginIslandsPage />} />
+          <Route
+            path="/listings/british-virgin-islands"
+            element={<BritishVirginIslandsPage />}
+          />
           <Route path="/listings/canada" element={<CanadaPage />} />
-          <Route path="/listings/cayman-islands" element={<CaymanIslandsPage />} />
+          <Route
+            path="/listings/cayman-islands"
+            element={<CaymanIslandsPage />}
+          />
           <Route path="/listings/france" element={<FrancePage />} />
           <Route path="/listings/germany" element={<GermanyPage />} />
           <Route path="/listings/greece" element={<GreecePage />} />
@@ -172,12 +234,15 @@ function App() {
           <Route path="/listings/pagani" element={<PaganiPage />} />
           <Route path="/listings/porsche" element={<PorschePage />} />
           <Route path="/listings/rolls-royce" element={<RollsRoycePage />} />
-          <Route path="/listings/bugatti-chiron" element={<BugattiChironPage />} />
+          <Route
+            path="/listings/bugatti-chiron"
+            element={<BugattiChironPage />}
+          />
         </Routes>
       </Suspense>
       {shouldShowFooter && <Footer />}
     </CartProvider>
-  )
+  );
 }
 
-export default App
+export default App;
