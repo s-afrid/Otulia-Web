@@ -114,7 +114,7 @@ const Navbar = ({
 
         {/* 3. RIGHT ACTIONS - Right Column */}
         <div className="flex-1 flex items-center justify-end gap-[clamp(8px,1vw,24px)]">
-          <NavLink
+          {/* <NavLink
             to="/signup"
             className={`hidden lg:flex items-center gap-2.5 px-[clamp(12px,1.5vw,24px)] py-[clamp(6px,1vh,12px)] border text-[clamp(9px,1.1vh,13px)] tracking-[0.2em] font-medium montserrat transition-all duration-500 whitespace-nowrap backdrop-blur-md shadow-lg active:scale-95 ${
               isDarkText
@@ -124,7 +124,7 @@ const Navbar = ({
           >
             JOIN WAITLIST
             <FaArrowRightLong />
-          </NavLink>
+          </NavLink> */}
 
           {/* 4. HAMBURGER (Visible on mobile and tablet) */}
           <button

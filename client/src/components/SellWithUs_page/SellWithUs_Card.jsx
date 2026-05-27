@@ -19,12 +19,12 @@ const SellWithUs_Card = () => {
               One Subscription
             </h2>
             <h3
-              className="mt-4 text-[#D2AE68] text-[40px] md:text-[58px] italic leading-none font-light"
+              className="mt-3 text-[#D2AE68] text-[40px] md:text-[58px] italic leading-none font-light"
               style={{ fontFamily: "serif" }}
             >
               Four Categories
             </h3>
-            <p className="mt-10 text-black/75 text-[18px] leading-relaxed max-w-lg">
+            <p className="mt-6 text-black/75 text-[15px] leading-relaxed max-w-lg">
               One subscription gives dealerships and agencies access to multiple
               luxury markets under one subscription. List in every market.
             </p>
@@ -32,10 +32,10 @@ const SellWithUs_Card = () => {
 
           {/* RIGHT CARDS */}
           <div className="w-full flex justify-center lg:justify-end">
-            <div className="relative h-auto w-full max-w-[560px]">
+            <div className="relative h-full w-full max-w-[800px]">
               <img
                 src={CategoryCards}
-                className="w-full h-auto object-contain"
+                className="w-full object-contain"
                 alt="categories"
               />
             </div>
@@ -71,7 +71,7 @@ const SellWithUs_Card = () => {
             >
               Directly On Whatsapp
             </h3>
-            <p className="mt-10 text-black/75 text-[18px] leading-relaxed max-w-lg">
+            <p className="mt-6 text-black/75 text-[15px] leading-relaxed max-w-lg">
               Every Otulia listing includes WhatsApp integration. Serious buyers
               connect with your team instantly — no forms, delays, or middlemen.
               The fastest path from interest to deal.

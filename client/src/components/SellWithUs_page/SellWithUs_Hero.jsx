@@ -33,7 +33,7 @@ const SellWithUs_Hero = () => {
           {/* Main Heading */}
           <div className="leading-[0.95]">
             <h1 className="text-white font-light text-[58px] sm:text-[72px] md:text-[88px] lg:text-[110px] tracking-[-0.04em]">
-              The Future
+              The Only
             </h1>
 
             <h1 className="text-white font-light text-[58px] sm:text-[72px] md:text-[88px] lg:text-[110px] tracking-[-0.04em]">
@@ -50,7 +50,7 @@ const SellWithUs_Hero = () => {
 
           {/* Description */}
           <p className="mt-8 max-w-2xl text-white/70 text-sm md:text-lg leading-relaxed font-light">
-            AI-driven luxury marketplace infrastructure designed for
+            luxury marketplace infrastructure designed for
             dealerships, real estate agencies, yacht brokers, and elite asset
             sellers.
           </p>
@@ -59,7 +59,7 @@ const SellWithUs_Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 mt-10">
             <NavLink to="/signup">
               <button className="group flex items-center justify-center gap-3 bg-white text-black px-8 py-4 text-[11px] tracking-[0.35em] uppercase montserrat font-medium transition-all duration-300 hover:bg-[#e8e8e8]">
-                Join Early Access
+                list your assests 
                 <FaArrowRightLong className="text-[12px] transition-transform duration-300 group-hover:translate-x-1" />
               </button>
             </NavLink>
