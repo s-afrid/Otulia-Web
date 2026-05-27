@@ -318,6 +318,7 @@ const Inventory = () => {
                     language: agentInfo.language,
                     timezone: agentInfo.timezone,
                     agentDescription: agentInfo.bio,
+                    profilePicture: agentInfo.photo,
                     social: {
                         instagram: agentInfo.social.instagram,
                         linkedin: agentInfo.social.linkedin,
@@ -359,6 +360,8 @@ const Inventory = () => {
                         phone: companyInfo.phone,
                         phoneCode: companyInfo.phoneCode,
                         description: companyInfo.description,
+                        companyLogo: companyInfo.logo,
+                        coverPhoto: companyInfo.coverImage,
                         social: {
                             instagram: companyInfo.social.instagram,
                             linkedin: companyInfo.social.linkedin,
@@ -385,17 +388,17 @@ const Inventory = () => {
         const file = e.target.files[0];
         if (!file) return;
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('profilePicture', file);
         try {
-            const response = await fetch('/api/upload/profile-picture', {
+            const response = await fetch('/api/auth/upload-profile-picture', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 body: formData
             });
             const result = await response.json();
-            if (result.success) {
-                setAgentInfo(p => ({ ...p, photo: result.url }));
-                updateUserLocal({ ...user, profilePicture: result.url });
+            if (result.user) {
+                setAgentInfo(p => ({ ...p, photo: result.user.profilePicture }));
+                updateUserLocal(result.user);
             }
         } catch (error) {
             console.error('Upload error:', error);
@@ -407,17 +410,17 @@ const Inventory = () => {
         if (!file) return;
         setLogoLoading(true);
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('companyLogo', file);
         try {
-            const response = await fetch('/api/upload/showroom-logo', {
+            const response = await fetch('/api/auth/upload-company-logo', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 body: formData
             });
             const result = await response.json();
-            if (result.success) {
-                setCompanyInfo(p => ({ ...p, logo: result.url }));
-                updateUserLocal({ ...user, showroomLogo: result.url });
+            if (result.user) {
+                setCompanyInfo(p => ({ ...p, logo: result.user.company?.companyLogo }));
+                updateUserLocal(result.user);
             }
         } catch (error) {
             console.error('Logo upload error:', error);
@@ -431,17 +434,17 @@ const Inventory = () => {
         if (!file) return;
         setIsUploadingCover(true);
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('coverPhoto', file);
         try {
-            const response = await fetch('/api/upload/showroom-cover', {
+            const response = await fetch('/api/auth/upload-company-cover', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 body: formData
             });
             const result = await response.json();
-            if (result.success) {
-                setCompanyInfo(p => ({ ...p, coverImage: result.url }));
-                updateUserLocal({ ...user, showroomCoverImage: result.url });
+            if (result.user) {
+                setCompanyInfo(p => ({ ...p, coverImage: result.user.company?.coverPhoto }));
+                updateUserLocal(result.user);
             }
         } catch (error) {
             console.error('Cover upload error:', error);
