@@ -45,29 +45,29 @@ const SettingsTab = ({
   setIsVerificationModalOpen,
 }) => {
   const countryCodes = [
-    { code: "+971", flag: "🇦🇪", name: "UAE" },
-    { code: "+91", flag: "🇮🇳", name: "India" },
-    { code: "+1", flag: "🇺🇸", name: "USA" },
-    { code: "+44", flag: "🇬🇧", name: "UK" },
-    { code: "+966", flag: "🇸🇦", name: "Saudi Arabia" },
-    { code: "+974", flag: "🇶🇦", name: "Qatar" },
-    { code: "+965", flag: "🇰🇼", name: "Kuwait" },
-    { code: "+968", flag: "🇴🇲", name: "Oman" },
-    { code: "+973", flag: "🇧🇭", name: "Bahrain" },
-    { code: "+20", flag: "🇪🇬", name: "Egypt" },
-    { code: "+33", flag: "🇫🇷", name: "France" },
-    { code: "+49", flag: "🇩🇪", name: "Germany" },
-    { code: "+39", flag: "🇮🇹", name: "Italy" },
-    { code: "+34", flag: "🇪🇸", name: "Spain" },
-    { code: "+41", flag: "🇨🇭", name: "Switzerland" },
-    { code: "+7", flag: "🇷🇺", name: "Russia" },
-    { code: "+81", flag: "🇯🇵", name: "Japan" },
-    { code: "+86", flag: "🇨🇳", name: "China" },
-    { code: "+61", flag: "🇦🇺", name: "Australia" },
-    { code: "+65", flag: "🇸🇬", name: "Singapore" },
-    { code: "+27", flag: "🇿🇦", name: "South Africa" },
-    { code: "+55", flag: "🇧🇷", name: "Brazil" },
-    { code: "+90", flag: "🇹🇷", name: "Turkey" },
+    { code: "+971", iso: "ae", name: "UAE" },
+    { code: "+91", iso: "in", name: "India" },
+    { code: "+1", iso: "us", name: "USA" },
+    { code: "+44", iso: "gb", name: "UK" },
+    { code: "+966", iso: "sa", name: "Saudi Arabia" },
+    { code: "+974", iso: "qa", name: "Qatar" },
+    { code: "+965", iso: "kw", name: "Kuwait" },
+    { code: "+968", iso: "om", name: "Oman" },
+    { code: "+973", iso: "bh", name: "Bahrain" },
+    { code: "+20", iso: "eg", name: "Egypt" },
+    { code: "+33", iso: "fr", name: "France" },
+    { code: "+49", iso: "de", name: "Germany" },
+    { code: "+39", iso: "it", name: "Italy" },
+    { code: "+34", iso: "es", name: "Spain" },
+    { code: "+41", iso: "ch", name: "Switzerland" },
+    { code: "+7", iso: "ru", name: "Russia" },
+    { code: "+81", iso: "jp", name: "Japan" },
+    { code: "+86", iso: "cn", name: "China" },
+    { code: "+61", iso: "au", name: "Australia" },
+    { code: "+65", iso: "sg", name: "Singapore" },
+    { code: "+27", iso: "za", name: "South Africa" },
+    { code: "+55", iso: "br", name: "Brazil" },
+    { code: "+90", iso: "tr", name: "Turkey" },
   ];
 
   const getContactIcon = (method) => {
@@ -196,7 +196,17 @@ const SettingsTab = ({
                   Phone Number
                 </label>
                 <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
-                  <div className="flex items-center px-4 bg-gray-50 border-r border-gray-200 text-[14px] relative">
+                  <div className="flex items-center px-4 py-3.5 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
+                    <div className="pointer-events-none flex items-center gap-2 font-bold text-gray-700">
+                      <img
+                        src={`https://flagcdn.com/w20/${countryCodes.find(c => c.code === agentInfo.phoneCode)?.iso || "ae"}.png`}
+                        srcSet={`https://flagcdn.com/w40/${countryCodes.find(c => c.code === agentInfo.phoneCode)?.iso || "ae"}.png 2x`}
+                        alt="flag"
+                        className="w-5 h-auto rounded-sm shadow-sm"
+                      />
+                      <span>{agentInfo.phoneCode}</span>
+                    </div>
+                    <FiChevronDown className="ml-3 text-[12px] text-gray-500 pointer-events-none" />
                     <select
                       value={agentInfo.phoneCode}
                       onChange={(e) =>
@@ -205,15 +215,14 @@ const SettingsTab = ({
                           phoneCode: e.target.value,
                         }))
                       }
-                      className="appearance-none bg-transparent outline-none pr-6 cursor-pointer font-bold"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     >
                       {countryCodes.map((c) => (
                         <option key={c.code} value={c.code}>
-                          {c.flag} {c.code}
+                          {c.flag} {c.name} ({c.code})
                         </option>
                       ))}
                     </select>
-                    <FiChevronDown className="absolute right-3 text-[11px] text-gray-500 pointer-events-none" />
                   </div>
                   <input
                     type="text"
@@ -221,7 +230,8 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, phone: e.target.value }))
                     }
-                    className="w-full bg-transparent px-5 py-3.5 text-[14px] font-medium focus:outline-none"
+                    className="w-full bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none min-w-0"
+                    placeholder="Enter phone number"
                   />
                 </div>
               </div>
@@ -230,7 +240,17 @@ const SettingsTab = ({
                   WhatsApp Number
                 </label>
                 <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
-                  <div className="flex items-center px-4 bg-gray-50 border-r border-gray-200 text-[14px] relative">
+                  <div className="flex items-center px-4 py-3.5 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
+                    <div className="pointer-events-none flex items-center gap-2 font-bold text-gray-700">
+                      <img
+                        src={`https://flagcdn.com/w20/${countryCodes.find(c => c.code === agentInfo.whatsappCode)?.iso || "ae"}.png`}
+                        srcSet={`https://flagcdn.com/w40/${countryCodes.find(c => c.code === agentInfo.whatsappCode)?.iso || "ae"}.png 2x`}
+                        alt="flag"
+                        className="w-5 h-auto rounded-sm shadow-sm"
+                      />
+                      <span>{agentInfo.whatsappCode}</span>
+                    </div>
+                    <FiChevronDown className="ml-3 text-[12px] text-gray-500 pointer-events-none" />
                     <select
                       value={agentInfo.whatsappCode}
                       onChange={(e) =>
@@ -239,15 +259,14 @@ const SettingsTab = ({
                           whatsappCode: e.target.value,
                         }))
                       }
-                      className="appearance-none bg-transparent outline-none pr-6 cursor-pointer font-bold"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     >
                       {countryCodes.map((c) => (
                         <option key={c.code} value={c.code}>
-                          {c.flag} {c.code}
+                          {c.flag} {c.name} ({c.code})
                         </option>
                       ))}
                     </select>
-                    <FiChevronDown className="absolute right-3 text-[11px] text-gray-500 pointer-events-none" />
                   </div>
                   <input
                     type="text"
@@ -255,7 +274,8 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, whatsapp: e.target.value }))
                     }
-                    className="w-full bg-transparent px-5 py-3.5 text-[14px] font-medium focus:outline-none"
+                    className="w-full bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none min-w-0"
+                    placeholder="Enter WhatsApp number"
                   />
                 </div>
               </div>
@@ -683,7 +703,17 @@ const SettingsTab = ({
                   Phone Number
                 </label>
                 <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
-                  <div className="flex items-center px-4 bg-gray-50 border-r border-gray-200 text-[14px] relative">
+                  <div className="flex items-center px-4 py-3.5 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
+                    <div className="pointer-events-none flex items-center gap-2 font-bold text-gray-700">
+                      <img
+                        src={`https://flagcdn.com/w20/${countryCodes.find(c => c.code === companyInfo.phoneCode)?.iso || "ae"}.png`}
+                        srcSet={`https://flagcdn.com/w40/${countryCodes.find(c => c.code === companyInfo.phoneCode)?.iso || "ae"}.png 2x`}
+                        alt="flag"
+                        className="w-5 h-auto rounded-sm shadow-sm"
+                      />
+                      <span>{companyInfo.phoneCode}</span>
+                    </div>
+                    <FiChevronDown className="ml-3 text-[12px] text-gray-500 pointer-events-none" />
                     <select
                       value={companyInfo.phoneCode}
                       onChange={(e) =>
@@ -692,15 +722,14 @@ const SettingsTab = ({
                           phoneCode: e.target.value,
                         }))
                       }
-                      className="appearance-none bg-transparent outline-none pr-6 cursor-pointer font-bold"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     >
                       {countryCodes.map((c) => (
                         <option key={c.code} value={c.code}>
-                          {c.flag} {c.code}
+                          {c.flag} {c.name} ({c.code})
                         </option>
                       ))}
                     </select>
-                    <FiChevronDown className="absolute right-3 text-[11px] text-gray-500 pointer-events-none" />
                   </div>
                   <input
                     type="text"
@@ -708,7 +737,8 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setCompanyInfo((p) => ({ ...p, phone: e.target.value }))
                     }
-                    className="w-full bg-transparent px-5 py-3.5 text-[14px] font-medium focus:outline-none"
+                    className="w-full bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none min-w-0"
+                    placeholder="Enter phone number"
                   />
                 </div>
               </div>
