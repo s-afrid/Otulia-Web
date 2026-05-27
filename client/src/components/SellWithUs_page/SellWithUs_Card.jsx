@@ -1,5 +1,5 @@
 import React from "react";
-import SellWithUs_Hero from "../../components/SellWithUs_page/SellWithUs_Hero";
+import SellWithUs_Hero from "./SellWithUs_Hero";
 import CategoryCards from "../../assets/sellwithus_page/category_cards.png";
 import WhatsappCard from "../../assets/sellwithus_page/whatsapp_card.png";
 import SeoCard from "../../assets/sellwithus_page/seo_card.png";
