@@ -79,43 +79,43 @@ const SettingsTab = ({
   };
 
   return (
-    <div className="min-h-full flex flex-col gap-5 animate-in fade-in duration-700 pb-6">
-      {/* 2 Main Columns - Adjusted for Ultra-Wide Scaling */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
+    <div className="min-h-full flex flex-col gap-8 animate-in fade-in duration-700 pb-12">
+      {/* 1 Column Layout - Stacked for Full Width Scalability */}
+      <div className="flex flex-col gap-8">
         {/* Personal Details */}
-        <div className="bg-white border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] rounded-[1.5rem] p-4 md:p-5 flex flex-col relative min-h-[540px] xl:min-h-[640px]">
+        <div className="bg-white border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] rounded-[1.5rem] p-5 md:p-8 flex flex-col relative">
           {/* Header */}
-          <div className="flex justify-between items-start mb-5 shrink-0">
+          <div className="flex justify-between items-start mb-8 shrink-0">
             <div className="flex gap-4 items-center">
-              <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 font-bold flex items-center justify-center text-[14px] shrink-0 border border-purple-100">
+              <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 font-bold flex items-center justify-center text-[16px] shrink-0 border border-purple-100">
                 1
               </div>
               <div className="flex flex-col">
-                <h3 className="text-[15px] md:text-[17px] font-bold text-gray-900 leading-tight">
+                <h3 className="text-[17px] md:text-[20px] font-bold text-gray-900 leading-tight">
                   Your Personal (Agent) Details
                 </h3>
-                <p className="text-[11px] md:text-[12px] text-gray-400 font-medium leading-tight mt-1">
+                <p className="text-[12px] md:text-[14px] text-gray-400 font-medium leading-tight mt-1.5">
                   This information will be visible to clients and used for
                   communication.
                 </p>
               </div>
             </div>
-            <div className="bg-emerald-50 text-emerald-600 px-3 py-1.5 flex items-center gap-1.5 rounded-full text-[10px] md:text-[11px] font-bold shrink-0 border border-emerald-100">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>{" "}
+            <div className="bg-emerald-50 text-emerald-600 px-4 py-2 flex items-center gap-2 rounded-full text-[11px] md:text-[13px] font-bold shrink-0 border border-emerald-100">
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>{" "}
               Verified
             </div>
           </div>
 
           {/* Form Fields container */}
-          <div className="flex-1 overflow-visible flex flex-col gap-5">
-            {/* Photo Row */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-2">
-              <div className="flex flex-col gap-2">
-                <label className="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
+          <div className="flex-1 overflow-visible flex flex-col gap-8">
+            {/* Photo & Basic Info Row */}
+            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 pb-2">
+              <div className="flex flex-col gap-3">
+                <label className="text-[12px] font-bold text-gray-700 uppercase tracking-wider">
                   Profile Photo
                 </label>
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden shrink-0 border-2 border-white shadow-md">
+                <div className="flex items-center gap-5">
+                  <div className="w-24 h-24 rounded-full bg-gray-100 overflow-hidden shrink-0 border-4 border-white shadow-lg">
                     <img
                       src={
                         agentInfo.photo ||
@@ -127,8 +127,8 @@ const SettingsTab = ({
                     />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <label className="px-4 py-2 cursor-pointer bg-white border border-gray-200 rounded-xl text-[11px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:bg-gray-50 hover:border-[#D48D2A] transition-all shadow-sm">
-                      <FiUpload className="text-[#D48D2A]" /> Upload Photo
+                    <label className="px-6 py-3 cursor-pointer bg-white border border-gray-200 rounded-2xl text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:bg-gray-50 hover:border-[#D48D2A] transition-all shadow-sm">
+                      <FiUpload className="text-[#D48D2A] text-lg" /> Upload Photo
                       <input
                         type="file"
                         className="hidden"
@@ -136,15 +136,15 @@ const SettingsTab = ({
                         onChange={handleProfilePicUpload}
                       />
                     </label>
-                    <span className="text-[9px] text-gray-400 mt-1.5 font-medium ml-1">
+                    <span className="text-[10px] text-gray-400 mt-2 font-medium ml-1">
                       JPG, PNG up to 5MB
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex-1">
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                     Full Name
                   </label>
                   <input
@@ -154,11 +154,11 @@ const SettingsTab = ({
                       setAgentInfo((p) => ({ ...p, fullName: e.target.value }))
                     }
                     placeholder="Enter your full name"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-[12px] font-medium focus:border-[#D48D2A] focus:ring-2 focus:ring-[#D48D2A]/10 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] focus:ring-4 focus:ring-[#D48D2A]/5 outline-none transition-all shadow-sm"
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                     Job Title / Role
                   </label>
                   <input
@@ -168,35 +168,35 @@ const SettingsTab = ({
                       setAgentInfo((p) => ({ ...p, jobTitle: e.target.value }))
                     }
                     placeholder="e.g. Luxury Real Estate Advisor"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-[12px] font-medium focus:border-[#D48D2A] focus:ring-2 focus:ring-[#D48D2A]/10 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] focus:ring-4 focus:ring-[#D48D2A]/5 outline-none transition-all shadow-sm"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-6">
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Email Address
                 </label>
                 <div className="relative">
-                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+                  <FiMail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
                   <input
                     type="email"
                     value={agentInfo.email}
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, email: e.target.value }))
                     }
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[12px] font-medium focus:border-[#D48D2A] outline-none transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none transition-all shadow-sm"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Phone Number
                 </label>
-                <div className="flex border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-2 focus-within:ring-[#D48D2A]/10 transition-all">
-                  <div className="flex items-center px-3 bg-gray-50 border-r border-gray-200 text-[12px] relative">
+                <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
+                  <div className="flex items-center px-4 bg-gray-50 border-r border-gray-200 text-[14px] relative">
                     <select
                       value={agentInfo.phoneCode}
                       onChange={(e) =>
@@ -205,7 +205,7 @@ const SettingsTab = ({
                           phoneCode: e.target.value,
                         }))
                       }
-                      className="appearance-none bg-transparent outline-none pr-5 cursor-pointer font-bold"
+                      className="appearance-none bg-transparent outline-none pr-6 cursor-pointer font-bold"
                     >
                       {countryCodes.map((c) => (
                         <option key={c.code} value={c.code}>
@@ -213,7 +213,7 @@ const SettingsTab = ({
                         </option>
                       ))}
                     </select>
-                    <FiChevronDown className="absolute right-2 text-[10px] text-gray-500 pointer-events-none" />
+                    <FiChevronDown className="absolute right-3 text-[11px] text-gray-500 pointer-events-none" />
                   </div>
                   <input
                     type="text"
@@ -221,16 +221,16 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, phone: e.target.value }))
                     }
-                    className="w-full bg-transparent px-4 py-2.5 text-[12px] font-medium focus:outline-none"
+                    className="w-full bg-transparent px-5 py-3.5 text-[14px] font-medium focus:outline-none"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   WhatsApp Number
                 </label>
-                <div className="flex border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-2 focus-within:ring-[#D48D2A]/10 transition-all">
-                  <div className="flex items-center px-3 bg-gray-50 border-r border-gray-200 text-[12px] relative">
+                <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
+                  <div className="flex items-center px-4 bg-gray-50 border-r border-gray-200 text-[14px] relative">
                     <select
                       value={agentInfo.whatsappCode}
                       onChange={(e) =>
@@ -239,7 +239,7 @@ const SettingsTab = ({
                           whatsappCode: e.target.value,
                         }))
                       }
-                      className="appearance-none bg-transparent outline-none pr-5 cursor-pointer font-bold"
+                      className="appearance-none bg-transparent outline-none pr-6 cursor-pointer font-bold"
                     >
                       {countryCodes.map((c) => (
                         <option key={c.code} value={c.code}>
@@ -247,7 +247,7 @@ const SettingsTab = ({
                         </option>
                       ))}
                     </select>
-                    <FiChevronDown className="absolute right-2 text-[10px] text-gray-500 pointer-events-none" />
+                    <FiChevronDown className="absolute right-3 text-[11px] text-gray-500 pointer-events-none" />
                   </div>
                   <input
                     type="text"
@@ -255,16 +255,16 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, whatsapp: e.target.value }))
                     }
-                    className="w-full bg-transparent px-4 py-2.5 text-[12px] font-medium focus:outline-none"
+                    className="w-full bg-transparent px-5 py-3.5 text-[14px] font-medium focus:outline-none"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Preferred Contact Method
                 </label>
                 <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                     {getContactIcon(agentInfo.contactMethod)}
                   </div>
                   <select
@@ -275,17 +275,17 @@ const SettingsTab = ({
                         contactMethod: e.target.value,
                       }))
                     }
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
+                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
                   >
                     <option value="WhatsApp">WhatsApp</option>
                     <option value="Email">Email</option>
                     <option value="Phone Call">Phone Call</option>
                   </select>
-                  <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+                  <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Language
                 </label>
                 <div className="relative w-full">
@@ -294,18 +294,18 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, language: e.target.value }))
                     }
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
+                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
                   >
                     <option value="English">English</option>
                     <option value="Arabic">Arabic</option>
                     <option value="French">French</option>
                     <option value="Spanish">Spanish</option>
                   </select>
-                  <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+                  <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Time Zone
                 </label>
                 <div className="relative w-full">
@@ -314,7 +314,7 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, timezone: e.target.value }))
                     }
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
+                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
                   >
                     <option value="(GMT+4) Dubai, UAE">
                       (GMT+4) Dubai, UAE
@@ -329,13 +329,13 @@ const SettingsTab = ({
                       (GMT-5) New York, USA
                     </option>
                   </select>
-                  <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+                  <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                 Agent Description
               </label>
               <div className="relative">
@@ -345,30 +345,30 @@ const SettingsTab = ({
                     setAgentInfo((p) => ({ ...p, bio: e.target.value }))
                   }
                   maxLength={1000}
-                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none transition-all"
-                  rows="4"
+                  className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none transition-all"
+                  rows="5"
                   placeholder="Tell clients about your expertise in luxury assets..."
                 ></textarea>
-                <span className="absolute bottom-3 right-4 text-[10px] text-gray-400 font-bold bg-white px-1">
+                <span className="absolute bottom-4 right-6 text-[11px] text-gray-400 font-bold bg-white px-2">
                   {agentInfo.bio.length} / 1000
                 </span>
               </div>
             </div>
 
-            <div className="pb-4">
-              <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-3">
+            <div>
+              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-4">
                 Social Profiles{" "}
                 <span className="text-gray-400 font-medium normal-case ml-1">
                   (Connect with more clients)
                 </span>
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                     <img
                       src={instagramIcon}
                       alt="Instagram"
-                      className="w-4 h-4 opacity-70"
+                      className="w-5 h-5 opacity-70"
                     />
                   </div>
                   <input
@@ -381,15 +381,15 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="instagram.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[11px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                     <img
                       src={linkedinIcon}
                       alt="LinkedIn"
-                      className="w-4 h-4 opacity-70"
+                      className="w-5 h-5 opacity-70"
                     />
                   </div>
                   <input
@@ -402,15 +402,15 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="linkedin.com/in/username"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[11px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                     <img
                       src={xIcon}
                       alt="X"
-                      className="w-3.5 h-3.5 opacity-70"
+                      className="w-4.5 h-4.5 opacity-70"
                     />
                   </div>
                   <input
@@ -423,15 +423,15 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="x.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[11px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                     <img
                       src={facebookIcon}
                       alt="Facebook"
-                      className="w-4 h-4 opacity-70"
+                      className="w-5 h-5 opacity-70"
                     />
                   </div>
                   <input
@@ -444,20 +444,20 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="facebook.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[11px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div className="pt-5 mt-auto shrink-0 border-t border-gray-50 flex">
+          <div className="pt-8 mt-10 shrink-0 border-t border-gray-50 flex">
             <button
               onClick={handleSavePersonalDetails}
               disabled={isSavingPersonal}
-              className="px-8 py-3 bg-gray-900 border border-transparent shadow-lg text-white rounded-xl text-[12px] font-bold hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
+              className="px-10 py-4 bg-gray-900 border border-transparent shadow-xl text-white rounded-2xl text-[14px] font-bold hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
             >
               {isSavingPersonal && (
-                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               )}
               Save Personal Details
             </button>
@@ -465,32 +465,32 @@ const SettingsTab = ({
         </div>
 
         {/* Company Details */}
-        <div className="bg-white border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] rounded-[1.5rem] p-4 md:p-5 flex flex-col relative min-h-[540px] xl:min-h-[640px]">
+        <div className="bg-white border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] rounded-[1.5rem] p-5 md:p-8 flex flex-col relative">
           {/* Header */}
-          <div className="flex justify-between items-start mb-5 shrink-0">
+          <div className="flex justify-between items-start mb-8 shrink-0">
             <div className="flex gap-4 items-center">
-              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-[14px] shrink-0 border border-blue-100">
+              <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-[16px] shrink-0 border border-blue-100">
                 2
               </div>
               <div className="flex flex-col">
-                <h3 className="text-[15px] md:text-[17px] font-bold text-gray-900 leading-tight">
+                <h3 className="text-[17px] md:text-[20px] font-bold text-gray-900 leading-tight">
                   Your Dealer / Company Details
                 </h3>
-                <p className="text-[11px] md:text-[12px] text-gray-400 font-medium leading-tight mt-1">
+                <p className="text-[12px] md:text-[14px] text-gray-400 font-medium leading-tight mt-1.5">
                   This information represents your business and will be visible
                   to clients.
                 </p>
               </div>
             </div>
-            <div className="bg-emerald-50 text-emerald-600 px-3 py-1.5 flex items-center gap-1.5 rounded-full text-[10px] md:text-[11px] font-bold shrink-0 border border-emerald-100">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>{" "}
+            <div className="bg-emerald-50 text-emerald-600 px-4 py-2 flex items-center gap-2 rounded-full text-[10px] md:text-[13px] font-bold shrink-0 border border-emerald-100">
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>{" "}
               Verified
             </div>
           </div>
 
-          <div className="flex-1 overflow-visible flex flex-col gap-5">
+          <div className="flex-1 overflow-visible flex flex-col gap-8">
             {/* Cover Image */}
-            <div className="relative h-28 bg-gray-50 rounded-2xl overflow-hidden group shrink-0 shadow-sm border border-gray-100 mb-2">
+            <div className="relative h-48 sm:h-64 bg-gray-50 rounded-[2rem] overflow-hidden group shrink-0 shadow-sm border border-gray-100 mb-2">
               {companyInfo.coverImage ? (
                 <img
                   src={companyInfo.coverImage}
@@ -498,16 +498,16 @@ const SettingsTab = ({
                   alt="Cover"
                 />
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 gap-2">
-                  <FiBriefcase className="text-3xl opacity-20" />{" "}
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
+                <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 gap-3">
+                  <FiBriefcase className="text-5xl opacity-20" />{" "}
+                  <span className="text-[12px] font-bold uppercase tracking-[0.3em]">
                     No Cover Image
                   </span>
                 </div>
               )}
               <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer backdrop-blur-[2px]">
-                <span className="text-white text-[11px] font-bold flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full border border-white/20">
-                  <FiUpload />{" "}
+                <span className="text-white text-[14px] font-bold flex items-center gap-3 px-8 py-4 bg-white/10 rounded-full border border-white/20 hover:bg-white/20 transition-all">
+                  <FiUpload className="text-xl" />{" "}
                   {isUploadingCover ? "Uploading..." : "Change Cover Photo"}
                 </span>
                 <input
@@ -519,10 +519,10 @@ const SettingsTab = ({
               </label>
             </div>
 
-            <div className="flex flex-col lg:flex-row justify-between gap-6">
-              <div className="flex-1 flex flex-col gap-4">
+            <div className="flex flex-col lg:flex-row justify-between gap-10">
+              <div className="flex-1 flex flex-col gap-6">
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                     Company / Dealership Name
                   </label>
                   <input
@@ -532,15 +532,15 @@ const SettingsTab = ({
                       setCompanyInfo((p) => ({ ...p, name: e.target.value }))
                     }
                     placeholder="Enter company name"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                     Website
                   </label>
                   <div className="relative">
-                    <FiLink className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+                    <FiLink className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
                     <input
                       type="text"
                       value={companyInfo.website}
@@ -551,35 +551,35 @@ const SettingsTab = ({
                         }))
                       }
                       placeholder="https://yourwebsite.com"
-                      className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                      className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                     />
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-2 min-w-[180px]">
-                <label className="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
+              <div className="flex flex-col gap-3 min-w-[240px]">
+                <label className="text-[12px] font-bold text-gray-700 uppercase tracking-wider">
                   Company Logo
                 </label>
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center border border-gray-200 shadow-sm overflow-hidden relative">
+                <div className="flex items-center gap-6">
+                  <div className="w-24 h-24 rounded-[1.5rem] bg-gray-50 flex items-center justify-center border border-gray-200 shadow-sm overflow-hidden relative">
                     {companyInfo.logo ? (
                       <img
                         src={companyInfo.logo}
-                        className="w-full h-full object-contain p-2"
+                        className="w-full h-full object-contain p-3"
                         alt="Logo"
                       />
                     ) : (
-                      <FiBriefcase className="text-gray-300 text-2xl" />
+                      <FiBriefcase className="text-gray-300 text-4xl" />
                     )}
                     {logoLoading && (
                       <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
-                        <div className="w-4 h-4 border-2 border-[#D48D2A] border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-6 h-6 border-3 border-[#D48D2A] border-t-transparent rounded-full animate-spin"></div>
                       </div>
                     )}
                   </div>
                   <div className="flex flex-col justify-center">
-                    <label className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-[11px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:bg-gray-50 hover:border-[#D48D2A] transition-all shadow-sm cursor-pointer">
-                      <FiUpload className="text-[#D48D2A]" /> Upload Logo
+                    <label className="px-5 py-3 bg-white border border-gray-200 rounded-2xl text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:bg-gray-50 hover:border-[#D48D2A] transition-all shadow-sm cursor-pointer">
+                      <FiUpload className="text-[#D48D2A] text-lg" /> Upload Logo
                       <input
                         type="file"
                         className="hidden"
@@ -587,7 +587,7 @@ const SettingsTab = ({
                         onChange={handleCompanyLogoUpload}
                       />
                     </label>
-                    <span className="text-[9px] text-gray-400 mt-1.5 font-medium ml-1">
+                    <span className="text-[10px] text-gray-400 mt-2 font-medium ml-1">
                       JPG, PNG up to 5MB
                     </span>
                   </div>
@@ -595,25 +595,25 @@ const SettingsTab = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-5">
-              <div className="md:col-span-2 2xl:col-span-1">
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+              <div>
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Company Email
                 </label>
                 <div className="relative">
-                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+                  <FiMail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
                   <input
                     type="email"
                     value={companyInfo.email}
                     onChange={(e) =>
                       setCompanyInfo((p) => ({ ...p, email: e.target.value }))
                     }
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Business Type
                 </label>
                 <div className="relative w-full">
@@ -625,7 +625,7 @@ const SettingsTab = ({
                         businessType: e.target.value,
                       }))
                     }
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
+                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
                   >
                     <option value="Luxury Cars & Supercars Dealer">
                       Luxury Cars & Supercars Dealer
@@ -638,15 +638,15 @@ const SettingsTab = ({
                       Multi-Asset Dealership
                     </option>
                   </select>
-                  <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+                  <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Established Year
                 </label>
                 <div className="relative w-full">
-                  <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+                  <FiCalendar className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
                   <input
                     type="text"
                     value={companyInfo.establishedYear}
@@ -657,16 +657,16 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="e.g. 2010"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Office Address
                 </label>
                 <div className="relative">
-                  <FiMapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+                  <FiMapPin className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
                   <input
                     type="text"
                     value={companyInfo.address}
@@ -674,16 +674,16 @@ const SettingsTab = ({
                       setCompanyInfo((p) => ({ ...p, address: e.target.value }))
                     }
                     placeholder="City, Country"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                   Phone Number
                 </label>
-                <div className="flex border border-gray-200 rounded-xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-2 focus-within:ring-[#D48D2A]/10 transition-all">
-                  <div className="flex items-center px-3 bg-gray-50 border-r border-gray-200 text-[12px] relative">
+                <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
+                  <div className="flex items-center px-4 bg-gray-50 border-r border-gray-200 text-[14px] relative">
                     <select
                       value={companyInfo.phoneCode}
                       onChange={(e) =>
@@ -692,7 +692,7 @@ const SettingsTab = ({
                           phoneCode: e.target.value,
                         }))
                       }
-                      className="appearance-none bg-transparent outline-none pr-5 cursor-pointer font-bold"
+                      className="appearance-none bg-transparent outline-none pr-6 cursor-pointer font-bold"
                     >
                       {countryCodes.map((c) => (
                         <option key={c.code} value={c.code}>
@@ -700,7 +700,7 @@ const SettingsTab = ({
                         </option>
                       ))}
                     </select>
-                    <FiChevronDown className="absolute right-2 text-[10px] text-gray-500 pointer-events-none" />
+                    <FiChevronDown className="absolute right-3 text-[11px] text-gray-500 pointer-events-none" />
                   </div>
                   <input
                     type="text"
@@ -708,14 +708,14 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setCompanyInfo((p) => ({ ...p, phone: e.target.value }))
                     }
-                    className="w-full bg-transparent px-4 py-2.5 text-[12px] font-medium focus:outline-none"
+                    className="w-full bg-transparent px-5 py-3.5 text-[14px] font-medium focus:outline-none"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-2">
+              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                 Dealer / Agent Description
               </label>
               <div className="relative">
@@ -728,30 +728,30 @@ const SettingsTab = ({
                     }))
                   }
                   maxLength={1000}
-                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none transition-all"
-                  rows="4"
+                  className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none transition-all"
+                  rows="5"
                   placeholder="Describe your dealership and the luxury assets you specialize in..."
                 ></textarea>
-                <span className="absolute bottom-3 right-4 text-[10px] text-gray-400 font-bold bg-white px-1">
+                <span className="absolute bottom-4 right-6 text-[11px] text-gray-400 font-bold bg-white px-2">
                   {companyInfo.description.length} / 1000
                 </span>
               </div>
             </div>
 
-            <div className="pb-4">
-              <label className="block text-[11px] font-bold text-gray-700 uppercase tracking-wider mb-3">
+            <div>
+              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-4">
                 Company Social Media{" "}
                 <span className="text-gray-400 font-medium normal-case ml-1">
                   (Showcase your presence)
                 </span>
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                     <img
                       src={instagramIcon}
                       alt="Instagram"
-                      className="w-4 h-4 opacity-70"
+                      className="w-5 h-5 opacity-70"
                     />
                   </div>
                   <input
@@ -764,15 +764,15 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="instagram.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[11px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                     <img
                       src={linkedinIcon}
                       alt="LinkedIn"
-                      className="w-4 h-4 opacity-70"
+                      className="w-5 h-5 opacity-70"
                     />
                   </div>
                   <input
@@ -785,15 +785,15 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="linkedin.com/company/username"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[11px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                     <img
                       src={facebookIcon}
                       alt="Facebook"
-                      className="w-4 h-4 opacity-70"
+                      className="w-5 h-5 opacity-70"
                     />
                   </div>
                   <input
@@ -806,15 +806,15 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="facebook.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[11px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                     <img
                       src={youtubeIcon}
                       alt="YouTube"
-                      className="w-4 h-4 opacity-70"
+                      className="w-5 h-5 opacity-70"
                     />
                   </div>
                   <input
@@ -827,20 +827,20 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="youtube.com/@username"
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 pl-10 text-[11px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div className="pt-5 mt-auto shrink-0 border-t border-gray-50 flex">
+          <div className="pt-8 mt-10 shrink-0 border-t border-gray-50 flex">
             <button
               onClick={handleSaveCompanyDetails}
               disabled={isSavingCompany}
-              className="px-8 py-3 bg-gray-900 border border-transparent shadow-lg text-white rounded-xl text-[12px] font-bold hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
+              className="px-10 py-4 bg-gray-900 border border-transparent shadow-xl text-white rounded-2xl text-[14px] font-bold hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
             >
               {isSavingCompany && (
-                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               )}
               Save Company Details
             </button>
