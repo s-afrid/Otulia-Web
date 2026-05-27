@@ -172,7 +172,7 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/view-document" element={<DocumentViewer />} />
           <Route path="/dealer/:email" element={<DealerProfile />} />
-          <Route path="/SellWithUs" element={<SellWithUs />} />
+          <Route path="/sellwithus" element={<SellWithUs />} />
 
           {/* Policy Routes */}
           <Route path="/terms" element={<Terms />} />
