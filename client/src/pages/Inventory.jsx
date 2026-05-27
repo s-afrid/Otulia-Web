@@ -22,6 +22,7 @@ import ContactModal from '../components/ContactModal';
 import UpgradeModal from '../components/UpgradeModal';
 import AddLeadModal from '../components/inventory/AddLeadModal';
 import ScheduleMeetingModal from '../components/inventory/ScheduleMeetingModal';
+import ImageCropModal from '../components/ImageCropModal';
 
 const Inventory = () => {
     const { user, logout, updateUserLocal } = useAuth();
@@ -169,6 +170,12 @@ const Inventory = () => {
     const [isUploadingCover, setIsUploadingCover] = useState(false);
     const [isSavingPersonal, setIsSavingPersonal] = useState(false);
     const [isSavingCompany, setIsSavingCompany] = useState(false);
+
+    // Image Cropping States
+    const [cropModalOpen, setCropModalOpen] = useState(false);
+    const [imageToCrop, setImageToCrop] = useState(null);
+    const [cropType, setCropType] = useState(null); // 'profile', 'logo', 'cover'
+    const [isCropping, setIsCropping] = useState(false);
 
     const isVerifiedDealer = user?.role === 'admin' || user?.isVerified;
 
@@ -384,71 +391,74 @@ const Inventory = () => {
         }
     };
 
-    const handleProfilePicUpload = async (e) => {
+    // Generic function to handle file selection and open crop modal
+    const onFileSelect = (e, type) => {
         const file = e.target.files[0];
-        if (!file) return;
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImageToCrop(reader.result);
+                setCropType(type);
+                setCropModalOpen(true);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleProfilePicUpload = (e) => onFileSelect(e, 'profile');
+    const handleCompanyLogoUpload = (e) => onFileSelect(e, 'logo');
+    const handleCompanyCoverUpload = (e) => onFileSelect(e, 'cover');
+
+    const handleCropComplete = async (blob) => {
+        setIsCropping(true);
+        if (cropType === 'logo') setLogoLoading(true);
+        if (cropType === 'cover') setIsUploadingCover(true);
+
         const formData = new FormData();
-        formData.append('profilePicture', file);
+        
+        let endpoint = '';
+        let fieldName = '';
+
+        if (cropType === 'profile') {
+            endpoint = '/api/auth/upload-profile-picture';
+            fieldName = 'profilePicture';
+        } else if (cropType === 'logo') {
+            endpoint = '/api/auth/upload-company-logo';
+            fieldName = 'companyLogo';
+        } else if (cropType === 'cover') {
+            endpoint = '/api/auth/upload-company-cover';
+            fieldName = 'coverPhoto';
+        }
+
+        formData.append(fieldName, blob, `cropped_${Date.now()}.png`);
+
         try {
-            const response = await fetch('/api/auth/upload-profile-picture', {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 body: formData
             });
             const result = await response.json();
+            
             if (result.user) {
-                setAgentInfo(p => ({ ...p, photo: result.user.profilePicture }));
+                if (cropType === 'profile') {
+                    setAgentInfo(p => ({ ...p, photo: result.user.profilePicture }));
+                } else if (cropType === 'logo') {
+                    setCompanyInfo(p => ({ ...p, logo: result.user.company?.companyLogo }));
+                } else if (cropType === 'cover') {
+                    setCompanyInfo(p => ({ ...p, coverImage: result.user.company?.coverPhoto }));
+                }
                 updateUserLocal(result.user);
+                setCropModalOpen(false);
+            } else {
+                alert(result.error || 'Upload failed');
             }
         } catch (error) {
             console.error('Upload error:', error);
-        }
-    };
-
-    const handleCompanyLogoUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setLogoLoading(true);
-        const formData = new FormData();
-        formData.append('companyLogo', file);
-        try {
-            const response = await fetch('/api/auth/upload-company-logo', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-                body: formData
-            });
-            const result = await response.json();
-            if (result.user) {
-                setCompanyInfo(p => ({ ...p, logo: result.user.company?.companyLogo }));
-                updateUserLocal(result.user);
-            }
-        } catch (error) {
-            console.error('Logo upload error:', error);
+            alert('An unexpected error occurred during upload.');
         } finally {
+            setIsCropping(false);
             setLogoLoading(false);
-        }
-    };
-
-    const handleCompanyCoverUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setIsUploadingCover(true);
-        const formData = new FormData();
-        formData.append('coverPhoto', file);
-        try {
-            const response = await fetch('/api/auth/upload-company-cover', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-                body: formData
-            });
-            const result = await response.json();
-            if (result.user) {
-                setCompanyInfo(p => ({ ...p, coverImage: result.user.company?.coverPhoto }));
-                updateUserLocal(result.user);
-            }
-        } catch (error) {
-            console.error('Cover upload error:', error);
-        } finally {
             setIsUploadingCover(false);
         }
     };
@@ -680,6 +690,15 @@ const Inventory = () => {
                 agentName={user?.name}
                 token={localStorage.getItem('token')}
             />
+
+            {cropModalOpen && (
+                <ImageCropModal 
+                    src={imageToCrop}
+                    onCropComplete={handleCropComplete}
+                    onClose={() => { setCropModalOpen(false); setImageToCrop(null); }}
+                    isUploading={isCropping}
+                />
+            )}
         </div>
     );
 };

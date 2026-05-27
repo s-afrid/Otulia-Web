@@ -83,9 +83,9 @@ const SettingsTab = ({
       {/* 2 Main Columns - Adjusted for Ultra-Wide Scaling */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
         {/* Personal Details */}
-        <div className="bg-white border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] rounded-[1.5rem] p-5 md:p-6 flex flex-col relative min-h-[580px] xl:min-h-[700px]">
+        <div className="bg-white border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] rounded-[1.5rem] p-4 md:p-5 flex flex-col relative min-h-[540px] xl:min-h-[640px]">
           {/* Header */}
-          <div className="flex justify-between items-start mb-6 shrink-0">
+          <div className="flex justify-between items-start mb-5 shrink-0">
             <div className="flex gap-4 items-center">
               <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 font-bold flex items-center justify-center text-[14px] shrink-0 border border-purple-100">
                 1
@@ -362,7 +362,7 @@ const SettingsTab = ({
                   (Connect with more clients)
                 </span>
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="relative w-full">
                   <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                     <img
@@ -465,9 +465,9 @@ const SettingsTab = ({
         </div>
 
         {/* Company Details */}
-        <div className="bg-white border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] rounded-[1.5rem] p-5 md:p-6 flex flex-col relative min-h-[580px] xl:min-h-[700px]">
+        <div className="bg-white border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] rounded-[1.5rem] p-4 md:p-5 flex flex-col relative min-h-[540px] xl:min-h-[640px]">
           {/* Header */}
-          <div className="flex justify-between items-start mb-6 shrink-0">
+          <div className="flex justify-between items-start mb-5 shrink-0">
             <div className="flex gap-4 items-center">
               <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-[14px] shrink-0 border border-blue-100">
                 2
@@ -745,7 +745,7 @@ const SettingsTab = ({
                   (Showcase your presence)
                 </span>
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="relative w-full">
                   <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                     <img
