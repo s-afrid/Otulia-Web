@@ -53,6 +53,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         interiorMaterial: '', manufacturerColorCode: '',
         matchingNumbers: '', accidentFree: '', numberOfOwners: '1',
         countryOfFirstDelivery: '', currentCarLocation: '',
+        soulOfTheCar: '', idealBuyer: '',
 
         // Yacht Specific
         yachtName: '', builder: '', length: '', beam: '', draft: '',
@@ -246,6 +247,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 ownershipCount: spec.numberOfOwners || spec.ownershipCount || '1',
                 latitude: spec.latitude || '',
                 longitude: spec.longitude || '',
+                soulOfTheCar: spec.soulOfTheCar || '',
+                idealBuyer: spec.idealBuyer || '',
 
                 // Yacht Specific
                 yachtName: editData.yachtName || (type === 'Yacht' ? editData.title : '') || '',
@@ -721,6 +724,33 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         )}
                                     </div>
                                 </div>
+
+                                {assetType === 'Car' && (
+                                    <div className="col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+                                        <div className="flex flex-col">
+                                            <label className="block text-[10px] font-bold text-[#D48D2A] uppercase tracking-widest mb-3">Soul of the Car</label>
+                                            <textarea
+                                                name="soulOfTheCar"
+                                                value={formData.soulOfTheCar}
+                                                onChange={handleInputChange}
+                                                placeholder="e.g. A celebration of 60 years of the 911..."
+                                                rows="4"
+                                                className="w-full p-6 bg-white border border-[#D48D2A]/20 rounded-[1.5rem] focus:outline-none focus:border-[#D48D2A] transition-all text-sm leading-relaxed text-gray-700 shadow-sm"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <label className="block text-[10px] font-bold text-[#D48D2A] uppercase tracking-widest mb-3">Ideal Buyer</label>
+                                            <textarea
+                                                name="idealBuyer"
+                                                value={formData.idealBuyer}
+                                                onChange={handleInputChange}
+                                                placeholder="e.g. Made for Porsche lovers who enjoy pure driving..."
+                                                rows="4"
+                                                className="w-full p-6 bg-white border border-[#D48D2A]/20 rounded-[1.5rem] focus:outline-none focus:border-[#D48D2A] transition-all text-sm leading-relaxed text-gray-700 shadow-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
 
                                 <LocationInputField label="Location *" name="location" value={formData.location} placeholder="Beverly Hills, CA" onChange={handleInputChange} required />
                             </div>

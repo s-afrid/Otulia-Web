@@ -56,6 +56,8 @@ const carAssetSchema = new mongoose.Schema(
       carLocation: String,
       latitude: String,
       longitude: String,
+      soulOfTheCar: String,
+      idealBuyer: String,
     },
 
     agent: {

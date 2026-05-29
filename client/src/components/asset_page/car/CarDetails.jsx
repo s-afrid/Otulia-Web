@@ -288,6 +288,32 @@ Reference ID: #${refId}
               <span className="text-xs font-medium montserrat">{location}</span>
             </div>
 
+            {/* Soul & Ideal Buyer Section */}
+            {(item.specification?.soulOfTheCar || item.specification?.idealBuyer) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-10 pb-10 border-b border-gray-100">
+                {item.specification?.soulOfTheCar && (
+                  <div className="flex flex-col">
+                    <h2 className="text-[10px] md:text-xs font-bold text-[#B58252] uppercase tracking-[0.2em] mb-4">
+                      SOUL OF THE CAR
+                    </h2>
+                    <p className="text-gray-800 leading-relaxed text-sm montserrat font-medium italic">
+                      "{item.specification.soulOfTheCar}"
+                    </p>
+                  </div>
+                )}
+                {item.specification?.idealBuyer && (
+                  <div className="flex flex-col">
+                    <h2 className="text-[10px] md:text-xs font-bold text-[#B58252] uppercase tracking-[0.2em] mb-4">
+                      IDEAL BUYER
+                    </h2>
+                    <p className="text-gray-600 leading-relaxed text-sm montserrat">
+                      {item.specification.idealBuyer}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="mb-8">
               <h2 className="text-[10px] md:text-xs font-bold text-[#B58252] uppercase tracking-[0.2em] mb-4">
                 ABOUT THE CAR

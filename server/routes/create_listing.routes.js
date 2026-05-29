@@ -445,6 +445,8 @@ router.post('/create', authMiddleware, upload.fields([
                 carLocation: req.body.currentCarLocation || location,
                 latitude: req.body.latitude,
                 longitude: req.body.longitude,
+                soulOfTheCar: req.body.soulOfTheCar,
+                idealBuyer: req.body.idealBuyer,
             };
         } else if (category === 'Bike') {
             updateData.brand = req.body.brand || req.body.make;
@@ -850,6 +852,8 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.currentCarLocation || location) spec.carLocation = req.body.currentCarLocation || location;
             if (req.body.latitude) spec.latitude = req.body.latitude;
             if (req.body.longitude) spec.longitude = req.body.longitude;
+            if (req.body.soulOfTheCar) spec.soulOfTheCar = req.body.soulOfTheCar;
+            if (req.body.idealBuyer) spec.idealBuyer = req.body.idealBuyer;
 
             listing.specification = spec;
             listing.keySpecifications = keySpec;
