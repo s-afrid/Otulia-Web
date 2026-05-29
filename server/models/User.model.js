@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema(
     whatsapp: String,
     whatsappCode: String,
     jobTitle: String,
-    language: String,
+    languages: [String],
     timezone: String,
     contactMethod: String,
     agentDescription: String,
@@ -79,6 +79,7 @@ const userSchema = new mongoose.Schema(
       whatsapp: String,
       whatsappCode: String,
       email: String,
+      languagesKnown: [String],
       social: {
         instagram: String,
         linkedin: String,

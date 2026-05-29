@@ -18,6 +18,7 @@ import {
   FiChevronRight,
   FiMessageSquare,
   FiCalendar,
+  FiX,
 } from "react-icons/fi";
 
 import facebookIcon from "../../assets/icons/social/facebook.svg";
@@ -44,6 +45,32 @@ const SettingsTab = ({
   handleSaveCompanyDetails,
   setIsVerificationModalOpen,
 }) => {
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = React.useState(false);
+  const langDropdownRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(event.target)) {
+        setIsLangDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const availableLanguages = [
+    "English", "Arabic", "French", "Spanish", "German", "Italian", "Russian", "Chinese", "Japanese", "Portuguese", "Hindi", "Urdu", "Turkish"
+  ];
+
+  const toggleLanguage = (lang) => {
+    const currentLangs = companyInfo.languagesKnown || [];
+    if (currentLangs.includes(lang)) {
+      setCompanyInfo({ ...companyInfo, languagesKnown: currentLangs.filter(l => l !== lang) });
+    } else {
+      setCompanyInfo({ ...companyInfo, languagesKnown: [...currentLangs, lang] });
+    }
+  };
+
   const countryCodes = [
     { code: "+971", iso: "ae", name: "UAE" },
     { code: "+91", iso: "in", name: "India" },
@@ -540,7 +567,7 @@ const SettingsTab = ({
             </div>
 
             <div className="flex flex-col lg:flex-row justify-between gap-10">
-              <div className="flex-1 flex flex-col gap-6">
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
                     Company / Dealership Name
@@ -573,6 +600,70 @@ const SettingsTab = ({
                       placeholder="https://yourwebsite.com"
                       className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                     />
+                  </div>
+                </div>
+                <div className="relative" ref={langDropdownRef}>
+                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                    Languages Known
+                  </label>
+                  <div 
+                    onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 flex items-center justify-between cursor-pointer hover:border-[#D48D2A] transition-all shadow-sm"
+                  >
+                    <span className="text-gray-400 font-medium text-[14px]">
+                      {companyInfo.languagesKnown?.length > 0 
+                        ? `${companyInfo.languagesKnown.length} languages selected` 
+                        : "Select languages..."}
+                    </span>
+                    <FiChevronDown className={`text-gray-400 transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`} />
+                  </div>
+                  
+                  {isLangDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl p-4 grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                      {availableLanguages.map(lang => (
+                        <div 
+                          key={lang} 
+                          onClick={(e) => { e.stopPropagation(); toggleLanguage(lang); }}
+                          className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors"
+                        >
+                          <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${
+                            companyInfo.languagesKnown?.includes(lang) 
+                              ? "bg-[#D48D2A] border-[#D48D2A]" 
+                              : "border-gray-200 bg-white"
+                          }`}>
+                            {companyInfo.languagesKnown?.includes(lang) && <FiCheck className="text-white text-xs" />}
+                          </div>
+                          <span className={`text-xs font-bold ${companyInfo.languagesKnown?.includes(lang) ? "text-[#D48D2A]" : "text-gray-600"}`}>
+                            {lang}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {/* Active Selection Display */}
+                <div className="flex flex-col">
+                  <label className="block text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">
+                    Active Selection
+                  </label>
+                  <div className="flex flex-wrap gap-2 items-center min-h-[48px]">
+                    {companyInfo.languagesKnown?.length > 0 ? (
+                      companyInfo.languagesKnown.map(lang => (
+                        <div key={lang} className="bg-[#D48D2A]/5 border border-[#D48D2A]/20 px-4 py-2 rounded-xl flex items-center gap-3 group animate-in zoom-in-95 duration-200">
+                          <span className="text-[13px] font-bold text-gray-800">{lang}</span>
+                          <button 
+                            onClick={() => toggleLanguage(lang)}
+                            className="text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            <FiX className="text-xs" />
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="bg-gray-50 border border-dashed border-gray-200 px-5 py-2.5 rounded-xl">
+                        <span className="text-[12px] text-gray-400 font-medium italic">No languages selected.</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

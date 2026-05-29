@@ -111,6 +111,7 @@ const Inventory = () => {
         description: '',
         logo: '',
         coverImage: '',
+        languagesKnown: [],
         social: {
             instagram: '',
             linkedin: '',
@@ -155,6 +156,7 @@ const Inventory = () => {
                 description: user.company?.description || '',
                 logo: user.company?.companyLogo || '',
                 coverImage: user.company?.coverPhoto || '',
+                languagesKnown: user.company?.languagesKnown || [],
                 social: {
                     instagram: user.company?.social?.instagram || '',
                     linkedin: user.company?.social?.linkedin || '',
@@ -369,6 +371,7 @@ const Inventory = () => {
                         description: companyInfo.description,
                         companyLogo: companyInfo.logo,
                         coverPhoto: companyInfo.coverImage,
+                        languagesKnown: companyInfo.languagesKnown,
                         social: {
                             instagram: companyInfo.social.instagram,
                             linkedin: companyInfo.social.linkedin,

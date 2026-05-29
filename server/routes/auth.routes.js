@@ -422,10 +422,10 @@ router.post("/upgrade-plan", authMiddleware, async (req, res) => {
  */
 router.put("/update-profile", authMiddleware, async (req, res) => {
   try {
-    const { 
-      name, phone, phoneCode, whatsapp, whatsappCode, 
-      jobTitle, language, timezone, contactMethod, preferredContact,
-      agentDescription, social, profilePicture, company 
+    const {
+      name, phone, phoneCode, whatsapp, whatsappCode,
+      jobTitle, languages, timezone, contactMethod, preferredContact,
+      agentDescription, social, profilePicture, company
     } = req.body;
 
     const user = await User.findById(req.user.id);
@@ -437,7 +437,7 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     if (whatsapp) user.whatsapp = whatsapp;
     if (whatsappCode) user.whatsappCode = whatsappCode;
     if (jobTitle) user.jobTitle = jobTitle;
-    if (language) user.language = language;
+    if (languages) user.languages = languages;
     if (timezone) user.timezone = timezone;
     if (contactMethod || preferredContact) user.contactMethod = contactMethod || preferredContact;
     if (agentDescription) user.agentDescription = agentDescription;
