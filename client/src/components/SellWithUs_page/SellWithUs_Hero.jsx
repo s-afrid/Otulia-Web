@@ -1,5 +1,5 @@
 import React from "react";
-import heroUrl from "../../assets/hero_banners/hero_car.webp";
+import heroUrl from "../../assets/hero_banners/hero_sellwithus.webp";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
 
