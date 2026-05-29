@@ -41,10 +41,10 @@ router.get("/popularity", async (req, res) => {
     const limit = 10;
     const [carAssets, estateAssets, bikeAssets, yachtAssets] =
       await Promise.all([
-        CarAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
-        // EstateAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
-        // BikeAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
-        // YachtAsset.find().sort({ popularity: -1 }).limit(limit).lean(),
+        CarAsset.find({ status: 'Active' }).sort({ popularity: -1 }).limit(limit).lean(),
+        EstateAsset.find({ status: 'Active' }).sort({ popularity: -1 }).limit(limit).lean(),
+        BikeAsset.find({ status: 'Active' }).sort({ popularity: -1 }).limit(limit).lean(),
+        YachtAsset.find({ status: 'Active' }).sort({ popularity: -1 }).limit(limit).lean(),
       ]);
 
     const combinedAssets = [
