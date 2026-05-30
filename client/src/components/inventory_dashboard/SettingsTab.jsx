@@ -50,7 +50,10 @@ const SettingsTab = ({
 
   React.useEffect(() => {
     const handleClickOutside = (event) => {
-      if (langDropdownRef.current && !langDropdownRef.current.contains(event.target)) {
+      if (
+        langDropdownRef.current &&
+        !langDropdownRef.current.contains(event.target)
+      ) {
         setIsLangDropdownOpen(false);
       }
     };
@@ -59,15 +62,33 @@ const SettingsTab = ({
   }, []);
 
   const availableLanguages = [
-    "English", "Arabic", "French", "Spanish", "German", "Italian", "Russian", "Chinese", "Japanese", "Portuguese", "Hindi", "Urdu", "Turkish"
+    "English",
+    "Arabic",
+    "French",
+    "Spanish",
+    "German",
+    "Italian",
+    "Russian",
+    "Chinese",
+    "Japanese",
+    "Portuguese",
+    "Hindi",
+    "Urdu",
+    "Turkish",
   ];
 
   const toggleLanguage = (lang) => {
     const currentLangs = companyInfo.languagesKnown || [];
     if (currentLangs.includes(lang)) {
-      setCompanyInfo({ ...companyInfo, languagesKnown: currentLangs.filter(l => l !== lang) });
+      setCompanyInfo({
+        ...companyInfo,
+        languagesKnown: currentLangs.filter((l) => l !== lang),
+      });
     } else {
-      setCompanyInfo({ ...companyInfo, languagesKnown: [...currentLangs, lang] });
+      setCompanyInfo({
+        ...companyInfo,
+        languagesKnown: [...currentLangs, lang],
+      });
     }
   };
 
@@ -138,7 +159,7 @@ const SettingsTab = ({
             {/* Photo & Basic Info Row */}
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 pb-2">
               <div className="flex flex-col gap-3">
-                <label className="text-[12px] font-bold text-gray-700 uppercase tracking-wider">
+                <label className="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
                   Profile Photo
                 </label>
                 <div className="flex items-center gap-5">
@@ -155,7 +176,8 @@ const SettingsTab = ({
                   </div>
                   <div className="flex flex-col justify-center">
                     <label className="px-6 py-3 cursor-pointer bg-white border border-gray-200 rounded-2xl text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:bg-gray-50 hover:border-[#D48D2A] transition-all shadow-sm">
-                      <FiUpload className="text-[#D48D2A] text-lg" /> Upload Photo
+                      <FiUpload className="text-[#D48D2A] text-lg" /> Upload
+                      Photo
                       <input
                         type="file"
                         className="hidden"
@@ -171,7 +193,7 @@ const SettingsTab = ({
               </div>
               <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex-1">
-                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
                     Full Name
                   </label>
                   <input
@@ -185,7 +207,7 @@ const SettingsTab = ({
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
                     Job Title / Role
                   </label>
                   <input
@@ -201,9 +223,9 @@ const SettingsTab = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-6">
-              <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-3">
+                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
                   Email Address
                 </label>
                 <div className="relative">
@@ -218,16 +240,16 @@ const SettingsTab = ({
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+              <div className="col-span-3">
+                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
                   Phone Number
                 </label>
                 <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
-                  <div className="flex items-center px-4 py-3.5 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
+                  <div className="flex items-center px-2 py-1.5 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
                     <div className="pointer-events-none flex items-center gap-2 font-bold text-gray-700">
                       <img
-                        src={`https://flagcdn.com/w20/${countryCodes.find(c => c.code === agentInfo.phoneCode)?.iso || "ae"}.png`}
-                        srcSet={`https://flagcdn.com/w40/${countryCodes.find(c => c.code === agentInfo.phoneCode)?.iso || "ae"}.png 2x`}
+                        src={`https://flagcdn.com/w20/${countryCodes.find((c) => c.code === agentInfo.phoneCode)?.iso || "ae"}.png`}
+                        srcSet={`https://flagcdn.com/w40/${countryCodes.find((c) => c.code === agentInfo.phoneCode)?.iso || "ae"}.png 2x`}
                         alt="flag"
                         className="w-5 h-auto rounded-sm shadow-sm"
                       />
@@ -257,21 +279,21 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, phone: e.target.value }))
                     }
-                    className="w-full bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none min-w-0"
+                    className="w-full min-w-[120px] bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none"
                     placeholder="Enter phone number"
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+              <div className="col-span-3">
+                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
                   WhatsApp Number
                 </label>
                 <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
-                  <div className="flex items-center px-4 py-3.5 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
+                  <div className="flex items-center px-2 py-2 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
                     <div className="pointer-events-none flex items-center gap-2 font-bold text-gray-700">
                       <img
-                        src={`https://flagcdn.com/w20/${countryCodes.find(c => c.code === agentInfo.whatsappCode)?.iso || "ae"}.png`}
-                        srcSet={`https://flagcdn.com/w40/${countryCodes.find(c => c.code === agentInfo.whatsappCode)?.iso || "ae"}.png 2x`}
+                        src={`https://flagcdn.com/w20/${countryCodes.find((c) => c.code === agentInfo.whatsappCode)?.iso || "ae"}.png`}
+                        srcSet={`https://flagcdn.com/w40/${countryCodes.find((c) => c.code === agentInfo.whatsappCode)?.iso || "ae"}.png 2x`}
                         alt="flag"
                         className="w-5 h-auto rounded-sm shadow-sm"
                       />
@@ -301,13 +323,13 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, whatsapp: e.target.value }))
                     }
-                    className="w-full bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none min-w-0"
+                    className="w-full min-w-[120px] bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none"
                     placeholder="Enter WhatsApp number"
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+              <div className="col-span-3">
+                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
                   Preferred Contact Method
                 </label>
                 <div className="relative w-full">
@@ -331,8 +353,8 @@ const SettingsTab = ({
                   <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
-              <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+              <div className="col-span-2">
+                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
                   Language
                 </label>
                 <div className="relative w-full">
@@ -351,8 +373,8 @@ const SettingsTab = ({
                   <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
-              <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+              <div className="col-span-3">
+                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
                   Time Zone
                 </label>
                 <div className="relative w-full">
@@ -382,7 +404,7 @@ const SettingsTab = ({
             </div>
 
             <div>
-              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5 ">
                 Agent Description
               </label>
               <div className="relative">
@@ -566,108 +588,9 @@ const SettingsTab = ({
               </label>
             </div>
 
-            <div className="flex flex-col lg:flex-row justify-between gap-10">
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
-                    Company / Dealership Name
-                  </label>
-                  <input
-                    type="text"
-                    value={companyInfo.name}
-                    onChange={(e) =>
-                      setCompanyInfo((p) => ({ ...p, name: e.target.value }))
-                    }
-                    placeholder="Enter company name"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
-                    Website
-                  </label>
-                  <div className="relative">
-                    <FiLink className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-                    <input
-                      type="text"
-                      value={companyInfo.website}
-                      onChange={(e) =>
-                        setCompanyInfo((p) => ({
-                          ...p,
-                          website: e.target.value,
-                        }))
-                      }
-                      placeholder="https://yourwebsite.com"
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
-                    />
-                  </div>
-                </div>
-                <div className="relative" ref={langDropdownRef}>
-                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
-                    Languages Known
-                  </label>
-                  <div 
-                    onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 flex items-center justify-between cursor-pointer hover:border-[#D48D2A] transition-all shadow-sm"
-                  >
-                    <span className="text-gray-400 font-medium text-[14px]">
-                      {companyInfo.languagesKnown?.length > 0 
-                        ? `${companyInfo.languagesKnown.length} languages selected` 
-                        : "Select languages..."}
-                    </span>
-                    <FiChevronDown className={`text-gray-400 transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`} />
-                  </div>
-                  
-                  {isLangDropdownOpen && (
-                    <div className="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl p-4 grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                      {availableLanguages.map(lang => (
-                        <div 
-                          key={lang} 
-                          onClick={(e) => { e.stopPropagation(); toggleLanguage(lang); }}
-                          className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors"
-                        >
-                          <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${
-                            companyInfo.languagesKnown?.includes(lang) 
-                              ? "bg-[#D48D2A] border-[#D48D2A]" 
-                              : "border-gray-200 bg-white"
-                          }`}>
-                            {companyInfo.languagesKnown?.includes(lang) && <FiCheck className="text-white text-xs" />}
-                          </div>
-                          <span className={`text-xs font-bold ${companyInfo.languagesKnown?.includes(lang) ? "text-[#D48D2A]" : "text-gray-600"}`}>
-                            {lang}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {/* Active Selection Display */}
-                <div className="flex flex-col">
-                  <label className="block text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">
-                    Active Selection
-                  </label>
-                  <div className="flex flex-wrap gap-2 items-center min-h-[48px]">
-                    {companyInfo.languagesKnown?.length > 0 ? (
-                      companyInfo.languagesKnown.map(lang => (
-                        <div key={lang} className="bg-[#D48D2A]/5 border border-[#D48D2A]/20 px-4 py-2 rounded-xl flex items-center gap-3 group animate-in zoom-in-95 duration-200">
-                          <span className="text-[13px] font-bold text-gray-800">{lang}</span>
-                          <button 
-                            onClick={() => toggleLanguage(lang)}
-                            className="text-gray-400 hover:text-red-500 transition-colors"
-                          >
-                            <FiX className="text-xs" />
-                          </button>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="bg-gray-50 border border-dashed border-gray-200 px-5 py-2.5 rounded-xl">
-                        <span className="text-[12px] text-gray-400 font-medium italic">No languages selected.</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-3 min-w-[240px]">
+            <div className="flex flex-col md:flex-row items-start gap-8 pb-2">
+              {/* Left: Logo */}
+              <div className="flex flex-col gap-3 shrink-0">
                 <label className="text-[12px] font-bold text-gray-700 uppercase tracking-wider">
                   Company Logo
                 </label>
@@ -690,7 +613,8 @@ const SettingsTab = ({
                   </div>
                   <div className="flex flex-col justify-center">
                     <label className="px-5 py-3 bg-white border border-gray-200 rounded-2xl text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:bg-gray-50 hover:border-[#D48D2A] transition-all shadow-sm cursor-pointer">
-                      <FiUpload className="text-[#D48D2A] text-lg" /> Upload Logo
+                      <FiUpload className="text-[#D48D2A] text-lg" /> Upload
+                      Logo
                       <input
                         type="file"
                         className="hidden"
@@ -701,6 +625,127 @@ const SettingsTab = ({
                     <span className="text-[10px] text-gray-400 mt-2 font-medium ml-1">
                       JPG, PNG up to 5MB
                     </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: 2-column grid — Name+Languages left, Website+Active right */}
+              <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-6">
+                {/* Row 1 left: Company Name */}
+                <div>
+                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                    Company / Dealership Name
+                  </label>
+                  <input
+                    type="text"
+                    value={companyInfo.name}
+                    onChange={(e) =>
+                      setCompanyInfo((p) => ({ ...p, name: e.target.value }))
+                    }
+                    placeholder="Enter company name"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                  />
+                </div>
+
+                {/* Row 1 right: Website */}
+                <div>
+                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                    Website
+                  </label>
+                  <div className="relative">
+                    <FiLink className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+                    <input
+                      type="text"
+                      value={companyInfo.website}
+                      onChange={(e) =>
+                        setCompanyInfo((p) => ({
+                          ...p,
+                          website: e.target.value,
+                        }))
+                      }
+                      placeholder="https://yourwebsite.com"
+                      className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 2 left: Languages Known */}
+                <div className="relative" ref={langDropdownRef}>
+                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                    Languages Known
+                  </label>
+                  <div
+                    onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 flex items-center justify-between cursor-pointer hover:border-[#D48D2A] transition-all shadow-sm"
+                  >
+                    <span className="text-gray-400 font-medium text-[14px]">
+                      {companyInfo.languagesKnown?.length > 0
+                        ? `${companyInfo.languagesKnown.length} languages selected`
+                        : "Select languages..."}
+                    </span>
+                    <FiChevronDown
+                      className={`text-gray-400 transition-transform ${isLangDropdownOpen ? "rotate-180" : ""}`}
+                    />
+                  </div>
+                  {isLangDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl p-4 grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                      {availableLanguages.map((lang) => (
+                        <div
+                          key={lang}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleLanguage(lang);
+                          }}
+                          className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors"
+                        >
+                          <div
+                            className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${companyInfo.languagesKnown?.includes(lang) ? "bg-[#D48D2A] border-[#D48D2A]" : "border-gray-200 bg-white"}`}
+                          >
+                            {companyInfo.languagesKnown?.includes(lang) && (
+                              <FiCheck className="text-white text-xs" />
+                            )}
+                          </div>
+                          <span
+                            className={`text-xs font-bold ${companyInfo.languagesKnown?.includes(lang) ? "text-[#D48D2A]" : "text-gray-600"}`}
+                          >
+                            {lang}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Row 2 right: Active Selection */}
+                <div className="flex flex-col">
+                  <label className="block text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">
+                    Active Selection
+                  </label>
+                  <div className="flex flex-wrap gap-2 items-center min-h-[48px]">
+                    {companyInfo.languagesKnown?.length > 0 ? (
+                      companyInfo.languagesKnown.map((lang) => (
+                        <div
+                          key={lang}
+                          className="bg-[#D48D2A]/5 border border-[#D48D2A]/20 px-4 py-2 rounded-xl flex items-center gap-3 group animate-in zoom-in-95 duration-200"
+                        >
+                          <span className="text-[13px] font-bold text-gray-800">
+                            {lang}
+                          </span>
+                          <button
+                            onClick={() => toggleLanguage(lang)}
+                            className="text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            <FiX className="text-xs" />
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="bg-gray-50 border border-dashed border-gray-200 px-5 py-2.5 rounded-xl">
+                        <span className="text-[12px] text-gray-400 font-medium italic">
+                          No languages selected.
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -797,8 +842,8 @@ const SettingsTab = ({
                   <div className="flex items-center px-4 py-3.5 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
                     <div className="pointer-events-none flex items-center gap-2 font-bold text-gray-700">
                       <img
-                        src={`https://flagcdn.com/w20/${countryCodes.find(c => c.code === companyInfo.phoneCode)?.iso || "ae"}.png`}
-                        srcSet={`https://flagcdn.com/w40/${countryCodes.find(c => c.code === companyInfo.phoneCode)?.iso || "ae"}.png 2x`}
+                        src={`https://flagcdn.com/w20/${countryCodes.find((c) => c.code === companyInfo.phoneCode)?.iso || "ae"}.png`}
+                        srcSet={`https://flagcdn.com/w40/${countryCodes.find((c) => c.code === companyInfo.phoneCode)?.iso || "ae"}.png 2x`}
                         alt="flag"
                         className="w-5 h-auto rounded-sm shadow-sm"
                       />
@@ -1011,7 +1056,8 @@ const SettingsTab = ({
               onClick={() => setIsVerificationModalOpen(true)}
               className="text-[11px] font-bold text-gray-600 hover:text-[#D48D2A] transition-colors w-full flex items-center justify-center gap-2"
             >
-              View Verification Details <FiChevronRight className="text-[10px]" />
+              View Verification Details{" "}
+              <FiChevronRight className="text-[10px]" />
             </button>
           </div>
         </div>
@@ -1097,7 +1143,9 @@ const SettingsTab = ({
                 <FiCheckCircle className="text-[14px] text-emerald-400" />{" "}
                 Two-Factor Auth
               </span>
-              <span className="text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full text-[9px]">Enabled</span>
+              <span className="text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full text-[9px]">
+                Enabled
+              </span>
             </div>
             <div className="flex justify-between items-center text-[11px] font-medium text-gray-600">
               <span className="flex items-center gap-2 text-gray-700">
