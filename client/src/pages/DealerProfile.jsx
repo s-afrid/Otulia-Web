@@ -111,6 +111,7 @@ const DealerProfile = () => {
   const displaySocial = isPremium
     ? user.company?.social || user.social
     : user.social;
+  const displayLanguages = user.company?.languagesKnown || [];
   const displayLanguage = user.language || "English";
 
   // Mocked/Calculated data for UI matching
@@ -212,7 +213,7 @@ const DealerProfile = () => {
         </div>
 
         {/* Details Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div className="flex flex-col">
             <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
               Address
@@ -307,6 +308,24 @@ const DealerProfile = () => {
               )}
             </div>
           </div>
+
+          {displayLanguages.length > 0 && (
+            <div className="flex flex-col">
+              <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] mb-4">
+                Languages
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {displayLanguages.map((lang) => (
+                  <span
+                    key={lang}
+                    className="text-[10px] font-bold text-gray-900 border border-gray-200 px-3 py-1 rounded-full uppercase tracking-tighter"
+                  >
+                    {lang}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* About Section */}

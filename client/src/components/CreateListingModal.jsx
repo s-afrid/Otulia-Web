@@ -114,6 +114,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         smartHomeSystems: editData?.smartHomeSystems || [],
         viewTypes: editData?.viewTypes || [],
 
+        soulOfTheCar: editData?.specification?.soulOfTheCar || '',
+        idealBuyer: editData?.specification?.idealBuyer || '',
+
         // Key Highlights
         highlight_hp: '', highlight_km: '', highlight_cc: '',
         highlight_length: '', highlight_baths: '', highlight_beds: '',
@@ -254,6 +257,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 amenities: editData.amenities || [],
                 smartHomeSystems: editData.smartHomeSystems || [],
                 viewTypes: editData.viewTypes || [],
+
+                soulOfTheCar: spec.soulOfTheCar || '',
+                idealBuyer: spec.idealBuyer || '',
 
                 // Fixed Highlights
                 highlight_hp: (() => {
@@ -720,6 +726,37 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                             )}
                         </div>
                     </div>
+
+                    {formData.category === 'Car' && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="flex flex-col">
+                                <label className="block text-[10px] font-bold text-[#D48D2A] uppercase tracking-widest mb-2.5">
+                                    Soul of the Car
+                                </label>
+                                <textarea
+                                    name="soulOfTheCar"
+                                    value={formData.soulOfTheCar}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g. A celebration of 60 years of the 911..."
+                                    rows="4"
+                                    className="w-full p-4 bg-white border border-[#D48D2A]/30 rounded-2xl focus:outline-none focus:border-[#D48D2A] transition-all text-sm leading-relaxed text-gray-700 shadow-sm"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="block text-[10px] font-bold text-[#D48D2A] uppercase tracking-widest mb-2.5">
+                                    Ideal Buyer
+                                </label>
+                                <textarea
+                                    name="idealBuyer"
+                                    value={formData.idealBuyer}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g. Made for Porsche lovers who enjoy pure driving..."
+                                    rows="4"
+                                    className="w-full p-4 bg-white border border-[#D48D2A]/30 rounded-2xl focus:outline-none focus:border-[#D48D2A] transition-all text-sm leading-relaxed text-gray-700 shadow-sm"
+                                />
+                            </div>
+                        </div>
+                    )}
 
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Location</label>
