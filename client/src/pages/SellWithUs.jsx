@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import NavbarSellwithus from "../components/NavbarSellwithus";
 import Hero from "../components/home_page/Hero";
 import {
@@ -25,7 +26,7 @@ import NJMcard from "../assets/sellwithus_page/njm_card.png";
 import RankingCard from "../assets/sellwithus_page/ranking_card.png";
 import CreditsCard from "../assets/sellwithus_page/credits_card.png";
 
-function Sellwithus() {
+function SellWithUs() {
   const featuredBrands = [
     "Chrono24",
     "Bring a Trailer",
@@ -83,7 +84,7 @@ function Sellwithus() {
       <SellWithUs_Hero />
 
       {/* MARKET VALIDATION SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto flex flex-col items-center">
           {/* Top Label */}
           <div className="flex items-center gap-4 mb-8">
@@ -165,8 +166,8 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* GROW BUSINESS SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16">
-        <div className="max-w-6xl mx-auto flex flex-col items-center">
+      <section className="w-full bg-white py-16 px-6 md:px-10 lg:px-16">
+        <div className="max-w-4xl  mx-auto flex flex-col items-center">
           {/* Heading */}
           <h2
             className="text-center text-black text-[42px] md:text-[64px] font-light leading-tight"
@@ -187,7 +188,7 @@ function Sellwithus() {
 
       {/* NUMBERED_CARDS */}
 
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto">
           {/* Top Line */}
           <div className="w-full h-[1px] bg-black/10 mb-10"></div>
@@ -220,7 +221,7 @@ function Sellwithus() {
                 className="mt-3 text-[40px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
-                Out Reach Forms
+                Outreach Forms
               </h3>
 
               {/* Description */}
@@ -234,8 +235,8 @@ function Sellwithus() {
             {/* RIGHT SIDE IMAGE */}
             <div className="flex justify-center lg:justify-end">
               <img
-                src={OutreachForm}//OutreachForm
-                alt="Buyer Flow"
+                src={OutreachForm}
+                alt="Outreach form example"
                 className="w-full max-w-[640px] object-contain"
               />
             </div>
@@ -326,7 +327,7 @@ function Sellwithus() {
       </section>
 
       {/* SELL EMOTIONS VS SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
         {/* TITLE */}
         <div className="flex flex-col items-center text-center mb-12">
           <h2
@@ -381,7 +382,7 @@ function Sellwithus() {
       {/* Line */}
       <div className="w-full h-[1px] bg-black/10"></div>
 
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* LEFT CONTENT */}
           <div className="max-w-xl">
@@ -420,7 +421,7 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* SELL SMARTER SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           {/* HEADING */}
           <div className="text-center mb-24">
@@ -454,8 +455,8 @@ function Sellwithus() {
 
             {/* RIGHT IMAGE PLACEHOLDER */}
             <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-[620px] aspect-[16/9] border border-[#E2B867] rounded-[6px] bg-white shadow-sm flex items-center justify-center">
-                <img src={DashboardCard} />
+              <div className="w-full max-w-[620px] aspect-[16/9]  rounded-[6px] bg-white shadow-sm flex items-center justify-center">
+                <img src={DashboardCard} alt="Otulia dashboard preview" />
               </div>
             </div>
           </div>
@@ -464,8 +465,8 @@ function Sellwithus() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mt-28">
             {/* LEFT IMAGE PLACEHOLDER */}
             <div className="flex justify-center lg:justify-start order-2 lg:order-1">
-              <div className="w-full max-w-[620px] border border-[#E2B867] rounded-[2px] bg-white shadow-sm flex items-center justify-center">
-                <img src={AnalyticsCard} />
+              <div className="w-full max-w-[620px]  rounded-[2px] bg-white shadow-sm flex items-center justify-center">
+                <img src={AnalyticsCard} alt="Analytics preview" />
               </div>
             </div>
 
@@ -493,7 +494,7 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* NJM ID SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             {/* LEFT CONTENT */}
@@ -524,7 +525,7 @@ function Sellwithus() {
 
             {/* RIGHT VISUAL AREA */}
             <div className="relative flex items-center justify-center min-h-[520px]">
-              <img src={NJMcard} />
+              <img src={NJMcard} alt="NJM ID card visual" />
             </div>
           </div>
         </div>
@@ -533,13 +534,13 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* RANKING SYSTEM SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             {/* LEFT IMAGE PLACEHOLDER */}
             <div className="flex justify-center lg:justify-start">
               <div className="w-full max-w-[760px] aspect-[1.15/1] bg-white/40 rounded-[8px] flex items-center justify-center">
-                <img src={RankingCard} />
+                <img src={RankingCard} alt="Ranking system preview" />
               </div>
             </div>
 
@@ -632,98 +633,12 @@ function Sellwithus() {
         </div>
       </section>
 
-      {/* OTULIA CREDITS SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            {/* LEFT CONTENT */}
-            <div>
-              {/* HEADING */}
-              <h2
-                className="text-black text-[42px] md:text-[68px] leading-[1.12] tracking-[-0.04em] font-light"
-                style={{ fontFamily: "serif" }}
-              >
-                Build Long-Term Buyer Engagement
-                <br />
-                With <span className="text-[#D4B06A]">Otulia Credits</span>
-              </h2>
-
-              {/* DESCRIPTION */}
-              <p className="mt-8 max-w-xl text-black text-[15px] leading-[1.8] font-light">
-                Otulia's exclusive credit system lets dealerships allocate
-                credits directly to buyers.Increasing the sales of dealerships.
-              </p>
-
-              {/* SUBTITLE */}
-              <h3
-                className="mt-16 text-black text-[28px] font-light"
-                style={{ fontFamily: "serif" }}
-              >
-                Credits Can Be Used For
-              </h3>
-
-              {/* FEATURES */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-14 mt-12">
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[20px] font-light">
-                    Luxury hotels
-                  </p>
-                </div>
-
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[20px] font-light">
-                    Concierge services
-                  </p>
-                </div>
-
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[20px] font-light">
-                    Vehicle services
-                  </p>
-                </div>
-
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[20px] font-light">
-                    Experiences
-                  </p>
-                </div>
-
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[20px] font-light">Travels</p>
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT IMAGE PLACEHOLDER */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-[720px] aspect-[1.45/1] rounded-[10px] bg-white/40 border border-[#D4B06A]/40 shadow-sm flex items-center justify-center">
-                <img src={CreditsCard} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Line */}
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* FINAL CTA SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-28 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-28 px-6 md:px-10 lg:px-16">
         <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
           {/* Small Label */}
           <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-[#C8922A] montserrat font-semibold">
@@ -746,15 +661,21 @@ function Sellwithus() {
           </p>
 
           {/* Buttons */}
-          <div className="mt-12 flex flex-col sm:flex-row items-center gap-4">
-            <button className="bg-black text-white px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-[#1a1a1a]">
-              List Your Asset Now →
-            </button>
+            <div className="mt-12 flex flex-col sm:flex-row items-center gap-4">
+              <Link
+                to="/seller"
+                className="bg-black text-white px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-[#1a1a1a]"
+              >
+                List Your Asset Now →
+              </Link>
 
-            <button className="border border-black/30 text-black px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-black hover:text-white">
-              Book a Demo
-            </button>
-          </div>
+              <Link
+                to="/contact"
+                className="border border-black/30 text-black px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-black hover:text-white"
+              >
+                Book a Demo
+              </Link>
+            </div>
         </div>
       </section>
       {/* Line */}
@@ -763,4 +684,4 @@ function Sellwithus() {
   );
 }
 
-export default Sellwithus;
+export default SellWithUs;
