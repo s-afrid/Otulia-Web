@@ -1,31 +1,32 @@
 import React from "react";
-import heroUrl from "../../assets/hero_banners/hero_sellwithus.webp";
+// import heroUrl from "../../assets/hero_banners/sell_with_us_header.jpeg";
+import sellwithus from '../../assets/hero_banners/sell_with_us_header.jpeg';
 import { FaArrowRightLong } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
 
 const SellWithUs_Hero = () => {
   return (
-    <div className="relative flex flex-col hero-banner h-screen w-full z-20 overflow-hidden">
+    <div className="relative flex flex-col hero-banner bg-white h-screen w-full z-20 overflow-hidden">
       {/* Background Image */}
       <img
         className="absolute top-0 left-0 -z-10 h-full w-full object-cover"
-        src={heroUrl}
+        src={sellwithus}  
         alt="hero_car"
       />
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/55 z-0" />
+      <div className="absolute inset-0 bg-white/10 z-0" />
 
       {/* Left Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-0" />
+      <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/0  z-0" />
 
       <div className="relative h-full w-full flex flex-col justify-center pl-8 md:pl-12 lg:pl-16 pr-[6%] z-10 pt-20">
         <div className="max-w-4xl flex flex-col">
           {/* Top Label */}
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-[1px] bg-white/40"></div>
+            <div className="w-10 h-[1px] bg-black/40"></div>
 
-            <p className="text-white/70 text-[10px] md:text-xs tracking-[0.35em] uppercase montserrat font-medium">
+            <p className="text-black/70 text-[10px] md:text-xs tracking-[0.35em] uppercase montserrat font-medium">
               Introducing Otulia
             </p>
           </div>

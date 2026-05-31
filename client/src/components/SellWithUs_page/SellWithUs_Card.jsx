@@ -8,7 +8,7 @@ const SellWithUs_Card = () => {
   return (
     <>
       {/* ONE SUBSCRIPTION SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* LEFT CONTENT */}
           <div className="max-w-xl">
@@ -32,10 +32,10 @@ const SellWithUs_Card = () => {
 
           {/* RIGHT CARDS */}
           <div className="w-full flex justify-center lg:justify-end">
-            <div className="relative h-full w-full max-w-[800px]">
+            <div className="relative w-full max-w-[1000px] h-[520px] flex items-center justify-center">
               <img
                 src={CategoryCards}
-                className="w-full object-contain"
+                className="w-full h-full object-contain"
                 alt="categories"
               />
             </div>
@@ -44,14 +44,14 @@ const SellWithUs_Card = () => {
       </section>
       <div className="w-full h-[1px] bg-black/10"></div>
       {/* BUYERS CONTACT YOU */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-30 items-center">
           {/* LEFT CONTENT */}
           <div className="w-full flex justify-center lg:justify-end">
-            <div className="relative h-auto w-full max-w-[560px]">
+            <div className="relative w-full max-w-[760px] h-[520px] flex items-center justify-center">
               <img
                 src={WhatsappCard}
-                className="w-full h-auto object-contain"
+                className="w-full h-full object-contain"
                 alt="categories"
               />
             </div>
@@ -81,7 +81,7 @@ const SellWithUs_Card = () => {
       </section>
       <div className="w-full h-[1px] bg-black/10"></div>
       {/* ONE SUBSCRIPTION SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* LEFT CONTENT */}
           <div className="max-w-xl">
@@ -106,10 +106,10 @@ const SellWithUs_Card = () => {
 
           {/* RIGHT CARDS */}
           <div className="w-full flex justify-center lg:justify-end">
-            <div className="relative h-auto w-full max-w-[560px]">
+            <div className="relative w-full max-w-[760px] h-[520px] flex items-center justify-center">
               <img
                 src={SeoCard}
-                className="w-full h-auto object-contain"
+                className="w-full h-full object-contain"
                 alt="categories"
               />
             </div>
