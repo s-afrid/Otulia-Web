@@ -170,7 +170,7 @@ function Sellwithus() {
         <div className="max-w-6xl mx-auto flex flex-col items-center">
           {/* Heading */}
           <h2
-            className="text-center text-black text-[42px] md:text-[64px] font-light leading-tight"
+            className="text-center text-black text-[40px] md:text-[60px] font-light leading-[1.05] tracking-[-0.04em]"
             style={{ fontFamily: "serif" }}
           >
             Grow Your Business with Otulia
@@ -193,7 +193,7 @@ function Sellwithus() {
 
                     <div className="flex flex-col max-w-[180px]">
                       <h3
-                        className="text-black text-[24px] leading-[1.4]"
+                        className="text-black text-[24px] leading-[1.05]"
                         style={{ fontFamily: "serif" }}
                       >
                         {item.title}
@@ -246,14 +246,14 @@ function Sellwithus() {
 
               {/* Title */}
               <h3
-                className="mt-3 text-[40px] leading-tight font-light text-[#D4B06A]"
+                className="mt-3 text-[45px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
                 Out Reach Forms
               </h3>
 
               {/* Description */}
-              <p className="mt-3 max-w-xl text-black text-[15px] leading-[1.7] font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[15px] leading-relaxed font-light">
                 Buyers fill out a form about their preferences, and we provide
                 them with the best buyer-seller matches.Depending upon the
                 requirements.
@@ -263,7 +263,7 @@ function Sellwithus() {
             {/* RIGHT SIDE IMAGE */}
             <div className="flex justify-center lg:justify-end">
               <img
-                src={OutreachForm}//OutreachForm
+                src={OutreachForm} //OutreachForm
                 alt="Buyer Flow"
                 className="w-full max-w-[640px] object-contain"
               />
@@ -303,7 +303,7 @@ function Sellwithus() {
               </h3>
 
               {/* Description */}
-              <p className="mt-4 max-w-xl text-black text-[15px] leading-[1.7] font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[15px] leading-relaxed font-light">
                 When buyers click “Interested” on your listing through Otulia
                 Website , the enquiry and buyer details are sent directly to
                 your CRM dashboard inbox, WA and Gmail.
@@ -334,7 +334,7 @@ function Sellwithus() {
               </h3>
 
               {/* Description */}
-              <p className="mt-3 max-w-xl text-black text-[15px] leading-[1.7] font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[15px] leading-relaxed font-light">
                 When a sale happens in your region within your average lead
                 value, you’ll be notified about the asset sold and its price to
                 help you price inventory and identify top-selling assets to
@@ -359,7 +359,7 @@ function Sellwithus() {
         {/* TITLE */}
         <div className="flex flex-col items-center text-center mb-12">
           <h2
-            className="text-[40px] md:text-[60px] leading-[1.05] tracking-[-0.04em] font-light text-black"
+            className="text-[40px] md:text-[65px] leading-[1.05] font-light text-black"
             style={{ fontFamily: "serif" }}
           >
             Sell Emotions To Buyers{" "}
@@ -416,8 +416,8 @@ function Sellwithus() {
           {/* LEFT CONTENT */}
           <div>
             <h2
-              className="text-[48px] md:text-[64px] leading-[1.1] font-light text-black"
-              style={{ fontFamily: "Cormorant Garamond, serif" }}
+              className="text-[40px] md:text-[65px] leading-[1.05] font-light text-black"
+              style={{ fontFamily: "serif" }}
             >
               We Create Marketing
               <br />
@@ -431,7 +431,7 @@ function Sellwithus() {
               For Every Asset
             </h3>
 
-            <p className="mt-8 max-w-md text-[18px] leading-relaxed text-black">
+            <p className="mt-6 max-w-lg text-[15px] leading-relaxed text-black/75">
               We create premium social-ready graphics and AI walkthrough videos
               that help your listings stand out and attract serious buyers.
             </p>
@@ -501,7 +501,7 @@ function Sellwithus() {
             >
               Attract More Buyers
             </h3>
-            <p className="mt-10 text-black/75 text-[15px] leading-relaxed max-w-lg">
+            <p className="mt-6 text-black/75 text-[15px] leading-relaxed max-w-lg">
               Give buyers access to 5–15 years of historical price data —
               increasing confidence, trust, and conversion rates.
             </p>
@@ -529,7 +529,7 @@ function Sellwithus() {
           {/* HEADING */}
           <div className="text-center mb-24">
             <h2
-              className="text-[30px] md:text-[60px] leading-[1.1] tracking-[-0.04em] font-light text-black"
+              className="text-[40px] md:text-[60px] leading-[1.05] font-light text-black"
               style={{ fontFamily: "serif" }}
             >
               Sell Smarter Using Luxury Marketplace Intelligence Tools
@@ -541,13 +541,13 @@ function Sellwithus() {
             {/* LEFT CONTENT */}
             <div>
               <h3
-                className="text-[#D4B06A] text-[34px] md:text-[50px] leading-[1.15] font-light"
+                className="text-[#D4B06A] text-[34px] md:text-[50px] leading-[1.05] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Otulia Analytics and Insights
               </h3>
 
-              <p className="mt-8 text-black text-[15px] leading-[1.8] max-w-xl font-light">
+              <p className="mt-6 text-black/75 text-[15px] leading-relaxed max-w-lg font-light">
                 A purpose-built CRM for luxury dealerships-manage inventory,
                 buyer inquiries, pricing history, follow-ups, and documents from
                 one dashboard.
@@ -574,13 +574,13 @@ function Sellwithus() {
             {/* RIGHT CONTENT */}
             <div className="order-1 lg:order-2">
               <h3
-                className="text-[#D4B06A] text-[34px] md:text-[50px] leading-[1.15] font-light"
+                className="text-[#D4B06A] text-[34px] md:text-[50px] leading-[1.05] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Global Google Analytics API
               </h3>
 
-              <p className="mt-8 text-black text-[15px] leading-[1.8] max-w-xl font-light">
+              <p className="mt-6 text-black/75 text-[15px] leading-relaxed max-w-lg font-light">
                 The world’s first luxury marketplace with Google Trends
                 Integration, live Buyer Demand Intelligence — see global search
                 demand, buyer locations, price ranges, and the best time to post
@@ -610,14 +610,14 @@ function Sellwithus() {
 
               {/* SUBTITLE */}
               <h3
-                className="mt-6 text-[#D4B06A] text-[20px] md:text-[40px] leading-[1.15] font-light"
+                className="mt-2 text-[#D4B06A] text-[20px] md:text-[40px] leading-[1.05] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Asset Recognition
               </h3>
 
               {/* DESCRIPTION */}
-              <p className="mt-6 max-w-xl text-black text-[15px] leading-[1.8] font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[15px] leading-relaxed font-light">
                 Every asset gets a unique NJM ID — making listings instantly
                 searchable, shareable, and verifiable worldwide with a single
                 code.
@@ -650,7 +650,7 @@ function Sellwithus() {
             <div>
               {/* HEADING */}
               <h2
-                className="text-black text-[40px] md:text-[60px] leading-[1] font-light"
+                className="text-black text-[40px] md:text-[60px] leading-[1.05] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Close More Deals With
@@ -658,14 +658,14 @@ function Sellwithus() {
 
               {/* SUBTITLE */}
               <h3
-                className="mt-4 text-[#D4B06A] text-[20px] md:text-[40px] leading-[1.15] font-light"
+                className="mt-4 text-[#D4B06A] text-[20px] md:text-[40px] leading-[1.05] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Otulia’s Ranking System
               </h3>
 
               {/* DESCRIPTION */}
-              <p className="mt-8 max-w-2xl text-black text-[15px] leading-[1.8] font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[15px] leading-relaxed font-light">
                 Your listings and company profile are added as nominees in
                 global luxury rankings released every six months, helping drive
                 millions of buyers toward your assets and increasing regional
@@ -743,7 +743,7 @@ function Sellwithus() {
             <div>
               {/* HEADING */}
               <h2
-                className="text-black text-[42px] md:text-[68px] leading-[1.12] tracking-[-0.04em] font-light"
+                className="text-black text-[40px] md:text-[60px] leading-[1.05] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Build Long-Term Buyer Engagement
@@ -752,26 +752,26 @@ function Sellwithus() {
               </h2>
 
               {/* DESCRIPTION */}
-              <p className="mt-8 max-w-xl text-black text-[15px] leading-[1.8] font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[15px] leading-relaxed font-light">
                 Otulia's exclusive credit system lets dealerships allocate
                 credits directly to buyers.Increasing the sales of dealerships.
               </p>
 
               {/* SUBTITLE */}
               <h3
-                className="mt-16 text-black text-[28px] font-light"
+                className="mt-6 text-black/75 text-[26px] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Credits Can Be Used For
               </h3>
 
               {/* FEATURES */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-14 mt-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-14 mt-6">
                 {/* ITEM */}
                 <div className="flex items-center gap-4">
                   <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
 
-                  <p className="text-black text-[20px] font-light">
+                  <p className="text-black text-[15px] leading-relaxed font-light">
                     Luxury hotels
                   </p>
                 </div>
@@ -780,7 +780,7 @@ function Sellwithus() {
                 <div className="flex items-center gap-4">
                   <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
 
-                  <p className="text-black text-[20px] font-light">
+                  <p className="text-black text-[15px] leading-relaxed font-light">
                     Concierge services
                   </p>
                 </div>
@@ -789,7 +789,7 @@ function Sellwithus() {
                 <div className="flex items-center gap-4">
                   <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
 
-                  <p className="text-black text-[20px] font-light">
+                  <p className="text-black text-[15px] leading-relaxed font-light">
                     Vehicle services
                   </p>
                 </div>
@@ -798,7 +798,7 @@ function Sellwithus() {
                 <div className="flex items-center gap-4">
                   <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
 
-                  <p className="text-black text-[20px] font-light">
+                  <p className="text-black text-[15px] leading-relaxed font-light">
                     Experiences
                   </p>
                 </div>
@@ -807,7 +807,9 @@ function Sellwithus() {
                 <div className="flex items-center gap-4">
                   <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
 
-                  <p className="text-black text-[20px] font-light">Travels</p>
+                  <p className="text-black text-[15px] leading-relaxed font-light">
+                    Travels
+                  </p>
                 </div>
               </div>
             </div>
@@ -843,7 +845,7 @@ function Sellwithus() {
           </h2>
 
           {/* Description */}
-          <p className="mt-8 max-w-2xl text-black/60 text-base md:text-lg leading-relaxed font-light">
+          <p className="mt-6 max-w-lg text-black/75 text-[15px] leading-relaxed font-light">
             Join the dealerships writing the next chapter of luxury commerce.
             List your first asset on Otulia today.
           </p>

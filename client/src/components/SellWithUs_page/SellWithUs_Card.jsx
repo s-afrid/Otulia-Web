@@ -13,13 +13,13 @@ const SellWithUs_Card = () => {
           {/* LEFT CONTENT */}
           <div className="max-w-xl">
             <h2
-              className="text-black text-[48px] md:text-[72px] leading-[1.05] font-light"
+              className="text-black text-[40px] md:text-[65px] leading-[1.05] font-light"
               style={{ fontFamily: "serif" }}
             >
               One Subscription
             </h2>
             <h3
-              className="mt-3 text-[#D2AE68] text-[40px] md:text-[58px] italic leading-none font-light"
+              className="mt-3 text-[#D2AE68] text-[40px] md:text-[50px] italic leading-none font-light"
               style={{ fontFamily: "serif" }}
             >
               Four Categories
@@ -60,13 +60,13 @@ const SellWithUs_Card = () => {
           {/* RIGHT CARDS */}
           <div className="max-w-xl">
             <h2
-              className="text-black text-[48px] md:text-[72px] leading-[1.05] font-light"
+              className="text-black text-[40px] md:text-[65px] leading-[1.05] font-light"
               style={{ fontFamily: "serif" }}
             >
               Buyers Contact You
             </h2>
             <h3
-              className="mt-4 text-[#D2AE68] text-[40px] md:text-[58px] italic leading-none font-light"
+              className="mt-4 text-[#D2AE68] text-[40px] md:text-[50px] italic leading-none font-light"
               style={{ fontFamily: "serif" }}
             >
               Directly On Whatsapp
@@ -86,18 +86,18 @@ const SellWithUs_Card = () => {
           {/* LEFT CONTENT */}
           <div className="max-w-xl">
             <h2
-              className="text-black text-[48px] md:text-[72px] leading-[1.05] font-light"
+              className="text-black text-[40px] md:text-[65px] leading-[1.05] font-light"
               style={{ fontFamily: "serif" }}
             >
               SEO-Ready Listing Pages
             </h2>
             <h3
-              className="mt-4 text-[#D2AE68] text-[40px] md:text-[58px] italic leading-none font-light"
+              className="mt-4 text-[#D2AE68] text-[40px] md:text-[50px] italic leading-none font-light"
               style={{ fontFamily: "serif" }}
             >
               Free Backlinks
             </h3>
-            <p className="mt-10 text-black/75 text-[18px] leading-relaxed max-w-lg">
+            <p className="mt-6 text-black/75 text-[15px] leading-relaxed max-w-lg">
               Every listing is SEO-optimised with free company profile and
               backlinks to your dealership website — boosting visibility and
               domain authority automatically.

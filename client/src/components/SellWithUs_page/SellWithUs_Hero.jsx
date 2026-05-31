@@ -32,16 +32,16 @@ const SellWithUs_Hero = () => {
 
           {/* Main Heading */}
           <div className="leading-[0.95]">
-            <h1 className="text-white font-light text-[58px] sm:text-[72px] md:text-[88px] lg:text-[110px] tracking-[-0.04em]">
-              The Only
+            <h1 className="text-white font-light text-[54px] sm:text-[68px] md:text-[84px] lg:text-[90px] tracking-[-0.04em]">
+              The
             </h1>
 
-            <h1 className="text-white font-light text-[58px] sm:text-[72px] md:text-[88px] lg:text-[110px] tracking-[-0.04em]">
+            <h1 className="text-white font-light text-[54px] sm:text-[68px] md:text-[84px] lg:text-[90px] tracking-[-0.04em]">
               Marketplace
             </h1>
 
             <h1
-              className="text-[#D7C1A1] italic font-light text-[48px] sm:text-[62px] md:text-[78px] lg:text-[96px] tracking-[-0.04em]"
+              className="text-[#D7C1A1] italic font-light text-[44px] sm:text-[50px] md:text-[70px] lg:text-[80px] tracking-[-0.04em]"
               style={{ fontFamily: "serif" }}
             >
               for Luxury Assets.
@@ -50,24 +50,18 @@ const SellWithUs_Hero = () => {
 
           {/* Description */}
           <p className="mt-8 max-w-2xl text-white/70 text-sm md:text-lg leading-relaxed font-light">
-            luxury marketplace infrastructure designed for
-            dealerships, real estate agencies, yacht brokers, and elite asset
-            sellers.
+            Luxury marketplace infrastructure designed for dealerships, real
+            estate agencies, yacht brokers, and elite asset sellers.
           </p>
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mt-10">
             <NavLink to="/signup">
               <button className="group flex items-center justify-center gap-3 bg-white text-black px-8 py-4 text-[11px] tracking-[0.35em] uppercase montserrat font-medium transition-all duration-300 hover:bg-[#e8e8e8]">
-                list your assests 
+                list your assests
                 <FaArrowRightLong className="text-[12px] transition-transform duration-300 group-hover:translate-x-1" />
               </button>
             </NavLink>
-
-            <button className="group flex items-center justify-center gap-3 border border-white/20 bg-white/5 backdrop-blur-md text-white px-8 py-4 text-[11px] tracking-[0.35em] uppercase montserrat font-medium transition-all duration-300 hover:bg-white hover:text-black">
-              Become A Founding Dealer
-              <FaArrowRightLong className="text-[12px] transition-transform duration-300 group-hover:translate-x-1" />
-            </button>
           </div>
         </div>
 
