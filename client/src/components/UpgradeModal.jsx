@@ -12,34 +12,35 @@ const UpgradeModal = ({ isOpen, onClose }) => {
     const plans = [
         {
             name: "Premium Basic",
-            price: "$ 5,000",
+            price: "$ 99",
             period: "per month",
             features: [
-                "List up to 25 luxury assets",
-                "Verified Seller Badge",
-                "Advanced performance metrics",
-                "Direct buyer enquiries",
-                "Priority email support"
+                "Upto 50 Listings",
+                "$25 extra per listing",
+                "5 Days of Featured Placement",
+                "Full Inventory Management System",
+                "Priority Placement Across Categories",
+                "Priority Email Support"
             ],
             icon: FiZap,
-            theme: "blue",
-            accent: "#3b82f6"
+            theme: "gold",
+            accent: "#b18b24"
         },
         {
             name: "Business VIP",
-            price: "$ 15,000",
+            price: "$ 299",
             period: "per month",
             features: [
-                "Listing capacity: 50 assets",
-                "VIP featured placement",
-                "Personal Account Manager",
-                "Bespoke analytics dashboard",
-                "Concierge listing support",
-                "24/7 Priority VIP support"
+                "Upto 100 Listings",
+                "$20 per extra listing",
+                "13 Days Of Featured Listing",
+                "Advanced Inventory Management System",
+                "Priority Placement Across Categories",
+                "Dedicated Account Manager"
             ],
             icon: FiAward,
             theme: "gold",
-            accent: "#d4af37",
+            accent: "#b18b24",
             popular: true
         }
     ];
@@ -101,7 +102,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
                 {/* LEFT PANEL: The Brand Vibe */}
                 <div className="md:w-[35%] bg-[#080808] p-10 text-white flex flex-col justify-between relative overflow-hidden">
                     {/* Artistic backgrounds */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#D90416]/10 rounded-full blur-[100px] -mr-32 -mt-32"></div>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#b18b24]/10 rounded-full blur-[100px] -mr-32 -mt-32"></div>
                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-[80px] -ml-32 -mb-32"></div>
 
                     <div className="relative z-10">
@@ -114,7 +115,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
                         </p>
 
                         <div className="space-y-4">
-                            <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-[#D90416] font-bold">
+                            <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-[#b18b24] font-bold">
                                 <FiShield className="text-lg" /> 100% Secure Transaction
                             </div>
                             <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-gray-500 font-bold">
@@ -135,7 +136,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
                     {/* Header */}
                     <div className="flex justify-between items-start mb-10">
                         <div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D90416] mb-2 block">Available Tiers</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#b18b24] mb-2 block">Available Tiers</span>
                             <h3 className="text-3xl font-bold text-gray-900 canela">Refine your membership</h3>
                         </div>
                         <button onClick={onClose} className="p-3 bg-gray-50 hover:bg-black hover:text-white rounded-full transition-all">
