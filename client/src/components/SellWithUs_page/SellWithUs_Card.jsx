@@ -8,7 +8,7 @@ const SellWithUs_Card = () => {
   return (
     <>
       {/* ONE SUBSCRIPTION SECTION */}
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* LEFT CONTENT */}
           <div className="max-w-xl">
@@ -44,7 +44,7 @@ const SellWithUs_Card = () => {
       </section>
       <div className="w-full h-[1px] bg-black/10"></div>
       {/* BUYERS CONTACT YOU */}
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-30 items-center">
           {/* LEFT CONTENT */}
           <div className="w-full flex justify-center lg:justify-end">
@@ -81,7 +81,7 @@ const SellWithUs_Card = () => {
       </section>
       <div className="w-full h-[1px] bg-black/10"></div>
       {/* ONE SUBSCRIPTION SECTION */}
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* LEFT CONTENT */}
           <div className="max-w-xl">

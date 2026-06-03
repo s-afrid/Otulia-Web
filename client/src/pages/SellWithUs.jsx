@@ -84,7 +84,7 @@ function Sellwithus() {
       <SellWithUs_Hero />
 
       {/* MARKET VALIDATION SECTION */}
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto flex flex-col items-center">
           {/* Top Label */}
           <div className="flex items-center gap-4 mb-8">
@@ -142,7 +142,7 @@ function Sellwithus() {
             {stats.map((item, index) => (
               <div
                 key={index}
-                className="bg-white border border-black/10 min-h-[260px] flex flex-col items-center justify-center text-center px-8 py-10 transition-all duration-300 hover:shadow-xl"
+                className="bg-white border border-black/10 min-h-[260px] flex flex-col items-center justify-center text-center px-8 py-2 transition-all duration-300 hover:shadow-xl"
               >
                 <div className="mb-8">{item.icon}</div>
 
@@ -163,10 +163,10 @@ function Sellwithus() {
       </section>
 
       {/* SEPARATING LINE */}
-      <div className="w-full h-[1px] bg-black/10"></div>
+      <div className="w-full h-[1px] bg-black/10 my-10"></div>
 
       {/* GROW BUSINESS SECTION */}
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-6xl mx-auto flex flex-col items-center">
           {/* Heading */}
           <h2
@@ -216,7 +216,7 @@ function Sellwithus() {
 
       {/* NUMBERED_CARDS */}
 
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto">
           {/* Top Line */}
           <div className="w-full h-[1px] bg-black/10 mb-10"></div>
@@ -355,7 +355,7 @@ function Sellwithus() {
       </section>
 
       {/* SELL EMOTIONS VS SECTION */}
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
         {/* TITLE */}
         <div className="flex flex-col items-center text-center mb-12">
           <h2
@@ -411,7 +411,7 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* WE CREATE MARKING  */}
-      <section className="w-full bg-white py-20 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
           {/* LEFT CONTENT */}
           <div>
@@ -485,7 +485,7 @@ function Sellwithus() {
       {/* Line */}
       <div className="w-full h-[1px] bg-black/10"></div>
 
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* LEFT CONTENT */}
           <div className="max-w-xl">
@@ -524,7 +524,7 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* SELL SMARTER SECTION */}
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           {/* HEADING */}
           <div className="text-center mb-24">
@@ -595,7 +595,7 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* NJM ID SECTION */}
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             {/* LEFT CONTENT */}
@@ -636,7 +636,7 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* RANKING SYSTEM SECTION */}
-      <section className="w-full bg-white py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             {/* LEFT IMAGE PLACEHOLDER */}
@@ -736,7 +736,7 @@ function Sellwithus() {
       </section>
 
       {/* OTULIA CREDITS SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-24 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-[#F8F7F4] py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             {/* LEFT CONTENT */}
@@ -828,7 +828,7 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10"></div>
 
       {/* FINAL CTA SECTION */}
-      <section className="w-full bg-white py-28 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
           {/* Small Label */}
           <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-[#C8922A] montserrat font-semibold">
