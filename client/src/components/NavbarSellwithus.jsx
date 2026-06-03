@@ -69,12 +69,12 @@ const Navbar = ({
         </div>
 
         {/* 2. DESKTOP MENU - Center Column (Absolute centered) */}
-        <ul className="hidden lg:flex items-center justify-center gap-[clamp(16px,3vw,48px)] absolute left-1/2 -translate-x-1/2 w-auto">
+        <ul className="hidden lg:flex items-center justify-center gap-[clamp(24px,4vw,64px)] absolute left-1/2 -translate-x-1/2 w-auto">
           <li>
             <NavLink
               to="/sellwithus"
               className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
               }
             >
               FEATURES
@@ -84,7 +84,7 @@ const Navbar = ({
             <NavLink
               to="/rent"
               className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
               }
             >
               CATEGORIES
@@ -94,7 +94,7 @@ const Navbar = ({
             <NavLink
               to="/pricing"
               className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
               }
             >
               PRICING
@@ -104,7 +104,7 @@ const Navbar = ({
             <NavLink
               to="/faq"
               className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
               }
             >
               FAQ
