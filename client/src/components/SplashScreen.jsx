@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import welcomeSound from "../assets/sounds/theme.mp3";
 
 const SplashScreen = ({ onFinish }) => {
     const [opacity, setOpacity] = useState(1);
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
+        // Play sound
+        const audio = new Audio(welcomeSound);
+        audio.volume = 0.5;
+        audio.play().catch((err) => {
+            console.log("Splash sound blocked:", err);
+        });
+
         // Animation timeline
         // 0ms: Render (Opacity 1)
         // 1500ms: Start Fade Out
@@ -22,6 +30,9 @@ const SplashScreen = ({ onFinish }) => {
         return () => {
             clearTimeout(fadeTimer);
             clearTimeout(removeTimer);
+            // Stop sound on unmount
+            audio.pause();
+            audio.currentTime = 0;
         };
     }, [onFinish]);
 

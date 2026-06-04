@@ -9,23 +9,8 @@ import PopularLinks from "../components/home_page/PopularLinks";
 import SEO from "../components/SEO";
 
 import { useEffect } from "react";
-import welcomeSound from "../assets/sounds/theme.mp3";
 
 const Home = () => {
-  useEffect(() => {
-    const audio = new Audio(welcomeSound);
-
-    audio.volume = 0.5; // 0.0 to 1.0
-
-    audio.play().catch((err) => {
-      console.log("Audio autoplay blocked:", err);
-    });
-
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }, []);
   return (
     <div className="relative w-full overflow-x-hidden">
       <SEO
