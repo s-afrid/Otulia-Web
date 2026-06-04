@@ -84,7 +84,7 @@ function Sellwithus() {
       <SellWithUs_Hero />
 
       {/* MARKET VALIDATION SECTION */}
-      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white pt-16 pb-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto flex flex-col items-center">
           {/* Top Label */}
           <div className="flex items-center gap-4 mb-8">
