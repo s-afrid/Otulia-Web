@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import NavbarSellwithus from "../components/NavbarSellwithus";
 import Hero from "../components/home_page/Hero";
+import { RiArrowDropDownLine } from "react-icons/ri";
 import {
   FaGlobeAmericas,
   FaSearch,
@@ -33,6 +34,46 @@ import SellPhoto from "../assets/icons/sell_photo.png";
 import SellTarget from "../assets/icons/sell_target.png";
 
 function Sellwithus() {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const faqs = [
+    {
+      question: "What is Otulia and who is it built for?",
+      answer:
+        "Otulia is a luxury marketplace built for extraordinary assets — including cars, estates, yachts, and collector machines. It is designed for buyers, collectors, dealers, and investors who value rarity, design, lifestyle, and intelligent ownership experiences rather than traditional classified marketplaces.",
+    },
+    {
+      question: "How does the Buyer Demand Trends feature work?",
+      answer:
+        "Otulia’s Buyer Demand Trends system analyzes global search interest and buyer activity to show how much attention a specific asset is receiving worldwide. Sellers can see where buyers are searching from, preferred price ranges, and the best time to post listings for maximum visibility.",
+    },
+    {
+      question: "Can I list multiple asset types under one subscription?",
+      answer:
+        "Yes. Depending on your membership tier, you can list multiple categories such as vehicles, estates, yachts, and bikes under one unified Otulia account and manage them from a single dashboard.",
+    },
+    {
+      question: "What is the NJM ID system?",
+      answer:
+        "Every asset listed on Otulia receives a unique NJM ID — a proprietary identification code that makes the listing instantly searchable, shareable, and recognizable worldwide. Buyers can simply enter the NJM ID to directly access the exact listing from anywhere.",
+    },
+    {
+      question: "How does the credit system work?",
+      answer:
+        "Otulia Credits are reward points earned through platform activity, verified listings, engagement, and premium memberships. Credits can unlock exclusive experiences, premium visibility, luxury partner offers, concierge services, and future ecosystem benefits.",
+    },
+    {
+      question: "What are Soul of the Asset and Ideal Buyer?",
+      answer:
+        "Soul of the Asset captures the emotional identity, personality, and lifestyle behind an asset — beyond technical specifications. Ideal Buyer describes the type of person the asset is truly built for, helping buyers emotionally connect with listings that match their lifestyle and taste.",
+    },
+    {
+      question: "How does the ranking system give 5× more visibility?",
+      answer:
+        "Otulia’s intelligent ranking system rewards high-quality listings with stronger visibility across the platform. Listings with complete media, detailed storytelling, pricing insights, buyer relevance, and verified information are promoted more aggressively to the right audience globally.",
+    },
+  ];
+
   const featuredBrands = [
     "Chrono24",
     "Bring a Trailer",
@@ -842,8 +883,70 @@ function Sellwithus() {
       {/* Line */}
       <div className="w-full h-[1px] bg-black/10 my-15"></div>
 
+      {/* FAQ SECTION */}
+      <section className="w-full py-10 px-6 md:px-10 lg:px-16 overflow-hidden">
+        <div className="max-w-[1600px] mx-auto">
+          {/* Top Label */}
+          <div className="flex flex-col items-center text-center">
+            <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-[#C8922A] montserrat font-semibold">
+              Frequently Asked
+            </p>
+
+            {/* Heading */}
+            <h2
+              className="mt-5 text-[42px] md:text-[64px] leading-none font-light text-black"
+              style={{ fontFamily: "serif" }}
+            >
+              Common <span className="italic text-[#C8922A]">Questions</span>
+            </h2>
+          </div>
+
+          {/* FAQ LIST */}
+          <div className="mt-20 border-t border-[#E7DFD2] max-w-5xl mx-auto">
+            {faqs.map((faq, index) => {
+              const isOpen = openIndex === index;
+
+              return (
+                <div key={index} className="border-b border-[#E7DFD2]">
+                  <button
+                    onClick={() => setOpenIndex(isOpen ? null : index)}
+                    className="w-full flex items-center justify-between py-8 text-left group"
+                  >
+                    <span
+                      className={`text-[24px] leading-snug font-light transition-colors duration-300 ${
+                        isOpen ? "text-[#C8922A]" : "text-black"
+                      }`}
+                      style={{ fontFamily: "serif" }}
+                    >
+                      {faq.question}
+                    </span>
+
+                    <RiArrowDropDownLine
+                      className={`text-[35px] transition-transform duration-300 ${
+                        isOpen ? "rotate-180 text-[#C8922A]" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* ANSWER */}
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      isOpen ? "max-h-[500px] pb-10" : "max-h-0"
+                    }`}
+                  >
+                    <p className="text-black/60 text-[18px] leading-relaxed pr-10">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* FINAL CTA SECTION */}
-      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-6 px-6 md:px-10 lg:px-16">
         <div className="max-w-[1600px] mx-auto flex flex-col items-center text-center">
           {/* Small Label */}
           <p className="text-[10px] md:text-xs tracking-[0.35em] uppercase text-[#C8922A] montserrat font-semibold">
