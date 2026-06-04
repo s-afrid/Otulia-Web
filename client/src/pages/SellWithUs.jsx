@@ -366,10 +366,10 @@ function Sellwithus() {
             <span className="text-black">Not Just Assets</span>
           </h2>
         </div>
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-10 lg:gap-16 items-center">
+        <div className="max-w-[1600px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-9 items-center">
             {/* LEFT IMAGE */}
-            <div className="flex flex-col justify-center">
+            <div className="w-full flex flex-col justify-center">
               <p
                 className="mt-8 text-[#D4B06A] text-[24px] md:text-[36px] font-light mb-2.5"
                 style={{ fontFamily: "serif" }}
@@ -379,18 +379,18 @@ function Sellwithus() {
               <img
                 src={Sellemo1}
                 alt="Sell Emotions"
-                className="w-full max-w-[720px] object-contain"
+                className="w-full min-w-[700px] object-contain"
               />
             </div>
 
             {/* CENTER VS */}
             <div className="flex flex-col items-center justify-center">
               {/* VS Circle */}
-              <div className="w-36 h-36 flex items-center justify-center ">
+              <div className="w-full h-full flex items-center justify-center ">
                 <img
                   src={Sellemo2}
                   alt="VS"
-                  className="w-50 h-50 object-contain"
+                  className="w-[200px] object-contain"
                 />
               </div>
             </div>
@@ -400,7 +400,7 @@ function Sellwithus() {
               <img
                 src={Sellemo3}
                 alt="Traditional"
-                className="w-full max-w-[320px] object-contain"
+                className="w-full min-w-[300px] object-contain"
               />
             </div>
           </div>
