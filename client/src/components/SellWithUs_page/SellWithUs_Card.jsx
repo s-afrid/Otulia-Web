@@ -8,10 +8,10 @@ const SellWithUs_Card = () => {
   return (
     <>
       {/* ONE SUBSCRIPTION SECTION */}
-      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <section className="w-full bg-white py-0 px-6 md:px-10 lg:px-12 -mt-4">
+        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-10 items-center">
           {/* LEFT CONTENT */}
-          <div className="max-w-xl">
+          <div className="max-w-xl lg:pl-10">
             <h2
               className="text-black text-[40px] md:text-[65px] leading-[1.05] font-light"
               style={{ fontFamily: "serif" }}
@@ -24,7 +24,7 @@ const SellWithUs_Card = () => {
             >
               Four Categories
             </h3>
-            <p className="mt-6 text-black/75 text-[15px] leading-relaxed max-w-lg">
+            <p className="mt-6 text-black/75 text-[19px] leading-relaxed max-w-lg">
               One subscription gives dealerships and agencies access to multiple
               luxury markets under one subscription. List in every market.
             </p>
@@ -32,7 +32,7 @@ const SellWithUs_Card = () => {
 
           {/* RIGHT CARDS */}
           <div className="w-full flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[1000px] h-[520px] flex items-center justify-center">
+            <div className="relative w-full max-w-[1300px] h-[550px] flex items-center justify-center">
               <img
                 src={CategoryCards}
                 className="w-full h-full object-contain"
@@ -45,7 +45,7 @@ const SellWithUs_Card = () => {
       <div className="w-full h-[1px] bg-black/10"></div>
       {/* BUYERS CONTACT YOU */}
       <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-30 items-center">
+        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-30 items-center">
           {/* LEFT CONTENT */}
           <div className="w-full flex justify-center lg:justify-end">
             <div className="relative w-full max-w-[760px] h-[520px] flex items-center justify-center">
@@ -71,7 +71,7 @@ const SellWithUs_Card = () => {
             >
               Directly On Whatsapp
             </h3>
-            <p className="mt-6 text-black/75 text-[15px] leading-relaxed max-w-lg">
+            <p className="mt-6 text-black/75 text-[19px] leading-relaxed max-w-lg">
               Every Otulia listing includes WhatsApp integration. Serious buyers
               connect with your team instantly — no forms, delays, or middlemen.
               The fastest path from interest to deal.
@@ -82,7 +82,7 @@ const SellWithUs_Card = () => {
       <div className="w-full h-[1px] bg-black/10"></div>
       {/* ONE SUBSCRIPTION SECTION */}
       <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* LEFT CONTENT */}
           <div className="max-w-xl">
             <h2
@@ -97,7 +97,7 @@ const SellWithUs_Card = () => {
             >
               Free Backlinks
             </h3>
-            <p className="mt-6 text-black/75 text-[15px] leading-relaxed max-w-lg">
+            <p className="mt-6 text-black/75 text-[19px] leading-relaxed max-w-lg">
               Every listing is SEO-optimised with free company profile and
               backlinks to your dealership website — boosting visibility and
               domain authority automatically.
