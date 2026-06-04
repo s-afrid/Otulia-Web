@@ -367,7 +367,7 @@ function Sellwithus() {
           </h2>
         </div>
         <div className="max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-9 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-9 xl:gap-11 items-center">
             {/* LEFT IMAGE */}
             <div className="w-full flex flex-col justify-center">
               <p
@@ -379,7 +379,7 @@ function Sellwithus() {
               <img
                 src={Sellemo1}
                 alt="Sell Emotions"
-                className="w-full min-w-[700px] object-contain"
+                className="w-full min-w-[750px] object-contain"
               />
             </div>
 
@@ -390,7 +390,7 @@ function Sellwithus() {
                 <img
                   src={Sellemo2}
                   alt="VS"
-                  className="w-[200px] object-contain"
+                  className="min-w-[200px] max-w-[300px] object-contain"
                 />
               </div>
             </div>
@@ -400,7 +400,7 @@ function Sellwithus() {
               <img
                 src={Sellemo3}
                 alt="Traditional"
-                className="w-full min-w-[300px] object-contain"
+                className="w-full min-w-[300px] max-w-[370px] object-contain"
               />
             </div>
           </div>
