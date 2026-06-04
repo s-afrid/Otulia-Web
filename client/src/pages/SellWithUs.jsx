@@ -28,6 +28,9 @@ import GrowIcon1 from "../assets/sellwithus_page/grow_1.png";
 import GrowIcon2 from "../assets/sellwithus_page/grow_2.png";
 import GrowIcon3 from "../assets/sellwithus_page/grow_3.png";
 import MarketingCard from "../assets/sellwithus_page/marketing_card.png";
+import SellPlay from "../assets/icons/sell_play.png";
+import SellPhoto from "../assets/icons/sell_photo.png";
+import SellTarget from "../assets/icons/sell_target.png";
 
 function Sellwithus() {
   const featuredBrands = [
@@ -437,31 +440,44 @@ function Sellwithus() {
             </p>
 
             {/* FEATURES */}
-            <div className="mt-12 grid grid-cols-3 gap-6">
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
                 {
+                  icon: SellPlay,
                   title: "AI Walkthroughs",
                   desc: "Cinematic video tours that showcase every detail.",
                 },
                 {
+                  icon: SellPhoto,
                   title: "Social-Ready Designs",
                   desc: "Professionally crafted posts ready to publish.",
                 },
                 {
+                  icon: SellTarget,
                   title: "Premium Campaigns",
                   desc: "High-quality visuals that attract serious buyers.",
                 },
               ].map((item, index) => (
-                <div key={index}>
-                  <div className="w-12 h-12 rounded-full border border-[#C8A96B] flex items-center justify-center mb-3">
-                    <div className="w-5 h-5 bg-[#C8A96B] rounded-sm" />
+                <div key={index} className="flex items-center gap-4">
+                  <div className="flex items-center justify-center shrink-0">
+                    <img
+                      src={item.icon}
+                      className="w-14 h-14"
+                      alt={item.title}
+                    />
                   </div>
 
-                  <h4 className="text-sm font-semibold text-black">
-                    {item.title}
-                  </h4>
+                  <div className="w-[1px] h-12 bg-black/10 hidden sm:block" />
 
-                  <p className="text-xs text-black/70 mt-1">{item.desc}</p>
+                  <div className="flex flex-col">
+                    <h4 className="text-[12px] font-semibold text-black leading-tight">
+                      {item.title}
+                    </h4>
+
+                    <p className="text-[10px] text-black/70 mt-1 leading-snug">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -488,6 +504,16 @@ function Sellwithus() {
       <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* LEFT CONTENT */}
+          <div className="w-full flex justify-center lg:justify-end">
+            <div className="relative h-auto w-full max-w-[600px]">
+              <img
+                src={ChartCard}
+                className="w-full h-auto object-contain rounded-sm"
+                alt="categories"
+              />
+            </div>
+          </div>
+          {/* RIGHT CARDS */}
           <div className="max-w-xl">
             <h2
               className="text-black text-[40px] md:text-[60px] leading-[1.05] font-light"
@@ -505,17 +531,6 @@ function Sellwithus() {
               Give buyers access to 5–15 years of historical price data —
               increasing confidence, trust, and conversion rates.
             </p>
-          </div>
-
-          {/* RIGHT CARDS */}
-          <div className="w-full flex justify-center lg:justify-end">
-            <div className="relative h-auto w-full max-w-[560px]">
-              <img
-                src={ChartCard}
-                className="w-full h-auto object-contain rounded-sm"
-                alt="categories"
-              />
-            </div>
           </div>
         </div>
       </section>
@@ -636,18 +651,18 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10 my-15"></div>
 
       {/* RANKING SYSTEM SECTION */}
-      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-12 overflow-hidden">
         <div className="max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_1fr] gap-10 items-center">
             {/* LEFT IMAGE PLACEHOLDER */}
             <div className="flex justify-center lg:justify-start">
-              <div className="w-full max-w-[760px] aspect-[1.15/1] bg-white/40 rounded-[8px] flex items-center justify-center">
+              <div className="w-full max-w-[950px] aspect-[1.15/1] bg-white/40 rounded-[8px] flex items-center justify-center">
                 <img src={RankingCard} />
               </div>
             </div>
 
             {/* RIGHT CONTENT */}
-            <div>
+            <div className="lg:pl-8">
               {/* HEADING */}
               <h2
                 className="text-black text-[40px] md:text-[60px] leading-[1.05] font-light"
@@ -736,7 +751,7 @@ function Sellwithus() {
       </section>
 
       {/* OTULIA CREDITS SECTION */}
-      <section className="w-full bg-[#F8F7F4] py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-[1600px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             {/* LEFT CONTENT */}
