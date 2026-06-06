@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import NavbarSellwithus from "../components/NavbarSellwithus";
+import { NavLink } from "react-router-dom";
 import Hero from "../components/home_page/Hero";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import {
@@ -884,9 +885,12 @@ function Sellwithus() {
 
           {/* Buttons */}
           <div className="mt-12 flex flex-col sm:flex-row items-center gap-4">
-            <button className="bg-black text-white px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-[#1a1a1a]">
+            <NavLink to="/pricing">
+            <button className="bg-black text-white px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-[#1a1a1a] cursor-pointer">
               List Your Asset Now →
             </button>
+            </NavLink>
+            
 
             <button className="border border-black/30 text-black px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-black hover:text-white">
               Book a Demo
