@@ -74,7 +74,7 @@ const Navbar = ({
             <NavLink
               to="/sellwithus"
               className={({ isActive }) =>
-                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
+                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#C8922A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
               }
             >
               FEATURES
@@ -84,7 +84,7 @@ const Navbar = ({
             <NavLink
               to="/rent"
               className={({ isActive }) =>
-                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
+                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#C8922A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
               }
             >
               CATEGORIES
@@ -94,7 +94,7 @@ const Navbar = ({
             <NavLink
               to="/pricing"
               className={({ isActive }) =>
-                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
+                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#C8922A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
               }
             >
               PRICING
@@ -104,7 +104,7 @@ const Navbar = ({
             <NavLink
               to="/faq"
               className={({ isActive }) =>
-                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
+                `text-[clamp(9px,1.1vh,11px)] tracking-[0.35em] font-medium montserrat transition-all whitespace-nowrap ${isActive ? "text-[#C8922A]" : isDarkText ? "text-black hover:opacity-70" : "text-white hover:opacity-70"}`
               }
             >
               FAQ
