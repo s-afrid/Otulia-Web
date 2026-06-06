@@ -9,14 +9,18 @@ import {
   FaUsers,
   FaBuilding,
   FaMoneyBillWave,
+  FaRegFileAlt,
+  FaTag,
+  FaRegQuestionCircle,
 } from "react-icons/fa";
+import { LuImage } from "react-icons/lu";
 import SellWithUs_Card from "../components/SellWithUs_page/SellWithUs_Card";
 import SellWithUs_Hero from "../components/SellWithUs_page/SellWithUs_Hero";
-import BuyerFlowImage from "../assets/sellwithus_page/buyer_flow.png";
+import BuyerFlowImage from "../assets/sellwithus_page/direct_enquiry.png";
 import OutreachForm from "../assets/sellwithus_page/reach_forms.png";
 import SalesCard from "../assets/sellwithus_page/sales_card.png";
 import Sellemo1 from "../assets/sellwithus_page/sellemo_1.jpeg";
-import Sellemo2 from "../assets/sellwithus_page/sellemo_2.png";
+import Sellemo2 from "../assets/sellwithus_page/vs.png";
 import Sellemo3 from "../assets/sellwithus_page/sellemo_3.png";
 import ChartCard from "../assets/sellwithus_page/chart_card.png";
 import DashboardCard from "../assets/sellwithus_page/dashboard_card.png";
@@ -399,9 +403,9 @@ function Sellwithus() {
       </section>
 
       {/* SELL EMOTIONS VS SECTION */}
-      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-20 px-6 md:px-10 lg:px-16 overflow-hidden">
         {/* TITLE */}
-        <div className="flex flex-col items-center text-center mb-12">
+        <div className="flex flex-col items-center text-center mb-16">
           <h2
             className="text-[40px] md:text-[65px] leading-[1.05] font-light text-black"
             style={{ fontFamily: "serif" }}
@@ -409,44 +413,41 @@ function Sellwithus() {
             Sell Emotions To Buyers{" "}
             <span className="text-black">Not Just Assets</span>
           </h2>
+
+          <p
+            className="mt-6 text-[#D4B06A] text-[22px] md:text-[32px] font-light"
+            style={{ fontFamily: "serif" }}
+          >
+            We believe Every asset has a Soul
+          </p>
         </div>
-        <div className="max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-9 xl:gap-11 items-center">
-            {/* LEFT IMAGE */}
-            <div className="w-full flex flex-col justify-center">
-              <p
-                className="mt-8 text-[#D4B06A] text-[24px] md:text-[36px] font-light mb-2.5"
-                style={{ fontFamily: "serif" }}
-              >
-                We believe Every asset has a Soul
-              </p>
-              <img
-                src={Sellemo1}
-                alt="Sell Emotions"
-                className="w-full min-w-[750px] object-contain"
-              />
-            </div>
 
-            {/* CENTER VS */}
-            <div className="flex flex-col items-center justify-center">
-              {/* VS Circle */}
-              <div className="w-full h-full flex items-center justify-center ">
-                <img
-                  src={Sellemo2}
-                  alt="VS"
-                  className="min-w-[200px] max-w-[300px] object-contain"
-                />
-              </div>
-            </div>
+        <div className="max-w-[1700px] mx-auto flex flex-col lg:flex-row items-center justify-center gap-5 lg:gap-8 xl:gap-12">
+          {/* LEFT IMAGE */}
+          <div className="w-full lg:w-auto flex justify-center">
+            <img
+              src={Sellemo1}
+              alt="Otulia Way"
+              className="w-full max-w-[950px] object-fit"
+            />
+          </div>
 
-            {/* RIGHT IMAGE */}
-            <div className="flex justify-center">
-              <img
-                src={Sellemo3}
-                alt="Traditional"
-                className="w-full min-w-[300px] max-w-[370px] object-contain"
-              />
-            </div>
+          {/* CENTER VS */}
+          <div className="shrink-0 flex items-center justify-center">
+            <img
+              src={Sellemo2}
+              alt="VS"
+              className="w-30 md:w-46 lg:w-62 object-contain"
+            />
+          </div>
+
+          {/* RIGHT IMAGE */}
+          <div className="w-full lg:w-auto flex justify-center">
+            <img
+              src={Sellemo3}
+              alt="Traditional"
+              className="w-full max-w-[480px] object-fit"
+            />
           </div>
         </div>
       </section>
@@ -503,7 +504,7 @@ function Sellwithus() {
                   <div className="flex items-center justify-center shrink-0">
                     <img
                       src={item.icon}
-                      className="w-14 h-14"
+                      className="w-12 h-12"
                       alt={item.title}
                     />
                   </div>
