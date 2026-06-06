@@ -437,7 +437,7 @@ function Sellwithus() {
             <img
               src={Sellemo2}
               alt="VS"
-              className="w-30 md:w-46 lg:w-62 object-contain"
+              className="w-24 md:w-32 lg:w-48 p-[30px] object-fit"
             />
           </div>
 
@@ -667,24 +667,24 @@ function Sellwithus() {
 
               {/* SUBTITLE */}
               <h3
-                className="mt-2 text-[#D4B06A] text-[20px] md:text-[40px] leading-[1.05] font-light"
+                className="mt-4 text-[#D4B06A] text-[20px] md:text-[40px] leading-[1.05] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Asset Recognition
               </h3>
 
               {/* DESCRIPTION */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed">
                 Every asset gets a unique NJM ID — making listings instantly
                 searchable, shareable, and verifiable worldwide with a single
                 code.
               </p>
-              <img src={NJM} />
+              <img className="mt-12 w-full max-w-[420px] object-contain" src={NJM} />
             </div>
 
             {/* RIGHT VISUAL AREA */}
-            <div className="relative flex items-center justify-center min-h-[520px]">
-              <img src={NJMcard} />
+            <div className="relative flex items-center justify-center lg:justify-end">
+              <img src={NJMcard} className="w-full max-w-[880px] object-contain" />
             </div>
           </div>
         </div>
@@ -693,188 +693,101 @@ function Sellwithus() {
       <div className="w-full h-[1px] bg-black/10 my-15"></div>
 
       {/* RANKING SYSTEM SECTION */}
-      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-12 overflow-hidden">
-        <div className="max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_1fr] gap-10 items-center">
+      <section className="w-full bg-white py-10 px-6 md:px-10 lg:px-16 overflow-hidden">
+        <div className="max-w-[1750px] mx-auto">
+          <div className="flex flex-col lg:flex-row gap-16 lg:items-stretch">
             {/* LEFT IMAGE PLACEHOLDER */}
-            <div className="flex justify-center lg:justify-start">
-              <div className="w-full max-w-[950px] aspect-[1.15/1] bg-white/40 rounded-[8px] flex items-center justify-center">
-                <img src={RankingCard} />
+            <div className="lg:flex-[1.3] flex">
+              <div className="w-full max-w-[1050px] bg-white/40 rounded-[8px] flex">
+                <img src={RankingCard} className="w-full h-auto object-contain shadow-sm" />
               </div>
             </div>
 
             {/* RIGHT CONTENT */}
-            <div className="lg:pl-8">
-              {/* HEADING */}
-              <h2
-                className="text-black text-[40px] md:text-[60px] leading-[1.05] font-light"
-                style={{ fontFamily: "serif" }}
-              >
-                Close More Deals With
-              </h2>
+            <div className="lg:flex-1 lg:pl-8 flex flex-col justify-between">
+              <div className="pt-2">
+                {/* HEADING */}
+                <h2
+                  className="text-black text-[42px] md:text-[68px] leading-[1.05] font-light"
+                  style={{ fontFamily: "serif" }}
+                >
+                  Close More Deals With
+                </h2>
 
-              {/* SUBTITLE */}
-              <h3
-                className="mt-4 text-[#D4B06A] text-[20px] md:text-[40px] leading-[1.05] font-light"
-                style={{ fontFamily: "serif" }}
-              >
-                Otulia’s Ranking System
-              </h3>
+                {/* SUBTITLE */}
+                <h3
+                  className="mt-4 text-[#D4B06A] text-[22px] md:text-[45px] leading-[1.05] font-light"
+                  style={{ fontFamily: "serif" }}
+                >
+                  Otulia’s Ranking System
+                </h3>
 
-              {/* DESCRIPTION */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed font-light">
-                Your listings and company profile are added as nominees in
-                global luxury rankings released every six months, helping drive
-                millions of buyers toward your assets and increasing regional
-                visibility, inquiries, and sales.
-              </p>
+                {/* DESCRIPTION */}
+                <p className="mt-8 max-w-xl text-black/75 text-[20px] md:text-[22px] leading-relaxed font-light">
+                  Your listings and company profile are added as nominees in
+                  global luxury rankings released every six months, helping drive
+                  millions of buyers toward your assets and increasing regional
+                  visibility, inquiries, and sales.
+                </p>
+              </div>
 
               {/* STATS GRID */}
-              <div className="grid grid-cols-2 gap-x-16 gap-y-14 mt-16">
+              <div className="grid grid-cols-2 gap-x-16 gap-y-16 mt-16 pb-2">
                 {/* ITEM */}
-                <div className="border-l-[3px] border-[#D4B06A] pl-3 ">
+                <div className="border-l-[3px] border-[#D4B06A] pl-4 ">
                   <h4
-                    className="text-[#D4B06A] text-[36px] md:text-[36px] leading-none font-light"
+                    className="text-[#D4B06A] text-[40px] md:text-[44px] leading-none font-light"
                     style={{ fontFamily: "serif" }}
                   >
                     3x–7x
                   </h4>
 
-                  <p className="mt-4 text-black text-[15px] leading-relaxed font-light">
+                  <p className="mt-4 text-black text-[16px] md:text-[18px] leading-relaxed font-light">
                     More Listing Visibility
                   </p>
                 </div>
 
                 {/* ITEM */}
-                <div className="border-l-[3px] border-[#D4B06A] pl-3">
+                <div className="border-l-[3px] border-[#D4B06A] pl-4">
                   <h4
-                    className="text-[#D4B06A] text-[38px] md:text-[36px] leading-none font-light"
+                    className="text-[#D4B06A] text-[40px] md:text-[44px] leading-none font-light"
                     style={{ fontFamily: "serif" }}
                   >
-                    40% – 65%
+                    40%–65%
                   </h4>
 
-                  <p className="mt-4 text-black text-[15px] leading-relaxed font-light">
+                  <p className="mt-4 text-black text-[16px] md:text-[18px] leading-relaxed font-light">
                     Organic Traffic Increase
                   </p>
                 </div>
 
                 {/* ITEM */}
-                <div className="border-l-[3px] border-[#D4B06A] pl-3">
+                <div className="border-l-[3px] border-[#D4B06A] pl-4">
                   <h4
-                    className="text-[#D4B06A] text-[38px] md:text-[36px] leading-none font-light"
+                    className="text-[#D4B06A] text-[40px] md:text-[44px] leading-none font-light"
                     style={{ fontFamily: "serif" }}
                   >
-                    + 55%
+                    +55%
                   </h4>
 
-                  <p className="mt-4 text-black text-[15px] leading-relaxed font-light">
+                  <p className="mt-4 text-black text-[16px] md:text-[18px] leading-relaxed font-light">
                     Buyer Inquiry Growth
                   </p>
                 </div>
 
                 {/* ITEM */}
-                <div className="border-l-[3px] border-[#D4B06A] pl-3">
+                <div className="border-l-[3px] border-[#D4B06A] pl-4">
                   <h4
-                    className="text-[#D4B06A] text-[38px] md:text-[36px] leading-none font-light"
+                    className="text-[#D4B06A] text-[40px] md:text-[44px] leading-none font-light"
                     style={{ fontFamily: "serif" }}
                   >
                     2.8x
                   </h4>
 
-                  <p className="mt-4 text-black text-[19px] leading-relaxed font-light">
+                  <p className="mt-4 text-black text-[16px] md:text-[18px] leading-relaxed font-light">
                     Better Buyer Discovery
                   </p>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* OTULIA CREDITS SECTION */}
-      <section className="w-full py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
-        <div className="max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            {/* LEFT CONTENT */}
-            <div>
-              {/* HEADING */}
-              <h2
-                className="text-black text-[40px] md:text-[60px] leading-[1.05] font-light"
-                style={{ fontFamily: "serif" }}
-              >
-                Build Long-Term Buyer Engagement
-                <br />
-                With <span className="text-[#D4B06A]">Otulia Credits</span>
-              </h2>
-
-              {/* DESCRIPTION */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed font-light">
-                Otulia's exclusive credit system lets dealerships allocate
-                credits directly to buyers.Increasing the sales of dealerships.
-              </p>
-
-              {/* SUBTITLE */}
-              <h3
-                className="mt-6 text-black/75 text-[26px] font-light"
-                style={{ fontFamily: "serif" }}
-              >
-                Credits Can Be Used For
-              </h3>
-
-              {/* FEATURES */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-14 mt-6">
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[15px] leading-relaxed font-light">
-                    Luxury hotels
-                  </p>
-                </div>
-
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[15px] leading-relaxed font-light">
-                    Concierge services
-                  </p>
-                </div>
-
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[15px] leading-relaxed font-light">
-                    Vehicle services
-                  </p>
-                </div>
-
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[15px] leading-relaxed font-light">
-                    Experiences
-                  </p>
-                </div>
-
-                {/* ITEM */}
-                <div className="flex items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-[#D4B06A]"></div>
-
-                  <p className="text-black text-[15px] leading-relaxed font-light">
-                    Travels
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT IMAGE PLACEHOLDER */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-[720px] aspect-[1.45/1] rounded-[10px] bg-white/40 border border-[#D4B06A]/40 shadow-sm flex items-center justify-center">
-                <img src={CreditsCard} />
               </div>
             </div>
           </div>
