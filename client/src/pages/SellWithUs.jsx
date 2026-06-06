@@ -146,7 +146,7 @@ function Sellwithus() {
 
           {/* Heading */}
           <h2 className="text-center leading-[1.05] tracking-[-0.04em]">
-            <span className="block text-black text-[42px] md:text-[64px] font-light">
+            <span className="block text-black text-[39px] md:text-[61px] font-light">
               Luxury Buyers{" "}
               <span
                 className="italic text-[#C8922A]"
@@ -219,7 +219,7 @@ function Sellwithus() {
         <div className="max-w-[1600px] mx-auto flex flex-col items-center">
           {/* Heading */}
           <h2
-            className="text-center text-black text-[40px] md:text-[60px] font-light leading-[1.05] tracking-[-0.04em]"
+            className="text-center text-black text-[37px] md:text-[57px] font-light leading-[1.05] tracking-[-0.04em]"
             style={{ fontFamily: "serif" }}
           >
             Grow Your Business with Otulia
@@ -272,7 +272,7 @@ function Sellwithus() {
 
           {/* Heading */}
           <h2
-            className="text-center text-[40px] md:text-[60px] leading-[1.05] tracking-[-0.04em] font-light"
+            className="text-center text-[37px] md:text-[57px] leading-[1.05] tracking-[-0.04em] font-light"
             style={{ fontFamily: "serif" }}
           >
             We Give You Buyers In{" "}
@@ -295,7 +295,7 @@ function Sellwithus() {
 
               {/* Title */}
               <h3
-                className="mt-3 text-[45px] leading-tight font-light text-[#D4B06A]"
+                className="mt-3 text-[42px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
                 Out Reach Forms
@@ -345,10 +345,10 @@ function Sellwithus() {
 
               {/* Title */}
               <h3
-                className="mt-3 text-[40px] leading-tight font-light text-[#D4B06A]"
+                className="mt-3 text-[42px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
-                Direct Enquiry
+                Out Reach Forms
               </h3>
 
               {/* Description */}
@@ -376,10 +376,10 @@ function Sellwithus() {
 
               {/* Title */}
               <h3
-                className="mt-3 text-[40px] leading-tight font-light text-[#D4B06A]"
+                className="mt-3 text-[42px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
-                Cross Category
+                Out Reach Forms
               </h3>
 
               {/* Description */}
@@ -408,7 +408,7 @@ function Sellwithus() {
         {/* TITLE */}
         <div className="flex flex-col items-center text-center mb-16">
           <h2
-            className="text-[40px] md:text-[65px] leading-[1.05] font-light text-black"
+            className="text-[37px] md:text-[62px] leading-[1.05] font-light text-black"
             style={{ fontFamily: "serif" }}
           >
             Sell Emotions To Buyers{" "}
@@ -462,7 +462,7 @@ function Sellwithus() {
           {/* LEFT CONTENT */}
           <div>
             <h2
-              className="text-[40px] md:text-[65px] leading-[1.05] font-light text-black"
+              className="text-[37px] md:text-[62px] leading-[1.05] font-light text-black"
               style={{ fontFamily: "serif" }}
             >
               We Create Marketing
@@ -471,7 +471,7 @@ function Sellwithus() {
             </h2>
 
             <h3
-              className="mt-4 text-[32px] md:text-[42px] font-light text-[#C8A96B]"
+              className="mt-4 text-[29px] md:text-[39px] font-light text-[#C8A96B]"
               style={{ fontFamily: "Cormorant Garamond, serif" }}
             >
               For Every Asset
@@ -559,13 +559,13 @@ function Sellwithus() {
           {/* RIGHT CARDS */}
           <div className="max-w-xl">
             <h2
-              className="text-black text-[40px] md:text-[60px] leading-[1.05] font-light"
+              className="text-black text-[37px] md:text-[57px] leading-[1.05] font-light"
               style={{ fontFamily: "serif" }}
             >
               Pricing Charts that
             </h2>
             <h3
-              className="mt-4 text-[#D2AE68] text-[20px] md:text-[40px] leading-none font-light"
+              className="mt-4 text-[#D2AE68] text-[17px] md:text-[37px] leading-none font-light"
               style={{ fontFamily: "serif" }}
             >
               Attract More Buyers
@@ -587,7 +587,7 @@ function Sellwithus() {
           {/* HEADING */}
           <div className="text-center mb-24">
             <h2
-              className="text-[40px] md:text-[60px] leading-[1.05] font-light text-black"
+              className="text-[37px] md:text-[57px] leading-[1.05] font-light text-black"
               style={{ fontFamily: "serif" }}
             >
               Sell Smarter Using Luxury Marketplace Intelligence Tools
@@ -599,7 +599,7 @@ function Sellwithus() {
             {/* LEFT CONTENT */}
             <div>
               <h3
-                className="text-[#D4B06A] text-[34px] md:text-[50px] leading-[1.05] font-light"
+                className="text-[#D4B06A] text-[31px] md:text-[47px] leading-[1.05] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Otulia Analytics and Insights
@@ -632,7 +632,7 @@ function Sellwithus() {
             {/* RIGHT CONTENT */}
             <div className="order-1 lg:order-2">
               <h3
-                className="text-[#D4B06A] text-[34px] md:text-[50px] leading-[1.05] font-light"
+                className="text-[#D4B06A] text-[31px] md:text-[47px] leading-[1.05] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 Global Google Analytics API
@@ -660,7 +660,7 @@ function Sellwithus() {
             <div>
               {/* HEADING */}
               <h2
-                className="text-black text-[40px] md:text-[60px] leading-[1.05] tracking-[-0.04em] font-light"
+                className="text-black text-[37px] md:text-[57px] leading-[1.05] tracking-[-0.04em] font-light"
                 style={{ fontFamily: "serif" }}
               >
                 NJM IDs for Instant
@@ -809,7 +809,7 @@ function Sellwithus() {
 
             {/* Heading */}
             <h2
-              className="mt-5 text-[42px] md:text-[64px] leading-none font-light text-black"
+              className="mt-5 text-[39px] md:text-[61px] leading-none font-light text-black"
               style={{ fontFamily: "serif" }}
             >
               Common <span className="italic text-[#C8922A]">Questions</span>
@@ -870,7 +870,7 @@ function Sellwithus() {
 
           {/* Heading */}
           <h2
-            className="mt-6 text-[42px] md:text-[72px] leading-[1.05] font-light text-black"
+            className="mt-6 text-[39px] md:text-[69px] leading-[1.05] font-light text-black"
             style={{ fontFamily: "serif" }}
           >
             Ready to Sell at the{" "}
