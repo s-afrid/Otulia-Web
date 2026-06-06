@@ -13,7 +13,7 @@ import {
 import SellWithUs_Card from "../components/SellWithUs_page/SellWithUs_Card";
 import SellWithUs_Hero from "../components/SellWithUs_page/SellWithUs_Hero";
 import BuyerFlowImage from "../assets/sellwithus_page/buyer_flow.png";
-import OutreachForm from "../assets/sellwithus_page/outreach_form.png";
+import OutreachForm from "../assets/sellwithus_page/reach_forms.png";
 import SalesCard from "../assets/sellwithus_page/sales_card.png";
 import Sellemo1 from "../assets/sellwithus_page/sellemo_1.jpeg";
 import Sellemo2 from "../assets/sellwithus_page/sellemo_2.png";
@@ -25,9 +25,9 @@ import NJMcard from "../assets/sellwithus_page/njm_card.png";
 import NJM from "../assets/sellwithus_page/njm.png";
 import RankingCard from "../assets/sellwithus_page/ranking_card.png";
 import CreditsCard from "../assets/sellwithus_page/credits_card.png";
-import GrowIcon1 from "../assets/sellwithus_page/grow_1.png";
-import GrowIcon2 from "../assets/sellwithus_page/grow_2.png";
-import GrowIcon3 from "../assets/sellwithus_page/grow_3.png";
+import GrowIcon1 from "../assets/sellwithus_page/sell_right.png";
+import GrowIcon2 from "../assets/sellwithus_page/sell_business.png";
+import GrowIcon3 from "../assets/sellwithus_page/sell_sales.png";
 import MarketingCard from "../assets/sellwithus_page/marketing_card.png";
 import SellPlay from "../assets/icons/sell_play.png";
 import SellPhoto from "../assets/icons/sell_photo.png";
@@ -207,7 +207,7 @@ function Sellwithus() {
       </section>
 
       {/* SEPARATING LINE */}
-      <div className="w-full h-[1px] bg-black/10 my-10"></div>
+      <div className="w-full h-[1px] bg-black/10 my-15"></div>
 
       {/* GROW BUSINESS SECTION */}
       <section className="w-full bg-white pt-2 pb-0 px-6 md:px-10 lg:px-16">
@@ -231,7 +231,7 @@ function Sellwithus() {
                   )}
 
                   <div className="flex items-start gap-7">
-                    <div className="w-[140px] h-[140px] flex items-center justify-center rounded-full bg-white shadow-md shrink-0">
+                    <div className="w-[130px] h-[130px] flex items-center justify-center rounded-full bg-white shadow-md shrink-0">
                       {item.icon}
                     </div>
 
@@ -297,7 +297,7 @@ function Sellwithus() {
               </h3>
 
               {/* Description */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed">
                 Buyers fill out a form about their preferences, and we provide
                 them with the best buyer-seller matches.Depending upon the
                 requirements.
@@ -347,7 +347,7 @@ function Sellwithus() {
               </h3>
 
               {/* Description */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed">
                 When buyers click “Interested” on your listing through Otulia
                 Website , the enquiry and buyer details are sent directly to
                 your CRM dashboard inbox, WA and Gmail.
@@ -378,7 +378,7 @@ function Sellwithus() {
               </h3>
 
               {/* Description */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed font-light">
+              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed">
                 When a sale happens in your region within your average lead
                 value, you’ll be notified about the asset sold and its price to
                 help you price inventory and identify top-selling assets to
