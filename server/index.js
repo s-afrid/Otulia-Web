@@ -68,9 +68,8 @@ app.get("/shipping-info", (req, res) => res.redirect(301, "/shipping"));
 app.get("/return-policy", (req, res) => res.redirect(301, "/returns"));
 
 const PORT = process.env.PORT || 5000;
-app.use(
-  express.static(path.join(__dirname, "../client/dist"), { maxAge: "1y" }),
-);
+
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
 // routes register
 app.use("/api/auth", authRoutes);
