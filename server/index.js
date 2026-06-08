@@ -110,6 +110,22 @@ app.use("/api/car-ranking", carRankingRoutes);
 
 const startTime = new Date().toISOString();
 
+app.get("/api/debug-assets", (req, res) => {
+  const distPath = path.join(__dirname, "../client/dist");
+  const results = {
+    distExists: fs.existsSync(distPath),
+    distContents: fs.existsSync(distPath) ? fs.readdirSync(distPath) : [],
+    assetsPath: path.join(distPath, "assets"),
+    assetsContents: []
+  };
+  
+  if (fs.existsSync(results.assetsPath)) {
+    results.assetsContents = fs.readdirSync(results.assetsPath).slice(0, 20); // First 20 files
+  }
+  
+  res.json(results);
+});
+
 app.get("/health", (req, res) => {
   res.json({
     status: "OK",
