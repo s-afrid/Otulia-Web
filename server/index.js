@@ -69,7 +69,24 @@ app.get("/return-policy", (req, res) => res.redirect(301, "/returns"));
 
 const PORT = process.env.PORT || 5000;
 
-app.use(express.static(path.join(__dirname, "../client/dist")));
+const distPath = path.join(__dirname, "../client/dist");
+console.log(`[Static] Serving files from: ${distPath}`);
+
+// Diagnostic: Check if dist exists
+const fs = require("fs");
+if (fs.existsSync(distPath)) {
+  console.log(`[Static] dist folder found. Contents:`, fs.readdirSync(distPath));
+  const assetsPath = path.join(distPath, "assets");
+  if (fs.existsSync(assetsPath)) {
+     console.log(`[Static] assets folder found. Example files:`, fs.readdirSync(assetsPath).slice(0, 5));
+  } else {
+     console.warn(`[Static] WARNING: assets folder NOT found at ${assetsPath}`);
+  }
+} else {
+  console.error(`[Static] ERROR: dist folder NOT found at ${distPath}`);
+}
+
+app.use(express.static(distPath));
 
 // routes register
 app.use("/api/auth", authRoutes);
