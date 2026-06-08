@@ -23,6 +23,9 @@ ssh -t -p $REMOTE_PORT $REMOTE_USER@$REMOTE_HOST << EOF
   echo "📦 Updating server dependencies..."
   cd server && npm install --legacy-peer-deps
   
+  echo "📦 Building client..."
+  cd ../client && npm install --legacy-peer-deps && npm run build
+  
   echo "🔄 Restarting PM2 processes..."
   pm2 restart all
   
