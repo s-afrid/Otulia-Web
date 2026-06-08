@@ -86,7 +86,15 @@ if (fs.existsSync(distPath)) {
   console.error(`[Static] ERROR: dist folder NOT found at ${distPath}`);
 }
 
-app.use(express.static(distPath));
+app.use(express.static(distPath, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    } else if (filePath.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|webp|woff|woff2|ttf|eot)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+}));
 
 // routes register
 app.use("/api/auth", authRoutes);
@@ -145,6 +153,8 @@ app.use((req, res) => {
   if (req.path.match(/\.[^\/]+$/) || req.path.startsWith('/api/')) {
     res.status(404).send("File not found");
   } else {
+    // Prevent caching for the entry point
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     // Otherwise, serve the React app index.html for client-side routing
     res.sendFile(path.join(__dirname, "../client/dist/index.html"));
   }
