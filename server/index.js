@@ -108,10 +108,14 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/admin", require("./routes/admin.routes.js"));
 app.use("/api/car-ranking", carRankingRoutes);
 
+const startTime = new Date().toISOString();
+
 app.get("/health", (req, res) => {
   res.json({
     status: "OK",
     service: "Otulia Backend",
+    deployedAt: startTime,
+    version: "1.0.1-diagnostic"
   });
 });
 
