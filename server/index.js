@@ -104,7 +104,13 @@ app.use(
 );
 
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+  // If the request has a file extension (like .js, .css, .png) or is an API route, return 404
+  if (req.path.match(/\.[^\/]+$/) || req.path.startsWith('/api/')) {
+    res.status(404).send("File not found");
+  } else {
+    // Otherwise, serve the React app index.html for client-side routing
+    res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+  }
 });
 
 const multer = require("multer");
