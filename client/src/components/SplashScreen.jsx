@@ -5,41 +5,42 @@ const SplashScreen = ({ onFinish }) => {
     const [opacity, setOpacity] = useState(1);
     const [isVisible, setIsVisible] = useState(true);
     const audioRef = React.useRef(null);
-    const hasStartedRef = React.useRef(false);
+    const hasUnmutedRef = React.useRef(false);
 
     useEffect(() => {
+        // Create audio once
         const audio = new Audio(welcomeSound);
         audio.volume = 0.5;
+        audio.preload = "auto";
         audioRef.current = audio;
 
-        const startAudio = () => {
-            if (hasStartedRef.current) return;
-            audio.play()
-                .then(() => {
-                    hasStartedRef.current = true;
-                })
-                .catch((err) => {
-                    console.log("Splash sound blocked, waiting for interaction:", err);
-                });
+        const attemptPlay = () => {
+            audio.play().catch(() => {
+                // If blocked, we wait for interaction
+                console.log("Autoplay blocked, waiting for interaction...");
+            });
         };
 
-        // Try playing immediately
-        startAudio();
-
-        // Fallback: Play on first interaction if blocked
         const handleInteraction = () => {
-            startAudio();
+            if (audioRef.current && !hasUnmutedRef.current) {
+                audioRef.current.play()
+                    .then(() => {
+                        hasUnmutedRef.current = true;
+                    })
+                    .catch(console.error);
+            }
         };
 
-        window.addEventListener('click', handleInteraction);
-        window.addEventListener('keydown', handleInteraction);
-        window.addEventListener('touchstart', handleInteraction);
+        // Initial attempt
+        attemptPlay();
 
-        // Animation timeline
-        const fadeTimer = setTimeout(() => {
-            setOpacity(0);
-        }, 2000);
+        // Listen for ANY interaction to unmute/play
+        window.addEventListener('click', handleInteraction, { once: true });
+        window.addEventListener('touchstart', handleInteraction, { once: true });
+        window.addEventListener('keydown', handleInteraction, { once: true });
 
+        // Fade out after 2s, remove after 3s
+        const fadeTimer = setTimeout(() => setOpacity(0), 2000);
         const removeTimer = setTimeout(() => {
             setIsVisible(false);
             if (onFinish) onFinish();
@@ -49,9 +50,8 @@ const SplashScreen = ({ onFinish }) => {
             clearTimeout(fadeTimer);
             clearTimeout(removeTimer);
             window.removeEventListener('click', handleInteraction);
-            window.removeEventListener('keydown', handleInteraction);
             window.removeEventListener('touchstart', handleInteraction);
-            // Stop sound on unmount
+            window.removeEventListener('keydown', handleInteraction);
             if (audioRef.current) {
                 audioRef.current.pause();
                 audioRef.current.currentTime = 0;
@@ -66,9 +66,9 @@ const SplashScreen = ({ onFinish }) => {
             className="fixed inset-0 z-[99999] flex items-center justify-center bg-black transition-opacity duration-1000 ease-in-out pointer-events-auto cursor-default"
             style={{ opacity: opacity }}
             onClick={() => {
-                if (!hasStartedRef.current && audioRef.current) {
+                if (audioRef.current && !hasUnmutedRef.current) {
                     audioRef.current.play().then(() => {
-                        hasStartedRef.current = true;
+                        hasUnmutedRef.current = true;
                     }).catch(console.error);
                 }
             }}

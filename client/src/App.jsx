@@ -136,9 +136,13 @@ function App() {
 
   const [showSplash, setShowSplash] = React.useState(true);
 
+  const handleSplashFinish = React.useCallback(() => {
+    setShowSplash(false);
+  }, []);
+
   return (
     <CartProvider>
-      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+      {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
