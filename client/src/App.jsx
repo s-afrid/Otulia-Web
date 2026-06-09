@@ -165,26 +165,39 @@ function App() {
       const audio = new Audio(welcomeSound);
       audio.volume = 1.0;
       audio.preload = "auto";
-      // Explicitly load for mobile
+      // Explicitly load the audio file for mobile devices
       audio.load();
       audioRef.current = audio;
 
       const handleInteraction = () => {
-        triggerAudio();
+        if (audioRef.current && !hasUnmutedRef.current) {
+          audioRef.current.play()
+            .then(() => {
+              hasUnmutedRef.current = true;
+              console.log("Audio unlocked and playing");
+            })
+            .catch((err) => {
+              console.log("Audio unlock failed:", err);
+            });
+        }
       };
 
-      // Try autoplaying (desktop)
-      audio.play().catch(() => {});
+      // Try autoplaying immediately (works on desktop if MEI is high)
+      audio.play().catch(() => {
+        console.log("Autoplay blocked, waiting for interaction...");
+      });
 
-      // touchend is often more reliable than touchstart for audio unlocking on iOS
-      window.addEventListener("click", handleInteraction, { once: true });
-      window.addEventListener("touchend", handleInteraction, { once: true });
-      window.addEventListener("keydown", handleInteraction, { once: true });
+      // Comprehensive list of events to unlock audio on mobile
+      const interactionEvents = ["click", "touchstart", "touchend", "mousedown", "keydown"];
+      
+      interactionEvents.forEach(event => {
+        window.addEventListener(event, handleInteraction, { once: true });
+      });
 
       return () => {
-        window.removeEventListener("click", handleInteraction);
-        window.removeEventListener("touchend", handleInteraction);
-        window.removeEventListener("keydown", handleInteraction);
+        interactionEvents.forEach(event => {
+          window.removeEventListener(event, handleInteraction);
+        });
       };
     }
   }, [triggerAudio]);
