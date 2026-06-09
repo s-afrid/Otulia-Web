@@ -139,6 +139,11 @@ function App() {
   const audioRef = React.useRef(null);
   const hasStartedRef = React.useRef(false);
 
+  // Mobile detection
+  const isMobile = React.useMemo(() => 
+    /iPhone|iPad|iPod|Android/i.test(navigator.userAgent), 
+  []);
+
   React.useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -186,6 +191,16 @@ function App() {
     setShowSplash(false);
   }, []);
 
+  const triggerAudio = React.useCallback(() => {
+    if (audioRef.current && !hasStartedRef.current) {
+      audioRef.current.play()
+        .then(() => {
+          hasStartedRef.current = true;
+        })
+        .catch(() => {});
+    }
+  }, []);
+
   return (
     <CartProvider>
       {/* Persistent Audio Element for Splash Theme */}
@@ -198,7 +213,11 @@ function App() {
         style={{ display: "none" }}
       />
       {showSplash && (
-        <SplashScreen onFinish={handleSplashFinish} />
+        <SplashScreen 
+          onFinish={handleSplashFinish} 
+          isMobile={isMobile}
+          onInteraction={triggerAudio}
+        />
       )}
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
