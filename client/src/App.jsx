@@ -142,13 +142,21 @@ function App() {
   // Function to trigger audio - call this on user gesture
   const triggerAudio = React.useCallback(() => {
     if (audioRef.current && !hasUnmutedRef.current) {
-      audioRef.current.play()
-        .then(() => {
-          hasUnmutedRef.current = true;
-        })
-        .catch((err) => {
-          console.log("Direct play attempt failed:", err);
-        });
+      const audio = audioRef.current;
+      
+      // Some mobile browsers need a fresh play() call inside the event loop
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            hasUnmutedRef.current = true;
+            console.log("Audio started successfully");
+          })
+          .catch((err) => {
+            console.log("Audio play failed:", err);
+          });
+      }
     }
   }, []);
 
@@ -157,23 +165,25 @@ function App() {
       const audio = new Audio(welcomeSound);
       audio.volume = 1.0;
       audio.preload = "auto";
+      // Explicitly load for mobile
+      audio.load();
       audioRef.current = audio;
 
-      // Backup listeners for general window interaction
       const handleInteraction = () => {
         triggerAudio();
       };
 
-      // Try autoplaying immediately (might work on some desktops/returning users)
+      // Try autoplaying (desktop)
       audio.play().catch(() => {});
 
+      // touchend is often more reliable than touchstart for audio unlocking on iOS
       window.addEventListener("click", handleInteraction, { once: true });
-      window.addEventListener("touchstart", handleInteraction, { once: true });
+      window.addEventListener("touchend", handleInteraction, { once: true });
       window.addEventListener("keydown", handleInteraction, { once: true });
 
       return () => {
         window.removeEventListener("click", handleInteraction);
-        window.removeEventListener("touchstart", handleInteraction);
+        window.removeEventListener("touchend", handleInteraction);
         window.removeEventListener("keydown", handleInteraction);
       };
     }
