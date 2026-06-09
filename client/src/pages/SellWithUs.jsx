@@ -348,7 +348,7 @@ function Sellwithus() {
                 className="mt-3 text-[42px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
-                Out Reach Forms
+                Direct Enquiry
               </h3>
 
               {/* Description */}
@@ -379,7 +379,7 @@ function Sellwithus() {
                 className="mt-3 text-[42px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
-                Out Reach Forms
+                Cross Category
               </h3>
 
               {/* Description */}
