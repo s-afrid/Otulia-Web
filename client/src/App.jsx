@@ -140,15 +140,14 @@ function App() {
   const hasUnmutedRef = React.useRef(false);
 
   React.useEffect(() => {
-    // Initialize audio
-    const audio = new Audio(welcomeSound);
+    const audio = audioRef.current;
+    if (!audio) return;
+
     audio.volume = 1.0;
-    audio.preload = "auto";
-    audioRef.current = audio;
 
     const playAudio = () => {
-      if (audioRef.current && !hasUnmutedRef.current) {
-        audioRef.current.play()
+      if (audio && !hasUnmutedRef.current) {
+        audio.play()
           .then(() => {
             hasUnmutedRef.current = true;
           })
@@ -192,6 +191,14 @@ function App() {
 
   return (
     <CartProvider>
+      {/* Persistent Audio Element for Splash Theme */}
+      <audio
+        ref={audioRef}
+        src={welcomeSound}
+        autoPlay
+        playsInline
+        style={{ display: "none" }}
+      />
       {showSplash && (
         <SplashScreen 
           onFinish={handleSplashFinish} 
