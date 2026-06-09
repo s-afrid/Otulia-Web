@@ -271,6 +271,16 @@ const PricingSection = () => {
         </div>
       )}
 
+      {/* Header Section */}
+      <div className="text-center mb-16 pt-8">
+        <h1 className="text-4xl md:text-5xl canela text-black mb-6">
+          Built for <span className="text-[#b18b24]">Sales.</span> Not Just Listings.
+        </h1>
+        <p className="text-[#666666] text-sm sm:text-base max-w-2xl mx-auto leading-relaxed px-4">
+          We tell you <span className="text-[#b18b24] font-semibold">where</span> to list, <span className="text-[#b18b24] font-semibold">when</span> to promote, <span className="text-[#b18b24] font-semibold">how</span> to position,<br className="hidden sm:block" /> and <span className="text-[#b18b24] font-semibold">how to connect</span> with qualified buyers.
+        </p>
+      </div>
+
       {/* Cards grid — 1 col mobile, 2 col tablet, 3 col desktop */}
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
         {plans.map((plan) => (
