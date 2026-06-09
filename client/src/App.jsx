@@ -139,71 +139,55 @@ function App() {
   const audioRef = React.useRef(null);
   const hasUnmutedRef = React.useRef(false);
 
-  // Function to trigger audio - call this on user gesture
-  const triggerAudio = React.useCallback(() => {
-    if (audioRef.current && !hasUnmutedRef.current) {
-      const audio = audioRef.current;
-      
-      // Some mobile browsers need a fresh play() call inside the event loop
-      const playPromise = audio.play();
-      
-      if (playPromise !== undefined) {
-        playPromise
+  React.useEffect(() => {
+    // Initialize audio
+    const audio = new Audio(welcomeSound);
+    audio.volume = 1.0;
+    audio.preload = "auto";
+    audioRef.current = audio;
+
+    const playAudio = () => {
+      if (audioRef.current && !hasUnmutedRef.current) {
+        audioRef.current.play()
           .then(() => {
             hasUnmutedRef.current = true;
-            console.log("Audio started successfully");
           })
           .catch((err) => {
-            console.log("Audio play failed:", err);
+            console.log("Audio play blocked:", err);
           });
       }
-    }
+    };
+
+    // Attempt immediate play
+    playAudio();
+
+    // Interaction listeners to unlock audio
+    const unlockEvents = ["click", "touchstart", "touchend", "mousedown", "keydown"];
+    const handleUnlock = () => playAudio();
+
+    unlockEvents.forEach(event => {
+      window.addEventListener(event, handleUnlock, { once: true });
+    });
+
+    return () => {
+      unlockEvents.forEach(event => {
+        window.removeEventListener(event, handleUnlock);
+      });
+    };
   }, []);
-
-  React.useEffect(() => {
-    if (!audioRef.current) {
-      const audio = new Audio(welcomeSound);
-      audio.volume = 1.0;
-      audio.preload = "auto";
-      // Explicitly load the audio file for mobile devices
-      audio.load();
-      audioRef.current = audio;
-
-      const handleInteraction = () => {
-        if (audioRef.current && !hasUnmutedRef.current) {
-          audioRef.current.play()
-            .then(() => {
-              hasUnmutedRef.current = true;
-              console.log("Audio unlocked and playing");
-            })
-            .catch((err) => {
-              console.log("Audio unlock failed:", err);
-            });
-        }
-      };
-
-      // Try autoplaying immediately (works on desktop if MEI is high)
-      audio.play().catch(() => {
-        console.log("Autoplay blocked, waiting for interaction...");
-      });
-
-      // Comprehensive list of events to unlock audio on mobile
-      const interactionEvents = ["click", "touchstart", "touchend", "mousedown", "keydown"];
-      
-      interactionEvents.forEach(event => {
-        window.addEventListener(event, handleInteraction, { once: true });
-      });
-
-      return () => {
-        interactionEvents.forEach(event => {
-          window.removeEventListener(event, handleInteraction);
-        });
-      };
-    }
-  }, [triggerAudio]);
 
   const handleSplashFinish = React.useCallback(() => {
     setShowSplash(false);
+  }, []);
+
+  const triggerAudio = React.useCallback(() => {
+    if (audioRef.current && !hasUnmutedRef.current) {
+      audioRef.current.play()
+        .then(() => {
+          hasUnmutedRef.current = true;
+        })
+        .catch(() => {});
+    }
   }, []);
 
   return (
