@@ -117,6 +117,7 @@ import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollTop";
 import SplashScreen from "./components/SplashScreen";
 import { CartProvider } from "./contexts/CartContext";
+import welcomeSound from "./assets/sounds/theme.mp3";
 
 // Simple fallback while lazy components load
 const PageLoader = () => <div className="w-full h-screen bg-white"></div>;
@@ -135,6 +136,40 @@ function App() {
   );
 
   const [showSplash, setShowSplash] = React.useState(true);
+  const audioRef = React.useRef(null);
+  const hasUnmutedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    // Initialize audio only on first mount
+    if (!audioRef.current) {
+      const audio = new Audio(welcomeSound);
+      audio.volume = 1.0;
+      audio.preload = "auto";
+      audioRef.current = audio;
+
+      const attemptPlay = () => {
+        audio.play().catch(() => {
+          console.log("Autoplay blocked, waiting for interaction...");
+        });
+      };
+
+      const handleInteraction = () => {
+        if (audioRef.current && !hasUnmutedRef.current) {
+          audioRef.current.play()
+            .then(() => {
+              hasUnmutedRef.current = true;
+            })
+            .catch(console.error);
+        }
+      };
+
+      attemptPlay();
+
+      window.addEventListener("click", handleInteraction, { once: true });
+      window.addEventListener("touchstart", handleInteraction, { once: true });
+      window.addEventListener("keydown", handleInteraction, { once: true });
+    }
+  }, []);
 
   const handleSplashFinish = React.useCallback(() => {
     setShowSplash(false);
