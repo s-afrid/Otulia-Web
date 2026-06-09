@@ -6,18 +6,36 @@ const SplashScreen = ({ onFinish }) => {
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
-        // Play sound
         const audio = new Audio(welcomeSound);
         audio.volume = 0.5;
-        audio.play().catch((err) => {
-            console.log("Splash sound blocked:", err);
-        });
+        let hasStarted = false;
+
+        const startAudio = () => {
+            if (hasStarted) return;
+            audio.play()
+                .then(() => {
+                    hasStarted = true;
+                })
+                .catch((err) => {
+                    console.log("Splash sound blocked, waiting for interaction:", err);
+                });
+        };
+
+        // Try playing immediately
+        startAudio();
+
+        // Fallback: Play on first interaction if blocked
+        const handleInteraction = () => {
+            if (!hasStarted) {
+                startAudio();
+            }
+        };
+
+        window.addEventListener('click', handleInteraction);
+        window.addEventListener('keydown', handleInteraction);
+        window.addEventListener('touchstart', handleInteraction);
 
         // Animation timeline
-        // 0ms: Render (Opacity 1)
-        // 1500ms: Start Fade Out
-        // 2500ms: Remove from DOM (onFinish)
-
         const fadeTimer = setTimeout(() => {
             setOpacity(0);
         }, 2000);
@@ -30,6 +48,9 @@ const SplashScreen = ({ onFinish }) => {
         return () => {
             clearTimeout(fadeTimer);
             clearTimeout(removeTimer);
+            window.removeEventListener('click', handleInteraction);
+            window.removeEventListener('keydown', handleInteraction);
+            window.removeEventListener('touchstart', handleInteraction);
             // Stop sound on unmount
             audio.pause();
             audio.currentTime = 0;
