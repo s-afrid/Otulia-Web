@@ -137,32 +137,39 @@ function App() {
 
   const [showSplash, setShowSplash] = React.useState(true);
   const audioRef = React.useRef(null);
-  const hasUnmutedRef = React.useRef(false);
+  const hasStartedRef = React.useRef(false);
 
   React.useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
+    // Set high volume and start attempt
     audio.volume = 1.0;
 
-    const playAudio = () => {
-      if (audio && !hasUnmutedRef.current) {
-        audio.play()
+    const attemptPlay = () => {
+      if (hasStartedRef.current) return;
+      
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
           .then(() => {
-            hasUnmutedRef.current = true;
+            hasStartedRef.current = true;
           })
           .catch((err) => {
-            console.log("Audio play blocked:", err);
+            console.log("Autoplay on load blocked by browser:", err);
           });
       }
     };
 
-    // Attempt immediate play
-    playAudio();
+    // Immediate attempt on mount
+    attemptPlay();
 
-    // Interaction listeners to unlock audio
+    // Secondary attempt as soon as document is ready
+    window.onload = attemptPlay;
+
+    // Safety fallback: still allow interaction to trigger it if blocked
     const unlockEvents = ["click", "touchstart", "touchend", "mousedown", "keydown"];
-    const handleUnlock = () => playAudio();
+    const handleUnlock = () => attemptPlay();
 
     unlockEvents.forEach(event => {
       window.addEventListener(event, handleUnlock, { once: true });
@@ -179,16 +186,6 @@ function App() {
     setShowSplash(false);
   }, []);
 
-  const triggerAudio = React.useCallback(() => {
-    if (audioRef.current && !hasUnmutedRef.current) {
-      audioRef.current.play()
-        .then(() => {
-          hasUnmutedRef.current = true;
-        })
-        .catch(() => {});
-    }
-  }, []);
-
   return (
     <CartProvider>
       {/* Persistent Audio Element for Splash Theme */}
@@ -197,13 +194,11 @@ function App() {
         src={welcomeSound}
         autoPlay
         playsInline
+        preload="auto"
         style={{ display: "none" }}
       />
       {showSplash && (
-        <SplashScreen 
-          onFinish={handleSplashFinish} 
-          onInteraction={triggerAudio}
-        />
+        <SplashScreen onFinish={handleSplashFinish} />
       )}
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
