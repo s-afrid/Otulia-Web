@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const SplashScreen = ({ onFinish }) => {
+const SplashScreen = ({ onFinish, onInteraction }) => {
     const [opacity, setOpacity] = useState(1);
     const [isVisible, setIsVisible] = useState(true);
     const [isFading, setIsFading] = useState(false);
@@ -28,6 +28,9 @@ const SplashScreen = ({ onFinish }) => {
         <div
             className={`fixed inset-0 z-[99999] flex items-center justify-center bg-black transition-opacity duration-1000 ease-in-out ${isFading ? 'pointer-events-none' : 'pointer-events-auto cursor-default'}`}
             style={{ opacity: opacity }}
+            onClick={() => {
+                if (!isFading && onInteraction) onInteraction();
+            }}
         >
             <div className="flex flex-col items-center animate-pulse justify-center text-center">
                 {/* White Logo */}

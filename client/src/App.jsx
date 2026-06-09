@@ -139,37 +139,45 @@ function App() {
   const audioRef = React.useRef(null);
   const hasUnmutedRef = React.useRef(false);
 
+  // Function to trigger audio - call this on user gesture
+  const triggerAudio = React.useCallback(() => {
+    if (audioRef.current && !hasUnmutedRef.current) {
+      audioRef.current.play()
+        .then(() => {
+          hasUnmutedRef.current = true;
+        })
+        .catch((err) => {
+          console.log("Direct play attempt failed:", err);
+        });
+    }
+  }, []);
+
   React.useEffect(() => {
-    // Initialize audio only on first mount
     if (!audioRef.current) {
       const audio = new Audio(welcomeSound);
       audio.volume = 1.0;
       audio.preload = "auto";
       audioRef.current = audio;
 
-      const attemptPlay = () => {
-        audio.play().catch(() => {
-          console.log("Autoplay blocked, waiting for interaction...");
-        });
-      };
-
+      // Backup listeners for general window interaction
       const handleInteraction = () => {
-        if (audioRef.current && !hasUnmutedRef.current) {
-          audioRef.current.play()
-            .then(() => {
-              hasUnmutedRef.current = true;
-            })
-            .catch(console.error);
-        }
+        triggerAudio();
       };
 
-      attemptPlay();
+      // Try autoplaying immediately (might work on some desktops/returning users)
+      audio.play().catch(() => {});
 
       window.addEventListener("click", handleInteraction, { once: true });
       window.addEventListener("touchstart", handleInteraction, { once: true });
       window.addEventListener("keydown", handleInteraction, { once: true });
+
+      return () => {
+        window.removeEventListener("click", handleInteraction);
+        window.removeEventListener("touchstart", handleInteraction);
+        window.removeEventListener("keydown", handleInteraction);
+      };
     }
-  }, []);
+  }, [triggerAudio]);
 
   const handleSplashFinish = React.useCallback(() => {
     setShowSplash(false);
@@ -177,7 +185,12 @@ function App() {
 
   return (
     <CartProvider>
-      {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+      {showSplash && (
+        <SplashScreen 
+          onFinish={handleSplashFinish} 
+          onInteraction={triggerAudio}
+        />
+      )}
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
