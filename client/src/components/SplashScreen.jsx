@@ -4,17 +4,19 @@ import welcomeSound from "../assets/sounds/theme.mp3";
 const SplashScreen = ({ onFinish }) => {
     const [opacity, setOpacity] = useState(1);
     const [isVisible, setIsVisible] = useState(true);
+    const audioRef = React.useRef(null);
+    const hasStartedRef = React.useRef(false);
 
     useEffect(() => {
         const audio = new Audio(welcomeSound);
         audio.volume = 0.5;
-        let hasStarted = false;
+        audioRef.current = audio;
 
         const startAudio = () => {
-            if (hasStarted) return;
+            if (hasStartedRef.current) return;
             audio.play()
                 .then(() => {
-                    hasStarted = true;
+                    hasStartedRef.current = true;
                 })
                 .catch((err) => {
                     console.log("Splash sound blocked, waiting for interaction:", err);
@@ -26,9 +28,7 @@ const SplashScreen = ({ onFinish }) => {
 
         // Fallback: Play on first interaction if blocked
         const handleInteraction = () => {
-            if (!hasStarted) {
-                startAudio();
-            }
+            startAudio();
         };
 
         window.addEventListener('click', handleInteraction);
@@ -52,8 +52,10 @@ const SplashScreen = ({ onFinish }) => {
             window.removeEventListener('keydown', handleInteraction);
             window.removeEventListener('touchstart', handleInteraction);
             // Stop sound on unmount
-            audio.pause();
-            audio.currentTime = 0;
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+            }
         };
     }, [onFinish]);
 
@@ -61,8 +63,15 @@ const SplashScreen = ({ onFinish }) => {
 
     return (
         <div
-            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black transition-opacity duration-1000 ease-in-out pointer-events-none"
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black transition-opacity duration-1000 ease-in-out pointer-events-auto cursor-default"
             style={{ opacity: opacity }}
+            onClick={() => {
+                if (!hasStartedRef.current && audioRef.current) {
+                    audioRef.current.play().then(() => {
+                        hasStartedRef.current = true;
+                    }).catch(console.error);
+                }
+            }}
         >
             <div className="flex flex-col items-center animate-pulse justify-center text-center">
                 {/* White Logo */}
