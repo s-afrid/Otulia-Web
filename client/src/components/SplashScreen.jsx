@@ -4,25 +4,25 @@ import welcomeSound from "../assets/sounds/theme.mp3";
 const SplashScreen = ({ onFinish }) => {
     const [opacity, setOpacity] = useState(1);
     const [isVisible, setIsVisible] = useState(true);
+    const [isFading, setIsFading] = useState(false);
     const audioRef = React.useRef(null);
     const hasUnmutedRef = React.useRef(false);
 
     useEffect(() => {
-        // Create audio once
         const audio = new Audio(welcomeSound);
-        audio.volume = 0.5;
+        audio.volume = 1.0;
         audio.preload = "auto";
         audioRef.current = audio;
 
         const attemptPlay = () => {
+            if (isFading) return;
             audio.play().catch(() => {
-                // If blocked, we wait for interaction
                 console.log("Autoplay blocked, waiting for interaction...");
             });
         };
 
         const handleInteraction = () => {
-            if (audioRef.current && !hasUnmutedRef.current) {
+            if (audioRef.current && !hasUnmutedRef.current && !isFading) {
                 audioRef.current.play()
                     .then(() => {
                         hasUnmutedRef.current = true;
@@ -31,16 +31,17 @@ const SplashScreen = ({ onFinish }) => {
             }
         };
 
-        // Initial attempt
         attemptPlay();
 
-        // Listen for ANY interaction to unmute/play
         window.addEventListener('click', handleInteraction, { once: true });
         window.addEventListener('touchstart', handleInteraction, { once: true });
         window.addEventListener('keydown', handleInteraction, { once: true });
 
-        // Fade out after 2s, remove after 3s
-        const fadeTimer = setTimeout(() => setOpacity(0), 2000);
+        const fadeTimer = setTimeout(() => {
+            setIsFading(true);
+            setOpacity(0);
+        }, 2000);
+
         const removeTimer = setTimeout(() => {
             setIsVisible(false);
             if (onFinish) onFinish();
@@ -57,16 +58,16 @@ const SplashScreen = ({ onFinish }) => {
                 audioRef.current.currentTime = 0;
             }
         };
-    }, [onFinish]);
+    }, [onFinish, isFading]);
 
     if (!isVisible) return null;
 
     return (
         <div
-            className="fixed inset-0 z-[99999] flex items-center justify-center bg-black transition-opacity duration-1000 ease-in-out pointer-events-auto cursor-default"
+            className={`fixed inset-0 z-[99999] flex items-center justify-center bg-black transition-opacity duration-1000 ease-in-out ${isFading ? 'pointer-events-none' : 'pointer-events-auto cursor-default'}`}
             style={{ opacity: opacity }}
             onClick={() => {
-                if (audioRef.current && !hasUnmutedRef.current) {
+                if (audioRef.current && !hasUnmutedRef.current && !isFading) {
                     audioRef.current.play().then(() => {
                         hasUnmutedRef.current = true;
                     }).catch(console.error);
