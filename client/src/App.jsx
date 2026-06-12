@@ -14,6 +14,7 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const Categorty = lazy(() => import("./pages/Categorty"));
 const Asset = lazy(() => import("./pages/Asset"));
 const Blogs = lazy(() => import("./pages/Blogs"));
+const Ranking = lazy(() => import("./pages/ranking/RankingHome"));
 
 // Company pages
 const About = lazy(() => import("./pages/company_pages/About"));
@@ -117,6 +118,8 @@ import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollTop";
 import SplashScreen from "./components/SplashScreen";
 import { CartProvider } from "./contexts/CartContext";
+import RankingHome from "./pages/ranking/RankingHome";
+import RankingCategoryPage from "./pages/ranking/RankingCategoryPage";
 
 // Simple fallback while lazy components load
 const PageLoader = () => <div className="w-full h-screen bg-white"></div>;
@@ -153,6 +156,8 @@ function App() {
           <Route path="/category/*" element={<Categorty />} />
           <Route path="/asset/:category/:id" element={<Asset />} />
           <Route path="/blogs" element={<Blogs />} />
+          <Route path="/ranking" element={<RankingHome />} />
+          <Route path="/ranking/:category" element={<RankingCategoryPage />} />
 
           {/* Auth routes */}
           <Route path="/login" element={<LoginPage />} />
