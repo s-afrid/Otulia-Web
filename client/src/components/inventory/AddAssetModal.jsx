@@ -37,6 +37,16 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         price: '', isPriceOnRequest: false, type: 'Sale', location: '', description: '',
         videoUrl: '', isPublic: true,
 
+        // Price History
+        priceHistoryRange: '5 Years',
+        priceHistory: [],
+        priceHistoryOptions: {
+            graphType: 'Bar Graph',
+            currency: 'USD $',
+            useInflationAdjusted: false,
+            allowAIEstimate: false
+        },
+
         // Fixed Highlights Keys
         highlight_hp: '', highlight_km: '', highlight_cc: '',
         highlight_length: '', highlight_baths: '', highlight_beds: '',
@@ -295,9 +305,38 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 abs: spec.abs || '',
                 tractionControl: spec.tractionControl || '',
                 color: spec.color || '',
+
+                // Price History from editData
+                priceHistoryRange: editData.priceHistory?.length > 10 ? '15 Years' : (editData.priceHistory?.length > 5 ? '10 Years' : '5 Years'),
+                priceHistory: editData.priceHistory || [],
+                priceHistoryOptions: editData.priceHistoryOptions || {
+                    graphType: 'Bar Graph',
+                    currency: 'USD $',
+                    useInflationAdjusted: false,
+                    allowAIEstimate: false
+                }
             });
         }
     }, [isOpen, editData]);
+
+    // Handle Price History Range Changes
+    useEffect(() => {
+        if (!isOpen || editData) return;
+
+        const yearsCount = parseInt(formData.priceHistoryRange);
+        const currentYear = new Date().getFullYear();
+        const newHistory = [];
+
+        for (let i = 0; i < yearsCount; i++) {
+            newHistory.push({
+                year: currentYear - i,
+                price: '',
+                currency: formData.priceHistoryOptions.currency
+            });
+        }
+
+        setFormData(prev => ({ ...prev, priceHistory: newHistory }));
+    }, [formData.priceHistoryRange, isOpen]);
 
     if (!isOpen) return null;
 
@@ -476,6 +515,9 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         });
 
         data.append('highlights', JSON.stringify(constructedHighlights));
+        data.append('priceHistory', JSON.stringify(formData.priceHistory));
+        data.append('priceHistoryOptions', JSON.stringify(formData.priceHistoryOptions));
+
         if (formData.amenities) data.append('amenities', JSON.stringify(formData.amenities));
         if (formData.smartHomeSystems) data.append('smartHomeSystems', JSON.stringify(formData.smartHomeSystems));
         if (formData.viewTypes) data.append('viewTypes', JSON.stringify(formData.viewTypes));
@@ -1092,9 +1134,181 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                                         </div>
                                     )}
+                                </div>
+                            </section>
 
-                                    {/* Media Section - Common to all */}
-                                    <div className="pt-10 border-t border-gray-100 space-y-10">
+                            {/* Price History Timeline Section */}
+                                        <section className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-100">
+                                        <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+                                            <div className="p-6 bg-gray-50/50 flex items-center justify-between border-b border-gray-100">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900">Price History Timeline</h3>
+                                                        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Add previous market prices to generate historical value graphs for buyers.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="p-6 space-y-8">
+                                                <div className="flex flex-wrap items-center justify-between gap-6">
+                                                    <div className="flex bg-gray-100 p-1 rounded-xl">
+                                                        {['5 Years', '10 Years', '15 Years'].map(range => (
+                                                            <button
+                                                                key={range}
+                                                                type="button"
+                                                                onClick={() => setFormData(prev => ({ ...prev, priceHistoryRange: range }))}
+                                                                className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${formData.priceHistoryRange === range ? 'bg-white text-black shadow-sm' : 'text-gray-500 hover:text-black'}`}
+                                                            >
+                                                                {range}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+
+                                                    <div className="flex items-center gap-6">
+                                                        <div className="space-y-1.5">
+                                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Graph Type</label>
+                                                            <div className="relative">
+                                                                <select 
+                                                                    value={formData.priceHistoryOptions.graphType}
+                                                                    onChange={(e) => setFormData(prev => ({ ...prev, priceHistoryOptions: { ...prev.priceHistoryOptions, graphType: e.target.value } }))}
+                                                                    className="pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none focus:border-black appearance-none"
+                                                                >
+                                                                    <option>Bar Graph</option>
+                                                                    <option>Line Graph</option>
+                                                                    <option>Area Graph</option>
+                                                                </select>
+                                                                <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="space-y-1.5">
+                                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Currency</label>
+                                                            <div className="relative">
+                                                                <select 
+                                                                    value={formData.priceHistoryOptions.currency}
+                                                                    onChange={(e) => setFormData(prev => ({ ...prev, priceHistoryOptions: { ...prev.priceHistoryOptions, currency: e.target.value } }))}
+                                                                    className="pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none focus:border-black appearance-none"
+                                                                >
+                                                                    <option>USD $</option>
+                                                                    <option>EUR €</option>
+                                                                    <option>GBP £</option>
+                                                                    <option>AED د.إ</option>
+                                                                </select>
+                                                                <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                                                    <div className="hidden md:grid grid-cols-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                                        <span>Year</span>
+                                                        <span>Estimated Market Price</span>
+                                                    </div>
+                                                    <div className="hidden md:grid grid-cols-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                                        <span>Year</span>
+                                                        <span>Estimated Market Price</span>
+                                                    </div>
+
+                                                    {formData.priceHistory.map((item, idx) => (
+                                                        <div key={idx} className="flex items-center gap-3">
+                                                            <div className="relative w-24">
+                                                                <select 
+                                                                    value={item.year}
+                                                                    onChange={(e) => {
+                                                                        const newHistory = [...formData.priceHistory];
+                                                                        newHistory[idx].year = parseInt(e.target.value);
+                                                                        setFormData(prev => ({ ...prev, priceHistory: newHistory }));
+                                                                    }}
+                                                                    className="w-full pl-3 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 appearance-none focus:outline-none focus:border-black"
+                                                                >
+                                                                    {Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                                                                        <option key={year} value={year}>{year}</option>
+                                                                    ))}
+                                                                </select>
+                                                                <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                            </div>
+
+                                                            <div className="flex-1 flex items-center gap-2">
+                                                                <div className="relative w-24">
+                                                                    <select 
+                                                                        value={item.currency}
+                                                                        onChange={(e) => {
+                                                                            const newHistory = [...formData.priceHistory];
+                                                                            newHistory[idx].currency = e.target.value;
+                                                                            setFormData(prev => ({ ...prev, priceHistory: newHistory }));
+                                                                        }}
+                                                                        className="w-full pl-3 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 appearance-none focus:outline-none focus:border-black"
+                                                                    >
+                                                                        <option>USD $</option>
+                                                                        <option>EUR €</option>
+                                                                        <option>GBP £</option>
+                                                                        <option>AED د.إ</option>
+                                                                    </select>
+                                                                    <FiChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                                </div>
+                                                                <input 
+                                                                    type="number"
+                                                                    value={item.price}
+                                                                    placeholder="Enter estimated price"
+                                                                    onChange={(e) => {
+                                                                        const newHistory = [...formData.priceHistory];
+                                                                        newHistory[idx].price = e.target.value;
+                                                                        setFormData(prev => ({ ...prev, priceHistory: newHistory }));
+                                                                    }}
+                                                                    className="flex-1 p-2.5 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-black transition-all"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-gray-100">
+                                                    <div className="flex items-center gap-8">
+                                                        <label className="flex items-center gap-3 cursor-pointer group">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                checked={formData.priceHistoryOptions.useInflationAdjusted}
+                                                                onChange={(e) => setFormData(prev => ({ ...prev, priceHistoryOptions: { ...prev.priceHistoryOptions, useInflationAdjusted: e.target.checked } }))}
+                                                                className="w-4 h-4 rounded border-gray-300 text-amber-500 focus:ring-amber-500"
+                                                            />
+                                                            <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider group-hover:text-black transition-colors">Use inflation-adjusted values</span>
+                                                        </label>
+                                                        <label className="flex items-center gap-3 cursor-pointer group">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                checked={formData.priceHistoryOptions.allowAIEstimate}
+                                                                onChange={(e) => setFormData(prev => ({ ...prev, priceHistoryOptions: { ...prev.priceHistoryOptions, allowAIEstimate: e.target.checked } }))}
+                                                                className="w-4 h-4 rounded border-gray-300 text-amber-500 focus:ring-amber-500"
+                                                            />
+                                                            <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider group-hover:text-black transition-colors">Allow Otulia AI to estimate missing years</span>
+                                                        </label>
+                                                    </div>
+
+                                                    <button 
+                                                        type="button"
+                                                        className="px-8 py-3.5 bg-[#D48D2A] text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-[#b87a24] transition-all shadow-lg shadow-[#D48D2A]/20 flex items-center gap-2"
+                                                    >
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                                                        Generate Market Graph
+                                                    </button>
+                                                </div>
+
+                                                <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100 flex items-start gap-4">
+                                                    <FiInfo className="text-blue-500 mt-0.5" />
+                                                    <p className="text-[11px] text-blue-600 font-medium leading-relaxed">
+                                                        These values help buyers understand appreciation trends and collector value over time. High accuracy improves listing visibility.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </section>
+
+                                        {/* Media Section - Common to all */}
+                                        <div className="pt-10 border-t border-gray-100 space-y-10">
                                         <h3 className="text-xl font-bold text-gray-900 mb-8 canela">Media</h3>
 
                                         {/* Show existing images if editing */}
@@ -1216,8 +1430,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             <InputField label="Video URL (YouTube/Vimeo)" name="videoUrl" value={formData.videoUrl} placeholder="https://youtube.com/watch?v=..." onChange={handleInputChange} />
                                         </div>
                                     </div>
-                                </div>
-                            </section>
 
                             {/* Footer / Visibility - Common to all */}
                             <div className="pt-10 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-6">

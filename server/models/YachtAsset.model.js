@@ -102,6 +102,20 @@ const yachtAssetSchema = new mongoose.Schema(
 
     keywords: [{ type: String }],
 
+    priceHistory: [
+      {
+        year: { type: Number },
+        price: { type: Number },
+        currency: { type: String, default: 'USD $' }
+      }
+    ],
+    priceHistoryOptions: {
+      graphType: { type: String, default: 'Bar Graph' },
+      currency: { type: String, default: 'USD $' },
+      useInflationAdjusted: { type: Boolean, default: false },
+      allowAIEstimate: { type: Boolean, default: false }
+    },
+
   },
   { timestamps: true }
 );

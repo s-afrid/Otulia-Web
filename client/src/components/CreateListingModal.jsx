@@ -540,6 +540,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         }
 
         data.append('highlights', JSON.stringify(constructedHighlights));
+        data.append('priceHistory', JSON.stringify(formData.priceHistory));
+        data.append('priceHistoryOptions', JSON.stringify(formData.priceHistoryOptions));
+
         images.forEach(img => {
             if (typeof img !== 'string') {
                 data.append('images', img);
@@ -1232,3 +1235,4 @@ const LocationInputField = ({ value, onChange }) => {
 };
 
 export default CreateListingModal;
+

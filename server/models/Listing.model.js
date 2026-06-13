@@ -97,6 +97,19 @@ const listingSchema = new mongoose.Schema(
             type: String,
             enum: ['rent', 'buy', 'rent/buy'],
             required: true
+        },
+        priceHistory: [
+            {
+                year: { type: Number },
+                price: { type: Number },
+                currency: { type: String, default: 'USD $' }
+            }
+        ],
+        priceHistoryOptions: {
+            graphType: { type: String, default: 'Bar Graph' },
+            currency: { type: String, default: 'USD $' },
+            useInflationAdjusted: { type: Boolean, default: false },
+            allowAIEstimate: { type: Boolean, default: false }
         }
     },
     { timestamps: true }

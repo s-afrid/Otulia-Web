@@ -288,6 +288,13 @@ router.post('/create', authMiddleware, upload.fields([
             status: req.body.isPublic === 'true' || req.body.isPublic === true ? 'Active' : 'Draft',
             type: req.body.type || 'Sale',
             acquisition: (req.body.type === 'Rent' ? 'rent' : 'buy'),
+            priceHistory: req.body.priceHistory ? JSON.parse(req.body.priceHistory) : [],
+            priceHistoryOptions: req.body.priceHistoryOptions ? JSON.parse(req.body.priceHistoryOptions) : {
+                graphType: 'Bar Graph',
+                currency: 'USD $',
+                useInflationAdjusted: false,
+                allowAIEstimate: false
+            },
             agent: {
                 id: user._id,
                 name: user.name,
@@ -774,6 +781,15 @@ router.put('/:id', authMiddleware, upload.fields([
         }
         if (videoUrl !== undefined) listing.videoUrl = videoUrl;
         if (isPublic !== undefined) listing.status = (isPublic === 'true' || isPublic === true) ? 'Active' : 'Draft';
+
+        if (req.body.priceHistory) {
+            listing.priceHistory = JSON.parse(req.body.priceHistory);
+            listing.markModified('priceHistory');
+        }
+        if (req.body.priceHistoryOptions) {
+            listing.priceHistoryOptions = JSON.parse(req.body.priceHistoryOptions);
+            listing.markModified('priceHistoryOptions');
+        }
 
         // --- Formatting Helper ---
         const addUnit = (val, unit) => {
