@@ -3,8 +3,12 @@ import {
   FiX, FiArrowLeft, FiImage, FiPlus, FiTrash2, FiVideo, FiCheck, 
   FiChevronRight, FiCheckCircle, FiInfo, FiMapPin, FiUploadCloud, 
   FiChevronDown, FiStar, FiGrid, FiSearch, FiHeart, FiSpeaker, 
-  FiTv, FiRadio, FiFeather, FiCpu, FiCast, FiCloud, FiThermometer, FiTool
+  FiTv, FiRadio, FiFeather, FiCpu, FiCast, FiCloud, FiThermometer, FiTool, FiBarChart2
 } from 'react-icons/fi';
+import { 
+    ResponsiveContainer, BarChart, Bar, LineChart, Line, AreaChart, Area, 
+    XAxis, YAxis, CartesianGrid, Tooltip, Legend 
+} from 'recharts';
 import { getAmenityIcon } from '../../utils/assetIcons';
 import { useAuth } from '../../contexts/AuthContext';
 import carIcon from '../../assets/icons/car_icon.png'
@@ -314,6 +318,15 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                     allowAIEstimate: false
                 }
             });
+        } else {
+            // New Asset: Pre-populate 5 years of price history
+            const currentYear = new Date().getFullYear();
+            const defaultHistory = Array.from({ length: 5 }, (_, i) => ({
+                year: currentYear - i,
+                price: '',
+                currency: 'USD $'
+            }));
+            setFormData(prev => ({ ...prev, priceHistory: defaultHistory }));
         }
     }, [isOpen, editData]);
 
@@ -1278,6 +1291,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                                                 <button 
                                                     type="button"
+                                                    onClick={() => setShowGraphPopup(true)}
                                                     className="w-full py-4 bg-[#D48D2A] text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-[#b87a24] transition-all shadow-lg shadow-[#D48D2A]/20 flex items-center justify-center gap-3 mt-4"
                                                 >
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
@@ -1453,6 +1467,15 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 </div>
             </div>
 
+            {/* Graph Popup Modal */}
+            <MarketGraphPopup 
+                isOpen={showGraphPopup} 
+                onClose={() => setShowGraphPopup(false)} 
+                data={formData.priceHistory} 
+                options={formData.priceHistoryOptions}
+                assetName={formData.propertyName || formData.make || formData.brand || formData.yachtName || 'Asset'}
+            />
+
             {/* Draft Confirmation Modal */}
             {showDraftConfirm && (
                 <div className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -1604,6 +1627,174 @@ const LocationInputField = ({ label, name, value, placeholder, onChange, require
                     })}
                 </ul>
             )}
+        </div>
+    );
+};
+
+const MarketGraphPopup = ({ isOpen, onClose, data, options, assetName }) => {
+    if (!isOpen) return null;
+
+    // Filter and sort data for Recharts
+    const chartData = data
+        .filter(item => item.price && item.year)
+        .map(item => ({
+            year: item.year.toString(),
+            price: parseFloat(item.price),
+            formattedPrice: new Intl.NumberFormat('en-US').format(item.price)
+        }))
+        .sort((a, b) => parseInt(a.year) - parseInt(b.year));
+
+    const renderChart = () => {
+        if (chartData.length === 0) {
+            return (
+                <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+                    <FiBarChart2 className="text-4xl mb-4 opacity-20" />
+                    <p className="text-sm font-medium">Add some prices to generate a graph</p>
+                </div>
+            );
+        }
+
+        const chartProps = {
+            data: chartData,
+            margin: { top: 20, right: 30, left: 20, bottom: 20 }
+        };
+
+        const commonAxis = (
+            <>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+                <XAxis 
+                    dataKey="year" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 10, fontWeight: 600, fill: '#9CA3AF' }}
+                    dy={10}
+                />
+                <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 10, fontWeight: 600, fill: '#9CA3AF' }}
+                    tickFormatter={(val) => `${options.currency.split(' ')[1] || '$'}${val >= 1000 ? (val/1000).toFixed(0) + 'k' : val}`}
+                />
+                <Tooltip 
+                    contentStyle={{ 
+                        borderRadius: '12px', 
+                        border: 'none', 
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                        padding: '12px'
+                    }}
+                    itemStyle={{ fontSize: '12px', fontWeight: '700', color: '#D48D2A' }}
+                    labelStyle={{ fontSize: '10px', fontWeight: '600', color: '#9CA3AF', marginBottom: '4px' }}
+                    formatter={(value) => [`${options.currency.split(' ')[0]} ${new Intl.NumberFormat().format(value)}`, 'Market Value']}
+                />
+            </>
+        );
+
+        if (options.graphType === 'Line Graph') {
+            return (
+                <LineChart {...chartProps}>
+                    {commonAxis}
+                    <Line 
+                        type="monotone" 
+                        dataKey="price" 
+                        stroke="#D48D2A" 
+                        strokeWidth={3} 
+                        dot={{ r: 6, fill: '#D48D2A', strokeWidth: 2, stroke: '#fff' }}
+                        activeDot={{ r: 8, strokeWidth: 0 }}
+                    />
+                </LineChart>
+            );
+        }
+
+        if (options.graphType === 'Area Graph') {
+            return (
+                <AreaChart {...chartProps}>
+                    <defs>
+                        <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#D48D2A" stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor="#D48D2A" stopOpacity={0}/>
+                        </linearGradient>
+                    </defs>
+                    {commonAxis}
+                    <Area 
+                        type="monotone" 
+                        dataKey="price" 
+                        stroke="#D48D2A" 
+                        strokeWidth={3} 
+                        fillOpacity={1} 
+                        fill="url(#colorPrice)" 
+                    />
+                </AreaChart>
+            );
+        }
+
+        // Default to Bar Graph
+        return (
+            <BarChart {...chartProps}>
+                {commonAxis}
+                <Bar 
+                    dataKey="price" 
+                    fill="#D48D2A" 
+                    radius={[6, 6, 0, 0]} 
+                    barSize={40}
+                />
+            </BarChart>
+        );
+    };
+
+    return (
+        <div className="fixed inset-0 z-[120] bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-[2.5rem] w-full max-w-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
+                <div className="px-8 py-6 border-b border-gray-50 flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                            <FiBarChart2 className="text-xl" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-900 canela">Market Value Analysis</h3>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{assetName} Price Trend</p>
+                        </div>
+                    </div>
+                    <button onClick={onClose} className="p-2 hover:bg-gray-50 rounded-full text-gray-400 transition-colors">
+                        <FiX className="text-xl" />
+                    </button>
+                </div>
+
+                <div className="p-10">
+                    <div className="h-80 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            {renderChart()}
+                        </ResponsiveContainer>
+                    </div>
+
+                    <div className="mt-10 grid grid-cols-3 gap-6">
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Peak Value</p>
+                            <p className="text-lg font-bold text-gray-900">
+                                {chartData.length > 0 
+                                    ? `${options.currency.split(' ')[0]} ${new Intl.NumberFormat().format(Math.max(...chartData.map(d => d.price)))}`
+                                    : '—'}
+                            </p>
+                        </div>
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Analysis Period</p>
+                            <p className="text-lg font-bold text-gray-900">{chartData.length} Years</p>
+                        </div>
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Currency</p>
+                            <p className="text-lg font-bold text-gray-900">{options.currency}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="px-8 py-6 bg-gray-50/50 border-t border-gray-50 flex justify-end">
+                    <button 
+                        onClick={onClose}
+                        className="px-8 py-3 bg-gray-900 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-black transition-all"
+                    >
+                        Close Analysis
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };
