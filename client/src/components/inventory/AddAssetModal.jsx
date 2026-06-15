@@ -94,6 +94,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const [documents, setDocuments] = useState([]); // General docs
     const [isSuccess, setIsSuccess] = useState(false);
     const [showDraftConfirm, setShowDraftConfirm] = useState(false);
+    const [showGraphPopup, setShowGraphPopup] = useState(false);
 
     const handleCloseAttempt = () => {
         // Only show draft confirmation if we have some data and we're not in edit mode
@@ -310,7 +311,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                 // Price History from editData
                 priceHistoryRange: editData.priceHistory?.length > 10 ? '15 Years' : (editData.priceHistory?.length > 5 ? '10 Years' : '5 Years'),
-                priceHistory: editData.priceHistory || [],
+                priceHistory: (editData.priceHistory && editData.priceHistory.length > 0) 
+                    ? editData.priceHistory 
+                    : Array.from({ length: 5 }, (_, i) => ({
+                        year: new Date().getFullYear() - i,
+                        price: '',
+                        currency: editData.priceHistoryOptions?.currency || 'USD $'
+                    })),
                 priceHistoryOptions: editData.priceHistoryOptions || {
                     graphType: 'Bar Graph',
                     currency: 'USD $',
@@ -319,34 +326,48 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 }
             });
         } else {
-            // New Asset: Pre-populate 5 years of price history
-            const currentYear = new Date().getFullYear();
-            const defaultHistory = Array.from({ length: 5 }, (_, i) => ({
-                year: currentYear - i,
-                price: '',
-                currency: 'USD $'
-            }));
-            setFormData(prev => ({ ...prev, priceHistory: defaultHistory }));
+            // New Asset: Pre-populate 5 years of price history if empty
+            setFormData(prev => {
+                if (prev.priceHistory && prev.priceHistory.length > 0) return prev;
+                
+                const currentYear = new Date().getFullYear();
+                const defaultHistory = Array.from({ length: 5 }, (_, i) => ({
+                    year: currentYear - i,
+                    price: '',
+                    currency: prev.priceHistoryOptions?.currency || 'USD $'
+                }));
+                return { ...prev, priceHistory: defaultHistory };
+            });
         }
     }, [isOpen, editData]);
 
     // Handle Price History Range Changes
     useEffect(() => {
-        if (!isOpen || editData) return;
+        if (!isOpen) return;
 
         const yearsCount = parseInt(formData.priceHistoryRange);
-        const currentYear = new Date().getFullYear();
-        const newHistory = [];
+        if (isNaN(yearsCount)) return;
 
-        for (let i = 0; i < yearsCount; i++) {
-            newHistory.push({
-                year: currentYear - i,
-                price: '',
-                currency: formData.priceHistoryOptions.currency
-            });
-        }
+        setFormData(prev => {
+            const currentHistory = prev.priceHistory || [];
+            if (currentHistory.length === yearsCount) return prev;
 
-        setFormData(prev => ({ ...prev, priceHistory: newHistory }));
+            const currentYear = new Date().getFullYear();
+            const newHistory = [];
+
+            for (let i = 0; i < yearsCount; i++) {
+                const targetYear = currentYear - i;
+                const existingItem = currentHistory.find(item => item.year === targetYear);
+                
+                newHistory.push(existingItem || {
+                    year: targetYear,
+                    price: '',
+                    currency: prev.priceHistoryOptions?.currency || 'USD $'
+                });
+            }
+
+            return { ...prev, priceHistory: newHistory };
+        });
     }, [formData.priceHistoryRange, isOpen]);
 
     if (!isOpen) return null;
