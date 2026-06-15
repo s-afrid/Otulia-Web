@@ -3,6 +3,7 @@ import SellWithUs_Hero from "./SellWithUs_Hero";
 import CategoryCards from "../../assets/sellwithus_page/category_cards.png";
 import WhatsappCard from "../../assets/sellwithus_page/whatsapp_card.png";
 import SeoCard from "../../assets/sellwithus_page/seo_card.png";
+import BuyerFlow from "../../assets/sellwithus_page/buyer_flow.png";
 
 const SellWithUs_Card = () => {
   return (
@@ -111,6 +112,41 @@ const SellWithUs_Card = () => {
                 src={SeoCard}
                 className="w-full h-full object-contain"
                 alt="categories"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+      <div className="w-full h-[1px] bg-black/10"></div>
+      {/* WE GIVE YOU BUYERS IN THREE MAIN WAYS */}
+      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
+        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* LEFT CONTENT */}
+          <div className="max-w-xl">
+            <h2
+              className="text-black text-[40px] md:text-[65px] leading-[1.05] font-light"
+              style={{ fontFamily: "serif" }}
+            >
+              We Give You Buyers In Three Main Ways
+            </h2>
+            <h3
+              className="mt-4 text-[#D2AE68] text-[40px] md:text-[50px] italic leading-none font-light"
+              style={{ fontFamily: "serif" }}
+            >
+              Perfect Matches
+            </h3>
+            <p className="mt-6 text-black/75 text-[19px] leading-relaxed max-w-lg">
+              Buyers fill out a form about their preferences, and we provide them with the best buyer-seller matches. Depending upon the requirements.
+            </p>
+          </div>
+
+          {/* RIGHT CARDS */}
+          <div className="w-full flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-[760px] h-[520px] flex items-center justify-center">
+              <img
+                src={BuyerFlow}
+                className="w-full h-full object-contain"
+                alt="buyer flow"
               />
             </div>
           </div>
