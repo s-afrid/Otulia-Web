@@ -7,6 +7,7 @@ import BikeKeyFeatures from "./BikeKeyFeat";
 import BikeFeatures from "./BikeFeatures";
 import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
+import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
@@ -109,6 +110,13 @@ const Bike_Section = () => {
             <BikeKeyFeatures item={info} />
 
             <BikeFeatures item={info} />
+
+            {info.priceHistory && info.priceHistory.length > 0 && (
+                <PriceHistoryChart 
+                    priceHistory={info.priceHistory} 
+                    options={info.priceHistoryOptions} 
+                />
+            )}
             
             <div className="w-full mt-10">
                 <LocationMap 

@@ -7,6 +7,7 @@ import YachtKeyFeatures from "./YachtKeyFeat";
 import YachtFeatures from "./YachtFeatures";
 import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
+import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
@@ -110,6 +111,13 @@ const Yacht_Section = () => {
             <YachtKeyFeatures item={info} />
 
             <YachtFeatures item={info} />
+
+            {info.priceHistory && info.priceHistory.length > 0 && (
+                <PriceHistoryChart 
+                    priceHistory={info.priceHistory} 
+                    options={info.priceHistoryOptions} 
+                />
+            )}
             
             <div className="w-full mt-10">
                 <LocationMap 

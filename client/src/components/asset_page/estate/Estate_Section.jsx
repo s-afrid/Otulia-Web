@@ -7,6 +7,7 @@ import EstateKeyFeatures from "../estate/EstateKeyFeat";
 import EstateFeatures from "../estate/EstateFeatures";
 import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
+import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
@@ -123,6 +124,13 @@ const Estate_Section = () => {
       <EstateKeyFeatures item={info} />
 
       <EstateFeatures item={info} />
+
+      {info.priceHistory && info.priceHistory.length > 0 && (
+        <PriceHistoryChart 
+          priceHistory={info.priceHistory} 
+          options={info.priceHistoryOptions} 
+        />
+      )}
 
       <div className="flex items-center justify-center mb-4">
         <LocationMap

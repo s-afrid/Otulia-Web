@@ -7,6 +7,7 @@ import CarKeyFeatures from "../car/CarKeyFeat";
 import CarFeatures from "../car/CarFeatures";
 import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
+import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
@@ -125,6 +126,13 @@ const Car_Section = () => {
       <CarKeyFeatures item={info} />
 
       <CarFeatures item={info} />
+
+      {info.priceHistory && info.priceHistory.length > 0 && (
+        <PriceHistoryChart 
+          priceHistory={info.priceHistory} 
+          options={info.priceHistoryOptions} 
+        />
+      )}
 
       <div className="w-full mt-10">
         <LocationMap
