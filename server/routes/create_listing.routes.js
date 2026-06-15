@@ -999,9 +999,28 @@ router.put('/:id', authMiddleware, upload.fields([
 
         } else if (modelName === 'EstateAsset') {
             if (req.body.propertyName) listing.propertyName = req.body.propertyName;
-            if (req.body.amenities) listing.amenities = JSON.parse(req.body.amenities);
-            if (req.body.smartHomeSystems) listing.smartHomeSystems = JSON.parse(req.body.smartHomeSystems);
-            if (req.body.viewTypes) listing.viewTypes = JSON.parse(req.body.viewTypes);
+            
+            if (req.body.amenities) {
+                try {
+                    listing.amenities = JSON.parse(req.body.amenities);
+                } catch (e) {
+                    if (Array.isArray(req.body.amenities)) listing.amenities = req.body.amenities;
+                }
+            }
+            if (req.body.smartHomeSystems) {
+                try {
+                    listing.smartHomeSystems = JSON.parse(req.body.smartHomeSystems);
+                } catch (e) {
+                    if (Array.isArray(req.body.smartHomeSystems)) listing.smartHomeSystems = req.body.smartHomeSystems;
+                }
+            }
+            if (req.body.viewTypes) {
+                try {
+                    listing.viewTypes = JSON.parse(req.body.viewTypes);
+                } catch (e) {
+                    if (Array.isArray(req.body.viewTypes)) listing.viewTypes = req.body.viewTypes;
+                }
+            }
 
             const spec = listing.specification || {};
             const keySpec = listing.keySpecifications || {};

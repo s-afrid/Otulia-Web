@@ -530,7 +530,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         }
 
         Object.keys(formData).forEach(key => {
-            if (key.startsWith('highlight_') || ['highlights', 'amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
+            if (key.startsWith('highlight_') || ['highlights', 'amenities', 'smartHomeSystems', 'viewTypes', 'priceHistory', 'priceHistoryOptions'].includes(key)) {
                 return;
             }
             if (key === 'isPublic' && draftOverride !== null) {
