@@ -2,8 +2,8 @@ import React from "react";
 import SellWithUs_Hero from "./SellWithUs_Hero";
 import CategoryCards from "../../assets/sellwithus_page/category_cards.png";
 import WhatsappCard from "../../assets/sellwithus_page/whatsapp_card.png";
-import SeoCard from "../../assets/sellwithus_page/seo_card.png";
-import BuyerFlow from "../../assets/sellwithus_page/buyer_flow.png";
+import SeoCard from "../../assets/sellwithus_page/seo_ready.png";
+import BuyerFlow from "../../assets/sellwithus_page/direct_enquiry.png";
 
 const SellWithUs_Card = () => {
   return (
