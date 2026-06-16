@@ -86,17 +86,25 @@ const PriceHistoryChart = ({ priceHistory, options }) => {
           dataKey="year" 
           axisLine={false} 
           tickLine={false} 
-          tick={{ fontSize: 11, fontWeight: 600, fill: '#9CA3AF' }}
-          dy={15}
+          tick={{ fontSize: 10, fontWeight: 600, fill: '#9CA3AF' }}
+          dy={10}
         />
-        <YAxis hide />
+        <YAxis 
+          axisLine={false} 
+          tickLine={false} 
+          tick={{ fontSize: 10, fontWeight: 600, fill: '#9CA3AF' }}
+          tickFormatter={(val) => `${val >= 1000000 ? (val/1000000).toFixed(1) + 'M' : (val >= 1000 ? (val/1000).toFixed(0) + 'K' : val)}`}
+          dx={-10}
+        />
         <Tooltip content={<CustomTooltip />} />
       </>
     );
 
+    const margin = { top: 40, right: 30, left: 20, bottom: 20 };
+
     if (graphType === 'Bar Graph') {
       return (
-        <BarChart data={chartData} margin={{ top: 30, right: 30, left: 0, bottom: 0 }}>
+        <BarChart data={chartData} margin={margin}>
           {commonAxis}
           <Bar 
             dataKey="price" 
@@ -112,7 +120,7 @@ const PriceHistoryChart = ({ priceHistory, options }) => {
 
     if (graphType === 'Line Graph') {
       return (
-        <LineChart data={chartData} margin={{ top: 30, right: 30, left: 0, bottom: 0 }}>
+        <LineChart data={chartData} margin={margin}>
           {commonAxis}
           <Line 
             type="monotone" 
@@ -130,7 +138,7 @@ const PriceHistoryChart = ({ priceHistory, options }) => {
 
     // Default to Area Graph
     return (
-      <AreaChart data={chartData} margin={{ top: 30, right: 30, left: 0, bottom: 0 }}>
+      <AreaChart data={chartData} margin={margin}>
         <defs>
           <linearGradient id="colorPriceProduct" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#D48D2A" stopOpacity={0.15}/>
