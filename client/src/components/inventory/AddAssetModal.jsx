@@ -43,10 +43,16 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
         // Price History
         priceHistoryRange: '5 Years',
-        priceHistory: [],
+        priceHistory: Array.from({ length: 15 }, (_, i) => ({
+            year: new Date().getFullYear() - i,
+            price: '',
+            currency: 'USD $'
+        })),
         priceHistoryOptions: {
             graphType: 'Bar Graph',
-            currency: 'USD $'
+            currency: 'USD $',
+            useInflationAdjusted: false,
+            allowAIEstimate: false
         },
 
         // Fixed Highlights Keys
@@ -311,18 +317,20 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                 // Price History from editData
                 priceHistoryRange: editData.priceHistory?.length > 10 ? '15 Years' : (editData.priceHistory?.length > 5 ? '10 Years' : '5 Years'),
-                priceHistory: (editData.priceHistory && editData.priceHistory.length > 0) 
-                    ? editData.priceHistory 
-                    : Array.from({ length: 5 }, (_, i) => ({
-                        year: new Date().getFullYear() - i,
+                priceHistory: Array.from({ length: 15 }, (_, i) => {
+                    const targetYear = new Date().getFullYear() - i;
+                    const existing = editData.priceHistory?.find(h => h.year === targetYear);
+                    return existing || {
+                        year: targetYear,
                         price: '',
                         currency: editData.priceHistoryOptions?.currency || 'USD $'
-                    })),
-                priceHistoryOptions: editData.priceHistoryOptions || {
-                    graphType: 'Bar Graph',
-                    currency: 'USD $',
-                    useInflationAdjusted: false,
-                    allowAIEstimate: false
+                    };
+                }),
+                priceHistoryOptions: {
+                    graphType: editData.priceHistoryOptions?.graphType || 'Bar Graph',
+                    currency: editData.priceHistoryOptions?.currency || 'USD $',
+                    useInflationAdjusted: editData.priceHistoryOptions?.useInflationAdjusted || false,
+                    allowAIEstimate: editData.priceHistoryOptions?.allowAIEstimate || false
                 }
             });
         } else {
@@ -340,35 +348,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             });
         }
     }, [isOpen, editData]);
-
-    // Handle Price History Range Changes
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const yearsCount = parseInt(formData.priceHistoryRange);
-        if (isNaN(yearsCount)) return;
-
-        setFormData(prev => {
-            const currentHistory = prev.priceHistory || [];
-            if (currentHistory.length === yearsCount) return prev;
-
-            const currentYear = new Date().getFullYear();
-            const newHistory = [];
-
-            for (let i = 0; i < yearsCount; i++) {
-                const targetYear = currentYear - i;
-                const existingItem = currentHistory.find(item => item.year === targetYear);
-                
-                newHistory.push(existingItem || {
-                    year: targetYear,
-                    price: '',
-                    currency: prev.priceHistoryOptions?.currency || 'USD $'
-                });
-            }
-
-            return { ...prev, priceHistory: newHistory };
-        });
-    }, [formData.priceHistoryRange, isOpen]);
 
     if (!isOpen) return null;
 
@@ -1209,7 +1188,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     </div>
 
                                                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                                                        {formData.priceHistory.map((item, idx) => (
+                                                        {formData.priceHistory.slice(0, parseInt(formData.priceHistoryRange)).map((item, idx) => (
                                                             <div key={idx} className="flex items-center gap-3">
                                                                 <div className="relative w-28 shrink-0">
                                                                     <select 

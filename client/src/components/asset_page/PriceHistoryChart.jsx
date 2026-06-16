@@ -7,7 +7,11 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  LabelList
+  LabelList,
+  BarChart,
+  Bar,
+  LineChart,
+  Line
 } from 'recharts';
 import { FiTrendingUp, FiTrendingDown } from 'react-icons/fi';
 import numberWithCommas from '../../modules/numberwithcomma';
@@ -27,6 +31,7 @@ const PriceHistoryChart = ({ priceHistory, options }) => {
   if (chartData.length < 2) return null;
 
   const currency = options?.currency?.split(' ')[0] || 'AED';
+  const graphType = options?.graphType || 'Area Graph';
 
   // Calculate statistics
   const prices = chartData.map(d => d.price);
@@ -73,6 +78,82 @@ const PriceHistoryChart = ({ priceHistory, options }) => {
     return null;
   };
 
+  const renderChart = () => {
+    const commonAxis = (
+      <>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+        <XAxis 
+          dataKey="year" 
+          axisLine={false} 
+          tickLine={false} 
+          tick={{ fontSize: 11, fontWeight: 600, fill: '#9CA3AF' }}
+          dy={15}
+        />
+        <YAxis hide />
+        <Tooltip content={<CustomTooltip />} />
+      </>
+    );
+
+    if (graphType === 'Bar Graph') {
+      return (
+        <BarChart data={chartData} margin={{ top: 30, right: 30, left: 0, bottom: 0 }}>
+          {commonAxis}
+          <Bar 
+            dataKey="price" 
+            fill="#D48D2A" 
+            radius={[6, 6, 0, 0]} 
+            barSize={40}
+          >
+            <LabelList content={renderCustomLabel} />
+          </Bar>
+        </BarChart>
+      );
+    }
+
+    if (graphType === 'Line Graph') {
+      return (
+        <LineChart data={chartData} margin={{ top: 30, right: 30, left: 0, bottom: 0 }}>
+          {commonAxis}
+          <Line 
+            type="monotone" 
+            dataKey="price" 
+            stroke="#D48D2A" 
+            strokeWidth={3} 
+            dot={{ r: 6, fill: '#D48D2A', strokeWidth: 2, stroke: '#fff' }}
+            activeDot={{ r: 8, strokeWidth: 0 }}
+          >
+            <LabelList content={renderCustomLabel} />
+          </Line>
+        </LineChart>
+      );
+    }
+
+    // Default to Area Graph
+    return (
+      <AreaChart data={chartData} margin={{ top: 30, right: 30, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="colorPriceProduct" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#D48D2A" stopOpacity={0.15}/>
+            <stop offset="95%" stopColor="#D48D2A" stopOpacity={0}/>
+          </linearGradient>
+        </defs>
+        {commonAxis}
+        <Area 
+          type="monotone" 
+          dataKey="price" 
+          stroke="#D48D2A" 
+          strokeWidth={3} 
+          fillOpacity={1} 
+          fill="url(#colorPriceProduct)"
+          dot={{ r: 5, fill: '#D48D2A', strokeWidth: 2, stroke: '#fff' }}
+          activeDot={{ r: 7, strokeWidth: 0 }}
+        >
+          <LabelList content={renderCustomLabel} />
+        </Area>
+      </AreaChart>
+    );
+  };
+
   return (
     <div className="w-full px-[2%] py-16">
       <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 md:p-12 shadow-sm">
@@ -111,38 +192,7 @@ const PriceHistoryChart = ({ priceHistory, options }) => {
           <div className="lg:w-2/3 flex flex-col justify-between">
             <div className="h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 30, right: 30, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorPriceProduct" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#D48D2A" stopOpacity={0.15}/>
-                      <stop offset="95%" stopColor="#D48D2A" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                  <XAxis 
-                    dataKey="year" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fontSize: 11, fontWeight: 600, fill: '#9CA3AF' }}
-                    dy={15}
-                  />
-                  <YAxis 
-                    hide
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area 
-                    type="monotone" 
-                    dataKey="price" 
-                    stroke="#D48D2A" 
-                    strokeWidth={3} 
-                    fillOpacity={1} 
-                    fill="url(#colorPriceProduct)"
-                    dot={{ r: 5, fill: '#D48D2A', strokeWidth: 2, stroke: '#fff' }}
-                    activeDot={{ r: 7, strokeWidth: 0 }}
-                  >
-                    <LabelList content={renderCustomLabel} />
-                  </Area>
-                </AreaChart>
+                {renderChart()}
               </ResponsiveContainer>
             </div>
             
