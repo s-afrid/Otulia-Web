@@ -262,7 +262,7 @@ const Cars_Section = () => {
 
         <section
           ref={featuredListRef}
-          className="w-full bg-[#f9f9f9] py-16 mt-4"
+          className="w-full  py-16 mt-4"
         >
           <div className="w-full px-2 md:px-9">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">

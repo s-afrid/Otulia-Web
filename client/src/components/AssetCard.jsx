@@ -152,7 +152,7 @@ const AssetCard = ({ item }) => {
         <div
           className="absolute z-10 flex flex-col"
           style={{
-            top: "2.7cqi" /* top: 4 (16px) */,
+            top: "2.7cqi" /* top: 4 (16px) */,  
             left: "2.7cqi" /* left: 4 (16px) */,
             gap: "1.3cqi" /* gap: 2 (8px) */,
           }}
@@ -224,16 +224,17 @@ const AssetCard = ({ item }) => {
               {/* TITLE */}
               <div>
                 <h4
-                  className="truncate translate-y-px pb-1"
+                  // className="truncate translate-y-px pb-1 "
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
                     fontWeight: 500,
-                    fontSize: "16px" /* fontSize: "15px" */,
+                    fontSize: "64px" /* fontSize: "15px" */,
+                    fontSize: "20px",
                     lineHeight: 1.15,
                     color: "#2A2A2A",
                   }}
                 >
-                  {item.title}
+                  {/* {item.title} */}
                 </h4>
               </div>
 
@@ -380,7 +381,7 @@ const AssetCard = ({ item }) => {
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
                     fontWeight: 500,
-                    fontSize: "16px" /* fontSize: "15px" */,
+                    fontSize: "12px",
                     lineHeight: "1.15",
                     color: "#2A2A2A",
                     paddingBottom: 2,
@@ -399,7 +400,7 @@ const AssetCard = ({ item }) => {
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 400,
-                fontSize: "1.93cqi" /* fontSize: "11.5px" */,
+                fontSize: "1.76cqi" /* fontSize: "10.5px" */,
                 lineHeight: "100%",
                 color: "#888888",
               }}
