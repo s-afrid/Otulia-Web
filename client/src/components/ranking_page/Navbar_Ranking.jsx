@@ -12,17 +12,16 @@ const Navbar = ({
   hideLogin = false,
   forceTransparent = false,
   customLogo = null,
+  isSidebarOpen = true,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [panelFlag, setpanelFlag] = useState(false);
 
   // 1. Get Loading State
-  // We need 'loading' to prevent the UI from checking "isAuthenticated" too early
   const { isAuthenticated, loading } = useAuth();
 
   const location = useLocation();
   const isHeroPage = location.pathname === "/";
-  const isProductPage = location.pathname.startsWith("/asset/");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,12 +31,11 @@ const Navbar = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 2. Determine Text/Icon Color
-  // If we are NOT on Hero, OR if we have Scrolled -> Dark Text
-  // Override if forceTransparent is on
   const isDarkText = (!isHeroPage || isScrolled) && !forceTransparent;
 
-  const navClasses = `fixed ${isScrolled ? "top-0" : "top-[clamp(12px,2vh,24px)]"} left-0 h-[clamp(50px,8vh,80px)] w-screen z-50 transition-all duration-200 flex items-center justify-between px-[clamp(12px,2vw,40px)] py-[clamp(8px,1vh,16px)] ${
+  const sidebarWidth = isSidebarOpen ? "clamp(180px,14vw,320px)" : "0px";
+
+  const navClasses = `fixed ${isScrolled ? "top-0" : "top-[clamp(12px,2vh,24px)]"} right-0 h-[clamp(50px,8vh,80px)] z-50 transition-all duration-200 flex items-center justify-between px-[clamp(12px,2vw,40px)] py-[clamp(8px,1vh,16px)] ${
     forceTransparent
       ? "bg-transparent text-white"
       : !isHeroPage
@@ -47,13 +45,16 @@ const Navbar = ({
           : "bg-transparent text-white"
   }`;
 
-  // Default logo logic (can be refined based on 'isDarkText' if you have a black logo asset)
-  // For now, adhere to existing unless custom provided
+  const navStyle = {
+    left: sidebarWidth,
+    width: `calc(100vw - ${sidebarWidth})`,
+  };
+
   const logoSrc =
     isScrolled || !isHeroPage ? "/logos/logo_inverted.png" : "/logos/logo.png";
 
   return (
-    <nav className={navClasses}>
+    <nav className={navClasses} style={navStyle}>
       <div className="w-full flex items-center justify-between relative">
         {/* 1. Logo - Left Column */}
         <div className="flex-1 flex justify-start">
