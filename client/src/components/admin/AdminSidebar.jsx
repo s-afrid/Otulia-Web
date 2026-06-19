@@ -1,12 +1,13 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
     FiGrid, FiUsers, FiPieChart, FiDollarSign, FiSettings,
-    FiXCircle, FiShoppingBag, FiShield, FiPercent
+    FiXCircle, FiShoppingBag, FiShield, FiPercent, FiFileText
 } from 'react-icons/fi';
 
 const AdminSidebar = ({ isSidebarOpen, toggleSidebar, activeTab, setActiveTab, user }) => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const menuItems = [
         { id: 'overview', label: 'Overview', icon: FiGrid },
@@ -15,6 +16,7 @@ const AdminSidebar = ({ isSidebarOpen, toggleSidebar, activeTab, setActiveTab, u
         { id: 'payouts', label: 'Payout Management', icon: FiDollarSign },
         { id: 'partners', label: 'Partners', icon: FiShoppingBag },
         { id: 'coupons', label: 'Coupons', icon: FiPercent },
+        { id: 'content-management', label: 'Content Management', icon: FiFileText, isRoute: true, path: '/content-management' },
         { id: 'settings', label: 'Settings', icon: FiSettings },
     ];
 
@@ -38,12 +40,21 @@ const AdminSidebar = ({ isSidebarOpen, toggleSidebar, activeTab, setActiveTab, u
                     <button
                         key={item.id}
                         onClick={() => {
-                            setActiveTab(item.id);
+                            if (item.isRoute) {
+                                navigate(item.path);
+                            } else {
+                                if (setActiveTab) {
+                                    setActiveTab(item.id);
+                                }
+                                if (location.pathname !== '/admin') {
+                                    navigate(`/admin?tab=${item.id}`);
+                                }
+                            }
                             if (window.innerWidth < 1024) {
                                 toggleSidebar();
                             }
                         }}
-                        className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
+                        className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-[12px] font-bold transition-all ${activeTab === item.id
                             ? 'bg-[#F2E8DB] text-gray-900 border-l-4 border-black shadow-sm'
                             : 'text-gray-500 hover:bg-gray-50'
                             }`}

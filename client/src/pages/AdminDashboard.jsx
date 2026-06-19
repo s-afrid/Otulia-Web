@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import SEO from '../components/SEO';
 
 // Modular Components
@@ -19,7 +19,11 @@ import CouponModal from '../components/admin/CouponModal';
 const AdminDashboard = () => {
     const { token, user } = useAuth();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState('overview');
+    const location = useLocation();
+    const [activeTab, setActiveTab] = useState(() => {
+        const params = new URLSearchParams(location.search);
+        return params.get('tab') || 'overview';
+    });
     const [statusFilter, setStatusFilter] = useState('All');
     const [stats, setStats] = useState(null);
     const [partners, setPartners] = useState([]);
@@ -150,6 +154,14 @@ const AdminDashboard = () => {
         fetchData();
         return () => window.removeEventListener('resize', handleResize);
     }, [token, user]);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tab = params.get('tab');
+        if (tab && tab !== activeTab) {
+            setActiveTab(tab);
+        }
+    }, [location.search]);
 
     const fetchData = async () => {
         try {

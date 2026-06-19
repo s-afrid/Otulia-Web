@@ -34,6 +34,7 @@ const Inventory = lazy(() => import("./pages/Inventory"));
 const Favorites = lazy(() => import("./pages/Favorites"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const DocumentViewer = lazy(() => import("./pages/DocumentViewer"));
+const ContentManagement = lazy(() => import("./pages/ContentManagement"));
 const DealerProfile = lazy(() => import("./pages/DealerProfile"));
 const SellWithUs = lazy(() => import("./pages/SellWithUs"));
 
@@ -133,6 +134,7 @@ function App() {
     "/login",
     "/signup",
     "/inventory",
+    "/content-management",
   ];
   const shouldShowFooter = !hideFooterRoutes.some((path) =>
     location.pathname.startsWith(path),
@@ -256,6 +258,7 @@ function App() {
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/view-document" element={<DocumentViewer />} />
+          <Route path="/content-management" element={<ContentManagement />} />
           <Route path="/dealer/:email" element={<DealerProfile />} />
           <Route path="/sellwithus" element={<SellWithUs />} />
 
