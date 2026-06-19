@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import {
-    FiGrid, FiUsers, FiPieChart, FiDollarSign, FiSettings,
-    FiSearch, FiBell, FiChevronDown, FiCheckCircle, FiXCircle,
-    FiMoreVertical, FiShoppingBag, FiShield, FiArrowUpRight, FiBriefcase, FiFileText, FiPercent, FiPlus, FiTrash2, FiEdit2
-} from 'react-icons/fi';
-import numberWithCommas from '../modules/numberwithcomma';
 import SEO from '../components/SEO';
-import { 
-    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    BarChart, Bar, PieChart, Pie, Cell, Legend
-} from 'recharts';
+
+// Modular Components
+import AdminSidebar from '../components/admin/AdminSidebar';
+import AdminNavbar from '../components/admin/AdminNavbar';
+import OverviewTab from '../components/admin/OverviewTab';
+import UsersTab from '../components/admin/UsersTab';
+import AnalyticsTab from '../components/admin/AnalyticsTab';
+import PayoutsTab from '../components/admin/PayoutsTab';
+import PartnersTab from '../components/admin/PartnersTab';
+import CouponsTab from '../components/admin/CouponsTab';
+import SettingsTab from '../components/admin/SettingsTab';
+import DocumentViewerModal from '../components/admin/DocumentViewerModal';
+import CouponModal from '../components/admin/CouponModal';
 
 const AdminDashboard = () => {
     const { token, user } = useAuth();
@@ -75,6 +78,7 @@ const AdminDashboard = () => {
                     discountValue: '',
                     expiresAt: '',
                     usageLimit: '',
+                    usageLimitPerUser: 1,
                     isActive: true
                 });
             } else {
@@ -217,968 +221,95 @@ const AdminDashboard = () => {
         </div>
     );
 
-    const KPICard = ({ title, value, growth, icon: Icon, colorClass, iconColorClass }) => (
-        <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-            <div className={`absolute top-0 right-0 w-24 h-24 rounded-bl-[4rem] opacity-5 transition-transform group-hover:scale-110 ${colorClass}`}></div>
-            <div className="flex justify-between items-start mb-6 z-10 relative">
-                <div>
-                    <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">{title}</p>
-                    <h3 className="text-2xl font-black text-gray-900 canela">{value}</h3>
-                </div>
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${iconColorClass}`}>
-                    <Icon className="text-xl" />
-                </div>
-            </div>
-            <div className="flex items-center gap-2 z-10 relative">
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${growth.includes('+') ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
-                    {growth}
-                </span>
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">vs last month</span>
-            </div>
-        </div>
-    );
-
     return (
         <div className="min-h-screen bg-[#F9FAFB] flex montserrat">
             <SEO title="Admin Dashboard" description="Otulia System Administration" />
+            
             {/* SIDEBAR */}
-            <aside className={`w-[240px] border-r flex-col fixed inset-y-0 z-50 bg-white border-gray-100 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} transition-transform duration-300 ease-in-out`}>
-                <div className="p-6 pb-10 flex justify-between items-center">
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                        <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-[34px]" />
-                        <div className="ml-2 px-2 py-1 bg-[#D48D2A] text-white rounded-md flex items-center gap-1 shadow-sm">
-                            <FiShield className="text-[10px]" />
-                            <span className="text-[9px] font-bold uppercase tracking-widest">Admin</span>
-                        </div>
-                    </div>
-                    <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900 lg:hidden">
-                        <FiXCircle className="h-6 w-6" />
-                    </button>
-                </div>
-
-                <nav className="flex-1 px-3 space-y-1.5 overflow-y-auto custom-scrollbar">
-                    {[
-                        { id: 'overview', label: 'Overview', icon: FiGrid },
-                        { id: 'users', label: 'User Management', icon: FiUsers },
-                        { id: 'analytics', label: 'Analytics', icon: FiPieChart },
-                        { id: 'payouts', label: 'Payout Management', icon: FiDollarSign },
-                        { id: 'partners', label: 'Partners', icon: FiShoppingBag },
-                        { id: 'coupons', label: 'Coupons', icon: FiPercent },
-                        { id: 'settings', label: 'Settings', icon: FiSettings },
-                    ].map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => setActiveTab(item.id)}
-                            className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id
-                                ? 'bg-[#F2E8DB] text-gray-900 border-l-4 border-black shadow-sm'
-                                : 'text-gray-500 hover:bg-gray-50'
-                                }`}
-                        >
-                            <item.icon className={`text-lg ${activeTab === item.id ? 'text-black' : 'text-gray-400'}`} />
-                            {item.label}
-                        </button>
-                    ))}
-                </nav>
-
-                <div className="p-4 m-4 bg-gray-50 rounded-2xl border border-gray-100">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-full bg-white border border-gray-200 p-0.5 shrink-0">
-                            <img src={user?.profilePicture || "https://i.pravatar.cc/150?img=68"} alt="Admin" className="w-full h-full rounded-full object-cover" />
-                        </div>
-                        <div className="overflow-hidden">
-                            <p className="text-sm font-bold text-gray-900 truncate">{user?.name || 'Admin User'}</p>
-                            <p className="text-[10px] text-gray-400 truncate">System Administrator</p>
-                        </div>
-                    </div>
-                    <button onClick={() => navigate('/inventory')} className="w-full py-2 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-gray-600 hover:text-[#D48D2A] hover:border-[#D48D2A] transition-all">
-                        Switch to Inventory
-                    </button>
-                </div>
-            </aside>
+            <AdminSidebar 
+                isSidebarOpen={isSidebarOpen} 
+                toggleSidebar={toggleSidebar} 
+                activeTab={activeTab} 
+                setActiveTab={setActiveTab} 
+                user={user} 
+            />
 
             {/* MAIN CONTENT */}
-            <main className={`flex-1 bg-[#F9FAFB] transition-all duration-300 ease-in-out lg:ml-[240px]`}>
-                {/* HEADER */}
-                <header className="h-20 px-4 sm:px-8 flex items-center justify-between border-b border-gray-100 bg-white sticky top-0 z-40">
-                    <div className="flex items-center gap-4">
-                        <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900 lg:hidden">
-                            <FiGrid className="h-6 w-6" />
-                        </button>
-                        <h2 className="text-lg sm:text-xl font-bold text-gray-900 canela">
-                            {activeTab === 'overview' ? 'Dashboard Overview' :
-                                activeTab === 'partners' ? 'Partner Verification' :
-                                    activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-                        </h2>
-                    </div>
-
-                    <div className="flex items-center gap-2 sm:gap-4">
-                        <div className="relative hidden sm:block">
-                            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <input
-                                className="w-40 sm:w-64 bg-gray-50 border border-gray-100 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium text-gray-600 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all placeholder:text-gray-400"
-                                placeholder="Search system..."
-                            />
-                        </div>
-                        <div className="w-px h-8 bg-gray-100 mx-2 hidden sm:block"></div>
-                        <div className="relative">
-                            <button 
-                                onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
-                                className="relative w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-all focus:outline-none"
-                            >
-                                <FiBell className="text-gray-500" />
-                                {notifications.length > 0 && (
-                                    <span className="absolute top-2 right-2.5 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-[9px] text-white font-bold flex items-center justify-center">
-                                        {notifications.length}
-                                    </span>
-                                )}
-                            </button>
-
-                            {/* Notification Dropdown */}
-                            {isNotificationDropdownOpen && (
-                                <div 
-                                    className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 py-3 animate-in fade-in slide-in-from-top-2 duration-200 z-[60]"
-                                    onMouseLeave={() => setIsNotificationDropdownOpen(false)}
-                                >
-                                    <div className="px-4 pb-2 border-b border-gray-50 flex justify-between items-center">
-                                        <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest">Recent Alerts</h4>
-                                        <span className="text-[10px] font-bold text-[#D48D2A]">{notifications.length} New</span>
-                                    </div>
-                                    <div className="max-h-80 overflow-y-auto custom-scrollbar">
-                                        {notifications.length === 0 ? (
-                                            <div className="py-8 px-4 text-center">
-                                                <FiBell className="mx-auto text-gray-200 text-3xl mb-2" />
-                                                <p className="text-xs text-gray-400 font-medium">No new notifications</p>
-                                            </div>
-                                        ) : (
-                                            notifications.map((notif) => (
-                                                <div 
-                                                    key={notif._id} 
-                                                    onClick={() => {
-                                                        handleRemoveNotification(notif._id);
-                                                        if (notif.targetTab) {
-                                                            setActiveTab(notif.targetTab);
-                                                        }
-                                                        setIsNotificationDropdownOpen(false);
-                                                    }}
-                                                    className="px-4 py-3 hover:bg-gray-50 border-b border-gray-50 cursor-pointer transition-colors group relative"
-                                                >
-                                                    <div className="flex gap-3">
-                                                        <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-[#D48D2A] shrink-0">
-                                                            <FiShield className="text-sm" />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-xs font-bold text-gray-900 leading-tight mb-1">{notif.message}</p>
-                                                            <p className="text-[10px] text-gray-400 font-medium">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Click to view</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </header>
+            <main className="flex-1 bg-[#F9FAFB] transition-all duration-300 ease-in-out lg:ml-[240px]">
+                {/* HEADER/NAVBAR */}
+                <AdminNavbar 
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    toggleSidebar={toggleSidebar}
+                    isNotificationDropdownOpen={isNotificationDropdownOpen}
+                    setIsNotificationDropdownOpen={setIsNotificationDropdownOpen}
+                    notifications={notifications}
+                    handleRemoveNotification={handleRemoveNotification}
+                />
 
                 <div className="p-4 sm:p-10">
-                    {activeTab === 'overview' && stats && (
-                        <div className="animate-in fade-in duration-500">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                                <KPICard
-                                    title="Total Revenue"
-                                    value={`$${numberWithCommas(stats.revenue)}`}
-                                    growth={`+${stats.revenueGrowth}%`}
-                                    icon={FiDollarSign}
-                                    colorClass="bg-emerald-500"
-                                    iconColorClass="bg-emerald-50 text-emerald-600"
-                                />
-                                <KPICard
-                                    title="Total Users"
-                                    value={numberWithCommas(stats.totalUsers)}
-                                    growth="--"
-                                    icon={FiUsers}
-                                    colorClass="bg-blue-500"
-                                    iconColorClass="bg-blue-50 text-blue-600"
-                                />
-                                <KPICard
-                                    title="Partner Stores"
-                                    value={stats.partnerStores}
-                                    growth="--"
-                                    icon={FiShoppingBag}
-                                    colorClass="bg-purple-500"
-                                    iconColorClass="bg-purple-50 text-purple-600"
-                                />
-                                <KPICard
-                                    title="Active Users"
-                                    value={stats.activeUsers}
-                                    growth="Real-time"
-                                    icon={FiUsers}
-                                    colorClass="bg-[#D48D2A]"
-                                    iconColorClass="bg-[#FFF4E5] text-[#D48D2A]"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                <div className="lg:col-span-2 bg-white p-4 sm:p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-6 canela">Revenue Analytics</h3>
-                                    <div className="h-64 mt-4">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart data={analyticsData?.monthlyRevenue || []}>
-                                                <defs>
-                                                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stopColor="#D48D2A" stopOpacity={0.3}/>
-                                                        <stop offset="95%" stopColor="#D48D2A" stopOpacity={0}/>
-                                                    </linearGradient>
-                                                </defs>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                                <XAxis 
-                                                    dataKey="name" 
-                                                    axisLine={false} 
-                                                    tickLine={false} 
-                                                    tick={{fontSize: 10, fontWeight: 700, fill: '#9ca3af'}}
-                                                    dy={10}
-                                                />
-                                                <YAxis 
-                                                    axisLine={false} 
-                                                    tickLine={false} 
-                                                    tick={{fontSize: 10, fontWeight: 700, fill: '#9ca3af'}}
-                                                    tickFormatter={(value) => `$${value}`}
-                                                />
-                                                <Tooltip 
-                                                    contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
-                                                    formatter={(value) => [`$${numberWithCommas(value)}`, 'Revenue']}
-                                                />
-                                                <Area 
-                                                    type="monotone" 
-                                                    dataKey="value" 
-                                                    stroke="#D48D2A" 
-                                                    strokeWidth={3}
-                                                    fillOpacity={1} 
-                                                    fill="url(#colorValue)" 
-                                                />
-                                            </AreaChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </div>
-                                <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-8 self-start canela">Platform Wallet</h3>
-                                    <div className="bg-gray-900 p-6 rounded-[2rem] mb-6 shadow-xl shadow-gray-200">
-                                        <div className="w-32 h-32 bg-white rounded-xl flex items-center justify-center p-2">
-                                            {/* QR Placeholder */}
-                                            <div className="w-full h-full border-4 border-black border-dashed opacity-20 bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=OtuliaPlatform')] bg-cover"></div>
-                                        </div>
-                                    </div>
-                                    <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-4">Scan to receive payments</p>
-                                    <button className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-black transition-all shadow-lg hover:shadow-xl">
-                                        Download QR Code
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {activeTab === 'partners' && (
-                        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
-                            <div className="p-4 sm:p-8 border-b border-gray-100 flex-col sm:flex-row flex justify-between items-start sm:items-end">
-                                <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-1 canela">Partners Management</h3>
-                                    <p className="text-sm text-gray-400 font-medium">Manage and verify dealer accounts</p>
-                                </div>
-                                <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
-                                    <div className="relative">
-                                        <select 
-                                            value={statusFilter}
-                                            onChange={(e) => setStatusFilter(e.target.value)}
-                                            className="appearance-none bg-gray-50 border border-gray-100 rounded-lg py-2 pl-4 pr-10 text-xs font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:border-[#D48D2A] cursor-pointer w-full sm:min-w-[140px]"
-                                        >
-                                            <option value="All">All Status</option>
-                                            <option value="None">None</option>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Verified">Verified</option>
-                                            <option value="Rejected">Rejected</option>
-                                        </select>
-                                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                                    </div>
-                                    <button className="px-4 py-2 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100">Export</button>
-                                </div>
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead className='hidden md:table-header-group'>
-                                        <tr className="bg-gray-50/50 border-b border-gray-100">
-                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Partner Name</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Plan</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Metrics</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</th>
-                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-50">
-                                        {partners
-                                            .filter(p => statusFilter === 'All' || p.verificationStatus === statusFilter)
-                                            .map(partner => (
-                                            <tr key={partner.id} className="block md:table-row hover:bg-gray-50/50 transition-colors group">
-                                                <td className="block md:table-cell px-8 py-5">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-xl bg-[#F2E8DB] flex-shrink-0 items-center justify-center text-xs font-black text-[#D48D2A] border border-[#E5DAC8] hidden sm:flex">
-                                                            {partner.name.substring(0, 2).toUpperCase()}
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-sm font-bold text-gray-900">{partner.name}</p>
-                                                            <p className="text-xs text-gray-400 font-medium">{partner.email}</p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="block md:table-cell px-6 py-5" data-label="Plan">
-                                                    <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tight ${partner.plan === 'Business VIP' ? 'bg-[#F2E8DB] text-[#D48D2A]' : 'bg-gray-50 text-gray-600'}`}>
-                                                        {partner.plan || 'Freemium'}
-                                                    </span>
-                                                </td>
-                                                <td className="block md:table-cell px-6 py-5" data-label="Status">
-                                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${partner.verificationStatus === 'Verified' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                                                        partner.verificationStatus === 'Pending' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
-                                                        partner.verificationStatus === 'Rejected' ? 'bg-red-50 text-red-600 border border-red-100' :
-                                                            'bg-gray-100 text-gray-500 border border-gray-200'
-                                                        }`}>
-                                                        <span className={`w-1.5 h-1.5 rounded-full ${partner.verificationStatus === 'Verified' ? 'bg-emerald-500' : partner.verificationStatus === 'Pending' ? 'bg-blue-500' : partner.verificationStatus === 'Rejected' ? 'bg-red-500' : 'bg-gray-400'}`}></span>
-                                                        {partner.verificationStatus || 'None'}
-                                                    </div>
-                                                </td>
-                                                <td className="block md:table-cell px-6 py-5" data-label="Metrics">
-                                                    <p className="text-sm font-bold text-gray-900">${numberWithCommas(partner.totalSales)}</p>
-                                                    <p className="text-xs text-gray-400 font-bold uppercase">Lifetime Sales</p>
-                                                </td>
-                                                <td className="block md:table-cell px-6 py-5" data-label="Location">
-                                                    <span className="text-sm text-gray-500 font-medium">{partner.location}</span>
-                                                </td>
-                                                <td className="block md:table-cell px-8 py-5 text-right">
-                                                    <div className="flex flex-wrap justify-end gap-2">
-                                                        <button
-                                                            onClick={() => viewDocs(partner)}
-                                                            className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all text-xs font-bold uppercase border border-blue-100"
-                                                        >
-                                                            View Docs
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleVerification(partner.id, 'approve')}
-                                                            disabled={actionLoading === partner.id}
-                                                            className="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold uppercase disabled:opacity-50 border border-emerald-100"
-                                                        >
-                                                            Approve
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleVerification(partner.id, 'reject')}
-                                                            disabled={actionLoading === partner.id}
-                                                            className="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all text-xs font-bold uppercase disabled:opacity-50 border border-red-100"
-                                                        >
-                                                            Reject
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    {activeTab === 'overview' && (
+                        <OverviewTab stats={stats} analyticsData={analyticsData} />
                     )}
 
                     {activeTab === 'users' && (
-                        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
-                            <div className="p-4 sm:p-8 border-b border-gray-100 flex-col sm:flex-row flex justify-between items-start sm:items-end">
-                                <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-1 canela">User Management</h3>
-                                    <p className="text-sm text-gray-400 font-medium">View and manage all registered platform users</p>
-                                </div>
-                                <div className="flex gap-2 mt-4 sm:mt-0">
-                                    <button className="px-4 py-2 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100">Export CSV</button>
-                                </div>
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead className='hidden md:table-header-group'>
-                                        <tr className="bg-gray-50/50 border-b border-gray-100">
-                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">User Profile</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Plan</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Est. Revenue</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Joined</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-50">
-                                        {usersList.map(u => (
-                                            <tr key={u.id} className="block md:table-row hover:bg-gray-50/50 transition-colors">
-                                                <td className="block md:table-cell px-8 py-5">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 items-center justify-center text-gray-500 font-bold text-xs hidden sm:flex">
-                                                            {u.name[0]}
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-sm font-bold text-gray-900">{u.name}</p>
-                                                            <p className="text-xs text-gray-400">{u.email}</p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="block md:table-cell px-6 py-5" data-label="Plan">
-                                                    <span className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-tight ${u.plan === 'Business VIP' ? 'bg-[#F2E8DB] text-[#D48D2A]' : 'bg-gray-100 text-gray-600'
-                                                        }`}>
-                                                        {u.plan}
-                                                    </span>
-                                                </td>
-                                                <td className="block md:table-cell px-6 py-5" data-label="Status">
-                                                    <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">{u.status}</span>
-                                                </td>
-
-                                                <td className="block md:table-cell px-6 py-5" data-label="Est. Revenue">
-                                                    <p className="text-sm font-bold text-gray-900">${numberWithCommas(u.revenue)}</p>
-                                                </td>
-                                                <td className="block md:table-cell px-6 py-5" data-label="Joined">
-                                                    <span className="text-xs text-gray-500">{new Date(u.joinDate).toLocaleDateString()}</span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <UsersTab usersList={usersList} />
                     )}
 
                     {activeTab === 'analytics' && (
-                        <div className="space-y-8 animate-in fade-in duration-500">
-                            {/* Sessions Over Time */}
-                            <div className="bg-white p-4 sm:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                                <h3 className="text-xl font-bold text-gray-900 mb-2 canela">Traffic Overview</h3>
-                                <p className="text-gray-400 text-sm mb-10">Daily sessions over the last 30 days (GA4)</p>
-
-                                <div className="h-80">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={analyticsData?.userGrowth || []}>
-                                            <defs>
-                                                <linearGradient id="colorSessions" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#000" stopOpacity={0.1}/>
-                                                    <stop offset="95%" stopColor="#000" stopOpacity={0}/>
-                                                </linearGradient>
-                                            </defs>
-                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                            <XAxis 
-                                                dataKey="name" 
-                                                axisLine={false} 
-                                                tickLine={false} 
-                                                tick={{fontSize: 10, fontWeight: 700, fill: '#9ca3af'}}
-                                            />
-                                            <YAxis 
-                                                axisLine={false} 
-                                                tickLine={false} 
-                                                tick={{fontSize: 10, fontWeight: 700, fill: '#9ca3af'}}
-                                            />
-                                            <Tooltip 
-                                                contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
-                                            />
-                                            <Area 
-                                                type="monotone" 
-                                                dataKey="value" 
-                                                stroke="#000" 
-                                                strokeWidth={2}
-                                                fillOpacity={1} 
-                                                fill="url(#colorSessions)" 
-                                            />
-                                        </AreaChart>
-                                    </ResponsiveContainer>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                {/* Device Distribution */}
-                                <div className="bg-white p-4 sm:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2 canela">Devices</h3>
-                                    <p className="text-gray-400 text-sm mb-8">Sessions by device category</p>
-                                    <div className="h-64">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <PieChart>
-                                                <Pie
-                                                    data={analyticsData?.deviceDistribution || []}
-                                                    innerRadius={60}
-                                                    outerRadius={80}
-                                                    paddingAngle={5}
-                                                    dataKey="value"
-                                                >
-                                                    {(analyticsData?.deviceDistribution || []).map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={['#000', '#D48D2A', '#9ca3af'][index % 3]} />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip />
-                                                <Legend verticalAlign="bottom" height={36}/>
-                                            </PieChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </div>
-
-                                {/* Top Countries */}
-                                <div className="bg-white p-4 sm:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2 canela">Top Countries</h3>
-                                    <p className="text-gray-400 text-sm mb-8">Most active regions</p>
-                                    <div className="space-y-4">
-                                        {analyticsData?.topCountries?.length > 0 ? (
-                                            analyticsData.topCountries.map((country, index) => (
-                                                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-bold border border-gray-100">
-                                                            {index + 1}
-                                                        </span>
-                                                        <span className="text-sm font-bold text-gray-900">{country.name}</span>
-                                                    </div>
-                                                    <span className="text-sm font-black text-[#D48D2A]">{numberWithCommas(country.value)} sessions</span>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <div className="text-center py-10 text-gray-400 text-xs font-bold uppercase tracking-widest">
-                                                No country data available
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <AnalyticsTab analyticsData={analyticsData} />
                     )}
 
                     {activeTab === 'payouts' && (
-                        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
-                            <div className="p-4 sm:p-8 border-b border-gray-100">
-                                <h3 className="text-xl font-bold text-gray-900 mb-1 canela">Payout Management</h3>
-                                <p className="text-sm text-gray-400 font-medium">Manage partner withdrawals and payments</p>
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead className='hidden md:table-header-group'>
-                                        <tr className="bg-gray-50/50 border-b border-gray-100">
-                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Partner</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
-                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-50">
-                                        {payouts.map(payout => (
-                                            <tr key={payout.id} className="block md:table-row hover:bg-gray-50/50 transition-colors">
-                                                <td className="block md:table-cell px-8 py-5 font-bold text-gray-900" data-label="Partner">{payout.partner}</td>
-                                                <td className="block md:table-cell px-6 py-5 font-medium text-gray-600" data-label="Amount">${numberWithCommas(payout.amount)}</td>
-                                                <td className="block md:table-cell px-6 py-5 text-sm text-gray-500" data-label="Date">{new Date(payout.date).toLocaleDateString()}</td>
-                                                <td className="block md:table-cell px-6 py-5" data-label="Status">
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${payout.status === 'Completed' ? 'bg-emerald-50 text-emerald-600' :
-                                                        payout.status === 'Pending' ? 'bg-amber-50 text-amber-600' :
-                                                            'bg-blue-50 text-blue-600'
-                                                        }`}>
-                                                        {payout.status}
-                                                    </span>
-                                                </td>
-                                                <td className="block md:table-cell px-8 py-5 text-right" data-label="Actions">
-                                                    {payout.status === 'Pending' && (
-                                                        <button className="px-4 py-2 bg-gray-900 text-white rounded-lg text-xs font-bold hover:bg-black transition-colors">
-                                                            Process
-                                                        </button>
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <PayoutsTab payouts={payouts} />
+                    )}
+
+                    {activeTab === 'partners' && (
+                        <PartnersTab 
+                            partners={partners}
+                            statusFilter={statusFilter}
+                            setStatusFilter={setStatusFilter}
+                            viewDocs={viewDocs}
+                            handleVerification={handleVerification}
+                            actionLoading={actionLoading}
+                        />
                     )}
 
                     {activeTab === 'coupons' && (
-                        <div className="animate-in fade-in duration-500">
-                            <div className="flex justify-between items-center mb-8">
-                                <div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-1 canela">Coupon Management</h3>
-                                    <p className="text-sm text-gray-400 font-medium">Create and manage promotional discount codes</p>
-                                </div>
-                                <button
-                                    onClick={() => {
-                                        setEditingCoupon(null);
-                                        setCouponFormData({
-                                            code: '',
-                                            discountType: 'percentage',
-                                            discountValue: '',
-                                            expiresAt: '',
-                                            usageLimit: '',
-                                            usageLimitPerUser: 1,
-                                            isActive: true
-                                        });
-                                        setIsCouponModalOpen(true);
-                                    }}
-                                    className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-black transition-all shadow-lg"
-                                >
-                                    <FiPlus /> Create Coupon
-                                </button>
-                            </div>
-
-                            <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left">
-                                        <thead>
-                                            <tr className="bg-gray-50/50 border-b border-gray-100">
-                                                <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Code</th>
-                                                <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Discount</th>
-                                                <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Expiry</th>
-                                                <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Usage</th>
-                                                <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                                                <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-50">
-                                            {coupons.map(coupon => (
-                                                <tr key={coupon._id} className="hover:bg-gray-50/50 transition-colors">
-                                                    <td className="px-8 py-5">
-                                                        <span className="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-black tracking-widest uppercase">
-                                                            {coupon.code}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-5">
-                                                        <p className="text-sm font-bold text-gray-900">
-                                                            {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `$${coupon.discountValue}`}
-                                                        </p>
-                                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">{coupon.discountType}</p>
-                                                    </td>
-                                                    <td className="px-6 py-5">
-                                                        <p className="text-sm font-bold text-gray-900">{new Date(coupon.expiresAt).toLocaleDateString()}</p>
-                                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
-                                                            {new Date(coupon.expiresAt) > new Date() ? 'Valid' : 'Expired'}
-                                                        </p>
-                                                    </td>
-                                                    <td className="px-6 py-5">
-                                                        <p className="text-sm font-bold text-gray-900">{coupon.usageCount} / {coupon.usageLimit || '∞'}</p>
-                                                        <div className="w-24 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
-                                                            <div 
-                                                                className="h-full bg-black rounded-full" 
-                                                                style={{ width: `${coupon.usageLimit ? (coupon.usageCount / coupon.usageLimit) * 100 : 0}%` }}
-                                                            ></div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-5">
-                                                        <span className={`px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${coupon.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
-                                                            {coupon.isActive ? 'Active' : 'Inactive'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-8 py-5 text-right">
-                                                        <div className="flex justify-end gap-2">
-                                                            <button
-                                                                onClick={() => {
-                                                                    setEditingCoupon(coupon);
-                                                                    setCouponFormData({
-                                                                        code: coupon.code,
-                                                                        discountType: coupon.discountType,
-                                                                        discountValue: coupon.discountValue,
-                                                                        expiresAt: new Date(coupon.expiresAt).toISOString().split('T')[0],
-                                                                        usageLimit: coupon.usageLimit || '',
-                                                                        usageLimitPerUser: coupon.usageLimitPerUser || 1,
-                                                                        isActive: coupon.isActive
-                                                                    });
-                                                                    setIsCouponModalOpen(true);
-                                                                }}
-                                                                className="p-2 text-gray-400 hover:text-black transition-colors"
-                                                            >
-                                                                <FiEdit2 />
-                                                            </button>
-                                                            <button 
-                                                                onClick={() => deleteCoupon(coupon._id)}
-                                                                className="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                                                            >
-                                                                <FiTrash2 />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        <CouponsTab 
+                            coupons={coupons}
+                            setEditingCoupon={setEditingCoupon}
+                            setCouponFormData={setCouponFormData}
+                            setIsCouponModalOpen={setIsCouponModalOpen}
+                            deleteCoupon={deleteCoupon}
+                        />
                     )}
 
                     {activeTab === 'settings' && (
-                        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-4 sm:p-10 animate-in fade-in duration-500">
-                            <h3 className="text-xl font-bold text-gray-900 mb-8 canela">Admin Settings</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Platform Name</label>
-                                        <input type="text" defaultValue="Otulia Luxury" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#D48D2A]" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Support Email</label>
-                                        <input type="email" defaultValue="support@otulia.com" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#D48D2A]" />
-                                    </div>
-                                </div>
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Platform Fee (%)</label>
-                                        <input type="number" defaultValue="5" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#D48D2A]" />
-                                    </div>
-                                    <div className="pt-6">
-                                        <button
-                                            onClick={handleSaveSettings}
-                                            disabled={savingSettings}
-                                            className="px-6 py-3 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] shadow-lg shadow-[#D48D2A]/20 transition-all w-full disabled:opacity-70 flex justify-center items-center gap-2"
-                                        >
-                                            {savingSettings ? (
-                                                <>
-                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                    Saving...
-                                                </>
-                                            ) : 'Save Changes'}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <SettingsTab 
+                            handleSaveSettings={handleSaveSettings}
+                            savingSettings={savingSettings}
+                        />
                     )}
                 </div>
             </main>
 
             {/* DOCUMENT VIEWER MODAL */}
-            {selectedPartnerDocs && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeDocsModal}></div>
-                    <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl relative z-10 overflow-hidden animate-in zoom-in-95">
-                        <div className="p-8 border-b border-gray-100 flex justify-between items-center">
-                            <div>
-                                <h3 className="text-xl font-bold text-gray-900 canela">{selectedPartnerDocs.name}'s Documents</h3>
-                                <p className="text-sm text-gray-400">Review submitted verification files</p>
-                            </div>
-                            <button onClick={closeDocsModal} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-gray-100">
-                                <FiXCircle className="text-xl text-gray-400" />
-                            </button>
-                        </div>
-                        <div className="p-8 max-h-[60vh] overflow-y-auto space-y-8">
-                            {/* Company Profile Section (Show if data exists) */}
-                            {selectedPartnerDocs.company && (selectedPartnerDocs.company.companyName || selectedPartnerDocs.company.website) && (
-                                <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                            <FiBriefcase className="text-sm" /> Company Profile Details
-                                        </h4>
-                                        {(selectedPartnerDocs.plan === 'Premium Basic' || selectedPartnerDocs.plan === 'Business VIP') && (
-                                            <span className="px-2 py-0.5 bg-[#F2E8DB] text-[#D48D2A] text-[9px] font-bold uppercase rounded-md border border-[#E5DAC8]">
-                                                {selectedPartnerDocs.plan}
-                                            </span>
-                                        )}
-                                    </div>
-                                    
-                                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                                        {/* Logo */}
-                                        <div className="md:col-span-3 flex flex-col items-center gap-2">
-                                            <p className="text-[10px] font-bold text-gray-400 uppercase">Logo</p>
-                                            <div className="w-24 h-24 rounded-xl bg-white border border-gray-100 p-1 shadow-sm overflow-hidden flex items-center justify-center">
-                                                {selectedPartnerDocs.company?.companyLogo ? (
-                                                    <img src={selectedPartnerDocs.company.companyLogo} className="w-full h-full object-contain" alt="Company Logo" />
-                                                ) : (
-                                                    <div className="text-2xl text-gray-200">🏢</div>
-                                                )}
-                                            </div>
-                                        </div>
+            <DocumentViewerModal 
+                selectedPartnerDocs={selectedPartnerDocs}
+                closeDocsModal={closeDocsModal}
+                handleVerification={handleVerification}
+            />
 
-                                        {/* Basic Info */}
-                                        <div className="md:col-span-9 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <div>
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Company Name</p>
-                                                <p className="text-sm font-bold text-gray-900">{selectedPartnerDocs.company?.companyName || 'Not Provided'}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Website</p>
-                                                {selectedPartnerDocs.company?.website ? (
-                                                    <a href={selectedPartnerDocs.company.website.startsWith('http') ? selectedPartnerDocs.company.website : `https://${selectedPartnerDocs.company.website}`} 
-                                                       target="_blank" rel="noopener noreferrer"
-                                                       className="text-sm font-bold text-[#D48D2A] hover:underline flex items-center gap-1">
-                                                        {selectedPartnerDocs.company.website} <FiArrowUpRight />
-                                                    </a>
-                                                ) : (
-                                                    <p className="text-sm font-bold text-gray-900">Not Provided</p>
-                                                )}
-                                            </div>
-                                            <div className="sm:col-span-2">
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Office Address</p>
-                                                <p className="text-sm font-bold text-gray-900">{selectedPartnerDocs.company?.address || 'Not Provided'}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            <div>
-                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <FiFileText className="text-sm" /> Verification Documents
-                                </h4>
-                                {!selectedPartnerDocs.verificationDocuments || Object.keys(selectedPartnerDocs.verificationDocuments).length === 0 ? (
-                                    <div className="text-center py-10 text-gray-400">
-                                        <p>No documents found for this user.</p>
-                                    </div>
-                                ) : (
-                                    <div className="grid gap-4">
-                                        {Object.entries(selectedPartnerDocs.verificationDocuments).map(([type, url]) => (
-                                            <div key={type} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-[#D48D2A] hover:bg-[#FDF8F0] transition-all group">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-2xl group-hover:bg-white group-hover:text-[#D48D2A]">
-                                                        📄
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-bold text-gray-900 capitalize">{type.replace(/([A-Z])/g, ' $1').trim()}</p>
-                                                        <p className="text-xs text-gray-400">Document</p>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    onClick={() => {
-            const docName = type.replace(/([A-Z])/g, ' $1').trim();
-            // Construct a URL with query parameters
-            const targetUrl = `/admin/view-document?url=${encodeURIComponent(url)}&name=${encodeURIComponent(docName)}`;
-            
-            // Open in a new tab
-            window.open(targetUrl, '_blank', 'noopener,noreferrer');
-        }}
-                                                    className="px-6 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-black transition-colors"
-                                                >
-                                                    View File
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        <div className="p-8 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-3">
-                            <button onClick={closeDocsModal} className="px-6 py-3 bg-white border border-gray-200 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-50">
-                                Close
-                            </button>
-                            <button
-                                onClick={() => {
-                                    handleVerification(selectedPartnerDocs.id, 'reject');
-                                    closeDocsModal();
-                                }}
-                                className="px-6 py-3 bg-red-50 text-red-600 border border-red-100 font-bold text-sm rounded-xl hover:bg-red-600 hover:text-white transition-all"
-                            >
-                                Reject Partner
-                            </button>
-                            <button
-                                onClick={() => {
-                                    handleVerification(selectedPartnerDocs.id, 'approve');
-                                    closeDocsModal();
-                                }}
-                                className="px-6 py-3 bg-emerald-500 text-white font-bold text-sm rounded-xl hover:bg-emerald-600 shadow-lg shadow-emerald-500/20"
-                            >
-                                Approve Partner
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
             {/* COUPON MODAL */}
-            {isCouponModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsCouponModalOpen(false)}></div>
-                    <form onSubmit={handleCouponAction} className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md relative z-10 overflow-hidden animate-in zoom-in-95">
-                        <div className="p-8 border-b border-gray-100 flex justify-between items-center">
-                            <div>
-                                <h3 className="text-xl font-bold text-gray-900 canela">{editingCoupon ? 'Edit' : 'Create'} Coupon</h3>
-                                <p className="text-sm text-gray-400">Configure your discount code</p>
-                            </div>
-                            <button type="button" onClick={() => setIsCouponModalOpen(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center hover:bg-gray-100">
-                                <FiXCircle className="text-xl text-gray-400" />
-                            </button>
-                        </div>
-                        <div className="p-8 space-y-4">
-                            <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Coupon Code</label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={couponFormData.code}
-                                    onChange={(e) => setCouponFormData({ ...couponFormData, code: e.target.value.toUpperCase() })}
-                                    placeholder="E.G. SUMMER50"
-                                    className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-black"
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Type</label>
-                                    <select
-                                        value={couponFormData.discountType}
-                                        onChange={(e) => setCouponFormData({ ...couponFormData, discountType: e.target.value })}
-                                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-black"
-                                    >
-                                        <option value="percentage">Percentage (%)</option>
-                                        <option value="fixed">Fixed Amount ($)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Value</label>
-                                    <input
-                                        type="number"
-                                        required
-                                        value={couponFormData.discountValue}
-                                        onChange={(e) => setCouponFormData({ ...couponFormData, discountValue: e.target.value })}
-                                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-black"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Expiry Date</label>
-                                <input
-                                    type="date"
-                                    required
-                                    value={couponFormData.expiresAt}
-                                    onChange={(e) => setCouponFormData({ ...couponFormData, expiresAt: e.target.value })}
-                                    className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-black"
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Global Usage Limit</label>
-                                    <input
-                                        type="number"
-                                        value={couponFormData.usageLimit}
-                                        onChange={(e) => setCouponFormData({ ...couponFormData, usageLimit: e.target.value })}
-                                        placeholder="∞"
-                                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-black"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Usage Per User</label>
-                                    <input
-                                        type="number"
-                                        required
-                                        min="1"
-                                        value={couponFormData.usageLimitPerUser}
-                                        onChange={(e) => setCouponFormData({ ...couponFormData, usageLimitPerUser: e.target.value })}
-                                        className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-black"
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3 pt-2">
-                                <input
-                                    type="checkbox"
-                                    id="isActive"
-                                    checked={couponFormData.isActive}
-                                    onChange={(e) => setCouponFormData({ ...couponFormData, isActive: e.target.checked })}
-                                    className="w-4 h-4 accent-black"
-                                />
-                                <label htmlFor="isActive" className="text-sm font-bold text-gray-700">Coupon is Active</label>
-                            </div>
-                        </div>
-                        <div className="p-8 border-t border-gray-100 bg-gray-50/50 flex gap-3">
-                            <button type="button" onClick={() => setIsCouponModalOpen(false)} className="flex-1 py-3 bg-white border border-gray-200 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-50">
-                                Cancel
-                            </button>
-                            <button type="submit" className="flex-1 py-3 bg-black text-white font-bold text-sm rounded-xl hover:bg-gray-800 shadow-lg">
-                                {editingCoupon ? 'Update' : 'Create'} Coupon
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            )}
+            <CouponModal 
+                isCouponModalOpen={isCouponModalOpen}
+                setIsCouponModalOpen={setIsCouponModalOpen}
+                editingCoupon={editingCoupon}
+                couponFormData={couponFormData}
+                setCouponFormData={setCouponFormData}
+                handleCouponAction={handleCouponAction}
+            />
         </div>
     );
 };
