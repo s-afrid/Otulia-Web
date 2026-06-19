@@ -11,6 +11,10 @@ import RankingCategoryTable from '../components/admin/RankingCategoryTable';
 import RankingsDashboardTab from '../components/admin/RankingsDashboardTab';
 import { FiAward } from 'react-icons/fi';
 
+import carIcon from '../assets/icons/car_icon.png';
+import estateIcon from '../assets/icons/estate_icon.png';
+import yachtIcon from '../assets/icons/yacht_icon.png';
+
 const ContentManagement = () => {
     const { token, user, loading } = useAuth();
     const navigate = useNavigate();
@@ -29,7 +33,7 @@ const ContentManagement = () => {
             detailedDescription: 'This category ranks the top 10 hypercars of 2026 based on performance, design, innovation, and overall impact in the automotive world.',
             categoryImage: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&auto=format&fit=crop&q=60', // Centenario Style
             bannerImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1200&auto=format&fit=crop&q=60',
-            icon: '🚗',
+            icon: carIcon,
             votingPeriodStart: '2026-01-01',
             votingPeriodEnd: '2026-06-30',
             nomineeLimit: 10,
@@ -50,7 +54,7 @@ const ContentManagement = () => {
             detailedDescription: 'Ranks the top luxury sport utility vehicles with a focus on interior refinement and raw engine performance.',
             categoryImage: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&auto=format&fit=crop&q=60', 
             bannerImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1200&auto=format&fit=crop&q=60',
-            icon: '🚗',
+            icon: carIcon,
             votingPeriodStart: '2026-01-01',
             votingPeriodEnd: '2026-06-30',
             nomineeLimit: 10,
@@ -71,7 +75,7 @@ const ContentManagement = () => {
             detailedDescription: 'Highlighting architectural masterpieces and high-profile luxury villas in premier locations.',
             categoryImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop&q=60', 
             bannerImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop&q=60',
-            icon: '🏠',
+            icon: estateIcon,
             votingPeriodStart: '2026-01-01',
             votingPeriodEnd: '2026-06-30',
             nomineeLimit: 10,
@@ -92,7 +96,7 @@ const ContentManagement = () => {
             detailedDescription: 'Exploring top-tier custom superyachts built for infinite luxury cruising.',
             categoryImage: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&auto=format&fit=crop&q=60', 
             bannerImage: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&auto=format&fit=crop&q=60',
-            icon: '⛵',
+            icon: yachtIcon,
             votingPeriodStart: '2026-01-01',
             votingPeriodEnd: '2026-06-30',
             nomineeLimit: 10,
