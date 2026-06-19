@@ -7,40 +7,27 @@ import {
   FaRegCalendarAlt,
 } from "react-icons/fa";
 
-function RankingHeader() {
-  // Dummy data (replace with API data later)
-  const rankingData = {
-    breadcrumbs: ["Home", "Rankings", "Cars", "Best Hypercars of 2026"],
-
-    titleMain: "Best Hypercars",
-
-    titleHighlight: "of 2026",
-
-    description:
-      "The ultimate ranking of the world's most extraordinary hypercars based on performance, design, innovation, and overall impact.",
-
-    stats: [
-      {
-        icon: FaTrophy,
-        value: "10",
-        label: "Nominees",
-        iconColor: "text-[#C9920E]",
-      },
-      {
-        icon: FaUsers,
-        value: "2.4K",
-        label: "Total Votes",
-        iconColor: "text-black",
-      },
-      {
-        icon: FaRegCalendarAlt,
-        value: "May 2026",
-        label: "Last Updated",
-        iconColor: "text-black",
-      },
-    ],
-  };
-
+function RankingHeader({ data }) {
+  const stats = [
+    {
+      icon: FaTrophy,
+      value: data.nominees,
+      label: "Nominees",
+      iconColor: "text-[#C9920E]",
+    },
+    {
+      icon: FaUsers,
+      value: data.votes,
+      label: "Total Votes",
+      iconColor: "text-black",
+    },
+    {
+      icon: FaRegCalendarAlt,
+      value: data.updated,
+      label: "Last Updated",
+      iconColor: "text-black",
+    },
+  ];
   return (
     <section className="bg-white ml-[248px] pt-[110px] px-8 pb-10">
       {/* Breadcrumb + Share */}
@@ -48,11 +35,11 @@ function RankingHeader() {
         <div>
           {/* Breadcrumb */}
           <div className="flex flex-wrap items-center gap-2 text-[14px] text-[#6B7280] mb-5">
-            {rankingData.breadcrumbs.map((item, index) => (
+            {data.breadcrumbs.map((item, index) => (
               <React.Fragment key={index}>
                 <span>{item}</span>
 
-                {index !== rankingData.breadcrumbs.length - 1 && (
+                {index !== data.breadcrumbs.length - 1 && (
                   <FaChevronRight className="text-[11px]" />
                 )}
               </React.Fragment>
@@ -61,14 +48,14 @@ function RankingHeader() {
 
           {/* Title */}
           <h1 className="text-[42px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em]">
-            <span className="text-black">{rankingData.titleMain} </span>
+            <span className="text-black">{data.titleMain} </span>
 
-            <span className="text-[#C9920E]">{rankingData.titleHighlight}</span>
+            <span className="text-[#C9920E]">{data.titleHighlight}</span>
           </h1>
 
           {/* Description */}
           <p className="mt-5 max-w-[650px] text-[18px] leading-[1.65] text-[#4B5563]">
-            {rankingData.description}
+            {data.description}
           </p>
         </div>
 
@@ -95,7 +82,7 @@ function RankingHeader() {
 
       {/* Stats */}
       <div className="mt-10 flex flex-wrap gap-4">
-        {rankingData.stats.map((stat, index) => {
+        {stats.map((stat, index) => {
           const Icon = stat.icon;
 
           return (

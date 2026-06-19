@@ -143,9 +143,10 @@ function App() {
   const hasStartedRef = React.useRef(false);
 
   // Mobile detection
-  const isMobile = React.useMemo(() => 
-    /iPhone|iPad|iPod|Android/i.test(navigator.userAgent), 
-  []);
+  const isMobile = React.useMemo(
+    () => /iPhone|iPad|iPod|Android/i.test(navigator.userAgent),
+    [],
+  );
 
   React.useEffect(() => {
     const audio = audioRef.current;
@@ -156,7 +157,7 @@ function App() {
 
     const attemptPlay = () => {
       if (hasStartedRef.current) return;
-      
+
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise
@@ -176,15 +177,21 @@ function App() {
     window.onload = attemptPlay;
 
     // Safety fallback: still allow interaction to trigger it if blocked
-    const unlockEvents = ["click", "touchstart", "touchend", "mousedown", "keydown"];
+    const unlockEvents = [
+      "click",
+      "touchstart",
+      "touchend",
+      "mousedown",
+      "keydown",
+    ];
     const handleUnlock = () => attemptPlay();
 
-    unlockEvents.forEach(event => {
+    unlockEvents.forEach((event) => {
       window.addEventListener(event, handleUnlock, { once: true });
     });
 
     return () => {
-      unlockEvents.forEach(event => {
+      unlockEvents.forEach((event) => {
         window.removeEventListener(event, handleUnlock);
       });
     };
@@ -196,7 +203,8 @@ function App() {
 
   const triggerAudio = React.useCallback(() => {
     if (audioRef.current && !hasStartedRef.current) {
-      audioRef.current.play()
+      audioRef.current
+        .play()
         .then(() => {
           hasStartedRef.current = true;
         })
@@ -216,8 +224,8 @@ function App() {
         style={{ display: "none" }}
       />
       {showSplash && (
-        <SplashScreen 
-          onFinish={handleSplashFinish} 
+        <SplashScreen
+          onFinish={handleSplashFinish}
           isMobile={isMobile}
           onInteraction={triggerAudio}
         />
@@ -237,7 +245,7 @@ function App() {
           <Route path="/asset/:category/:id" element={<Asset />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/ranking" element={<RankingHome />} />
-          <Route path="/ranking/:category" element={<RankingCategoryPage />} />
+          <Route path="/ranking/:category/:slug" element={<RankingHome />} />
 
           {/* Auth routes */}
           <Route path="/login" element={<LoginPage />} />
