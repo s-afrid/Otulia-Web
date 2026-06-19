@@ -7,67 +7,55 @@ import {
   FaRegCalendarAlt,
 } from "react-icons/fa";
 
-function RankingHeader({ activeTab, count }) {
-  const getTabInfo = (tab) => {
-    const tabs = {
-      allranking: { main: "All Car", highlight: "Rankings", desc: "Comprehensive ranking of all listed cars based on performance, engagement, and completeness." },
-      besthypercars: { main: "Best Hypercars", highlight: "of 2026", desc: "The ultimate ranking of the world's most extraordinary hypercars." },
-      bestluxurycars: { main: "Best Luxury Cars", highlight: "of 2026", desc: "Top-tier luxury vehicles ranked by comfort, prestige, and engineering." },
-      bestluxurysuv: { main: "Best Luxury SUVs", highlight: "of 2026", desc: "Premium SUVs that define versatility and luxury." },
-      bestevcars: { main: "Best Electric Cars", highlight: "of 2026", desc: "Leading sustainable performance vehicles in the electric era." },
-      bestsportcars: { main: "Best Sports Cars", highlight: "of 2026", desc: "Performance-focused sports cars ranked for driving enthusiasts." },
-      bestsupercars: { main: "Best Supercars", highlight: "of 2026", desc: "High-performance supercars that push the boundaries of speed." },
-      bestcarbrands: { main: "Best Car Brands", highlight: "of 2026", desc: "Most influential and prestigious car manufacturers ranked." },
-    };
-    return tabs[tab] || tabs.allranking;
-  };
-
-  const info = getTabInfo(activeTab);
-
+function RankingHeader({ data }) {
   const stats = [
     {
       icon: FaTrophy,
-      value: count || "0",
+      value: data.nominees,
       label: "Nominees",
       iconColor: "text-[#C9920E]",
     },
     {
       icon: FaUsers,
-      value: "Dynamic", // Or calculate total votes if possible
+      value: data.votes,
       label: "Total Votes",
       iconColor: "text-black",
     },
     {
       icon: FaRegCalendarAlt,
-      value: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+      value: data.updated,
       label: "Last Updated",
       iconColor: "text-black",
     },
   ];
-
   return (
-    <section className="bg-[#FDFDFD] pt-[110px] px-8 pb-10">
+    <section className="bg-white ml-[248px] pt-[110px] px-8 pb-10">
       {/* Breadcrumb + Share */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           {/* Breadcrumb */}
           <div className="flex flex-wrap items-center gap-2 text-[14px] text-[#6B7280] mb-5">
-            <span>Home</span>
-            <FaChevronRight className="text-[11px]" />
-            <span>Rankings</span>
-            <FaChevronRight className="text-[11px]" />
-            <span className="text-black font-medium">{info.main}</span>
+            {data.breadcrumbs.map((item, index) => (
+              <React.Fragment key={index}>
+                <span>{item}</span>
+
+                {index !== data.breadcrumbs.length - 1 && (
+                  <FaChevronRight className="text-[11px]" />
+                )}
+              </React.Fragment>
+            ))}
           </div>
 
           {/* Title */}
           <h1 className="text-[42px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em]">
-            <span className="text-black">{info.main} </span>
-            <span className="text-[#C9920E]">{info.highlight}</span>
+            <span className="text-black">{data.titleMain} </span>
+
+            <span className="text-[#C9920E]">{data.titleHighlight}</span>
           </h1>
 
           {/* Description */}
           <p className="mt-5 max-w-[650px] text-[18px] leading-[1.65] text-[#4B5563]">
-            {info.desc}
+            {data.description}
           </p>
         </div>
 
@@ -87,6 +75,7 @@ function RankingHeader({ activeTab, count }) {
           "
         >
           <FaShareAlt className="text-[18px]" />
+
           <span>Share</span>
         </button>
       </div>
