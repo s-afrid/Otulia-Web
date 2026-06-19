@@ -107,14 +107,46 @@ const ContentManagement = () => {
     // Currently editing record state
     const [editingCategory, setEditingCategory] = useState(null);
 
-    // Route Gate Guarding
+    const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+
+    // Route Gate Guarding & Notifications Fetch
     useEffect(() => {
         if (!loading) {
             if (!token || !user || user.role !== 'admin') {
                 navigate('/');
+            } else {
+                fetchNotifications();
             }
         }
     }, [token, user, loading, navigate]);
+
+    const fetchNotifications = async () => {
+        try {
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const statsRes = await fetch('/api/admin/stats', { headers });
+            if (statsRes.ok) {
+                const statsData = await statsRes.json();
+                setNotifications(statsData.notifications || []);
+            }
+        } catch (error) {
+            console.error("CMS Notifications Fetch Error:", error);
+        }
+    };
+
+    const handleRemoveNotification = async (notificationId) => {
+        try {
+            const response = await fetch(`/api/leads/notification/${notificationId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                setNotifications(prev => prev.filter(n => n._id !== notificationId));
+            }
+        } catch (error) {
+            console.error("Remove Notification Error:", error);
+        }
+    };
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -184,6 +216,10 @@ const ContentManagement = () => {
                 <ContentManagementHeader 
                     toggleSidebar={toggleSidebar} 
                     user={user} 
+                    isNotificationDropdownOpen={isNotificationDropdownOpen}
+                    setIsNotificationDropdownOpen={setIsNotificationDropdownOpen}
+                    notifications={notifications}
+                    handleRemoveNotification={handleRemoveNotification}
                 />
 
                 {/* Sub-body CMS Workspace */}

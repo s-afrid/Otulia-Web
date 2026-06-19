@@ -46,7 +46,7 @@ const ContentManagementSidebar = ({ activeTab = 'categories', isMobileOpen, togg
             {/* Header Brand Logo */}
             <div className="p-6 pb-6 border-b border-[#151C2C] flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2 cursor-pointer animate-in fade-in" onClick={() => navigate('/')}>
-                    <img src="/logos/logo_inverted.png" alt="Otulia" className="h-[28px] object-contain" />
+                    <img src="/logos/logo.png" alt="Otulia" className="h-[28px] object-contain" />
                     <span className="text-[8px] font-extrabold bg-[#D48D2A] text-white px-1.5 py-0.5 rounded uppercase tracking-wider scale-90 select-none">CMS</span>
                 </div>
                 <button onClick={toggleSidebar} className="text-gray-400 hover:text-white lg:hidden">
