@@ -212,7 +212,7 @@ router.post('/capture-order', authMiddleware, async (req, res) => {
 });
 
 // Direct activation with coupon (e.g. for free activation/bypass)
-router.post('/activate-with-coupon', authMiddleware, async (req, res) => {
+router.post(['/activate-with-coupon', '/direct-activate'], authMiddleware, async (req, res) => {
     const { plan, couponCode } = req.body;
     
     if (!plan || !couponCode) {

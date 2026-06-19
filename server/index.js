@@ -112,6 +112,7 @@ app.use("/api/inventory", inventoryRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/leads", leadRoutes);
 app.use("/api/coupons", couponRoutes);
+app.use("/api/coupon", couponRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/admin", require("./routes/admin.routes.js"));
 app.use("/api/car-ranking", carRankingRoutes);
