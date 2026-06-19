@@ -6,11 +6,11 @@ import {
     FiLayers, FiMenu, FiShield, FiExternalLink 
 } from 'react-icons/fi';
 
-const ContentManagementSidebar = ({ activeTab = 'categories', isMobileOpen, toggleSidebar }) => {
+const ContentManagementSidebar = ({ activeTab = 'categories', onTabChange, isMobileOpen, toggleSidebar }) => {
     const navigate = useNavigate();
 
     const navigationItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: FiGrid, path: '/admin?tab=overview' },
+        { id: 'dashboard', label: 'Dashboard', icon: FiGrid },
         { id: 'listings', label: 'Listings', icon: FiLayers, hasSubmenu: true },
         { 
             id: 'rankings', 
@@ -57,12 +57,18 @@ const ContentManagementSidebar = ({ activeTab = 'categories', isMobileOpen, togg
             {/* Navigation Lists */}
             <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto custom-scrollbar">
                 {navigationItems.map((item) => {
-                    const isActive = activeTab === item.id || (item.isOpen && item.submenu?.some(s => s.id === activeTab));
+                    const isActive = activeTab === item.id || (item.id === 'dashboard' && activeTab === 'all-rankings') || (item.isOpen && item.submenu?.some(s => s.id === activeTab));
                     return (
                         <div key={item.id} className="space-y-1">
                             <button
                                 onClick={() => {
-                                    if (item.path) navigate(item.path);
+                                    if (item.id === 'dashboard') {
+                                        if (onTabChange) onTabChange('all-rankings');
+                                    } else if (item.path) {
+                                        navigate(item.path);
+                                    } else {
+                                        if (onTabChange) onTabChange(item.id);
+                                    }
                                 }}
                                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
                                     isActive 
@@ -87,6 +93,7 @@ const ContentManagementSidebar = ({ activeTab = 'categories', isMobileOpen, togg
                                         return (
                                             <button
                                                 key={sub.id}
+                                                onClick={() => onTabChange && onTabChange(sub.id)}
                                                 className={`w-full text-left px-3 py-2 rounded-lg text-[11px] font-semibold transition-all ${
                                                     isSubActive 
                                                     ? 'text-white bg-[#6366F1]/20 border-l-2 border-[#6366F1]' 

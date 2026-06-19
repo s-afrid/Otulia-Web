@@ -8,6 +8,8 @@ import ContentManagementSidebar from '../components/admin/ContentManagementSideb
 import ContentManagementHeader from '../components/admin/ContentManagementHeader';
 import RankingCategoryForm from '../components/admin/RankingCategoryForm';
 import RankingCategoryTable from '../components/admin/RankingCategoryTable';
+import RankingsDashboardTab from '../components/admin/RankingsDashboardTab';
+import { FiAward } from 'react-icons/fi';
 
 const ContentManagement = () => {
     const { token, user, loading } = useAuth();
@@ -106,6 +108,7 @@ const ContentManagement = () => {
 
     // Currently editing record state
     const [editingCategory, setEditingCategory] = useState(null);
+    const [activeTab, setActiveTab] = useState('all-rankings');
 
     const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -204,7 +207,8 @@ const ContentManagement = () => {
             
             {/* Dark Theme Sidebar */}
             <ContentManagementSidebar 
-                activeTab="categories" 
+                activeTab={activeTab} 
+                onTabChange={setActiveTab}
                 isMobileOpen={isSidebarOpen} 
                 toggleSidebar={toggleSidebar} 
             />
@@ -224,33 +228,52 @@ const ContentManagement = () => {
 
                 {/* Sub-body CMS Workspace */}
                 <div className="flex-1 p-6 sm:p-8 space-y-8 bg-[#0B0F19]">
-                    
-                    {/* Add/Edit Section Header */}
-                    <div className="flex justify-between items-center text-left">
-                        <div>
-                            <h2 className="text-xl sm:text-2xl font-black tracking-wide text-white canela">
-                                {editingCategory ? 'Edit Ranking Category' : 'Add New Ranking Category'}
-                            </h2>
-                            <p className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mt-1">
-                                Rankings <span className="text-gray-600 font-semibold">&gt;</span> Categories <span className="text-gray-600 font-semibold">&gt;</span> {editingCategory ? 'Edit' : 'Add New'}
+                    {activeTab === 'all-rankings' ? (
+                        <RankingsDashboardTab 
+                            onTabChange={setActiveTab} 
+                            onCreateCategoryClick={() => {
+                                setEditingCategory(null);
+                                setActiveTab('categories');
+                            }} 
+                        />
+                    ) : activeTab === 'categories' ? (
+                        <>
+                            {/* Add/Edit Section Header */}
+                            <div className="flex justify-between items-center text-left">
+                                <div>
+                                    <h2 className="text-xl sm:text-2xl font-normal tracking-wide text-white canela">
+                                        {editingCategory ? 'Edit Ranking Category' : 'Add New Ranking Category'}
+                                    </h2>
+                                    <p className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase tracking-wider mt-1">
+                                        Rankings <span className="text-gray-600 font-semibold">&gt;</span> Categories <span className="text-gray-600 font-semibold">&gt;</span> {editingCategory ? 'Edit' : 'Add New'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Stepper Form Block */}
+                            <RankingCategoryForm 
+                                initialData={editingCategory} 
+                                onSubmit={handleSubmitCategory} 
+                                onCancel={() => setEditingCategory(null)} 
+                            />
+
+                            {/* Existing Categories Table View */}
+                            <RankingCategoryTable 
+                                categories={categories} 
+                                onEdit={handleEditTrigger} 
+                                onDelete={handleDeleteTrigger} 
+                                onAddNew={handleAddNewTrigger} 
+                            />
+                        </>
+                    ) : (
+                        <div className="bg-[#111726]/60 border border-[#1C253B] p-12 rounded-[2.5rem] text-center backdrop-blur-md">
+                            <FiAward className="text-4xl text-[#D48D2A] mx-auto mb-4 animate-bounce" />
+                            <h3 className="text-lg font-normal text-white canela tracking-wide capitalize">{activeTab.replace('-', ' ')} Component</h3>
+                            <p className="text-xs text-gray-400 font-medium max-w-sm mx-auto mt-2 leading-relaxed">
+                                The {activeTab.replace('-', ' ')} management interface is under active deployment. Data is currently live-syncing to the ranking server.
                             </p>
                         </div>
-                    </div>
-
-                    {/* Stepper Form Block */}
-                    <RankingCategoryForm 
-                        initialData={editingCategory} 
-                        onSubmit={handleSubmitCategory} 
-                        onCancel={() => setEditingCategory(null)} 
-                    />
-
-                    {/* Existing Categories Table View */}
-                    <RankingCategoryTable 
-                        categories={categories} 
-                        onEdit={handleEditTrigger} 
-                        onDelete={handleDeleteTrigger} 
-                        onAddNew={handleAddNewTrigger} 
-                    />
+                    )}
                 </div>
             </div>
         </div>
