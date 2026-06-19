@@ -108,7 +108,7 @@ const ContentManagement = () => {
 
     // Currently editing record state
     const [editingCategory, setEditingCategory] = useState(null);
-    const [activeTab, setActiveTab] = useState('all-rankings');
+    const [activeTab, setActiveTab] = useState('dashboard');
 
     const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -228,7 +228,7 @@ const ContentManagement = () => {
 
                 {/* Sub-body CMS Workspace */}
                 <div className="flex-1 p-6 sm:p-8 space-y-8 bg-[#0B0F19]">
-                    {activeTab === 'all-rankings' ? (
+                    {activeTab === 'dashboard' ? (
                         <RankingsDashboardTab 
                             onTabChange={setActiveTab} 
                             onCreateCategoryClick={() => {

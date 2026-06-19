@@ -57,13 +57,13 @@ const ContentManagementSidebar = ({ activeTab = 'categories', onTabChange, isMob
             {/* Navigation Lists */}
             <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto custom-scrollbar">
                 {navigationItems.map((item) => {
-                    const isActive = activeTab === item.id || (item.id === 'dashboard' && activeTab === 'all-rankings') || (item.isOpen && item.submenu?.some(s => s.id === activeTab));
+                    const isActive = activeTab === item.id || (item.isOpen && item.submenu?.some(s => s.id === activeTab));
                     return (
                         <div key={item.id} className="space-y-1">
                             <button
                                 onClick={() => {
                                     if (item.id === 'dashboard') {
-                                        if (onTabChange) onTabChange('all-rankings');
+                                        if (onTabChange) onTabChange('dashboard');
                                     } else if (item.path) {
                                         navigate(item.path);
                                     } else {
