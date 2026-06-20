@@ -152,7 +152,7 @@ const AssetCard = ({ item }) => {
         <div
           className="absolute z-10 flex flex-col"
           style={{
-            top: "2.7cqi" /* top: 4 (16px) */,  
+            top: "2.7cqi" /* top: 4 (16px) */,
             left: "2.7cqi" /* left: 4 (16px) */,
             gap: "1.3cqi" /* gap: 2 (8px) */,
           }}
@@ -224,17 +224,16 @@ const AssetCard = ({ item }) => {
               {/* TITLE */}
               <div>
                 <h4
-                  // className="truncate translate-y-px pb-1 "
+                  className="truncate translate-y-px pb-1"
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
-                    fontWeight: 500,
-                    fontSize: "64px" /* fontSize: "15px" */,
-                    fontSize: "20px",
+                    fontWeight: 800,
+                    fontSize: "18px",
                     lineHeight: 1.15,
                     color: "#2A2A2A",
                   }}
                 >
-                  {/* {item.title} */}
+                  {item.title}
                 </h4>
               </div>
 
