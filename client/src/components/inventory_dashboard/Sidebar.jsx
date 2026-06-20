@@ -19,7 +19,7 @@ const Sidebar = ({ activeTab, setActiveTab, user, navigate, logout, isProfileDro
                 <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-[clamp(45px,6vh,95px)] object-contain cursor-pointer" onClick={() => navigate('/')} />
             </div>
 
-            <nav className="flex-1 px-[clamp(10px,1vw,20px)] space-y-[clamp(6px,1vh,12px)] overflow-y-auto custom-scrollbar pb-8">
+            <nav className="flex-1 px-[clamp(10px,1vw,20px)] space-y-[clamp(6px,1vh,12px)] overflow-y-auto no-scrollbar pb-8">
                 {navItems.map((item) => (
                     <button
                         key={item.id}

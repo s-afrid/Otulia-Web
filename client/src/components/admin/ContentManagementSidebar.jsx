@@ -55,7 +55,7 @@ const ContentManagementSidebar = ({ activeTab = 'categories', onTabChange, isMob
             </div>
 
             {/* Navigation Lists */}
-            <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto custom-scrollbar">
+            <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto no-scrollbar">
                 {navigationItems.map((item) => {
                     const isActive = activeTab === item.id || (item.isOpen && item.submenu?.some(s => s.id === activeTab));
                     return (

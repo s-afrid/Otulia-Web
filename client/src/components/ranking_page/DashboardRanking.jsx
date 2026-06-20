@@ -9,7 +9,7 @@ import {
   FiCreditCard,
   FiSettings,
 } from "react-icons/fi";
-import logoSrc from "../../../dist/logos/logo_inverted.png";
+const logoSrc = "/logos/logo_inverted.png";
 
 function Sidebar() {
   const { slug } = useParams();

@@ -35,7 +35,7 @@ const AdminSidebar = ({ isSidebarOpen, toggleSidebar, activeTab, setActiveTab, u
                 </button>
             </div>
 
-            <nav className="flex-1 px-3 space-y-1.5 overflow-y-auto custom-scrollbar">
+            <nav className="flex-1 px-3 space-y-1.5 overflow-y-auto no-scrollbar">
                 {menuItems.map((item) => (
                     <button
                         key={item.id}
