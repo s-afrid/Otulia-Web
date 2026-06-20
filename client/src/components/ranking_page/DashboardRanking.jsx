@@ -9,6 +9,7 @@ import {
   FiCreditCard,
   FiSettings,
 } from "react-icons/fi";
+import logoSrc from "../../../dist/logos/logo_inverted.png";
 
 function Sidebar() {
   const { slug } = useParams();
@@ -64,28 +65,31 @@ function Sidebar() {
   ];
 
   return (
-    <div
-      style={{ "--sidebar-width": "260px" }}
+    <aside
       className="
-        fixed
-        left-0
-        top-0
-        z-[50]
-        h-screen
-        w-[var(--sidebar-width)]
-        bg-white
-        border-r
-        border-gray-100
-        flex
-        flex-col
-      "
+      fixed
+      left-0
+      top-0
+      w-[260px]
+      h-screen
+      bg-white
+      z-40
+      flex
+      flex-col
+    "
     >
-      {/* Logo */}
-      <div className="h-[88px] flex items-center px-6 border-b border-gray-50">
-        RANKING
+      {/* Header */}
+      <div className="h-[88px] flex items-center px-6 border-b border-[#EAEAEA]">
+        <img
+          className="w-[clamp(100px,10vw,160px)] h-auto object-contain transition-all"
+          alt="logo"
+          src={logoSrc}
+          title="Otulia"
+        />
       </div>
 
-      <nav className="flex-1 px-3 space-y-2 overflow-y-auto pb-8">
+      {/* Menu */}
+      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-2 border-r border-[#EAEAEA]">
         {navItems.map((item) => {
           const isActive =
             item.path === "/ranking"
@@ -96,32 +100,34 @@ function Sidebar() {
             <Link
               key={item.path}
               to={item.path}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all group relative ${
+              className={`
+              relative
+              flex
+              items-center
+              gap-3
+              px-4
+              py-3
+              
+              transition-all
+              ${
                 isActive
                   ? "bg-[#FFF8F0] text-[#D48D2A]"
-                  : "text-gray-500 hover:bg-gray-50"
-              }`}
+                  : "text-[#6B7280] hover:bg-gray-50"
+              }
+            `}
             >
-              <item.icon
-                className={`text-[18px] ${
-                  isActive
-                    ? "text-[#D48D2A]"
-                    : "text-gray-400 group-hover:text-gray-600"
-                }`}
-              />
+              <item.icon className="text-[18px]" />
 
-              <span className="inter text-[14px] font-semibold tracking-tight">
-                {item.label}
-              </span>
+              <span className="text-[15px] font-semibold">{item.label}</span>
 
               {isActive && (
-                <div className="absolute right-0 top-[20%] bottom-[20%] w-[4px] bg-[#D48D2A] rounded-l-full" />
+                <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#D48D2A]" />
               )}
             </Link>
           );
         })}
       </nav>
-    </div>
+    </aside>
   );
 }
 

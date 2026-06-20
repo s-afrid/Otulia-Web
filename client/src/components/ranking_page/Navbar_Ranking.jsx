@@ -6,6 +6,7 @@ import LoginButton from "../navbar/LoginButton";
 import ProfileDropdown from "../navbar/Profile_dropdown";
 import NavbarMobile from "../Navbar_mobile";
 import { useAuth } from "../../contexts/AuthContext";
+import { FaTrophy } from "react-icons/fa";
 
 const Navbar = ({
   hideSearch = false,
@@ -33,21 +34,26 @@ const Navbar = ({
 
   const isDarkText = (!isHeroPage || isScrolled) && !forceTransparent;
 
-  const sidebarWidth = isSidebarOpen ? "clamp(180px,14vw,320px)" : "0px";
+  const sidebarWidth = "260px";
 
-  const navClasses = `fixed ${isScrolled ? "top-0" : "top-[clamp(12px,2vh,24px)]"} right-0 h-[clamp(50px,8vh,80px)] z-50 transition-all duration-200 flex items-center justify-between px-[clamp(12px,2vw,40px)] py-[clamp(8px,1vh,16px)] ${
-    forceTransparent
-      ? "bg-transparent text-white"
-      : !isHeroPage
-        ? "bg-white text-black shadow-sm"
-        : isScrolled
-          ? "bg-white text-black shadow-md"
-          : "bg-transparent text-white"
-  }`;
+  const navClasses = `
+fixed
+top-0
+right-0
+h-[88px]
+z-50
+bg-white
+border-b
+border-[#EAEAEA]
+flex
+items-center
+justify-between
+px-10
+`;
 
   const navStyle = {
-    left: sidebarWidth,
-    width: `calc(100vw - ${sidebarWidth})`,
+    left: "260px",
+    width: "calc(100vw - 260px)",
   };
 
   const logoSrc =
@@ -56,18 +62,6 @@ const Navbar = ({
   return (
     <nav className={navClasses} style={navStyle}>
       <div className="w-full flex items-center justify-between relative">
-        {/* 1. Logo - Left Column */}
-        <div className="flex-1 flex justify-start">
-          <NavLink to={"/"}>
-            <img
-              className="w-[clamp(100px,10vw,160px)] h-auto object-contain transition-all"
-              alt="logo"
-              src={logoSrc}
-              title="Otulia"
-            />
-          </NavLink>
-        </div>
-
         {/* 2. DESKTOP MENU - Center Column (Absolute centered) */}
         <ul className="hidden lg:flex items-center justify-center gap-[clamp(16px,3vw,48px)] absolute left-1/2 -translate-x-1/2 w-auto">
           <li>
@@ -82,7 +76,7 @@ const Navbar = ({
           </li>
           <li>
             <NavLink
-              to="/rent"
+              to="/ranking/cars"
               className={({ isActive }) =>
                 `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
               }
@@ -92,7 +86,7 @@ const Navbar = ({
           </li>
           <li>
             <NavLink
-              to="/pricing"
+              to="/"
               className={({ isActive }) =>
                 `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
               }
@@ -130,7 +124,7 @@ const Navbar = ({
               RANKINGS
             </NavLink>
           </li>
-          <li>
+          {/* <li>
             <NavLink
               to="/"
               className={({ isActive }) =>
@@ -139,8 +133,8 @@ const Navbar = ({
             >
               MAGAZINE
             </NavLink>
-          </li>
-          <li>
+          </li> */}
+          {/* <li>
             <NavLink
               to="/"
               className={({ isActive }) =>
@@ -149,13 +143,13 @@ const Navbar = ({
             >
               ABOUT US
             </NavLink>
-          </li>
+          </li> */}
         </ul>
 
         {/* 3. RIGHT ACTIONS - Right Column */}
         <div className="flex-1 flex items-center justify-end gap-[clamp(8px,1vw,24px)]">
           <NavLink
-            to="/ranking"
+            to="/"
             className={`hidden lg:block px-[clamp(12px,1.5vw,24px)] py-[clamp(6px,1vh,12px)] rounded border text-[clamp(9px,1.1vh,13px)] tracking-[0.2em] font-medium montserrat transition-all duration-500 whitespace-nowrap backdrop-blur-md shadow-lg active:scale-95 ${
               isDarkText
                 ? "border-black/10 bg-black/5 text-black hover:bg-black hover:text-white hover:border-black hover:shadow-black/10"

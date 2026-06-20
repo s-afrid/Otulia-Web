@@ -66,7 +66,7 @@ function RankingCard({ cars }) {
               {/* Header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-[18px] font-semibold text-[#111827]">
+                  <h2 className="text-[30px] font-bold tracking-normal text-[#111827]">
                     {car.name}
                   </h2>
                   {car.showTagOnHeader && car.tag && (
@@ -108,22 +108,22 @@ function RankingCard({ cars }) {
               </div>
 
               {/* Description */}
-              <p className="mt-2 text-[13px] leading-relaxed text-[#4B5563]">
+              <p className="mt-2 text-[15px] text-[#4B5563] tracking-normal">
                 {car.description}
               </p>
 
               {/* Stats */}
-              <div className="mt-5 grid grid-cols-4 gap-6">
+              <div className="mt-5 grid grid-cols-4">
                 {car.stats.map((stat, index) => {
                   const Icon = stat.icon;
                   return (
                     <div key={index} className="flex items-start gap-2">
-                      <Icon className="mt-0.5 text-[18px] text-[#4B5563]" />
+                      <Icon className="mt-0.5 text-[15px] text-[#4B5563]" />
                       <div>
-                        <div className="text-[14px] font-semibold text-[#111827]">
+                        <div className="text-[15px] font-bold text-[#111827] tracking-tight">
                           {stat.value}
                         </div>
-                        <div className="text-[12px] text-[#6B7280]">
+                        <div className="text-[12px] text-[#6B7280] font-medium tracking-normal">
                           {stat.label}
                         </div>
                       </div>
@@ -133,24 +133,24 @@ function RankingCard({ cars }) {
               </div>
 
               {/* Meta */}
-              <div className="mt-4 flex items-center gap-4 border-t border-[#ECECEC] pt-3 text-[12px] text-[#6B7280]">
+              <div className="mt-4 flex items-center gap-4 border-t border-[#ECECEC] pt-3 text-[13px] text-[#6B7280]">
                 <span>
                   Category:{" "}
-                  <span className="font-medium text-[#111827]">
+                  <span className="font-medium text-[#111827] tracking-normal">
                     {car.category}
                   </span>
                 </span>
                 <span>|</span>
                 <span>
                   Origin:{" "}
-                  <span className="font-medium text-[#111827]">
+                  <span className="font-medium text-[#111827] tracking-normal">
                     {car.origin}
                   </span>
                 </span>
                 <span>|</span>
                 <span>
                   Body Type:{" "}
-                  <span className="font-medium text-[#111827]">
+                  <span className="font-medium text-[#111827] tracking-normal">
                     {car.bodyType}
                   </span>
                 </span>
@@ -176,7 +176,7 @@ function RankingCard({ cars }) {
               </button>
 
               <div className="mt-7 text-center">
-                <div className="text-[26px] font-bold text-[#111827]">
+                <div className="text-[35px] tracking-tight font-bold text-[#111827]">
                   {car.votes}
                 </div>
                 <div className="text-[14px] text-[#6B7280]">Votes</div>

@@ -29,7 +29,7 @@ function RankingHeader({ data }) {
     },
   ];
   return (
-    <section className="bg-white ml-[248px] pt-[110px] px-8 pb-10">
+    <section className="bg-white pt-[110px] pb-12">
       {/* Breadcrumb + Share */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
@@ -90,22 +90,22 @@ function RankingHeader({ data }) {
               key={index}
               className="
                 flex items-center gap-4
-                rounded-2xl
+                rounded-xl
                 border border-[#E7E7E7]
                 bg-white
-                px-5 py-4
+                px-8 py-4
                 shadow-[0_2px_6px_rgba(0,0,0,0.03)]
                 min-w-[135px]
               "
             >
-              <Icon className={`text-[26px] ${stat.iconColor}`} />
+              <Icon className={`text-[24px] ${stat.iconColor}`} />
 
               <div>
-                <div className="text-[28px] font-bold leading-none text-black">
+                <div className="text-[20px] font-bold leading-none text-black">
                   {stat.value}
                 </div>
 
-                <div className="mt-1 text-[15px] text-[#6B7280]">
+                <div className="mt-1 text-[12px] text-[#6B7280]">
                   {stat.label}
                 </div>
               </div>

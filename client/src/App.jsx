@@ -135,6 +135,7 @@ function App() {
     "/signup",
     "/inventory",
     "/content-management",
+    "/ranking",
   ];
   const shouldShowFooter = !hideFooterRoutes.some((path) =>
     location.pathname.startsWith(path),

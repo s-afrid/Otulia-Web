@@ -20,7 +20,7 @@ function RankingHome() {
       <div className="ml-[300px]">
         <Navbar_Ranking hideSearch={true} />
 
-        <div className="px-12">
+        <div className="px-8">
           <HeaderRanking data={rankingData.header} />
 
           <RankingCard cars={rankingData.cards} />
