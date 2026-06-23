@@ -152,7 +152,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                 if (formData.targetType === 'Assets') {
                     // Map selected type to category query parameter
                     const categoryMap = {
-                        'Cars': 'vehicles',
+                        'Cars': 'cars|vehicles',
                         'Real Estate': 'estates',
                         'Yachts': 'yachts',
                         'Bikes': 'bikes'
@@ -163,7 +163,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                     const response = await fetch(url);
                     if (response.ok) {
                         const resData = await response.json();
-                        if (resData.success && Array.isArray(resData.data)) {
+                        if (resData && Array.isArray(resData.data)) {
                             const formatted = resData.data.map(asset => {
                                 const detailParts = [];
                                 if (asset.brand) detailParts.push(asset.brand);
