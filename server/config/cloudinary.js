@@ -34,12 +34,16 @@ const storage = new CloudinaryStorage({
         folder = folders.verification;
     } else if (req.path.includes('profile')) {
         folder = folders.profile;
+    } else if (req.path.includes('category')) {
+        const categoryTitle = req.query.title || 'general';
+        const sanitizedTitle = categoryTitle.trim().replace(/[\/\?#%&*=+:;]/g, '_');
+        folder = `cmscategory/${sanitizedTitle}`;
     }
 
     return {
       folder: folder,
       resource_type: 'auto',
-      allowed_formats: ['jpg', 'png', 'jpeg', 'pdf', 'docs', 'docx'],
+      allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'pdf', 'docs', 'docx'],
     };
   },
 });

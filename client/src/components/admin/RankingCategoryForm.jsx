@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FiImage, FiPlus, FiGrid, FiTrash2, FiInfo, FiChevronRight, FiSearch, FiCheck, FiChevronLeft, FiAward } from 'react-icons/fi';
+import { useAuth } from '../../contexts/AuthContext';
+import ImageCropModal from '../ImageCropModal';
 
 import carIcon from '../../assets/icons/car_icon.png';
 import estateIcon from '../../assets/icons/estate_icon.png';
@@ -39,8 +41,38 @@ const mockDealerNominees = [
     { id: 'd5', name: 'Ultimate Motors Dubai', detail: 'Dubai, UAE · Exotic Car Retailer', image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=150&auto=format&fit=crop&q=60' }
 ];
 
+const getTodayDateString = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+};
+
+const getFutureDateString = (days) => {
+    const today = new Date();
+    today.setDate(today.getDate() + days);
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+};
+
 const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
+    const { token } = useAuth();
     const [step, setStep] = useState(1);
+    const coverInputRef = useRef(null);
+    const bannerInputRef = useRef(null);
+
+    const [croppedCoverBlob, setCroppedCoverBlob] = useState(null);
+    const [croppedBannerBlob, setCroppedBannerBlob] = useState(null);
+    
+    const [cropModalOpen, setCropModalOpen] = useState(false);
+    const [cropImageSrc, setCropImageSrc] = useState('');
+    const [cropTarget, setCropTarget] = useState('');
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
     
     const [formData, setFormData] = useState({
         title: '',
@@ -49,18 +81,18 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
         targetType: 'Assets', // 'Assets' or 'Dealers'
         shortDescription: '',
         detailedDescription: '',
-        categoryImage: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&auto=format&fit=crop&q=60',
-        bannerImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1200&auto=format&fit=crop&q=60',
+        categoryImage: '',
+        bannerImage: '',
         icon: carIcon,
-        votingPeriodStart: '2026-01-01',
-        votingPeriodEnd: '2026-06-30',
+        votingPeriodStart: getTodayDateString(),
+        votingPeriodEnd: getFutureDateString(30),
         nomineeLimit: 10,
         allowMultipleVotes: true,
         showInPopularLinks: true,
         displayOrder: 1,
         featuredCategory: true,
         categoryColor: '#6366F1',
-        status: 'Draft',
+        status: 'Active',
         nominees: [],
         seoTitle: '',
         seoKeywords: ''
@@ -75,12 +107,13 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
         if (initialData) {
             setFormData({
                 ...initialData,
-                votingPeriodStart: initialData.votingPeriodStart || '2026-01-01',
-                votingPeriodEnd: initialData.votingPeriodEnd || '2026-06-30',
+                votingPeriodStart: initialData.votingPeriodStart || getTodayDateString(),
+                votingPeriodEnd: initialData.votingPeriodEnd || getFutureDateString(30),
                 targetType: initialData.targetType || 'Assets',
                 nominees: initialData.nominees || [],
                 seoTitle: initialData.seoTitle || '',
-                seoKeywords: initialData.seoKeywords || ''
+                seoKeywords: initialData.seoKeywords || '',
+                status: initialData.status || 'Active'
             });
         }
     }, [initialData]);
@@ -108,20 +141,103 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
 
     // Filter nominees based on targetType and search query
     useEffect(() => {
-        const db = formData.targetType === 'Assets' ? mockAssetNominees : mockDealerNominees;
         if (!searchQuery.trim()) {
             setSearchResults([]);
             return;
         }
-        const filtered = db.filter(item => 
-            item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-            item.detail.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setSearchResults(filtered);
-    }, [searchQuery, formData.targetType]);
+
+        const delayDebounceFn = setTimeout(async () => {
+            setIsSearching(true);
+            try {
+                if (formData.targetType === 'Assets') {
+                    // Map selected type to category query parameter
+                    const categoryMap = {
+                        'Cars': 'vehicles',
+                        'Real Estate': 'estates',
+                        'Yachts': 'yachts',
+                        'Bikes': 'bikes'
+                    };
+                    const queryCategory = categoryMap[formData.type] || '';
+                    
+                    const url = `/api/assets/combined?q=${encodeURIComponent(searchQuery)}&category=${queryCategory}&limit=10`;
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const resData = await response.json();
+                        if (resData.success && Array.isArray(resData.data)) {
+                            const formatted = resData.data.map(asset => {
+                                const detailParts = [];
+                                if (asset.brand) detailParts.push(asset.brand);
+                                if (asset.specification?.model) detailParts.push(asset.specification.model);
+                                if (asset.location) detailParts.push(asset.location);
+                                
+                                const priceStr = asset.isPriceOnRequest 
+                                    ? 'Price on Request' 
+                                    : (asset.price ? `$${Number(asset.price).toLocaleString()}` : '');
+                                if (priceStr) detailParts.push(priceStr);
+
+                                return {
+                                    id: asset._id || asset.id,
+                                    name: asset.title || 'Unnamed Asset',
+                                    detail: detailParts.join(' · '),
+                                    image: asset.images && asset.images[0] ? asset.images[0] : '',
+                                    votes: 0
+                                };
+                            });
+                            setSearchResults(formatted);
+                        }
+                    }
+                } else {
+                    // targetType === 'Dealers'
+                    const response = await fetch('/api/admin/partners', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (response.ok) {
+                        const partners = await response.json();
+                        
+                        const categoryMap = {
+                            'Cars': 'Car',
+                            'Real Estate': 'Estate',
+                            'Yachts': 'Yacht',
+                            'Bikes': 'Bike'
+                        };
+                        const selectedCat = categoryMap[formData.type];
+                        
+                        const filtered = partners.filter(p => {
+                            const matchesSearch = 
+                                p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                (p.company?.companyName && p.company.companyName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                                p.email.toLowerCase().includes(searchQuery.toLowerCase());
+                                
+                            const matchesCategory = !selectedCat || p.category === selectedCat || p.category === 'General';
+                            
+                            return matchesSearch && matchesCategory;
+                        });
+
+                        const formatted = filtered.map(p => ({
+                            id: p.id,
+                            name: p.company?.companyName || p.name,
+                            detail: `${p.plan || 'Dealer'} · ${p.email} · ${p.level || 'Silver'} Level`,
+                            image: p.company?.companyLogo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                            votes: 0
+                        }));
+                        
+                        setSearchResults(formatted);
+                    }
+                }
+            } catch (err) {
+                console.error("Search error:", err);
+            } finally {
+                setIsSearching(false);
+            }
+        }, 400);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchQuery, formData.targetType, formData.type, token]);
 
     const addNominee = (nominee) => {
-        if (formData.nominees.some(n => n.id === nominee.id)) {
+        if (formData.nominees.some(n => n.id === nominee.id || n._id === nominee.id)) {
             alert("This nominee is already added to this category.");
             return;
         }
@@ -140,63 +256,189 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
     const removeNominee = (id) => {
         setFormData(prev => ({
             ...prev,
-            nominees: prev.nominees.filter(n => n.id !== id)
+            nominees: prev.nominees.filter(n => n.id !== id && n._id !== id)
         }));
     };
 
-    const handleFormSubmit = (e) => {
+    const uploadToCloudinary = async (blob, target, title) => {
+        const uploadData = new FormData();
+        uploadData.append('image', blob);
+        
+        const endpoint = target === 'cover' 
+            ? `/api/upload/category-cover?title=${encodeURIComponent(title)}` 
+            : `/api/upload/category-banner?title=${encodeURIComponent(title)}`;
+            
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: uploadData
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.url) {
+                return data.url;
+            }
+        }
+        throw new Error(`Cloudinary upload failed for ${target}`);
+    };
+
+    const handleFormSubmit = async (e) => {
         if (e) e.preventDefault();
-        onSubmit(formData);
-        // Reset form if creating new
-        if (!initialData) {
-            setFormData({
-                title: '',
-                slug: '',
-                type: 'Cars',
-                targetType: 'Assets',
-                shortDescription: '',
-                detailedDescription: '',
-                categoryImage: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&auto=format&fit=crop&q=60',
-                bannerImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1200&auto=format&fit=crop&q=60',
-                icon: carIcon,
-                votingPeriodStart: '2026-01-01',
-                votingPeriodEnd: '2026-06-30',
-                nomineeLimit: 10,
-                allowMultipleVotes: true,
-                showInPopularLinks: true,
-                displayOrder: 1,
-                featuredCategory: true,
-                categoryColor: '#6366F1',
-                status: 'Draft',
-                nominees: [],
-                seoTitle: '',
-                seoKeywords: ''
+        setIsSubmitting(true);
+        
+        let finalCoverUrl = formData.categoryImage;
+        let finalBannerUrl = formData.bannerImage;
+        
+        try {
+            // Upload cover if we have a cropped blob temporarily saved
+            if (croppedCoverBlob) {
+                finalCoverUrl = await uploadToCloudinary(croppedCoverBlob, 'cover', formData.title);
+            }
+            
+            // Upload banner if we have a cropped blob temporarily saved
+            if (croppedBannerBlob) {
+                finalBannerUrl = await uploadToCloudinary(croppedBannerBlob, 'banner', formData.title);
+            }
+            
+            await onSubmit({
+                ...formData,
+                categoryImage: finalCoverUrl,
+                bannerImage: finalBannerUrl
             });
-            setStep(1);
+            
+            // Reset form if creating new
+            if (!initialData) {
+                setFormData({
+                    title: '',
+                    slug: '',
+                    type: 'Cars',
+                    targetType: 'Assets',
+                    shortDescription: '',
+                    detailedDescription: '',
+                    categoryImage: '',
+                    bannerImage: '',
+                    icon: carIcon,
+                    votingPeriodStart: getTodayDateString(),
+                    votingPeriodEnd: getFutureDateString(30),
+                    nomineeLimit: 10,
+                    allowMultipleVotes: true,
+                    showInPopularLinks: true,
+                    displayOrder: 1,
+                    featuredCategory: true,
+                    categoryColor: '#6366F1',
+                    status: 'Active',
+                    nominees: [],
+                    seoTitle: '',
+                    seoKeywords: ''
+                });
+                setCroppedCoverBlob(null);
+                setCroppedBannerBlob(null);
+                setStep(1);
+            }
+        } catch (err) {
+            console.error("Error submitting category:", err);
+            alert("Error saving category images. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
-    const mockChangeImage = (type) => {
-        const luxuryImages = [
-            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop&q=60',
-            'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&auto=format&fit=crop&q=60',
-            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop&q=60',
-            'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&auto=format&fit=crop&q=60',
-        ];
-        const randomImage = luxuryImages[Math.floor(Math.random() * luxuryImages.length)];
-        if (type === 'cover') {
-            setFormData(prev => ({ ...prev, categoryImage: randomImage }));
-        } else {
-            setFormData(prev => ({ ...prev, bannerImage: randomImage }));
+    const handleFileSelect = (e, target) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setCropImageSrc(reader.result);
+            setCropTarget(target);
+            setCropModalOpen(true);
+        };
+        reader.readAsDataURL(file);
+        
+        // Reset file input value so same file can be selected again
+        e.target.value = '';
+    };
+
+    const handleStepClick = (targetStep) => {
+        if (targetStep < step) {
+            setStep(targetStep);
+            return;
+        }
+
+        // Validate Step 1
+        if (step === 1) {
+            if (!formData.title.trim()) {
+                alert("Category title is required.");
+                return;
+            }
+            if (!formData.slug.trim()) {
+                alert("Slug is required.");
+                return;
+            }
+            if (!formData.shortDescription.trim()) {
+                alert("Short description is required.");
+                return;
+            }
+            if (!formData.detailedDescription.trim()) {
+                alert("Detailed description is required.");
+                return;
+            }
+            if (!formData.categoryImage) {
+                alert("Category cover image is required.");
+                return;
+            }
+            if (!formData.bannerImage) {
+                alert("Banner image is required.");
+                return;
+            }
+        }
+
+        if (targetStep <= 2) {
+            setStep(targetStep);
         }
     };
 
     const handleNextStep = () => {
-        if (step === 1 && !formData.title.trim()) {
-            alert("Category title is required.");
-            return;
+        // Validate Step 1 fields
+        if (step === 1) {
+            if (!formData.title.trim()) {
+                alert("Category title is required.");
+                return;
+            }
+            if (!formData.slug.trim()) {
+                alert("Slug is required.");
+                return;
+            }
+            if (!formData.shortDescription.trim()) {
+                alert("Short description is required.");
+                return;
+            }
+            if (!formData.detailedDescription.trim()) {
+                alert("Detailed description is required.");
+                return;
+            }
+            if (!formData.categoryImage) {
+                alert("Category cover image is required.");
+                return;
+            }
+            if (!formData.bannerImage) {
+                alert("Banner image is required.");
+                return;
+            }
         }
-        if (step < 4) setStep(step + 1);
+
+        // Validate Step 2 fields
+        if (step === 2) {
+            if (formData.nominees.length === 0) {
+                alert("Please add at least one nominee before proceeding.");
+                return;
+            }
+        }
+
+        if (step < 2) setStep(step + 1);
         else handleFormSubmit();
     };
 
@@ -210,7 +452,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
             <div className="bg-[#101622] rounded-2xl p-4 border border-[#1B243B] flex flex-wrap gap-4 items-center justify-between text-xs text-gray-400">
                 <div className="flex items-center flex-wrap gap-4 sm:gap-6">
                     <span 
-                        onClick={() => formData.title.trim() && setStep(1)}
+                        onClick={() => handleStepClick(1)}
                         className={`flex items-center gap-2 cursor-pointer transition-colors ${step === 1 ? 'text-white font-bold' : 'text-gray-500 hover:text-gray-300'}`}
                     >
                         <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 1 ? 'bg-[#6366F1] text-white' : 'bg-[#1C253B]'}`}>1</span> 
@@ -219,29 +461,11 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                     <FiChevronRight className="text-gray-700 hidden sm:block" />
                     
                     <span 
-                        onClick={() => formData.title.trim() && setStep(2)}
+                        onClick={() => handleStepClick(2)}
                         className={`flex items-center gap-2 cursor-pointer transition-colors ${step === 2 ? 'text-white font-bold' : 'text-gray-500 hover:text-gray-300'}`}
                     >
                         <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 2 ? 'bg-[#6366F1] text-white' : 'bg-[#1C253B]'}`}>2</span> 
                         Nominees ({formData.nominees.length})
-                    </span>
-                    <FiChevronRight className="text-gray-700 hidden sm:block" />
-                    
-                    <span 
-                        onClick={() => formData.title.trim() && setStep(3)}
-                        className={`flex items-center gap-2 cursor-pointer transition-colors ${step === 3 ? 'text-white font-bold' : 'text-gray-500 hover:text-gray-300'}`}
-                    >
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 3 ? 'bg-[#6366F1] text-white' : 'bg-[#1C253B]'}`}>3</span> 
-                        Display & SEO
-                    </span>
-                    <FiChevronRight className="text-gray-700 hidden sm:block" />
-                    
-                    <span 
-                        onClick={() => formData.title.trim() && setStep(4)}
-                        className={`flex items-center gap-2 cursor-pointer transition-colors ${step === 4 ? 'text-white font-bold' : 'text-gray-500 hover:text-gray-300'}`}
-                    >
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 4 ? 'bg-[#6366F1] text-white' : 'bg-[#1C253B]'}`}>4</span> 
-                        Settings & Publish
                     </span>
                 </div>
                 <div className="flex gap-2">
@@ -251,8 +475,19 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                             <FiChevronLeft /> Back
                         </button>
                     )}
-                    <button type="button" onClick={handleNextStep} className="flex items-center gap-1.5 px-4 py-1.5 bg-[#6366F1] text-white rounded-lg hover:bg-[#4F46E5] transition-colors font-bold shadow-lg shadow-[#6366F1]/20">
-                        {step === 4 ? 'Publish Category' : 'Next Step'} <FiChevronRight />
+                    <button 
+                        type="button" 
+                        onClick={handleNextStep} 
+                        disabled={isSubmitting}
+                        className="flex items-center gap-1.5 px-4 py-1.5 bg-[#6366F1] text-white rounded-lg hover:bg-[#4F46E5] transition-colors font-bold shadow-lg shadow-[#6366F1]/20 disabled:opacity-50"
+                    >
+                        {isSubmitting ? (
+                            <>Saving...</>
+                        ) : step === 2 ? (
+                            <>Save & Publish <FiChevronRight /></>
+                        ) : (
+                            <>Next Step <FiChevronRight /></>
+                        )}
                     </button>
                 </div>
             </div>
@@ -357,7 +592,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                             <div className="space-y-4">
                                 <div>
                                     <div className="flex justify-between items-center mb-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Short Description</label>
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Short Description *</label>
                                         <span className="text-[9px] font-bold text-gray-500">{formData.shortDescription.length}/200</span>
                                     </div>
                                     <textarea 
@@ -371,7 +606,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                 </div>
                                 <div>
                                     <div className="flex justify-between items-center mb-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Detailed Description</label>
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Detailed Description *</label>
                                         <span className="text-[9px] font-bold text-gray-500">{formData.detailedDescription.length}/1000</span>
                                     </div>
                                     <textarea 
@@ -392,27 +627,61 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                         {/* Cover Image */}
                         <div className="bg-[#101622] rounded-[2rem] p-6 border border-[#1B243B] space-y-4">
                             <h3 className="text-[10px] font-black text-white uppercase tracking-wider border-b border-[#1C253B] pb-2">Category Cover Image *</h3>
-                            <div className="h-44 rounded-xl overflow-hidden bg-gray-900 border border-[#222E4A] relative group">
-                                <img src={formData.categoryImage} alt="Cover Preview" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <button type="button" onClick={() => mockChangeImage('cover')} className="px-3 py-1.5 bg-[#1C253B] text-white rounded-lg text-[9px] font-bold uppercase hover:bg-black transition-colors">Change Cover</button>
-                                </div>
+                            <div className="h-44 rounded-xl overflow-hidden bg-gray-900 border border-[#222E4A] relative group flex items-center justify-center">
+                                {formData.categoryImage ? (
+                                    <img src={formData.categoryImage} alt="Cover Preview" className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="flex flex-col items-center gap-2 text-gray-500 p-4 text-center">
+                                        <FiImage className="text-3xl" />
+                                        <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600">No Image Uploaded</span>
+                                    </div>
+                                )}
+                                
+                                {formData.categoryImage && (
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <button type="button" onClick={() => coverInputRef.current.click()} className="px-3 py-1.5 bg-[#1C253B] text-white rounded-lg text-[9px] font-bold uppercase hover:bg-black transition-colors">Change Cover</button>
+                                    </div>
+                                )}
                             </div>
-                            <button type="button" onClick={() => mockChangeImage('cover')} className="w-full py-2.5 bg-[#151D30] border border-[#222E4A] rounded-xl text-[10px] font-bold text-white hover:bg-[#222E4A] transition-all uppercase tracking-wider flex items-center justify-center gap-1.5">
+                            <input 
+                                type="file" 
+                                ref={coverInputRef} 
+                                onChange={(e) => handleFileSelect(e, 'cover')} 
+                                style={{ display: 'none' }} 
+                                accept="image/*" 
+                            />
+                            <button type="button" onClick={() => coverInputRef.current.click()} className="w-full py-2.5 bg-[#151D30] border border-[#222E4A] rounded-xl text-[10px] font-bold text-white hover:bg-[#222E4A] transition-all uppercase tracking-wider flex items-center justify-center gap-1.5">
                                 <FiImage /> Choose Image
                             </button>
                         </div>
 
                         {/* Banner Image */}
                         <div className="bg-[#101622] rounded-[2rem] p-6 border border-[#1B243B] space-y-4">
-                            <h3 className="text-[10px] font-black text-white uppercase tracking-wider border-b border-[#1C253B] pb-2">Banner Image <span className="text-gray-500 font-bold">(Optional)</span></h3>
-                            <div className="h-24 rounded-xl overflow-hidden bg-gray-900 border border-[#222E4A] relative group">
-                                <img src={formData.bannerImage} alt="Banner Preview" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <button type="button" onClick={() => mockChangeImage('banner')} className="px-3 py-1.5 bg-[#1C253B] text-white rounded-lg text-[9px] font-bold uppercase hover:bg-black transition-colors">Change Banner</button>
-                                </div>
+                            <h3 className="text-[10px] font-black text-white uppercase tracking-wider border-b border-[#1C253B] pb-2">Banner Image *</h3>
+                            <div className="h-24 rounded-xl overflow-hidden bg-gray-900 border border-[#222E4A] relative group flex items-center justify-center">
+                                {formData.bannerImage ? (
+                                    <img src={formData.bannerImage} alt="Banner Preview" className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="flex flex-col items-center gap-1.5 text-gray-500 p-4 text-center">
+                                        <FiImage className="text-2xl" />
+                                        <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600">No Image Uploaded</span>
+                                    </div>
+                                )}
+
+                                {formData.bannerImage && (
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <button type="button" onClick={() => bannerInputRef.current.click()} className="px-3 py-1.5 bg-[#1C253B] text-white rounded-lg text-[9px] font-bold uppercase hover:bg-black transition-colors">Change Banner</button>
+                                    </div>
+                                )}
                             </div>
-                            <button type="button" onClick={() => mockChangeImage('banner')} className="w-full py-2.5 bg-[#151D30] border border-[#222E4A] rounded-xl text-[10px] font-bold text-white hover:bg-[#222E4A] transition-all uppercase tracking-wider flex items-center justify-center gap-1.5">
+                            <input 
+                                type="file" 
+                                ref={bannerInputRef} 
+                                onChange={(e) => handleFileSelect(e, 'banner')} 
+                                style={{ display: 'none' }} 
+                                accept="image/*" 
+                            />
+                            <button type="button" onClick={() => bannerInputRef.current.click()} className="w-full py-2.5 bg-[#151D30] border border-[#222E4A] rounded-xl text-[10px] font-bold text-white hover:bg-[#222E4A] transition-all uppercase tracking-wider flex items-center justify-center gap-1.5">
                                 <FiImage /> Choose Banner
                             </button>
                         </div>
@@ -458,9 +727,14 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                         {/* Search Results Dropdown */}
                         {showResultsDropdown && searchQuery.trim() && (
                             <div className="absolute top-full inset-x-0 bg-[#0F172A] border border-[#222E4A] rounded-2xl mt-2 overflow-hidden shadow-2xl z-50 divide-y divide-[#1E293B]">
-                                {searchResults.length > 0 ? (
+                                {isSearching ? (
+                                    <div className="p-4 text-center text-xs text-gray-500 font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-[#6366F1] border-t-transparent rounded-full animate-spin"></div>
+                                        Searching database...
+                                    </div>
+                                ) : searchResults.length > 0 ? (
                                     searchResults.map((item) => {
-                                        const alreadyAdded = formData.nominees.some(n => n.id === item.id);
+                                        const alreadyAdded = formData.nominees.some(n => n.id === item.id || n._id === item.id);
                                         return (
                                             <div 
                                                 key={item.id} 
@@ -468,7 +742,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                                 className={`flex items-center justify-between p-3 cursor-pointer transition-colors ${alreadyAdded ? 'opacity-40 cursor-default bg-[#151D30]/20' : 'hover:bg-[#1E293B]/70'}`}
                                             >
                                                 <div className="flex items-center gap-3">
-                                                    <img src={item.image} alt={item.name} className="w-9 h-9 rounded-lg object-cover bg-gray-800" />
+                                                    <img src={item.image || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt={item.name} className="w-9 h-9 rounded-lg object-cover bg-gray-800" />
                                                     <div className="text-left">
                                                         <p className="text-xs font-bold text-white leading-normal">{item.name}</p>
                                                         <p className="text-[10px] text-gray-500 font-semibold">{item.detail}</p>
@@ -525,217 +799,39 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                 </div>
             )}
 
-            {/* STEP 3: Display & SEO */}
-            {step === 3 && (
-                <div className="bg-[#101622] rounded-[2.5rem] p-6 sm:p-8 border border-[#1B243B] space-y-6">
-                    <h3 className="text-sm font-normal text-white border-b border-[#1C253B] pb-3 canela tracking-wide">Display Settings & Search Engine Optimization</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-                        {/* Display settings */}
-                        <div className="space-y-5">
-                            <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Display Order</label>
-                                <input 
-                                    type="number" 
-                                    required
-                                    value={formData.displayOrder}
-                                    onChange={(e) => setFormData({ ...formData, displayOrder: Number(e.target.value) })}
-                                    className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1]"
-                                />
-                                <p className="text-[8px] text-gray-500 font-semibold mt-1">Lower display numbers appear first inside voting indexes.</p>
-                            </div>
-                            
-                            <div className="flex items-center justify-between text-xs pt-2">
-                                <span className="font-semibold text-gray-300">Featured Category (Homepage Banner)</span>
-                                <input 
-                                    type="checkbox" 
-                                    checked={formData.featuredCategory}
-                                    onChange={(e) => setFormData({ ...formData, featuredCategory: e.target.checked })}
-                                    className="w-4 h-4 accent-[#6366F1] cursor-pointer"
-                                />
-                            </div>
-
-                            <div className="flex items-center justify-between text-xs">
-                                <span className="font-semibold text-gray-300">Category Branding Accent Color</span>
-                                <div className="flex items-center gap-3 bg-[#151D30] px-3 py-1.5 rounded-xl border border-[#222E4A]">
-                                    <input 
-                                        type="color" 
-                                        value={formData.categoryColor}
-                                        onChange={(e) => setFormData({ ...formData, categoryColor: e.target.value })}
-                                        className="w-6 h-6 border-0 bg-transparent cursor-pointer rounded overflow-hidden"
-                                    />
-                                    <span className="text-[10px] font-mono text-gray-400 uppercase">{formData.categoryColor}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* SEO details */}
-                        <div className="space-y-5">
-                            <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">SEO Meta Title (Optional)</label>
-                                <input 
-                                    type="text" 
-                                    value={formData.seoTitle}
-                                    onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
-                                    className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1]"
-                                    placeholder="e.g., Vote Best Luxury Car Dealers | Otulia Rankings"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">SEO Meta Keywords (Optional)</label>
-                                <input 
-                                    type="text" 
-                                    value={formData.seoKeywords}
-                                    onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
-                                    className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1]"
-                                    placeholder="e.g., hypercars, rankings, luxury cars nominees"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* STEP 4: Settings & Publish */}
-            {step === 4 && (
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 text-left">
-                    {/* LEFT BLOCK: Date/Status Settings */}
-                    <div className="xl:col-span-8 space-y-6">
-                        <div className="bg-[#101622] rounded-[2.5rem] p-6 border border-[#1B243B] space-y-6">
-                            <h3 className="text-sm font-normal text-white border-b border-[#1C253B] pb-3 canela tracking-wide">Publish & Intervals Configurations</h3>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Voting dates */}
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Voting Period Interval *</label>
-                                    <div className="grid grid-cols-2 gap-3 text-xs">
-                                        <div>
-                                            <span className="block text-[8px] font-bold text-gray-500 uppercase tracking-wider mb-1">Start Date</span>
-                                            <input 
-                                                type="date"
-                                                required
-                                                value={formData.votingPeriodStart}
-                                                onChange={(e) => setFormData({ ...formData, votingPeriodStart: e.target.value })}
-                                                className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-3 py-2 text-white focus:outline-none"
-                                            />
-                                        </div>
-                                        <div>
-                                            <span className="block text-[8px] font-bold text-gray-500 uppercase tracking-wider mb-1">End Date</span>
-                                            <input 
-                                                type="date"
-                                                required
-                                                value={formData.votingPeriodEnd}
-                                                onChange={(e) => setFormData({ ...formData, votingPeriodEnd: e.target.value })}
-                                                className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-3 py-2 text-white focus:outline-none"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Nominees limit count */}
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Max Nominees Limit</label>
-                                    <input 
-                                        type="number" 
-                                        required
-                                        min="1"
-                                        max="50"
-                                        value={formData.nomineeLimit}
-                                        onChange={(e) => setFormData({ ...formData, nomineeLimit: Number(e.target.value) })}
-                                        className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none"
-                                    />
-                                    <p className="text-[8px] text-gray-500 font-semibold mt-1">Defines maximum candidates slot. Safe default is 10.</p>
-                                </div>
-                            </div>
-
-                            {/* Toggles */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                                <div className="flex items-center justify-between text-xs bg-[#151D30]/40 p-4 border border-[#222E4A]/65 rounded-xl">
-                                    <div>
-                                        <span className="font-bold text-gray-300 block">Allow Multiple Votes</span>
-                                        <span className="text-[8px] text-gray-500 font-semibold mt-0.5 block">Let voters cast multiple votes over time</span>
-                                    </div>
-                                    <input 
-                                        type="checkbox" 
-                                        checked={formData.allowMultipleVotes}
-                                        onChange={(e) => setFormData({ ...formData, allowMultipleVotes: e.target.checked })}
-                                        className="w-4 h-4 accent-[#6366F1] cursor-pointer"
-                                    />
-                                </div>
-                                <div className="flex items-center justify-between text-xs bg-[#151D30]/40 p-4 border border-[#222E4A]/65 rounded-xl">
-                                    <div>
-                                        <span className="font-bold text-gray-300 block">Show in Popular Links</span>
-                                        <span className="text-[8px] text-gray-500 font-semibold mt-0.5 block">Render in public home/listing categories</span>
-                                    </div>
-                                    <input 
-                                        type="checkbox" 
-                                        checked={formData.showInPopularLinks}
-                                        onChange={(e) => setFormData({ ...formData, showInPopularLinks: e.target.checked })}
-                                        className="w-4 h-4 accent-[#6366F1] cursor-pointer"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Status selection */}
-                            <div className="pt-2">
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Category Status</label>
-                                <select
-                                    value={formData.status}
-                                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                    className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none"
-                                >
-                                    <option value="Draft">Draft (Only Admin visible)</option>
-                                    <option value="Active">Active (Publish live to all visitors)</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* RIGHT BLOCK: Summary Preview */}
-                    <div className="xl:col-span-4 space-y-6">
-                        <div className="bg-[#101622] rounded-[2.5rem] p-6 border border-[#1B243B] space-y-5">
-                            <h3 className="text-[10px] font-black text-white uppercase tracking-wider border-b border-[#1C253B] pb-2">Publish Preview Summary</h3>
-                            
-                            <div className="rounded-2xl overflow-hidden border border-[#222E4A] bg-[#151D30]/50 relative">
-                                <div className="h-28 relative">
-                                    <img src={formData.categoryImage} alt="Summary Cover" className="w-full h-full object-cover" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#151D30] to-transparent"></div>
-                                </div>
-                                <div className="p-4 space-y-3 relative -mt-4 text-left">
-                                    <span className="px-2 py-0.5 bg-[#6366F1] text-white rounded text-[8px] font-black tracking-widest uppercase">
-                                        {formData.type} · {formData.targetType}
-                                    </span>
-                                    <h4 className="text-sm font-bold text-white leading-normal mt-1.5">{formData.title || 'Untitled Category'}</h4>
-                                    <p className="text-[10px] text-gray-500 font-semibold leading-normal truncate">{formData.shortDescription || 'No description provided'}</p>
-                                    
-                                    <div className="flex justify-between items-center text-[9px] text-gray-400 pt-2 border-t border-[#222E4A] mt-2">
-                                        <span>Nominees: <span className="text-white font-black">{formData.nominees.length}</span></span>
-                                        <span>Status: <span className={`font-black ${formData.status === 'Active' ? 'text-emerald-400' : 'text-amber-400'}`}>{formData.status}</span></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-[#1A2338] border border-[#2B395B] rounded-xl p-3 flex items-start gap-2 text-xs">
-                                <FiInfo className="text-[#D48D2A] text-sm shrink-0 mt-0.5" />
-                                <p className="text-[9px] text-gray-400 leading-normal">
-                                    Ensure all candidate nominees are selected correctly. Once published as <span className="text-white font-bold">Active</span>, public votes are castable immediately.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             {/* Bottom Actions footer */}
             <div className="flex justify-end gap-3 pt-6 border-t border-[#1C253B]">
                 <button type="button" onClick={onCancel} className="px-6 py-2.5 bg-[#1C253B] text-gray-300 rounded-xl hover:bg-[#253252] transition-colors font-bold text-xs uppercase tracking-wider">Cancel</button>
                 {step > 1 && (
                     <button type="button" onClick={handlePrevStep} className="px-6 py-2.5 bg-[#151D30] border border-[#2B395B] text-gray-300 rounded-xl hover:bg-[#253252] transition-colors font-bold text-xs uppercase tracking-wider">Back</button>
                 )}
-                <button type="button" onClick={handleNextStep} className="px-6 py-2.5 bg-[#6366F1] text-white rounded-xl hover:bg-[#4F46E5] transition-colors font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#6366F1]/20">
-                    {step === 4 ? 'Save & Publish' : 'Save & Next'}
+                <button 
+                    type="button" 
+                    onClick={handleNextStep} 
+                    disabled={isSubmitting}
+                    className="px-6 py-2.5 bg-[#6366F1] text-white rounded-xl hover:bg-[#4F46E5] transition-colors font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#6366F1]/20 disabled:opacity-50"
+                >
+                    {isSubmitting ? 'Saving...' : step === 2 ? 'Save & Publish' : 'Save & Next'}
                 </button>
             </div>
+
+            {cropModalOpen && (
+                <ImageCropModal 
+                    src={cropImageSrc}
+                    onCropComplete={(blob) => {
+                        if (cropTarget === 'cover') {
+                            setCroppedCoverBlob(blob);
+                            setFormData(prev => ({ ...prev, categoryImage: URL.createObjectURL(blob) }));
+                        } else {
+                            setCroppedBannerBlob(blob);
+                            setFormData(prev => ({ ...prev, bannerImage: URL.createObjectURL(blob) }));
+                        }
+                        setCropModalOpen(false);
+                    }}
+                    onClose={() => setCropModalOpen(false)}
+                    isUploading={false}
+                />
+            )}
         </div>
     );
 };

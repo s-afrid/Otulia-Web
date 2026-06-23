@@ -11,6 +11,7 @@ const getFolderPaths = (userEmail) => {
         profile: `users/${sanitizedEmail}/profile`,
         company: `users/${sanitizedEmail}/company`,
         assets: `otulia_assets`,
+        categories: `categories`,
         temp: `temp`
     };
 };

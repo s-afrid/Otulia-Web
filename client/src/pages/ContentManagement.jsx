@@ -22,93 +22,9 @@ const ContentManagement = () => {
     // Layout states
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
-    // Core Categories State (Prepopulated with User's Image design records)
-    const [categories, setCategories] = useState([
-        { 
-            id: 1, 
-            title: 'Best Hypercars of 2026', 
-            slug: 'best-hypercars-of-2026', 
-            type: 'Cars', 
-            shortDescription: 'Recognizing the most powerful, fastest and most innovative hypercars of 2026.', 
-            detailedDescription: 'This category ranks the top 10 hypercars of 2026 based on performance, design, innovation, and overall impact in the automotive world.',
-            categoryImage: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&auto=format&fit=crop&q=60', // Centenario Style
-            bannerImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1200&auto=format&fit=crop&q=60',
-            icon: carIcon,
-            votingPeriodStart: '2026-01-01',
-            votingPeriodEnd: '2026-06-30',
-            nomineeLimit: 10,
-            allowMultipleVotes: true,
-            showInPopularLinks: true,
-            displayOrder: 1,
-            featuredCategory: true,
-            categoryColor: '#6366F1',
-            status: 'Active',
-            votes: '12.4K'
-        },
-        { 
-            id: 2, 
-            title: 'Best Luxury SUVs of 2026', 
-            slug: 'best-luxury-suvs-of-2026', 
-            type: 'Cars', 
-            shortDescription: 'The pinnacle of high-riding luxury and power.', 
-            detailedDescription: 'Ranks the top luxury sport utility vehicles with a focus on interior refinement and raw engine performance.',
-            categoryImage: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&auto=format&fit=crop&q=60', 
-            bannerImage: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1200&auto=format&fit=crop&q=60',
-            icon: carIcon,
-            votingPeriodStart: '2026-01-01',
-            votingPeriodEnd: '2026-06-30',
-            nomineeLimit: 10,
-            allowMultipleVotes: true,
-            showInPopularLinks: false,
-            displayOrder: 2,
-            featuredCategory: false,
-            categoryColor: '#8B5CF6',
-            status: 'Active',
-            votes: '8.7K'
-        },
-        { 
-            id: 3, 
-            title: 'Most Beautiful Villas 2026', 
-            slug: 'most-beautiful-villas-2026', 
-            type: 'Real Estate', 
-            shortDescription: 'Stunning luxury estates across the globe.', 
-            detailedDescription: 'Highlighting architectural masterpieces and high-profile luxury villas in premier locations.',
-            categoryImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop&q=60', 
-            bannerImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop&q=60',
-            icon: estateIcon,
-            votingPeriodStart: '2026-01-01',
-            votingPeriodEnd: '2026-06-30',
-            nomineeLimit: 10,
-            allowMultipleVotes: false,
-            showInPopularLinks: true,
-            displayOrder: 3,
-            featuredCategory: true,
-            categoryColor: '#F59E0B',
-            status: 'Active',
-            votes: '6.3K'
-        },
-        { 
-            id: 4, 
-            title: 'Best Superyachts of 2026', 
-            slug: 'best-superyachts-of-2026', 
-            type: 'Yachts', 
-            shortDescription: 'The ultimate maritime luxury vessels.', 
-            detailedDescription: 'Exploring top-tier custom superyachts built for infinite luxury cruising.',
-            categoryImage: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&auto=format&fit=crop&q=60', 
-            bannerImage: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&auto=format&fit=crop&q=60',
-            icon: yachtIcon,
-            votingPeriodStart: '2026-01-01',
-            votingPeriodEnd: '2026-06-30',
-            nomineeLimit: 10,
-            allowMultipleVotes: true,
-            showInPopularLinks: true,
-            displayOrder: 4,
-            featuredCategory: true,
-            categoryColor: '#06B6D4',
-            status: 'Draft',
-            votes: '4.8K'
-        }
-    ]);
+    // Core Categories State (Loaded from backend DB)
+    const [categories, setCategories] = useState([]);
+    const [fetchingCategories, setFetchingCategories] = useState(false);
 
     // Currently editing record state
     const [editingCategory, setEditingCategory] = useState(null);
@@ -117,6 +33,26 @@ const ContentManagement = () => {
     const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
 
+    const loadCategories = async () => {
+        if (!token) return;
+        setFetchingCategories(true);
+        try {
+            const response = await fetch('/api/admin/ranking-categories', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setCategories(data);
+            }
+        } catch (error) {
+            console.error("Load Categories Error:", error);
+        } finally {
+            setFetchingCategories(false);
+        }
+    };
+
     // Route Gate Guarding & Notifications Fetch
     useEffect(() => {
         if (!loading) {
@@ -124,6 +60,7 @@ const ContentManagement = () => {
                 navigate('/');
             } else {
                 fetchNotifications();
+                loadCategories();
             }
         }
     }, [token, user, loading, navigate]);
@@ -158,33 +95,62 @@ const ContentManagement = () => {
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     // Action handlers
-    const handleSubmitCategory = (formData) => {
-        if (editingCategory) {
-            // Update
-            setCategories(prev => prev.map(c => c.id === editingCategory.id ? { ...c, ...formData } : c));
-            setEditingCategory(null);
-            alert('Ranking Category updated successfully!');
-        } else {
-            // Add new
-            const newCategory = {
-                id: Date.now(),
-                ...formData,
-                votes: '0'
-            };
-            setCategories(prev => [...prev, newCategory]);
-            alert('New Ranking Category created successfully!');
+    const handleSubmitCategory = async (formData) => {
+        try {
+            const method = editingCategory ? 'PUT' : 'POST';
+            const endpoint = editingCategory 
+                ? `/api/admin/ranking-categories/${editingCategory._id || editingCategory.id}` 
+                : '/api/admin/ranking-categories';
+
+            const response = await fetch(endpoint, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                alert(editingCategory ? 'Ranking Category updated successfully!' : 'New Ranking Category created successfully!');
+                setEditingCategory(null);
+                loadCategories();
+            } else {
+                const err = await response.json();
+                alert(err.message || 'Failed to save ranking category.');
+            }
+        } catch (error) {
+            console.error("Submit Category Error:", error);
+            alert('Error saving ranking category.');
         }
     };
 
     const handleEditTrigger = (category) => {
         setEditingCategory(category);
-        // Scroll to form fields smoothly
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const handleDeleteTrigger = (id) => {
-        if (confirm('Are you sure you want to delete this ranking category?')) {
-            setCategories(prev => prev.filter(c => c.id !== id));
+    const handleDeleteTrigger = async (id) => {
+        if (confirm('Are you sure you want to delete this ranking category? All its nominees will be deleted too.')) {
+            try {
+                const response = await fetch(`/api/admin/ranking-categories/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Ranking Category deleted successfully!');
+                    loadCategories();
+                } else {
+                    const err = await response.json();
+                    alert(err.message || 'Failed to delete category.');
+                }
+            } catch (error) {
+                console.error("Delete Category Error:", error);
+                alert('Error deleting category.');
+            }
         }
     };
 

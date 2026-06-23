@@ -8,6 +8,9 @@ const EstateAsset = require("../models/EstateAsset.model");
 const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
 const Coupon = require("../models/Coupon.model");
+const RankingCategory = require("../models/RankingCategory.model");
+const AssetNominee = require("../models/AssetNominee.model");
+const DealerNominee = require("../models/DealerNominee.model");
 const authMiddleware = require("../middleware/auth.middleware");
 const nodemailer = require("nodemailer");
 const ga = require("../utils/googleAnalytics");
@@ -417,6 +420,271 @@ router.delete("/coupons/:id", authMiddleware, adminCheck, async (req, res) => {
         res.json({ message: "COUPON_DELETED" });
     } catch (err) {
         res.status(500).json({ error: "DELETE_COUPON_FAILED" });
+    }
+});
+
+/**
+ * GET ALL RANKING CATEGORIES
+ */
+router.get("/ranking-categories", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        const categories = await RankingCategory.find({})
+            .populate('assetNominees')
+            .populate('dealerNominees')
+            .sort({ displayOrder: 1, createdAt: -1 });
+
+        const formattedCategories = categories.map(c => {
+            const nominees = c.targetType === 'Assets' 
+                ? (c.assetNominees || []).map(n => ({ id: n._id, name: n.name, detail: n.detail, image: n.image, votes: n.votes }))
+                : (c.dealerNominees || []).map(n => ({ id: n._id, name: n.name, detail: n.detail, image: n.image, votes: n.votes }));
+
+            const totalVotesVal = nominees.reduce((acc, curr) => acc + (curr.votes || 0), 0);
+            let formattedVotes = "0";
+            if (totalVotesVal >= 1000) {
+                formattedVotes = (totalVotesVal / 1000).toFixed(1) + 'K';
+            } else {
+                formattedVotes = totalVotesVal.toString();
+            }
+
+            return {
+                _id: c._id,
+                id: c._id,
+                title: c.title,
+                slug: c.slug,
+                type: c.type,
+                targetType: c.targetType,
+                shortDescription: c.shortDescription || '',
+                detailedDescription: c.detailedDescription || '',
+                categoryImage: c.categoryImage || '',
+                bannerImage: c.bannerImage || '',
+                icon: c.icon || '',
+                votingPeriodStart: c.votingPeriodStart ? c.votingPeriodStart.toISOString().split('T')[0] : '',
+                votingPeriodEnd: c.votingPeriodEnd ? c.votingPeriodEnd.toISOString().split('T')[0] : '',
+                nomineeLimit: c.nomineeLimit || 10,
+                allowMultipleVotes: c.allowMultipleVotes !== undefined ? c.allowMultipleVotes : true,
+                showInPopularLinks: c.showInPopularLinks !== undefined ? c.showInPopularLinks : true,
+                displayOrder: c.displayOrder || 1,
+                featuredCategory: c.featuredCategory !== undefined ? c.featuredCategory : true,
+                categoryColor: c.categoryColor || '#6366F1',
+                status: c.status || 'Draft',
+                nominees: nominees,
+                votes: formattedVotes
+            };
+        });
+
+        res.json(formattedCategories);
+    } catch (err) {
+        console.error("GET ranking-categories error:", err);
+        res.status(500).json({ error: "FETCH_CATEGORIES_FAILED" });
+    }
+});
+
+/**
+ * CREATE A RANKING CATEGORY
+ */
+router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        const {
+            title, slug, type, targetType, shortDescription, detailedDescription,
+            categoryImage, bannerImage, icon, votingPeriodStart, votingPeriodEnd,
+            nomineeLimit, allowMultipleVotes, showInPopularLinks, displayOrder,
+            featuredCategory, categoryColor, status, nominees
+        } = req.body;
+
+        // Validation - all details are mandatory as requested by user
+        if (!title || !slug || !type || !targetType || !shortDescription || !detailedDescription || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
+            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All category details (Title, Slug, Scope, Industry Type, Descriptions, Cover and Banner Images, and Voting Period) are mandatory." });
+        }
+
+        // Check uniqueness
+        const existingTitle = await RankingCategory.findOne({ title });
+        if (existingTitle) return res.status(400).json({ error: "CATEGORY_TITLE_MUST_BE_UNIQUE" });
+
+        const existingSlug = await RankingCategory.findOne({ slug });
+        if (existingSlug) return res.status(400).json({ error: "CATEGORY_SLUG_MUST_BE_UNIQUE" });
+
+        const category = new RankingCategory({
+            title,
+            slug,
+            type,
+            targetType,
+            shortDescription,
+            detailedDescription,
+            categoryImage,
+            bannerImage,
+            icon,
+            votingPeriodStart,
+            votingPeriodEnd,
+            nomineeLimit: nomineeLimit || 10,
+            allowMultipleVotes: allowMultipleVotes !== undefined ? allowMultipleVotes : true,
+            showInPopularLinks: showInPopularLinks !== undefined ? showInPopularLinks : true,
+            displayOrder: displayOrder || 1,
+            featuredCategory: featuredCategory !== undefined ? featuredCategory : true,
+            categoryColor: categoryColor || '#6366F1',
+            status: status || 'Draft'
+        });
+
+        await category.save();
+
+        // Save Nominees
+        const nomineeIds = [];
+        if (nominees && nominees.length > 0) {
+            for (const nom of nominees) {
+                if (targetType === 'Assets') {
+                    const assetNominee = new AssetNominee({
+                        category: category._id,
+                        name: nom.name,
+                        detail: nom.detail || '',
+                        image: nom.image || '',
+                        asset: nom.asset || null,
+                        assetModel: nom.assetModel || null
+                    });
+                    await assetNominee.save();
+                    nomineeIds.push(assetNominee._id);
+                } else {
+                    const dealerNominee = new DealerNominee({
+                        category: category._id,
+                        name: nom.name,
+                        detail: nom.detail || '',
+                        image: nom.image || '',
+                        dealer: nom.dealer || null
+                    });
+                    await dealerNominee.save();
+                    nomineeIds.push(dealerNominee._id);
+                }
+            }
+        }
+
+        if (targetType === 'Assets') {
+            category.assetNominees = nomineeIds;
+        } else {
+            category.dealerNominees = nomineeIds;
+        }
+        await category.save();
+
+        res.status(201).json(category);
+    } catch (err) {
+        console.error("CREATE ranking-category error:", err);
+        res.status(500).json({ error: "CREATE_CATEGORY_FAILED" });
+    }
+});
+
+/**
+ * UPDATE A RANKING CATEGORY
+ */
+router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        const {
+            title, slug, type, targetType, shortDescription, detailedDescription,
+            categoryImage, bannerImage, icon, votingPeriodStart, votingPeriodEnd,
+            nomineeLimit, allowMultipleVotes, showInPopularLinks, displayOrder,
+            featuredCategory, categoryColor, status, nominees
+        } = req.body;
+
+        // Validation - all details are mandatory
+        if (!title || !slug || !type || !targetType || !shortDescription || !detailedDescription || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
+            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All category details (Title, Slug, Scope, Industry Type, Descriptions, Cover and Banner Images, and Voting Period) are mandatory." });
+        }
+
+        const category = await RankingCategory.findById(req.params.id);
+        if (!category) return res.status(404).json({ error: "CATEGORY_NOT_FOUND" });
+
+        // Check unique title/slug (excluding current document)
+        const duplicateTitle = await RankingCategory.findOne({ title, _id: { $ne: req.params.id } });
+        if (duplicateTitle) return res.status(400).json({ error: "CATEGORY_TITLE_MUST_BE_UNIQUE" });
+
+        const duplicateSlug = await RankingCategory.findOne({ slug, _id: { $ne: req.params.id } });
+        if (duplicateSlug) return res.status(400).json({ error: "CATEGORY_SLUG_MUST_BE_UNIQUE" });
+
+        category.title = title;
+        category.slug = slug;
+        category.type = type;
+        category.targetType = targetType;
+        category.shortDescription = shortDescription;
+        category.detailedDescription = detailedDescription;
+        category.categoryImage = categoryImage;
+        category.bannerImage = bannerImage;
+        category.icon = icon;
+        category.votingPeriodStart = votingPeriodStart;
+        category.votingPeriodEnd = votingPeriodEnd;
+        category.nomineeLimit = nomineeLimit;
+        category.allowMultipleVotes = allowMultipleVotes;
+        category.showInPopularLinks = showInPopularLinks;
+        category.displayOrder = displayOrder;
+        category.featuredCategory = featuredCategory;
+        category.categoryColor = categoryColor;
+        category.status = status;
+
+        // Find existing nominees for this category to preserve votes/votedBy
+        const existingAssetNominees = await AssetNominee.find({ category: category._id });
+        const existingDealerNominees = await DealerNominee.find({ category: category._id });
+
+        // Delete existing nominees
+        await AssetNominee.deleteMany({ category: category._id });
+        await DealerNominee.deleteMany({ category: category._id });
+
+        // Save new Nominees list
+        const nomineeIds = [];
+        if (nominees && nominees.length > 0) {
+            for (const nom of nominees) {
+                if (targetType === 'Assets') {
+                    const match = existingAssetNominees.find(n => n.name === nom.name);
+                    const assetNominee = new AssetNominee({
+                        category: category._id,
+                        name: nom.name,
+                        detail: nom.detail || '',
+                        image: nom.image || '',
+                        asset: nom.asset || null,
+                        assetModel: nom.assetModel || null,
+                        votes: match ? match.votes : 0,
+                        votedBy: match ? match.votedBy : []
+                    });
+                    await assetNominee.save();
+                    nomineeIds.push(assetNominee._id);
+                } else {
+                    const match = existingDealerNominees.find(n => n.name === nom.name);
+                    const dealerNominee = new DealerNominee({
+                        category: category._id,
+                        name: nom.name,
+                        detail: nom.detail || '',
+                        image: nom.image || '',
+                        dealer: nom.dealer || null,
+                        votes: match ? match.votes : 0,
+                        votedBy: match ? match.votedBy : []
+                    });
+                    await dealerNominee.save();
+                    nomineeIds.push(dealerNominee._id);
+                }
+            }
+        }
+
+        category.assetNominees = targetType === 'Assets' ? nomineeIds : [];
+        category.dealerNominees = targetType === 'Dealers' ? nomineeIds : [];
+
+        await category.save();
+        res.json(category);
+    } catch (err) {
+        console.error("UPDATE ranking-category error:", err);
+        res.status(500).json({ error: "UPDATE_CATEGORY_FAILED" });
+    }
+});
+
+/**
+ * DELETE A RANKING CATEGORY
+ */
+router.delete("/ranking-categories/:id", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        // Delete all associated nominees first
+        await AssetNominee.deleteMany({ category: req.params.id });
+        await DealerNominee.deleteMany({ category: req.params.id });
+
+        const category = await RankingCategory.findByIdAndDelete(req.params.id);
+        if (!category) return res.status(404).json({ error: "CATEGORY_NOT_FOUND" });
+
+        res.json({ message: "CATEGORY_DELETED" });
+    } catch (err) {
+        console.error("DELETE ranking-category error:", err);
+        res.status(500).json({ error: "DELETE_CATEGORY_FAILED" });
     }
 });
 

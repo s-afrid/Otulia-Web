@@ -37,4 +37,10 @@ router.post('/showroom-logo', authMiddleware, upload.single('image'), sendFileRe
 // Showroom cover upload
 router.post('/showroom-cover', authMiddleware, upload.single('image'), sendFileResponse);
 
+// Category cover upload
+router.post('/category-cover', authMiddleware, upload.single('image'), sendFileResponse);
+
+// Category banner upload
+router.post('/category-banner', authMiddleware, upload.single('image'), sendFileResponse);
+
 module.exports = router;
