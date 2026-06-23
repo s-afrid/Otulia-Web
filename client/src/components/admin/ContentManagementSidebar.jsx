@@ -12,16 +12,12 @@ const ContentManagementSidebar = ({ activeTab = 'categories', onTabChange, isMob
     // Menu expand/collapse states
     const [openMenus, setOpenMenus] = React.useState({
         listings: true,
-        rankings: true,
-        'content-creators': false,
     });
 
     // Auto-expand menus when active tab switches to a sub-tab
     React.useEffect(() => {
         if (activeTab.startsWith('listings')) {
             setOpenMenus(prev => ({ ...prev, listings: true }));
-        } else if (['all-rankings', 'categories', 'nominations', 'votes', 'leaderboard', 'banners', 'settings'].includes(activeTab)) {
-            setOpenMenus(prev => ({ ...prev, rankings: true }));
         }
     }, [activeTab]);
 
@@ -42,30 +38,7 @@ const ContentManagementSidebar = ({ activeTab = 'categories', onTabChange, isMob
             isOpen: openMenus.listings,
             submenu: categories.map(c => ({ id: `listings-${c.id || c._id}`, label: c.title }))
         },
-        { 
-            id: 'rankings', 
-            label: 'Rankings', 
-            icon: FiAward, 
-            hasSubmenu: true, 
-            isOpen: openMenus.rankings,
-            submenu: [
-                { id: 'all-rankings', label: 'All Rankings' },
-                { id: 'categories', label: 'Categories' },
-                { id: 'nominations', label: 'Nominations' },
-                { id: 'votes', label: 'Votes' },
-                { id: 'leaderboard', label: 'Leaderboard' },
-                { id: 'banners', label: 'Banners' },
-                { id: 'settings', label: 'Settings' }
-            ]
-        },
-        { id: 'content-creators', label: 'Content Creators', icon: FiUsers, hasSubmenu: true },
-        { id: 'media', label: 'Media', icon: FiFileText },
-        { id: 'pages', label: 'Pages', icon: FiFileText },
-        { id: 'blog', label: 'Blog', icon: FiBookOpen },
-        { id: 'users', label: 'Users', icon: FiUsers, path: '/admin?tab=users' },
-        { id: 'settings', label: 'Settings', icon: FiSettings, path: '/admin?tab=settings' },
-        { id: 'reports', label: 'Reports', icon: FiPieChart },
-        { id: 'integrations', label: 'Integrations', icon: FiCpu }
+        { id: 'categories', label: 'Categories', icon: FiAward }
     ];
 
     return (
@@ -143,15 +116,6 @@ const ContentManagementSidebar = ({ activeTab = 'categories', onTabChange, isMob
                     );
                 })}
             </nav>
-
-            {/* Need Help Box */}
-            <div className="p-4 m-4 bg-[#111726] border border-[#1C253B] rounded-2xl shrink-0">
-                <p className="text-xs font-bold text-white mb-1">Need Help?</p>
-                <p className="text-[10px] text-gray-500 font-medium mb-3 leading-normal">Check our ranking system documentation</p>
-                <button className="w-full py-2.5 bg-[#1C253B] border border-[#2B395B] rounded-xl text-[10px] font-bold text-white hover:bg-[#2B395B] transition-all flex items-center justify-center gap-1.5">
-                    View Docs <FiExternalLink className="text-[8px]" />
-                </button>
-            </div>
         </aside>
     );
 };
