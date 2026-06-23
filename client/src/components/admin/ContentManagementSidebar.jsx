@@ -6,18 +6,48 @@ import {
     FiLayers, FiMenu, FiShield, FiExternalLink 
 } from 'react-icons/fi';
 
-const ContentManagementSidebar = ({ activeTab = 'categories', onTabChange, isMobileOpen, toggleSidebar }) => {
+const ContentManagementSidebar = ({ activeTab = 'categories', onTabChange, isMobileOpen, toggleSidebar, categories = [] }) => {
     const navigate = useNavigate();
+
+    // Menu expand/collapse states
+    const [openMenus, setOpenMenus] = React.useState({
+        listings: true,
+        rankings: true,
+        'content-creators': false,
+    });
+
+    // Auto-expand menus when active tab switches to a sub-tab
+    React.useEffect(() => {
+        if (activeTab.startsWith('listings')) {
+            setOpenMenus(prev => ({ ...prev, listings: true }));
+        } else if (['all-rankings', 'categories', 'nominations', 'votes', 'leaderboard', 'banners', 'settings'].includes(activeTab)) {
+            setOpenMenus(prev => ({ ...prev, rankings: true }));
+        }
+    }, [activeTab]);
+
+    const toggleMenu = (menuId) => {
+        setOpenMenus(prev => ({
+            ...prev,
+            [menuId]: !prev[menuId]
+        }));
+    };
 
     const navigationItems = [
         { id: 'dashboard', label: 'Dashboard', icon: FiGrid },
-        { id: 'listings', label: 'Listings', icon: FiLayers, hasSubmenu: true },
+        { 
+            id: 'listings', 
+            label: 'Listings', 
+            icon: FiLayers, 
+            hasSubmenu: true, 
+            isOpen: openMenus.listings,
+            submenu: categories.map(c => ({ id: `listings-${c.id || c._id}`, label: c.title }))
+        },
         { 
             id: 'rankings', 
             label: 'Rankings', 
             icon: FiAward, 
             hasSubmenu: true, 
-            isOpen: true,
+            isOpen: openMenus.rankings,
             submenu: [
                 { id: 'all-rankings', label: 'All Rankings' },
                 { id: 'categories', label: 'Categories' },
@@ -57,11 +87,14 @@ const ContentManagementSidebar = ({ activeTab = 'categories', onTabChange, isMob
             {/* Navigation Lists */}
             <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto no-scrollbar">
                 {navigationItems.map((item) => {
-                    const isActive = activeTab === item.id || (item.isOpen && item.submenu?.some(s => s.id === activeTab));
+                    const isActive = activeTab === item.id || item.submenu?.some(s => s.id === activeTab);
                     return (
                         <div key={item.id} className="space-y-1">
                             <button
                                 onClick={() => {
+                                    if (item.hasSubmenu) {
+                                        toggleMenu(item.id);
+                                    }
                                     if (item.id === 'dashboard') {
                                         if (onTabChange) onTabChange('dashboard');
                                     } else if (item.path) {

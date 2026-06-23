@@ -1,8 +1,4 @@
 const mongoose = require('mongoose');
-const CarAsset = require('./models/CarAsset.model');
-const EstateAsset = require('./models/EstateAsset.model');
-const BikeAsset = require('./models/BikeAsset.model');
-const YachtAsset = require('./models/YachtAsset.model');
 
 // Load environment variables
 require('dotenv').config();
@@ -14,11 +10,12 @@ async function check() {
         await mongoose.connect(MONGO_URI);
         console.log("Connected to MongoDB.");
         
-        const cars = await CarAsset.find({}).limit(2);
-        console.log("Cars:", cars.map(c => ({ id: c._id, title: c.title, images: c.images, category: c.category })));
-        
-        const estates = await EstateAsset.find({}).limit(2);
-        console.log("Estates:", estates.map(e => ({ id: e._id, title: e.title, images: e.images, category: e.category })));
+        const db = mongoose.connection.db;
+        const collections = await db.listCollections().toArray();
+        for (const col of collections) {
+            const count = await db.collection(col.name).countDocuments();
+            console.log(`Collection: ${col.name} - Count: ${count}`);
+        }
         
         await mongoose.disconnect();
     } catch (err) {
