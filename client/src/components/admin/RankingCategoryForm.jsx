@@ -316,13 +316,17 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
         }));
     };
 
-    const uploadToCloudinary = async (blob, target, title) => {
+    const uploadToCloudinary = async (blob, target, title, oldUrl) => {
         const uploadData = new FormData();
         uploadData.append('image', blob);
         
-        const endpoint = target === 'cover' 
+        let endpoint = target === 'cover' 
             ? `/api/upload/category-cover?title=${encodeURIComponent(title)}` 
             : `/api/upload/category-banner?title=${encodeURIComponent(title)}`;
+            
+        if (oldUrl) {
+            endpoint += `&oldUrl=${encodeURIComponent(oldUrl)}`;
+        }
             
         const response = await fetch(endpoint, {
             method: 'POST',
@@ -351,12 +355,12 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
         try {
             // Upload cover if we have a cropped blob temporarily saved
             if (croppedCoverBlob) {
-                finalCoverUrl = await uploadToCloudinary(croppedCoverBlob, 'cover', formData.title);
+                finalCoverUrl = await uploadToCloudinary(croppedCoverBlob, 'cover', formData.title, initialData?.categoryImage);
             }
             
             // Upload banner if we have a cropped blob temporarily saved
             if (croppedBannerBlob) {
-                finalBannerUrl = await uploadToCloudinary(croppedBannerBlob, 'banner', formData.title);
+                finalBannerUrl = await uploadToCloudinary(croppedBannerBlob, 'banner', formData.title, initialData?.bannerImage);
             }
             
             await onSubmit({
@@ -965,63 +969,8 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                         </div>
                     </div>
 
-                    {/* Search Field & Auto-complete dropdown + Add Custom Nominee button */}
-                    <div className="flex flex-col sm:flex-row gap-4 items-end max-w-2xl text-left">
-                        <div className="relative flex-1 w-full text-left">
-                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Search {formData.targetType}</label>
-                            <div className="relative">
-                                <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-                                <input 
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value);
-                                        setShowResultsDropdown(true);
-                                    }}
-                                    onFocus={() => setShowResultsDropdown(true)}
-                                    className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all placeholder:text-gray-600 animate-in fade-in"
-                                    placeholder={`Type name of ${formData.targetType.toLowerCase() === 'assets' ? 'asset (e.g. Bugatti, Villa)' : 'dealer (e.g. Sotheby, Elite)'}...`}
-                                />
-                            </div>
-
-                            {/* Search Results Dropdown */}
-                            {showResultsDropdown && searchQuery.trim() && (
-                                <div className="absolute top-full inset-x-0 bg-[#0F172A] border border-[#222E4A] rounded-2xl mt-2 overflow-hidden shadow-2xl z-50 divide-y divide-[#1E293B]">
-                                    {isSearching ? (
-                                        <div className="p-4 text-center text-xs text-gray-500 font-bold uppercase tracking-wider flex items-center justify-center gap-2">
-                                            <div className="w-4 h-4 border-2 border-[#6366F1] border-t-transparent rounded-full animate-spin"></div>
-                                            Searching database...
-                                        </div>
-                                    ) : searchResults.length > 0 ? (
-                                        searchResults.map((item) => {
-                                            const alreadyAdded = formData.nominees.some(n => n.id === item.id || n._id === item.id);
-                                            return (
-                                                <div 
-                                                    key={item.id} 
-                                                    onClick={() => !alreadyAdded && addNominee(item)}
-                                                    className={`flex items-center justify-between p-3 cursor-pointer transition-colors ${alreadyAdded ? 'opacity-40 cursor-default bg-[#151D30]/20' : 'hover:bg-[#1E293B]/70'}`}
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <img src={item.image || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt={item.name} className="w-9 h-9 rounded-lg object-cover bg-gray-800" />
-                                                        <div className="text-left">
-                                                            <p className="text-xs font-bold text-white leading-normal">{item.name}</p>
-                                                            <p className="text-[10px] text-gray-500 font-semibold">{item.detail}</p>
-                                                        </div>
-                                                    </div>
-                                                    {alreadyAdded ? (
-                                                        <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20"><FiCheck /> Added</span>
-                                                    ) : (
-                                                        <button type="button" className="text-[10px] font-bold text-[#6366F1] hover:underline uppercase tracking-wider">Add nominee</button>
-                                                    )}
-                                                </div>
-                                            );
-                                        })
-                                    ) : (
-                                        <div className="p-4 text-center text-xs text-gray-500 font-bold uppercase tracking-wider">No matching {formData.targetType.toLowerCase()} found</div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                    {/* Add Custom Nominee button */}
+                    <div className="text-left">
                         <button 
                             type="button"
                             onClick={() => {
@@ -1049,7 +998,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                 setEditNomineeData(newNominee);
                                 setEditingNomineeIndex(formData.nominees.length);
                             }}
-                            className="py-3 px-4 bg-[#151D30]/80 border border-[#2B395B] hover:border-[#6366F1] hover:bg-[#6366F1]/10 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shrink-0"
+                            className="py-3 px-4 bg-[#151D30]/80 border border-[#2B395B] hover:border-[#6366F1] hover:bg-[#6366F1]/10 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300"
                         >
                             + Add Custom Nominee
                         </button>
@@ -1483,7 +1432,17 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                             
                             const categoryTitle = formData.title || 'general';
                             const nomineeName = editNomineeData?.name || `nominee-${editingNomineeIndex}`;
-                            fetch(`/api/upload/nominee-image?category=${encodeURIComponent(categoryTitle)}&nominee=${encodeURIComponent(nomineeName)}`, {
+                            
+                            const oldUrl = cropTarget.startsWith('nominee-banner-') 
+                                ? editNomineeData?.banner 
+                                : editNomineeData?.image;
+                                
+                            let endpoint = `/api/upload/nominee-image?category=${encodeURIComponent(categoryTitle)}&nominee=${encodeURIComponent(nomineeName)}`;
+                            if (oldUrl) {
+                                endpoint += `&oldUrl=${encodeURIComponent(oldUrl)}`;
+                            }
+                            
+                            fetch(endpoint, {
                                 method: 'POST',
                                 headers: {
                                     'Authorization': `Bearer ${token}`

@@ -164,9 +164,6 @@ const RankingCategoryTable = ({ categories, onEdit, onDelete, onAddNew }) => {
                                     {/* Actions */}
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <button className="p-1.5 hover:bg-[#1C253B] text-gray-400 hover:text-white rounded-lg transition-colors">
-                                                <FiEye className="text-xs" />
-                                            </button>
                                             <button 
                                                 onClick={() => onEdit(c)}
                                                 className="p-1.5 hover:bg-[#1C253B] text-gray-400 hover:text-[#6366F1] rounded-lg transition-colors"
@@ -178,9 +175,6 @@ const RankingCategoryTable = ({ categories, onEdit, onDelete, onAddNew }) => {
                                                 className="p-1.5 hover:bg-[#1C253B] text-gray-400 hover:text-red-500 rounded-lg transition-colors"
                                             >
                                                 <FiTrash2 className="text-xs" />
-                                            </button>
-                                            <button className="p-1.5 hover:bg-[#1C253B] text-gray-500 rounded-lg transition-colors">
-                                                <FiMoreVertical className="text-xs" />
                                             </button>
                                         </div>
                                     </td>
