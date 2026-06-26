@@ -64,6 +64,7 @@ const estateNomineeSchema = new mongoose.Schema({
         default: ''
     },
     keyDetails: {
+        price: { type: String, default: '' },
         ownership: { type: String, default: '' },
         zoning: { type: String, default: '' },
         availabilityStatus: { type: String, default: '' },

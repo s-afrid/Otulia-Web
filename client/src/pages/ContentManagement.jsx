@@ -779,6 +779,22 @@ const ContentManagement = () => {
                                             placeholder="https://otulia.com/..."
                                         />
                                     </div>
+
+                                    {viewingCategory.type === 'Real Estate' && (
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Price</label>
+                                            <input 
+                                                type="text"
+                                                value={editNomineeInlineData.keyDetails?.price || ''}
+                                                onChange={(e) => setEditNomineeInlineData({ 
+                                                    ...editNomineeInlineData, 
+                                                    keyDetails: { ...(editNomineeInlineData.keyDetails || {}), price: e.target.value } 
+                                                })}
+                                                className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs font-bold text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                placeholder="e.g. $12,500,000"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Image upload section */}

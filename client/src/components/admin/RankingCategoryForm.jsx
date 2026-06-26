@@ -546,6 +546,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                 <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                         {[
+                            { label: 'Price', key: 'price', placeholder: '$12,500,000' },
                             { label: 'Living Area', key: 'livingArea', placeholder: '45,000 sqft' },
                             { label: 'Land Size', key: 'landSize', placeholder: '5 Acres' },
                             { label: 'Bedroom', key: 'bedroom', placeholder: '12' },
