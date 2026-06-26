@@ -135,7 +135,7 @@ const RankingCategoryTable = ({ categories, onEdit, onDelete, onAddNew }) => {
                                     </td>
 
                                     {/* Nominees */}
-                                    <td className="px-6 py-4 text-xs font-bold text-white">{c.nomineeLimit || 10}</td>
+                                    <td className="px-6 py-4 text-xs font-bold text-white">{c.nominees ? c.nominees.length : 0}</td>
 
                                     {/* Votes */}
                                     <td className="px-6 py-4 text-xs font-bold text-white">
