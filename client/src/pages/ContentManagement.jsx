@@ -173,6 +173,7 @@ const ContentManagement = () => {
             return (
                 <RankingsDashboardTab 
                     onTabChange={setActiveTab} 
+                    categories={categories}
                     onCreateCategoryClick={() => {
                         setEditingCategory(null);
                         setActiveTab('categories');
