@@ -55,21 +55,74 @@ const RankingsDashboardTab = ({ onTabChange, onCreateCategoryClick, categories =
         formattedActiveVoters = activeVoters.toString();
     }
 
-    // 30 days voting engagement data scaled to database votes
+    // 30 days voting engagement data scaled to database votes deterministically
     const analyticsData = Array.from({ length: 30 }, (_, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (29 - i));
-        
-        const base = totalVotesVal > 0 ? (totalVotesVal / 30) : 500;
-        const trendFactor = 0.5 + (i / 58); // upward trend from 0.5 to 1.0
-        const randomVariance = 0.8 + Math.random() * 0.4; // +/- 20% variance
-        const votesForDay = Math.round(base * trendFactor * randomVariance);
-
         return {
+            dateObj: date,
             name: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            votes: votesForDay,
+            votes: 0,
         };
     });
+
+    // Distribute votes of each category deterministically across the 30 days based on their voting period
+    categories.forEach((cat) => {
+        const nomineesList = cat.nominees || [];
+        const catVotes = nomineesList.reduce((sum, n) => sum + (n.votes || 0), 0);
+        if (catVotes <= 0) return;
+
+        const start = cat.votingPeriodStart ? new Date(cat.votingPeriodStart) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const end = cat.votingPeriodEnd ? new Date(cat.votingPeriodEnd) : new Date();
+
+        // Calculate weights for the 30 days for this category
+        const weights = analyticsData.map((d, index) => {
+            const dTime = d.dateObj.getTime();
+            const sTime = start.getTime();
+            const eTime = end.getTime();
+            
+            if (dTime < sTime || dTime > eTime) return 0;
+            
+            // Deterministic shape: sine wave + day of week boost + upward trend
+            const titleHash = cat.title.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const trend = 1.0 + (index / 29) * 1.5;
+            const wave = Math.sin((index + titleHash) * 0.7) * 0.4 + Math.cos((index + titleHash) * 0.3) * 0.2;
+            const dayOfWeek = d.dateObj.getDay();
+            const weekendBoost = (dayOfWeek === 0 || dayOfWeek === 6) ? 1.25 : 0.85;
+
+            return Math.max(0.1, (trend + wave) * weekendBoost);
+        });
+
+        const sumWeights = weights.reduce((sum, w) => sum + w, 0);
+        if (sumWeights <= 0) {
+            // Fallback: distribute evenly over all 30 days
+            const evenWeight = 1 / 30;
+            analyticsData.forEach((d) => {
+                d.votes += Math.round(catVotes * evenWeight);
+            });
+            return;
+        }
+
+        let distributed = weights.map(w => Math.round(catVotes * (w / sumWeights)));
+        
+        // Correct rounding to sum up to exactly catVotes
+        const distributedSum = distributed.reduce((sum, v) => sum + v, 0);
+        const diff = catVotes - distributedSum;
+        if (diff !== 0) {
+            const validIndex = distributed.findIndex(v => v > 0);
+            if (validIndex !== -1) {
+                distributed[validIndex] = Math.max(0, distributed[validIndex] + diff);
+            } else {
+                distributed[29] = Math.max(0, distributed[29] + diff);
+            }
+        }
+
+        // Add to analyticsData
+        analyticsData.forEach((d, idx) => {
+            d.votes += distributed[idx];
+        });
+    });
+
 
     // Dynamic Recent Activities based on categories & nominees in database
     const sortedByDate = [...categories].sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));

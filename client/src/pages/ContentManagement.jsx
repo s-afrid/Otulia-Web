@@ -9,7 +9,7 @@ import ContentManagementHeader from '../components/admin/ContentManagementHeader
 import RankingCategoryForm from '../components/admin/RankingCategoryForm';
 import RankingCategoryTable from '../components/admin/RankingCategoryTable';
 import RankingsDashboardTab from '../components/admin/RankingsDashboardTab';
-import { FiAward, FiLayers, FiChevronRight } from 'react-icons/fi';
+import { FiAward, FiLayers, FiChevronRight, FiTrash2 } from 'react-icons/fi';
 
 import carIcon from '../assets/icons/car_icon.png';
 import estateIcon from '../assets/icons/estate_icon.png';
@@ -152,6 +152,9 @@ const ContentManagement = () => {
                 if (response.ok) {
                     alert('Ranking Category deleted successfully!');
                     loadCategories();
+                    if (activeTab === `listings-${id}`) {
+                        setActiveTab('listings');
+                    }
                 } else {
                     const err = await response.json();
                     alert(err.message || 'Failed to delete category.');
@@ -272,12 +275,21 @@ const ContentManagement = () => {
                                                 </div>
                                             </div>
 
-                                            <button 
-                                                onClick={() => setActiveTab(`listings-${c.id || c._id}`)}
-                                                className="mt-5 w-full py-3 bg-[#151D30]/80 border border-[#2B395B] hover:border-[#6366F1] text-gray-200 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300"
-                                            >
-                                                View Nominees & Rankings
-                                            </button>
+                                            <div className="mt-5 flex gap-2 w-full">
+                                                <button 
+                                                    onClick={() => setActiveTab(`listings-${c.id || c._id}`)}
+                                                    className="flex-1 py-3 bg-[#151D30]/80 border border-[#2B395B] hover:border-[#6366F1] text-gray-200 hover:text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300"
+                                                >
+                                                    View Nominees
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDeleteTrigger(c.id || c._id)}
+                                                    className="px-4 py-3 bg-red-500/10 hover:bg-red-500/25 border border-red-500/30 hover:border-red-500/50 text-red-400 hover:text-red-300 rounded-xl transition-all duration-300"
+                                                    title="Delete Category Listing"
+                                                >
+                                                    <FiTrash2 className="text-sm" />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 );
@@ -333,6 +345,13 @@ const ContentManagement = () => {
                             }`}>
                                 {category.status}
                             </span>
+                            <button
+                                onClick={() => handleDeleteTrigger(category.id || category._id)}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/25 border border-red-500/30 hover:border-red-500/50 text-red-400 hover:text-red-300 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all duration-300"
+                                title="Delete Category Listing"
+                            >
+                                <FiTrash2 className="text-[10px]" /> Delete Category
+                            </button>
                         </div>
                     </div>
 
