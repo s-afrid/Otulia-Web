@@ -15,6 +15,7 @@ const Categorty = lazy(() => import("./pages/Categorty"));
 const Asset = lazy(() => import("./pages/Asset"));
 const Blogs = lazy(() => import("./pages/Blogs"));
 const Ranking = lazy(() => import("./pages/ranking/RankingHome"));
+const Journal = lazy(() => import("./pages/journal/JournalHome"));
 
 // Company pages
 const About = lazy(() => import("./pages/company_pages/About"));
@@ -122,6 +123,7 @@ import { CartProvider } from "./contexts/CartContext";
 import welcomeSound from "./assets/sounds/theme.mp3";
 import RankingHome from "./pages/ranking/RankingHome";
 import RankingCategoryPage from "./pages/ranking/RankingCategoryPage";
+import JournalHome from "./pages/journal/JournalHome";
 
 // Simple fallback while lazy components load
 const PageLoader = () => <div className="w-full h-screen bg-white"></div>;
@@ -249,6 +251,7 @@ function App() {
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/ranking" element={<RankingHome />} />
           <Route path="/ranking/:category/:slug" element={<RankingHome />} />
+          <Route path="/journal" element={<JournalHome />} />
 
           {/* Auth routes */}
           <Route path="/login" element={<LoginPage />} />
