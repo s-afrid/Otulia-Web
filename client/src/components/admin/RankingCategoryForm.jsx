@@ -103,6 +103,9 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
     const [searchResults, setSearchResults] = useState([]);
     const [showResultsDropdown, setShowResultsDropdown] = useState(false);
 
+    const [editingNomineeIndex, setEditingNomineeIndex] = useState(null);
+    const [editNomineeData, setEditNomineeData] = useState(null);
+
     useEffect(() => {
         if (initialData) {
             setFormData({
@@ -118,24 +121,16 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
         }
     }, [initialData]);
 
-    // Update slug and target type smart details on title change
+    // Update slug smart details on title change
     const handleTitleChange = (e) => {
         const val = e.target.value;
         const generatedSlug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         
-        // Auto-detect targetType based on keywords
-        let detectedTarget = formData.targetType;
-        if (val.toLowerCase().includes('dealer') || val.toLowerCase().includes('agency') || val.toLowerCase().includes('broker')) {
-            detectedTarget = 'Dealers';
-        } else if (val.toLowerCase().includes('car') || val.toLowerCase().includes('villa') || val.toLowerCase().includes('yacht')) {
-            detectedTarget = 'Assets';
-        }
-
         setFormData(prev => ({
             ...prev,
             title: val,
             slug: generatedSlug,
-            targetType: detectedTarget
+            targetType: 'Assets'
         }));
     };
 
@@ -149,6 +144,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
         const delayDebounceFn = setTimeout(async () => {
             setIsSearching(true);
             try {
+                const isEstate = formData.type === 'Real Estate';
                 if (formData.targetType === 'Assets') {
                     // Map selected type to category query parameter
                     const categoryMap = {
@@ -180,7 +176,48 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                     name: asset.title || 'Unnamed Asset',
                                     detail: detailParts.join(' · '),
                                     image: asset.images && asset.images[0] ? asset.images[0] : '',
-                                    votes: 0
+                                    votes: 0,
+                                    brand: asset.brand || '',
+                                    model: asset.specification?.model || asset.variant || '',
+                                    description: asset.description || '',
+                                    listingLink: `/assets/${asset._id || asset.id}`,
+                                    keyDetails: isEstate ? {
+                                         ownership: asset.specification?.ownership || '',
+                                         zoning: asset.specification?.zoning || '',
+                                         availabilityStatus: asset.specification?.availabilityStatus || asset.availability || '',
+                                         listingId: asset.specification?.listingId || asset.referenceId || '',
+                                         livingArea: asset.keySpecifications?.builtUpArea || asset.specification?.builtUpArea || '',
+                                         landSize: asset.keySpecifications?.landArea || asset.specification?.landArea || '',
+                                         bedroom: asset.keySpecifications?.bedrooms?.toString() || asset.specification?.bedrooms?.toString() || '',
+                                         bathroom: asset.keySpecifications?.bathrooms?.toString() || asset.specification?.bathrooms?.toString() || '',
+                                         propertyType: asset.keySpecifications?.propertyType || asset.specification?.propertyType || '',
+                                         yearBuilt: asset.specification?.yearOfConstruction?.toString() || '',
+                                         architect: asset.specification?.architectureStyle || '',
+                                         interiorDesign: asset.specification?.interiorMaterial || '',
+                                         garageCapacity: asset.keySpecifications?.garageCapacity?.toString() || asset.specification?.garageCapacity?.toString() || '',
+                                         floors: asset.keySpecifications?.floors?.toString() || asset.specification?.floors?.toString() || '',
+                                         prestigeScore: asset.keySpecifications?.prestigeScore || '',
+                                         architectureScore: asset.keySpecifications?.architectureScore || '',
+                                         locationScore: asset.keySpecifications?.locationScore || '',
+                                         amenitiesScore: asset.keySpecifications?.amenitiesScore || '',
+                                         investmentScore: asset.keySpecifications?.investmentScore || '',
+                                         exclusivityScore: asset.keySpecifications?.exclusivityScore || '',
+                                         annualAppreciation: asset.keySpecifications?.annualAppreciation || ''
+                                     } : {
+                                         price: priceStr || '',
+                                         year: asset.specification?.yearOfConstruction || '',
+                                         engine: asset.specification?.engineType || asset.keySpecifications?.engineType || '',
+                                         power: asset.specification?.power || asset.keySpecifications?.power || '',
+                                         topSpeed: asset.specification?.topSpeed || asset.keySpecifications?.topSpeed || '',
+                                         model: asset.specification?.model || '',
+                                         drivetrain: asset.specification?.drive || '',
+                                         transmission: asset.specification?.transmission || '',
+                                         productionUnits: '',
+                                         fuelType: asset.specification?.fuel || ''
+                                     },
+                                    sources: [
+                                        { title: 'Listing Link', url: `https://otulia.com/assets/${asset._id || asset.id}` }
+                                    ]
                                 };
                             });
                             setSearchResults(formatted);
@@ -220,7 +257,26 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                             name: p.company?.companyName || p.name,
                             detail: `${p.plan || 'Dealer'} · ${p.email} · ${p.level || 'Silver'} Level`,
                             image: p.company?.companyLogo || 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
-                            votes: 0
+                            votes: 0,
+                            brand: p.company?.companyName || '',
+                            model: p.level || '',
+                            description: p.company?.companyDescription || '',
+                            listingLink: p.company?.website || '',
+                            keyDetails: {
+                                price: '',
+                                year: p.joined ? new Date(p.joined).getFullYear().toString() : '',
+                                engine: '',
+                                power: '',
+                                topSpeed: '',
+                                model: '',
+                                drivetrain: '',
+                                transmission: '',
+                                productionUnits: '',
+                                fuelType: ''
+                            },
+                            sources: [
+                                { title: 'Website', url: p.company?.website || '' }
+                            ]
                         }));
                         
                         setSearchResults(formatted);
@@ -442,6 +498,240 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
         else handleFormSubmit();
     };
 
+    const renderKeyDetailsFields = () => {
+        const type = formData.type || 'Cars';
+
+        if (type === 'Cars') {
+            return (
+                <div>
+                    <h4 className="text-base font-bold text-white mb-4">Key Details</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                        {[
+                            { label: 'Price', key: 'price', placeholder: '$ 5.2M' },
+                            { label: 'Year', key: 'year', placeholder: '2026' },
+                            { label: 'Engine', key: 'engine', placeholder: 'W16 8.3 L' },
+                            { label: 'Power', key: 'power', placeholder: '18000 HP' },
+                            { label: 'Top Speed', key: 'topSpeed', placeholder: '440 Km/h' },
+                            { label: 'Model', key: 'model', placeholder: 'Chiron Super Sport' },
+                            { label: 'Drivetrain', key: 'drivetrain', placeholder: 'AWD' },
+                            { label: 'Transmission', key: 'transmission', placeholder: '8-Speed Dual Clutch' },
+                            { label: 'Production Units', key: 'productionUnits', placeholder: '250 Units' },
+                            { label: 'Fuel Type', key: 'fuelType', placeholder: 'E85 Petrol' }
+                        ].map((field) => (
+                            <div key={field.key}>
+                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{field.label}</label>
+                                <input 
+                                    type="text"
+                                    value={editNomineeData.keyDetails?.[field.key] || ''}
+                                    onChange={(e) => setEditNomineeData({
+                                        ...editNomineeData,
+                                        keyDetails: { ...editNomineeData.keyDetails, [field.key]: e.target.value }
+                                    })}
+                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                    placeholder={field.placeholder}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        if (type === 'Real Estate') {
+            return (
+                <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                        {[
+                            { label: 'Living Area', key: 'livingArea', placeholder: '45,000 sqft' },
+                            { label: 'Land Size', key: 'landSize', placeholder: '5 Acres' },
+                            { label: 'Bedroom', key: 'bedroom', placeholder: '12' },
+                            { label: 'Bathroom', key: 'bathroom', placeholder: '18' },
+                            { label: 'Property Type', key: 'propertyType', placeholder: 'Mansion' },
+                            { label: 'Year Built', key: 'yearBuilt', placeholder: '2024' },
+                            { label: 'Architect', key: 'architect', placeholder: 'Sothebys' },
+                            { label: 'Interior Design', key: 'interiorDesign', placeholder: 'Sothebys' },
+                            { label: 'Garage Capacity', key: 'garageCapacity', placeholder: '20+ Cars' },
+                            { label: 'Floors', key: 'floors', placeholder: '3' },
+                            { label: 'Ownership', key: 'ownership', placeholder: 'Freehold' },
+                            { label: 'Zoning', key: 'zoning', placeholder: 'Residential' },
+                            { label: 'Availability Status', key: 'availabilityStatus', placeholder: 'For Sale' },
+                            { label: 'Listing ID', key: 'listingId', placeholder: '#NJM1342000' }
+                        ].map((field) => (
+                            <div key={field.key}>
+                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{field.label}</label>
+                                <input 
+                                    type="text"
+                                    value={editNomineeData.keyDetails?.[field.key] || ''}
+                                    onChange={(e) => setEditNomineeData({
+                                        ...editNomineeData,
+                                        keyDetails: { ...editNomineeData.keyDetails, [field.key]: e.target.value }
+                                    })}
+                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                    placeholder={field.placeholder}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    <div>
+                        <h4 className="text-xl font-normal text-white mb-4 canela tracking-wide">Scores And Rankings</h4>
+                        <div className="grid grid-cols-2 gap-4">
+                            {[
+                                { label: 'Prestige Score ( Out Of 100 )', key: 'prestigeScore', placeholder: '80' },
+                                { label: 'Architecture Score ( Out Of 100 )', key: 'architectureScore', placeholder: '50' },
+                                { label: 'Location Score ( Out Of 100 )', key: 'locationScore', placeholder: '70' },
+                                { label: 'Amenities Score ( Out Of 100 )', key: 'amenitiesScore', placeholder: '40' },
+                                { label: 'Investment Score ( Out Of 100 )', key: 'investmentScore', placeholder: '60' },
+                                { label: 'Exclusivity Score ( Out Of 100 )', key: 'exclusivityScore', placeholder: '80' },
+                                { label: 'Anuual Appreciation ( % )', key: 'annualAppreciation', placeholder: '5' }
+                            ].map((field) => (
+                                <div key={field.key} className={field.key === 'annualAppreciation' ? 'col-span-1' : ''}>
+                                    <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{field.label}</label>
+                                    <input 
+                                        type="text"
+                                        value={editNomineeData.keyDetails?.[field.key] || ''}
+                                        onChange={(e) => setEditNomineeData({
+                                            ...editNomineeData,
+                                            keyDetails: { ...editNomineeData.keyDetails, [field.key]: e.target.value }
+                                        })}
+                                        className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                        placeholder={field.placeholder}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        if (type === 'Yachts') {
+            return (
+                <div>
+                    <h4 className="text-base font-bold text-white mb-4">Yacht Specifications</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                        {[
+                            { label: 'Length', key: 'length', placeholder: '40m' },
+                            { label: 'Beam', key: 'beam', placeholder: '8.5m' },
+                            { label: 'Draft', key: 'draft', placeholder: '2.2m' },
+                            { label: 'Cabins', key: 'cabins', placeholder: '5 Cabins' },
+                            { label: 'Guests', key: 'guests', placeholder: '10 Guests' },
+                            { label: 'Engine', key: 'engine', placeholder: 'Twin MTU' },
+                            { label: 'Max Speed', key: 'speed', placeholder: '22 knots' },
+                            { label: 'Price', key: 'price', placeholder: '$22M' },
+                            { label: 'Year', key: 'year', placeholder: '2026' }
+                        ].map((field) => (
+                            <div key={field.key}>
+                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{field.label}</label>
+                                <input 
+                                    type="text"
+                                    value={editNomineeData.keyDetails?.[field.key] || ''}
+                                    onChange={(e) => setEditNomineeData({
+                                        ...editNomineeData,
+                                        keyDetails: { ...editNomineeData.keyDetails, [field.key]: e.target.value }
+                                    })}
+                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                    placeholder={field.placeholder}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        if (type === 'Bikes') {
+            return (
+                <div>
+                    <h4 className="text-base font-bold text-white mb-4">Bike Specifications</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                        {[
+                            { label: 'Price', key: 'price', placeholder: '$45K' },
+                            { label: 'Year', key: 'year', placeholder: '2026' },
+                            { label: 'Engine', key: 'engine', placeholder: '1000 cc' },
+                            { label: 'Power', key: 'power', placeholder: '200 HP' },
+                            { label: 'Top Speed', key: 'speed', placeholder: '299 Km/h' },
+                            { label: 'Fuel Type', key: 'fuelType', placeholder: 'Petrol' }
+                        ].map((field) => (
+                            <div key={field.key}>
+                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{field.label}</label>
+                                <input 
+                                    type="text"
+                                    value={editNomineeData.keyDetails?.[field.key] || ''}
+                                    onChange={(e) => setEditNomineeData({
+                                        ...editNomineeData,
+                                        keyDetails: { ...editNomineeData.keyDetails, [field.key]: e.target.value }
+                                    })}
+                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                    placeholder={field.placeholder}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        if (type === 'Content Creator') {
+            return (
+                <div>
+                    <h4 className="text-base font-bold text-white mb-4">Creator Metrics</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                        {[
+                            { label: 'Subscribers', key: 'subscribers', placeholder: '10M+' },
+                            { label: 'Total Views', key: 'views', placeholder: '500M+' },
+                            { label: 'Category', key: 'category', placeholder: 'Tech / Lifestyle' },
+                            { label: 'Location', key: 'location', placeholder: 'United States' },
+                            { label: 'Joined Date', key: 'joinDate', placeholder: '2018' }
+                        ].map((field) => (
+                            <div key={field.key}>
+                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{field.label}</label>
+                                <input 
+                                    type="text"
+                                    value={editNomineeData.keyDetails?.[field.key] || ''}
+                                    onChange={(e) => setEditNomineeData({
+                                        ...editNomineeData,
+                                        keyDetails: { ...editNomineeData.keyDetails, [field.key]: e.target.value }
+                                    })}
+                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                    placeholder={field.placeholder}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Other/Fallback
+        return (
+            <div>
+                <h4 className="text-base font-bold text-white mb-4">Key Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                    {[
+                        { label: 'Price', key: 'price', placeholder: '$1.2M' },
+                        { label: 'Year', key: 'year', placeholder: '2026' },
+                        { label: 'Details', key: 'details', placeholder: 'Additional details...' }
+                    ].map((field) => (
+                        <div key={field.key}>
+                            <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{field.label}</label>
+                            <input 
+                                type="text"
+                                value={editNomineeData.keyDetails?.[field.key] || ''}
+                                onChange={(e) => setEditNomineeData({
+                                    ...editNomineeData,
+                                    keyDetails: { ...editNomineeData.keyDetails, [field.key]: e.target.value }
+                                })}
+                                className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                placeholder={field.placeholder}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
     const handlePrevStep = () => {
         if (step > 1) setStep(step - 1);
     };
@@ -449,47 +739,48 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
     return (
         <div className="space-y-8 animate-in fade-in duration-500 text-left">
             {/* Multi-step Navigation Header */}
-            <div className="bg-[#101622] rounded-2xl p-4 border border-[#1B243B] flex flex-wrap gap-4 items-center justify-between text-xs text-gray-400">
-                <div className="flex items-center flex-wrap gap-4 sm:gap-6">
+            <div className="flex flex-wrap gap-4 items-center justify-between text-xs text-gray-400 pb-4 mb-6">
+                <div className="flex items-center flex-wrap gap-4 sm:gap-8">
                     <span 
                         onClick={() => handleStepClick(1)}
-                        className={`flex items-center gap-2 cursor-pointer transition-colors ${step === 1 ? 'text-white font-bold' : 'text-gray-500 hover:text-gray-300'}`}
+                        className={`flex items-center gap-3 cursor-pointer transition-colors ${step === 1 ? 'text-white font-bold' : 'text-gray-400 hover:text-gray-200'}`}
                     >
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 1 ? 'bg-[#6366F1] text-white' : 'bg-[#1C253B]'}`}>1</span> 
-                        Basic Info
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${step === 1 ? 'bg-[#2E2E2E] text-white' : 'bg-[#1C253B] text-gray-300'}`}>1</span> 
+                        <span className="text-sm font-medium">Basic Information</span>
                     </span>
-                    <FiChevronRight className="text-gray-700 hidden sm:block" />
                     
                     <span 
                         onClick={() => handleStepClick(2)}
-                        className={`flex items-center gap-2 cursor-pointer transition-colors ${step === 2 ? 'text-white font-bold' : 'text-gray-500 hover:text-gray-300'}`}
+                        className={`flex items-center gap-3 cursor-pointer transition-colors ${step === 2 ? 'text-white font-bold' : 'text-gray-400 hover:text-gray-200'}`}
                     >
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${step >= 2 ? 'bg-[#6366F1] text-white' : 'bg-[#1C253B]'}`}>2</span> 
-                        Nominees ({formData.nominees.length})
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${step === 2 ? 'bg-[#251BF5] text-white' : 'bg-[#1C253B] text-gray-500'}`}>2</span> 
+                        <span className="text-sm font-medium">Nominees ( Top )</span>
                     </span>
                 </div>
-                <div className="flex gap-2">
-                    <button type="button" onClick={onCancel} className="px-4 py-1.5 bg-[#1C253B] text-gray-300 rounded-lg hover:bg-[#253252] transition-colors font-bold">Cancel</button>
-                    {step > 1 && (
-                        <button type="button" onClick={handlePrevStep} className="flex items-center gap-1.5 px-4 py-1.5 bg-[#1A2338] text-gray-300 border border-[#2B395B] rounded-lg hover:bg-[#253252] transition-colors font-bold">
-                            <FiChevronLeft /> Back
-                        </button>
-                    )}
-                    <button 
-                        type="button" 
-                        onClick={handleNextStep} 
-                        disabled={isSubmitting}
-                        className="flex items-center gap-1.5 px-4 py-1.5 bg-[#6366F1] text-white rounded-lg hover:bg-[#4F46E5] transition-colors font-bold shadow-lg shadow-[#6366F1]/20 disabled:opacity-50"
-                    >
-                        {isSubmitting ? (
-                            <>Saving...</>
-                        ) : step === 2 ? (
-                            <>Save & Publish <FiChevronRight /></>
-                        ) : (
-                            <>Next Step <FiChevronRight /></>
+                {editingNomineeIndex === null && (
+                    <div className="flex gap-2">
+                        <button type="button" onClick={onCancel} className="px-4 py-1.5 bg-[#1C253B] text-gray-300 rounded-lg hover:bg-[#253252] transition-colors font-bold">Cancel</button>
+                        {step > 1 && (
+                            <button type="button" onClick={handlePrevStep} className="flex items-center gap-1.5 px-4 py-1.5 bg-[#1A2338] text-gray-300 border border-[#2B395B] rounded-lg hover:bg-[#253252] transition-colors font-bold">
+                                <FiChevronLeft /> Back
+                            </button>
                         )}
-                    </button>
-                </div>
+                        <button 
+                            type="button" 
+                            onClick={handleNextStep} 
+                            disabled={isSubmitting}
+                            className="flex items-center gap-1.5 px-4 py-1.5 bg-[#6366F1] text-white rounded-lg hover:bg-[#4F46E5] transition-colors font-bold shadow-lg shadow-[#6366F1]/20 disabled:opacity-50"
+                        >
+                            {isSubmitting ? (
+                                <>Saving...</>
+                            ) : step === 2 ? (
+                                <>Save & Publish <FiChevronRight /></>
+                            ) : (
+                                <>Next Step <FiChevronRight /></>
+                            )}
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* STEP 1: Basic Information */}
@@ -530,38 +821,6 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                 />
                             </div>
 
-                            {/* Nominees Scope Target Type Selector */}
-                            <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Nominee Target Scope *</label>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => setFormData({ ...formData, targetType: 'Assets', nominees: [] })}
-                                        className={`p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 ${
-                                            formData.targetType === 'Assets'
-                                            ? 'bg-[#6366F1]/10 border-[#6366F1] text-white shadow-xl'
-                                            : 'bg-[#151D30]/60 border-[#222E4A] text-gray-400 hover:border-gray-500 hover:text-white'
-                                        }`}
-                                    >
-                                        <FiAward className="text-xl text-[#D48D2A]" />
-                                        <span className="text-xs font-bold">Assets Nominees</span>
-                                        <span className="text-[9px] text-gray-500 font-semibold leading-normal">Nominate luxury cars, villas, yachts, or bikes</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setFormData({ ...formData, targetType: 'Dealers', nominees: [] })}
-                                        className={`p-4 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 ${
-                                            formData.targetType === 'Dealers'
-                                            ? 'bg-[#6366F1]/10 border-[#6366F1] text-white shadow-xl'
-                                            : 'bg-[#151D30]/60 border-[#222E4A] text-gray-400 hover:border-gray-500 hover:text-white'
-                                        }`}
-                                    >
-                                        <FiPlus className="text-xl text-[#6366F1]" />
-                                        <span className="text-xs font-bold">Dealers Nominees</span>
-                                        <span className="text-[9px] text-gray-500 font-semibold leading-normal">Nominate dealerships, agents, realty teams, or companies</span>
-                                    </button>
-                                </div>
-                            </div>
 
                             {/* Type Selector Grid */}
                             <div>
@@ -689,9 +948,9 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                 </div>
             )}
 
-            {/* STEP 2: Manage Nominees */}
-            {step === 2 && (
-                <div className="bg-[#101622] rounded-[2.5rem] p-6 sm:p-8 border border-[#1B243B] space-y-6">
+            {/* STEP 2: Manage Nominees (List View) */}
+            {step === 2 && editingNomineeIndex === null && (
+                <div className="bg-[#101622] rounded-[2.5rem] p-6 sm:p-8 border border-[#1B243B] space-y-6 animate-in fade-in duration-300">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1C253B] pb-4">
                         <div>
                             <h3 className="text-lg font-normal text-white canela tracking-wide">
@@ -706,65 +965,98 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                         </div>
                     </div>
 
-                    {/* Search Field & Auto-complete dropdown */}
-                    <div className="relative max-w-xl">
-                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Search {formData.targetType}</label>
-                        <div className="relative">
-                            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-                            <input 
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => {
-                                    setSearchQuery(e.target.value);
-                                    setShowResultsDropdown(true);
-                                }}
-                                onFocus={() => setShowResultsDropdown(true)}
-                                className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all placeholder:text-gray-600"
-                                placeholder={`Type name of ${formData.targetType.toLowerCase() === 'assets' ? 'asset (e.g. Bugatti, Villa)' : 'dealer (e.g. Sotheby, Elite)'}...`}
-                            />
-                        </div>
-
-                        {/* Search Results Dropdown */}
-                        {showResultsDropdown && searchQuery.trim() && (
-                            <div className="absolute top-full inset-x-0 bg-[#0F172A] border border-[#222E4A] rounded-2xl mt-2 overflow-hidden shadow-2xl z-50 divide-y divide-[#1E293B]">
-                                {isSearching ? (
-                                    <div className="p-4 text-center text-xs text-gray-500 font-bold uppercase tracking-wider flex items-center justify-center gap-2">
-                                        <div className="w-4 h-4 border-2 border-[#6366F1] border-t-transparent rounded-full animate-spin"></div>
-                                        Searching database...
-                                    </div>
-                                ) : searchResults.length > 0 ? (
-                                    searchResults.map((item) => {
-                                        const alreadyAdded = formData.nominees.some(n => n.id === item.id || n._id === item.id);
-                                        return (
-                                            <div 
-                                                key={item.id} 
-                                                onClick={() => !alreadyAdded && addNominee(item)}
-                                                className={`flex items-center justify-between p-3 cursor-pointer transition-colors ${alreadyAdded ? 'opacity-40 cursor-default bg-[#151D30]/20' : 'hover:bg-[#1E293B]/70'}`}
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <img src={item.image || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt={item.name} className="w-9 h-9 rounded-lg object-cover bg-gray-800" />
-                                                    <div className="text-left">
-                                                        <p className="text-xs font-bold text-white leading-normal">{item.name}</p>
-                                                        <p className="text-[10px] text-gray-500 font-semibold">{item.detail}</p>
-                                                    </div>
-                                                </div>
-                                                {alreadyAdded ? (
-                                                    <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20"><FiCheck /> Added</span>
-                                                ) : (
-                                                    <button type="button" className="text-[10px] font-bold text-[#6366F1] hover:underline uppercase tracking-wider">Add nominee</button>
-                                                )}
-                                            </div>
-                                        );
-                                    })
-                                ) : (
-                                    <div className="p-4 text-center text-xs text-gray-500 font-bold uppercase tracking-wider">No matching {formData.targetType.toLowerCase()} found</div>
-                                )}
+                    {/* Search Field & Auto-complete dropdown + Add Custom Nominee button */}
+                    <div className="flex flex-col sm:flex-row gap-4 items-end max-w-2xl text-left">
+                        <div className="relative flex-1 w-full text-left">
+                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Search {formData.targetType}</label>
+                            <div className="relative">
+                                <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+                                <input 
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        setShowResultsDropdown(true);
+                                    }}
+                                    onFocus={() => setShowResultsDropdown(true)}
+                                    className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl pl-11 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all placeholder:text-gray-600 animate-in fade-in"
+                                    placeholder={`Type name of ${formData.targetType.toLowerCase() === 'assets' ? 'asset (e.g. Bugatti, Villa)' : 'dealer (e.g. Sotheby, Elite)'}...`}
+                                />
                             </div>
-                        )}
+
+                            {/* Search Results Dropdown */}
+                            {showResultsDropdown && searchQuery.trim() && (
+                                <div className="absolute top-full inset-x-0 bg-[#0F172A] border border-[#222E4A] rounded-2xl mt-2 overflow-hidden shadow-2xl z-50 divide-y divide-[#1E293B]">
+                                    {isSearching ? (
+                                        <div className="p-4 text-center text-xs text-gray-500 font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+                                            <div className="w-4 h-4 border-2 border-[#6366F1] border-t-transparent rounded-full animate-spin"></div>
+                                            Searching database...
+                                        </div>
+                                    ) : searchResults.length > 0 ? (
+                                        searchResults.map((item) => {
+                                            const alreadyAdded = formData.nominees.some(n => n.id === item.id || n._id === item.id);
+                                            return (
+                                                <div 
+                                                    key={item.id} 
+                                                    onClick={() => !alreadyAdded && addNominee(item)}
+                                                    className={`flex items-center justify-between p-3 cursor-pointer transition-colors ${alreadyAdded ? 'opacity-40 cursor-default bg-[#151D30]/20' : 'hover:bg-[#1E293B]/70'}`}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <img src={item.image || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt={item.name} className="w-9 h-9 rounded-lg object-cover bg-gray-800" />
+                                                        <div className="text-left">
+                                                            <p className="text-xs font-bold text-white leading-normal">{item.name}</p>
+                                                            <p className="text-[10px] text-gray-500 font-semibold">{item.detail}</p>
+                                                        </div>
+                                                    </div>
+                                                    {alreadyAdded ? (
+                                                        <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20"><FiCheck /> Added</span>
+                                                    ) : (
+                                                        <button type="button" className="text-[10px] font-bold text-[#6366F1] hover:underline uppercase tracking-wider">Add nominee</button>
+                                                    )}
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="p-4 text-center text-xs text-gray-500 font-bold uppercase tracking-wider">No matching {formData.targetType.toLowerCase()} found</div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        <button 
+                            type="button"
+                            onClick={() => {
+                                const customId = 'custom-' + Date.now();
+                                const slugType = formData.type === 'Real Estate' ? 'real-estate' : (formData.type ? formData.type.toLowerCase() : 'cars');
+                                const newNominee = {
+                                    id: customId,
+                                    name: 'New Custom Nominee',
+                                    detail: 'Custom Nominee',
+                                    image: '',
+                                    votes: 0,
+                                    brand: '',
+                                    model: '',
+                                    description: '',
+                                    listingLink: '',
+                                    keyDetails: {},
+                                    sources: [
+                                        { title: 'Listing Link', url: `https://otulia.com/ranking/${slugType}/` }
+                                    ]
+                                };
+                                setFormData(prev => ({
+                                    ...prev,
+                                    nominees: [...prev.nominees, newNominee]
+                                }));
+                                setEditNomineeData(newNominee);
+                                setEditingNomineeIndex(formData.nominees.length);
+                            }}
+                            className="py-3 px-4 bg-[#151D30]/80 border border-[#2B395B] hover:border-[#6366F1] hover:bg-[#6366F1]/10 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shrink-0"
+                        >
+                            + Add Custom Nominee
+                        </button>
                     </div>
 
                     {/* Nominees Added Listing */}
-                    <div className="space-y-3 mt-6">
+                    <div className="space-y-3 mt-6 text-left">
                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nominated Candidates</label>
                         {formData.nominees.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -772,19 +1064,31 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                     <div key={nom.id} className="flex items-center justify-between p-3.5 bg-[#151D30]/40 border border-[#222E4A] rounded-2xl hover:border-[#2C3B5E] transition-all duration-300">
                                         <div className="flex items-center gap-4">
                                             <span className="w-6 h-6 rounded-full bg-[#1C253B] flex items-center justify-center text-[10px] text-[#D48D2A] font-bold">{index + 1}</span>
-                                            <img src={nom.image} alt={nom.name} className="w-11 h-11 rounded-xl object-cover bg-gray-800" />
+                                            <img src={nom.image || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt={nom.name} className="w-11 h-11 rounded-xl object-cover bg-gray-800 animate-in fade-in" />
                                             <div className="text-left">
                                                 <h4 className="text-xs font-bold text-white tracking-wide">{nom.name}</h4>
-                                                <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">{nom.detail}</p>
+                                                <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">{nom.detail || 'Custom Nominee Details'}</p>
                                             </div>
                                         </div>
-                                        <button 
-                                            type="button" 
-                                            onClick={() => removeNominee(nom.id)}
-                                            className="p-2 text-gray-500 hover:text-red-500 transition-colors"
-                                        >
-                                            <FiTrash2 className="text-sm" />
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setEditingNomineeIndex(index);
+                                                    setEditNomineeData(nom);
+                                                }}
+                                                className="px-2.5 py-1.5 bg-[#1C253B] hover:bg-[#253252] border border-[#2B395B] text-gray-300 hover:text-white rounded-lg text-[9px] font-bold uppercase tracking-wider transition-colors"
+                                            >
+                                                Edit Details
+                                            </button>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => removeNominee(nom.id)}
+                                                className="p-2 text-gray-500 hover:text-red-500 transition-colors"
+                                            >
+                                                <FiTrash2 className="text-sm" />
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -799,21 +1103,366 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                 </div>
             )}
 
-            {/* Bottom Actions footer */}
-            <div className="flex justify-end gap-3 pt-6 border-t border-[#1C253B]">
-                <button type="button" onClick={onCancel} className="px-6 py-2.5 bg-[#1C253B] text-gray-300 rounded-xl hover:bg-[#253252] transition-colors font-bold text-xs uppercase tracking-wider">Cancel</button>
-                {step > 1 && (
-                    <button type="button" onClick={handlePrevStep} className="px-6 py-2.5 bg-[#151D30] border border-[#2B395B] text-gray-300 rounded-xl hover:bg-[#253252] transition-colors font-bold text-xs uppercase tracking-wider">Back</button>
-                )}
-                <button 
-                    type="button" 
-                    onClick={handleNextStep} 
-                    disabled={isSubmitting}
-                    className="px-6 py-2.5 bg-[#6366F1] text-white rounded-xl hover:bg-[#4F46E5] transition-colors font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#6366F1]/20 disabled:opacity-50"
-                >
-                    {isSubmitting ? 'Saving...' : step === 2 ? 'Save & Publish' : 'Save & Next'}
-                </button>
-            </div>
+            {/* STEP 2: Detailed Nominee Editor View (Matching Second mockup Image exactly) */}
+            {step === 2 && editingNomineeIndex !== null && editNomineeData && (
+                <div className="space-y-6 animate-in fade-in duration-300 text-left">
+                    <div className="pb-4">
+                        <h3 className="text-2xl font-normal text-white">
+                            Editing Nominee #{editingNomineeIndex + 1}
+                        </h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* LEFT COLUMN: Name, Brand, Model, Preview + Change Image, Listing Link */}
+                        <div className="lg:col-span-4 space-y-5">
+                            <div>
+                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">Nominee Name</label>
+                                <input 
+                                    type="text"
+                                    value={editNomineeData.name || ''}
+                                    onChange={(e) => setEditNomineeData({ ...editNomineeData, name: e.target.value })}
+                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white font-medium focus:outline-none focus:border-[#6366F1] transition-all"
+                                />
+                            </div>
+
+                            {formData.type === 'Content Creator' ? (
+                                <div>
+                                    <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">Channel Name</label>
+                                    <input 
+                                        type="text"
+                                        value={editNomineeData.channelName || ''}
+                                        onChange={(e) => setEditNomineeData({ ...editNomineeData, channelName: e.target.value })}
+                                        className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white font-medium focus:outline-none focus:border-[#6366F1] transition-all"
+                                        placeholder="e.g. MrBeast"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">
+                                            {formData.type === 'Real Estate' ? 'Property Type' : 'Brand'}
+                                        </label>
+                                        <input 
+                                            type="text"
+                                            value={editNomineeData.brand || ''}
+                                            onChange={(e) => setEditNomineeData({ ...editNomineeData, brand: e.target.value })}
+                                            className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white font-medium focus:outline-none focus:border-[#6366F1] transition-all"
+                                            placeholder={formData.type === 'Real Estate' ? 'e.g. Mansion' : 'e.g. Bugatti'}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">
+                                            {formData.type === 'Real Estate' ? 'Location' : 'Model'}
+                                        </label>
+                                        <input 
+                                            type="text"
+                                            value={editNomineeData.model || ''}
+                                            onChange={(e) => setEditNomineeData({ ...editNomineeData, model: e.target.value })}
+                                            className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white font-medium focus:outline-none focus:border-[#6366F1] transition-all"
+                                            placeholder={formData.type === 'Real Estate' ? 'e.g. Beverly Hills' : 'e.g. Tourbillon'}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {formData.type === 'Content Creator' ? (
+                                <div className="grid grid-cols-2 gap-4">
+                                    {/* Channel Logo Upload */}
+                                    <div className="space-y-3">
+                                        <label className="block text-[13px] text-[#A1A1AA] font-medium">Channel Logo</label>
+                                        <div className="h-32 rounded-xl overflow-hidden bg-[#0D0D0E] border border-[#222E4A] relative group flex items-center justify-center">
+                                            {editNomineeData.image ? (
+                                                <img src={editNomineeData.image} alt="Channel Logo" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-1 text-gray-500 p-2 text-center">
+                                                    <FiImage className="text-2xl" />
+                                                    <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600">No Logo</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => {
+                                                const fileInput = document.createElement('input');
+                                                fileInput.type = 'file';
+                                                fileInput.accept = 'image/*';
+                                                fileInput.onchange = (e) => {
+                                                    const file = e.target.files[0];
+                                                    if (file) {
+                                                        const reader = new FileReader();
+                                                        reader.onload = () => {
+                                                            setCropImageSrc(reader.result);
+                                                            setCropTarget(`nominee-logo-${editingNomineeIndex}`);
+                                                            setCropModalOpen(true);
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    }
+                                                };
+                                                fileInput.click();
+                                            }}
+                                            className="w-full py-2 bg-[#251BF5] hover:bg-[#3D33FF] text-white rounded-xl text-[11px] font-bold transition-all uppercase tracking-wider text-center"
+                                        >
+                                            Change Logo
+                                        </button>
+                                    </div>
+                                    {/* Banner Upload */}
+                                    <div className="space-y-3">
+                                        <label className="block text-[13px] text-[#A1A1AA] font-medium">Banner Image</label>
+                                        <div className="h-32 rounded-xl overflow-hidden bg-[#0D0D0E] border border-[#222E4A] relative group flex items-center justify-center">
+                                            {editNomineeData.banner ? (
+                                                <img src={editNomineeData.banner} alt="Banner" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-1 text-gray-500 p-2 text-center">
+                                                    <FiImage className="text-2xl" />
+                                                    <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600">No Banner</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => {
+                                                const fileInput = document.createElement('input');
+                                                fileInput.type = 'file';
+                                                fileInput.accept = 'image/*';
+                                                fileInput.onchange = (e) => {
+                                                    const file = e.target.files[0];
+                                                    if (file) {
+                                                        const reader = new FileReader();
+                                                        reader.onload = () => {
+                                                            setCropImageSrc(reader.result);
+                                                            setCropTarget(`nominee-banner-${editingNomineeIndex}`);
+                                                            setCropModalOpen(true);
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    }
+                                                };
+                                                fileInput.click();
+                                            }}
+                                            className="w-full py-2 bg-[#251BF5] hover:bg-[#3D33FF] text-white rounded-xl text-[11px] font-bold transition-all uppercase tracking-wider text-center"
+                                        >
+                                            Change Banner
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    <div className="h-48 rounded-xl overflow-hidden bg-[#0D0D0E] border border-[#222E4A] relative group flex items-center justify-center">
+                                        {editNomineeData.image ? (
+                                            <img src={editNomineeData.image} alt="Nominee Preview" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-2 text-gray-500 p-4 text-center">
+                                                <FiImage className="text-3xl" />
+                                                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-600">No Image Uploaded</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => {
+                                            const fileInput = document.createElement('input');
+                                            fileInput.type = 'file';
+                                            fileInput.accept = 'image/*';
+                                            fileInput.onchange = (e) => {
+                                                const file = e.target.files[0];
+                                                if (file) {
+                                                    const reader = new FileReader();
+                                                    reader.onload = () => {
+                                                        setCropImageSrc(reader.result);
+                                                        setCropTarget(`nominee-${editingNomineeIndex}`);
+                                                        setCropModalOpen(true);
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                }
+                                            };
+                                            fileInput.click();
+                                        }}
+                                        className="px-5 py-2.5 bg-[#251BF5] hover:bg-[#3D33FF] text-white rounded-xl text-xs font-bold transition-all uppercase tracking-wider"
+                                    >
+                                        Change Image
+                                    </button>
+                                </div>
+                            )}
+
+                            <div>
+                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">Listing Link</label>
+                                <input 
+                                    type="text"
+                                    value={editNomineeData.listingLink || ''}
+                                    onChange={(e) => setEditNomineeData({ ...editNomineeData, listingLink: e.target.value })}
+                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white font-medium focus:outline-none focus:border-[#6366F1] transition-all"
+                                    placeholder="https://otulia.com/ranking/cars/car-brands"
+                                />
+                            </div>
+                        </div>
+
+                        {/* MIDDLE COLUMN: Description & Key Details */}
+                        <div className="lg:col-span-5 space-y-5">
+                            <div>
+                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">Description</label>
+                                <div className="relative">
+                                    <textarea 
+                                        rows="5"
+                                        maxLength="1000"
+                                        value={editNomineeData.description || ''}
+                                        onChange={(e) => setEditNomineeData({ ...editNomineeData, description: e.target.value })}
+                                        className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white font-medium focus:outline-none focus:border-[#6366F1] transition-all resize-none placeholder:text-gray-600 pb-8"
+                                        placeholder="This Rankings tells about the best hypercars ranked by people..."
+                                    />
+                                    <span className="absolute bottom-3 right-3 text-[10px] text-gray-500 font-bold">
+                                        {(editNomineeData.description || '').length}/1000
+                                    </span>
+                                </div>
+                            </div>
+
+                            {renderKeyDetailsFields()}
+
+                            {formData.type === 'Content Creator' && (
+                                <div className="pt-4 border-t border-[#1C253B]">
+                                    <h4 className="text-base font-bold text-white mb-4">Social Links</h4>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {[
+                                            { label: 'Youtube Channel', key: 'youtube', placeholder: 'https://youtube.com/...' },
+                                            { label: 'Instagram Link', key: 'instagram', placeholder: 'https://instagram.com/...' },
+                                            { label: 'Twitter Link', key: 'twitter', placeholder: 'https://twitter.com/...' },
+                                            { label: 'TikTok Link', key: 'tiktok', placeholder: 'https://tiktok.com/...' }
+                                        ].map((social) => (
+                                            <div key={social.key}>
+                                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{social.label}</label>
+                                                <input 
+                                                    type="text"
+                                                    value={editNomineeData[social.key] || ''}
+                                                    onChange={(e) => setEditNomineeData({
+                                                        ...editNomineeData,
+                                                        [social.key]: e.target.value
+                                                    })}
+                                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                    placeholder={social.placeholder}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* RIGHT COLUMN: Sources & Save/Cancel Actions */}
+                        <div className="lg:col-span-3 flex flex-col justify-between min-h-[500px]">
+                            <div className="space-y-5">
+                                <h4 className="text-base font-bold text-white mb-4 flex items-baseline gap-2">
+                                    Sources <span className="text-[10px] text-gray-500 font-medium">( Multiple Links )</span>
+                                </h4>
+                                
+                                <div className="space-y-6 max-h-[350px] overflow-y-auto pr-1 no-scrollbar">
+                                    {(editNomineeData.sources || []).map((source, sIdx) => (
+                                        <div key={sIdx} className="flex items-center gap-3 relative group">
+                                            <div className="flex-1 space-y-3">
+                                                <div>
+                                                    <label className="block text-[13px] text-[#A1A1AA] mb-1.5 font-medium">Source Title</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={source.title || ''}
+                                                        onChange={(e) => {
+                                                            const updatedSources = [...editNomineeData.sources];
+                                                            updatedSources[sIdx].title = e.target.value;
+                                                            setEditNomineeData({ ...editNomineeData, sources: updatedSources });
+                                                        }}
+                                                        className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                        placeholder="Listing Link"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[13px] text-[#A1A1AA] mb-1.5 font-medium">Source URL</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={source.url || ''}
+                                                        onChange={(e) => {
+                                                            const updatedSources = [...editNomineeData.sources];
+                                                            updatedSources[sIdx].url = e.target.value;
+                                                            setEditNomineeData({ ...editNomineeData, sources: updatedSources });
+                                                        }}
+                                                        className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                        placeholder="https://otulia.com/ranking/cars/"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <button 
+                                                type="button"
+                                                onClick={() => {
+                                                    const updatedSources = editNomineeData.sources.filter((_, idx) => idx !== sIdx);
+                                                    setEditNomineeData({ ...editNomineeData, sources: updatedSources });
+                                                }}
+                                                className="w-9 h-9 rounded-full bg-[#DC2626] hover:bg-red-700 text-white flex items-center justify-center transition-colors shrink-0 mt-6 shadow-md"
+                                                title="Delete Source"
+                                            >
+                                                <FiTrash2 className="text-sm" />
+                                            </button>
+                                        </div>
+                                    ))}
+
+                                    <button 
+                                        type="button"
+                                        onClick={() => {
+                                            const updatedSources = [...(editNomineeData.sources || []), { title: 'Listing Link', url: 'https://otulia.com/ranking/cars/' }];
+                                            setEditNomineeData({ ...editNomineeData, sources: updatedSources });
+                                        }}
+                                        className="w-full py-3 bg-[#251BF5] hover:bg-[#3D33FF] text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 text-center"
+                                    >
+                                        Add Another Source
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Actions layout inside right column */}
+                            <div className="flex gap-4 pt-6 border-t border-[#1C253B] mt-8 w-full">
+                                <button 
+                                    type="button" 
+                                    onClick={() => {
+                                        setEditingNomineeIndex(null);
+                                        setEditNomineeData(null);
+                                    }} 
+                                    className="flex-1 py-3 border border-[#2B395B] hover:border-gray-500 text-gray-300 hover:text-white rounded-xl transition-all font-bold text-xs uppercase tracking-wider text-center bg-transparent"
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="button"
+                                    onClick={() => {
+                                        setFormData(prev => {
+                                            const updated = [...prev.nominees];
+                                            const nomineeToSave = { ...editNomineeData };
+                                            const parts = [];
+                                            if (formData.type === 'Content Creator') {
+                                                if (nomineeToSave.channelName) parts.push(nomineeToSave.channelName);
+                                                if (nomineeToSave.keyDetails?.category) parts.push(nomineeToSave.keyDetails.category);
+                                                nomineeToSave.detail = parts.join(' · ') || 'Content Creator';
+                                            } else {
+                                                if (nomineeToSave.brand) parts.push(nomineeToSave.brand);
+                                                if (nomineeToSave.model) parts.push(nomineeToSave.model);
+                                                nomineeToSave.detail = parts.join(' · ') || (formData.type === 'Real Estate' ? 'Real Estate Nominee' : 'Nominee');
+                                            }
+                                            
+                                            updated[editingNomineeIndex] = nomineeToSave;
+                                            return { ...prev, nominees: updated };
+                                        });
+
+                                        if (editingNomineeIndex < formData.nominees.length - 1) {
+                                            const nextIdx = editingNomineeIndex + 1;
+                                            setEditingNomineeIndex(nextIdx);
+                                            setEditNomineeData(formData.nominees[nextIdx]);
+                                        } else {
+                                            setEditingNomineeIndex(null);
+                                            setEditNomineeData(null);
+                                        }
+                                    }}
+                                    className="flex-1 py-3 bg-[#251BF5] hover:bg-[#3D33FF] text-white rounded-xl transition-all font-bold text-xs uppercase tracking-wider text-center shadow-lg shadow-[#251BF5]/20"
+                                >
+                                    {editingNomineeIndex < formData.nominees.length - 1 ? 'Save & Next' : 'Save & Done'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {cropModalOpen && (
                 <ImageCropModal 
@@ -822,11 +1471,46 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                         if (cropTarget === 'cover') {
                             setCroppedCoverBlob(blob);
                             setFormData(prev => ({ ...prev, categoryImage: URL.createObjectURL(blob) }));
-                        } else {
+                            setCropModalOpen(false);
+                        } else if (cropTarget === 'banner') {
                             setCroppedBannerBlob(blob);
                             setFormData(prev => ({ ...prev, bannerImage: URL.createObjectURL(blob) }));
+                            setCropModalOpen(false);
+                        } else if (cropTarget.startsWith('nominee-')) {
+                            setIsSubmitting(true);
+                            const uploadData = new FormData();
+                            uploadData.append('image', blob);
+                            
+                            const categoryTitle = formData.title || 'general';
+                            const nomineeName = editNomineeData?.name || `nominee-${editingNomineeIndex}`;
+                            fetch(`/api/upload/nominee-image?category=${encodeURIComponent(categoryTitle)}&nominee=${encodeURIComponent(nomineeName)}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: uploadData
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success && data.url) {
+                                    if (cropTarget.startsWith('nominee-banner-')) {
+                                        setEditNomineeData(prev => ({ ...prev, banner: data.url }));
+                                    } else {
+                                        setEditNomineeData(prev => ({ ...prev, image: data.url }));
+                                    }
+                                } else {
+                                    alert("Failed to upload image. Please try again.");
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Nominee image upload error:", err);
+                                alert("Error uploading nominee image.");
+                            })
+                            .finally(() => {
+                                setIsSubmitting(false);
+                                setCropModalOpen(false);
+                            });
                         }
-                        setCropModalOpen(false);
                     }}
                     onClose={() => setCropModalOpen(false)}
                     isUploading={false}

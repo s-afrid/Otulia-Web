@@ -1,0 +1,95 @@
+const mongoose = require('mongoose');
+
+const estateNomineeSchema = new mongoose.Schema({
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'RankingCategory',
+        required: true
+    },
+    name: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    detail: {
+        type: String,
+        trim: true
+    },
+    image: {
+        type: String,
+        default: ''
+    },
+    targetType: {
+        type: String,
+        enum: ['Assets', 'Dealers'],
+        default: 'Assets'
+    },
+    asset: {
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'assetModel',
+        required: false
+    },
+    assetModel: {
+        type: String,
+        enum: ['EstateAsset', 'Listing'],
+        required: false
+    },
+    dealer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: false
+    },
+    votes: {
+        type: Number,
+        default: 0
+    },
+    votedBy: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    brand: {
+        type: String,
+        default: ''
+    },
+    model: {
+        type: String,
+        default: ''
+    },
+    description: {
+        type: String,
+        default: ''
+    },
+    listingLink: {
+        type: String,
+        default: ''
+    },
+    keyDetails: {
+        ownership: { type: String, default: '' },
+        zoning: { type: String, default: '' },
+        availabilityStatus: { type: String, default: '' },
+        listingId: { type: String, default: '' },
+        livingArea: { type: String, default: '' },
+        landSize: { type: String, default: '' },
+        bedroom: { type: String, default: '' },
+        bathroom: { type: String, default: '' },
+        propertyType: { type: String, default: '' },
+        yearBuilt: { type: String, default: '' },
+        architect: { type: String, default: '' },
+        interiorDesign: { type: String, default: '' },
+        garageCapacity: { type: String, default: '' },
+        floors: { type: String, default: '' },
+        prestigeScore: { type: String, default: '' },
+        architectureScore: { type: String, default: '' },
+        locationScore: { type: String, default: '' },
+        amenitiesScore: { type: String, default: '' },
+        investmentScore: { type: String, default: '' },
+        exclusivityScore: { type: String, default: '' },
+        annualAppreciation: { type: String, default: '' }
+    },
+    sources: [{
+        title: { type: String, default: '' },
+        url: { type: String, default: '' }
+    }]
+}, { timestamps: true });
+
+module.exports = mongoose.model('EstateNominee', estateNomineeSchema);

@@ -11,6 +11,25 @@ const Coupon = require("../models/Coupon.model");
 const RankingCategory = require("../models/RankingCategory.model");
 const AssetNominee = require("../models/AssetNominee.model");
 const DealerNominee = require("../models/DealerNominee.model");
+const CarNominee = require("../models/CarNominee.model");
+const EstateNominee = require("../models/EstateNominee.model");
+const YachtNominee = require("../models/YachtNominee.model");
+const BikeNominee = require("../models/BikeNominee.model");
+const ContentCreatorNominee = require("../models/ContentCreatorNominee.model");
+const OtherNominee = require("../models/OtherNominee.model");
+
+const nomineeModelMap = {
+    'Cars': { Model: CarNominee, nomineeModel: 'CarNominee' },
+    'Real Estate': { Model: EstateNominee, nomineeModel: 'EstateNominee' },
+    'Yachts': { Model: YachtNominee, nomineeModel: 'YachtNominee' },
+    'Bikes': { Model: BikeNominee, nomineeModel: 'BikeNominee' },
+    'Content Creator': { Model: ContentCreatorNominee, nomineeModel: 'ContentCreatorNominee' },
+    'Other': { Model: OtherNominee, nomineeModel: 'OtherNominee' }
+};
+
+function getNomineeModelConfig(type) {
+    return nomineeModelMap[type] || nomineeModelMap['Other'];
+}
 const authMiddleware = require("../middleware/auth.middleware");
 const nodemailer = require("nodemailer");
 const ga = require("../utils/googleAnalytics");
@@ -435,8 +454,34 @@ router.get("/ranking-categories", authMiddleware, adminCheck, async (req, res) =
 
         const formattedCategories = categories.map(c => {
             const nominees = c.targetType === 'Assets' 
-                ? (c.assetNominees || []).map(n => ({ id: n._id, name: n.name, detail: n.detail, image: n.image, votes: n.votes }))
-                : (c.dealerNominees || []).map(n => ({ id: n._id, name: n.name, detail: n.detail, image: n.image, votes: n.votes }));
+                ? (c.assetNominees || []).map(n => ({
+                    id: n._id,
+                    _id: n._id,
+                    name: n.name,
+                    detail: n.detail,
+                    image: n.image,
+                    votes: n.votes,
+                    brand: n.brand || '',
+                    model: n.model || '',
+                    description: n.description || '',
+                    listingLink: n.listingLink || '',
+                    keyDetails: n.keyDetails || {},
+                    sources: n.sources || []
+                }))
+                : (c.dealerNominees || []).map(n => ({
+                    id: n._id,
+                    _id: n._id,
+                    name: n.name,
+                    detail: n.detail,
+                    image: n.image,
+                    votes: n.votes,
+                    brand: n.brand || '',
+                    model: n.model || '',
+                    description: n.description || '',
+                    listingLink: n.listingLink || '',
+                    keyDetails: n.keyDetails || {},
+                    sources: n.sources || []
+                }));
 
             const totalVotesVal = nominees.reduce((acc, curr) => acc + (curr.votes || 0), 0);
             let formattedVotes = "0";
@@ -498,10 +543,12 @@ router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) 
 
         // Check uniqueness
         const existingTitle = await RankingCategory.findOne({ title });
-        if (existingTitle) return res.status(400).json({ error: "CATEGORY_TITLE_MUST_BE_UNIQUE" });
+        if (existingTitle) return res.status(400).json({ error: "CATEGORY_TITLE_MUST_BE_UNIQUE", message: "Category title must be unique." });
 
         const existingSlug = await RankingCategory.findOne({ slug });
-        if (existingSlug) return res.status(400).json({ error: "CATEGORY_SLUG_MUST_BE_UNIQUE" });
+        if (existingSlug) return res.status(400).json({ error: "CATEGORY_SLUG_MUST_BE_UNIQUE", message: "Category slug must be unique." });
+
+        const { Model, nomineeModel } = getNomineeModelConfig(type);
 
         const category = new RankingCategory({
             title,
@@ -521,7 +568,8 @@ router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) 
             displayOrder: displayOrder || 1,
             featuredCategory: featuredCategory !== undefined ? featuredCategory : true,
             categoryColor: categoryColor || '#6366F1',
-            status: status || 'Draft'
+            status: status || 'Draft',
+            nomineeModel
         });
 
         await category.save();
@@ -530,28 +578,33 @@ router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) 
         const nomineeIds = [];
         if (nominees && nominees.length > 0) {
             for (const nom of nominees) {
-                if (targetType === 'Assets') {
-                    const assetNominee = new AssetNominee({
-                        category: category._id,
-                        name: nom.name,
-                        detail: nom.detail || '',
-                        image: nom.image || '',
+                const newNominee = new Model({
+                    category: category._id,
+                    name: nom.name,
+                    detail: nom.detail || '',
+                    image: nom.image || '',
+                    targetType: targetType,
+                    brand: nom.brand || '',
+                    model: nom.model || '',
+                    description: nom.description || '',
+                    listingLink: nom.listingLink || '',
+                    keyDetails: nom.keyDetails || {},
+                    sources: nom.sources || [],
+                    channelName: nom.channelName || '',
+                    banner: nom.banner || '',
+                    youtube: nom.youtube || '',
+                    instagram: nom.instagram || '',
+                    twitter: nom.twitter || '',
+                    tiktok: nom.tiktok || '',
+                    ...(targetType === 'Assets' ? {
                         asset: nom.asset || null,
-                        assetModel: nom.assetModel || null
-                    });
-                    await assetNominee.save();
-                    nomineeIds.push(assetNominee._id);
-                } else {
-                    const dealerNominee = new DealerNominee({
-                        category: category._id,
-                        name: nom.name,
-                        detail: nom.detail || '',
-                        image: nom.image || '',
+                        ...(nom.assetModel ? { assetModel: nom.assetModel } : {})
+                    } : {
                         dealer: nom.dealer || null
-                    });
-                    await dealerNominee.save();
-                    nomineeIds.push(dealerNominee._id);
-                }
+                    })
+                });
+                await newNominee.save();
+                nomineeIds.push(newNominee._id);
             }
         }
 
@@ -565,7 +618,7 @@ router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) 
         res.status(201).json(category);
     } catch (err) {
         console.error("CREATE ranking-category error:", err);
-        res.status(500).json({ error: "CREATE_CATEGORY_FAILED" });
+        res.status(500).json({ error: "CREATE_CATEGORY_FAILED", message: err.message });
     }
 });
 
@@ -591,10 +644,10 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
 
         // Check unique title/slug (excluding current document)
         const duplicateTitle = await RankingCategory.findOne({ title, _id: { $ne: req.params.id } });
-        if (duplicateTitle) return res.status(400).json({ error: "CATEGORY_TITLE_MUST_BE_UNIQUE" });
+        if (duplicateTitle) return res.status(400).json({ error: "CATEGORY_TITLE_MUST_BE_UNIQUE", message: "Category title must be unique." });
 
         const duplicateSlug = await RankingCategory.findOne({ slug, _id: { $ne: req.params.id } });
-        if (duplicateSlug) return res.status(400).json({ error: "CATEGORY_SLUG_MUST_BE_UNIQUE" });
+        if (duplicateSlug) return res.status(400).json({ error: "CATEGORY_SLUG_MUST_BE_UNIQUE", message: "Category slug must be unique." });
 
         category.title = title;
         category.slug = slug;
@@ -615,11 +668,19 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
         category.categoryColor = categoryColor;
         category.status = status;
 
-        // Find existing nominees for this category to preserve votes/votedBy
-        const existingAssetNominees = await AssetNominee.find({ category: category._id });
-        const existingDealerNominees = await DealerNominee.find({ category: category._id });
+        // Dynamic nominee config
+        const { Model, nomineeModel } = getNomineeModelConfig(type);
+        category.nomineeModel = nomineeModel;
 
-        // Delete existing nominees
+        // Find existing nominees from ALL possible models for this category to preserve votes/votedBy!
+        const prevNomineeModelName = category.nomineeModel || 'OtherNominee';
+        const prevModelConfig = Object.values(nomineeModelMap).find(m => m.nomineeModel === prevNomineeModelName) || { Model: OtherNominee };
+        const existingNominees = await prevModelConfig.Model.find({ category: category._id });
+
+        // Delete existing nominees from all nominee collections
+        for (const config of Object.values(nomineeModelMap)) {
+            await config.Model.deleteMany({ category: category._id });
+        }
         await AssetNominee.deleteMany({ category: category._id });
         await DealerNominee.deleteMany({ category: category._id });
 
@@ -627,34 +688,36 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
         const nomineeIds = [];
         if (nominees && nominees.length > 0) {
             for (const nom of nominees) {
-                if (targetType === 'Assets') {
-                    const match = existingAssetNominees.find(n => n.name === nom.name);
-                    const assetNominee = new AssetNominee({
-                        category: category._id,
-                        name: nom.name,
-                        detail: nom.detail || '',
-                        image: nom.image || '',
+                const match = existingNominees.find(n => n.name === nom.name);
+                const newNominee = new Model({
+                    category: category._id,
+                    name: nom.name,
+                    detail: nom.detail || '',
+                    image: nom.image || '',
+                    targetType: targetType,
+                    votes: match ? match.votes : 0,
+                    votedBy: match ? match.votedBy : [],
+                    brand: nom.brand || '',
+                    model: nom.model || '',
+                    description: nom.description || '',
+                    listingLink: nom.listingLink || '',
+                    keyDetails: nom.keyDetails || {},
+                    sources: nom.sources || [],
+                    channelName: nom.channelName || '',
+                    banner: nom.banner || '',
+                    youtube: nom.youtube || '',
+                    instagram: nom.instagram || '',
+                    twitter: nom.twitter || '',
+                    tiktok: nom.tiktok || '',
+                    ...(targetType === 'Assets' ? {
                         asset: nom.asset || null,
-                        assetModel: nom.assetModel || null,
-                        votes: match ? match.votes : 0,
-                        votedBy: match ? match.votedBy : []
-                    });
-                    await assetNominee.save();
-                    nomineeIds.push(assetNominee._id);
-                } else {
-                    const match = existingDealerNominees.find(n => n.name === nom.name);
-                    const dealerNominee = new DealerNominee({
-                        category: category._id,
-                        name: nom.name,
-                        detail: nom.detail || '',
-                        image: nom.image || '',
-                        dealer: nom.dealer || null,
-                        votes: match ? match.votes : 0,
-                        votedBy: match ? match.votedBy : []
-                    });
-                    await dealerNominee.save();
-                    nomineeIds.push(dealerNominee._id);
-                }
+                        ...(nom.assetModel ? { assetModel: nom.assetModel } : {})
+                    } : {
+                        dealer: nom.dealer || null
+                    })
+                });
+                await newNominee.save();
+                nomineeIds.push(newNominee._id);
             }
         }
 
@@ -665,21 +728,85 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
         res.json(category);
     } catch (err) {
         console.error("UPDATE ranking-category error:", err);
-        res.status(500).json({ error: "UPDATE_CATEGORY_FAILED" });
+        res.status(500).json({ error: "UPDATE_CATEGORY_FAILED", message: err.message });
     }
 });
+
+/**
+ * Helper to extract public_id from Cloudinary URL
+ */
+const getPublicIdFromUrl = (url) => {
+    if (!url || !url.includes('cloudinary')) return null;
+    try {
+        const uploadSplit = url.split('/upload/');
+        if (uploadSplit.length < 2) return null;
+        
+        const afterUpload = uploadSplit[1];
+        const parts = afterUpload.split('/');
+        
+        const relevantParts = parts.filter(part => {
+            if (part.includes(',') || part.includes('_')) return false;
+            if (/^v\d+$/.test(part)) return false;
+            return true;
+        });
+        
+        const fullPublicId = relevantParts.join('/');
+        const dotIndex = fullPublicId.lastIndexOf('.');
+        if (dotIndex !== -1) {
+            return fullPublicId.substring(0, dotIndex);
+        }
+        return fullPublicId;
+    } catch (err) {
+        console.error("Error parsing Cloudinary URL in admin.routes:", err);
+        return null;
+    }
+};
 
 /**
  * DELETE A RANKING CATEGORY
  */
 router.delete("/ranking-categories/:id", authMiddleware, adminCheck, async (req, res) => {
     try {
-        // Delete all associated nominees first
-        await AssetNominee.deleteMany({ category: req.params.id });
-        await DealerNominee.deleteMany({ category: req.params.id });
-
-        const category = await RankingCategory.findByIdAndDelete(req.params.id);
+        const category = await RankingCategory.findById(req.params.id);
         if (!category) return res.status(404).json({ error: "CATEGORY_NOT_FOUND" });
+
+        // Find all associated nominees first to grab their image URLs from all models
+        let allNominees = [];
+        // Legacy
+        const legacyAssets = await AssetNominee.find({ category: category._id });
+        const legacyDealers = await DealerNominee.find({ category: category._id });
+        allNominees.push(...legacyAssets, ...legacyDealers);
+
+        for (const config of Object.values(nomineeModelMap)) {
+            const list = await config.Model.find({ category: category._id });
+            allNominees.push(...list);
+        }
+
+        // Gather all image URLs from the category and its nominees
+        const urlsToDelete = [];
+        if (category.categoryImage) urlsToDelete.push(category.categoryImage);
+        if (category.bannerImage) urlsToDelete.push(category.bannerImage);
+        allNominees.forEach(nom => {
+            if (nom.image) urlsToDelete.push(nom.image);
+        });
+
+        // Trigger Cloudinary deletion asynchronously
+        urlsToDelete.forEach(url => {
+            const publicId = getPublicIdFromUrl(url);
+            if (publicId) {
+                cloudinary.uploader.destroy(publicId)
+                    .then(result => console.log(`[Cloudinary] Successfully deleted ${publicId}:`, result))
+                    .catch(err => console.error(`[Cloudinary] Failed to delete ${publicId}:`, err));
+            }
+        });
+
+        // Delete nominees and category from database
+        await AssetNominee.deleteMany({ category: category._id });
+        await DealerNominee.deleteMany({ category: category._id });
+        for (const config of Object.values(nomineeModelMap)) {
+            await config.Model.deleteMany({ category: category._id });
+        }
+        await RankingCategory.findByIdAndDelete(category._id);
 
         res.json({ message: "CATEGORY_DELETED" });
     } catch (err) {

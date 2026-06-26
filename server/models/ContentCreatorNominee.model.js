@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const dealerNomineeSchema = new mongoose.Schema({
+const contentCreatorNomineeSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RankingCategory',
@@ -19,6 +19,21 @@ const dealerNomineeSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    targetType: {
+        type: String,
+        enum: ['Assets', 'Dealers'],
+        default: 'Assets'
+    },
+    asset: {
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'assetModel',
+        required: false
+    },
+    assetModel: {
+        type: String,
+        enum: ['Listing'],
+        required: false
+    },
     dealer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -32,11 +47,27 @@ const dealerNomineeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    brand: {
+    channelName: {
         type: String,
         default: ''
     },
-    model: {
+    banner: {
+        type: String,
+        default: ''
+    },
+    youtube: {
+        type: String,
+        default: ''
+    },
+    instagram: {
+        type: String,
+        default: ''
+    },
+    twitter: {
+        type: String,
+        default: ''
+    },
+    tiktok: {
         type: String,
         default: ''
     },
@@ -49,16 +80,11 @@ const dealerNomineeSchema = new mongoose.Schema({
         default: ''
     },
     keyDetails: {
-        price: { type: String, default: '' },
-        year: { type: String, default: '' },
-        engine: { type: String, default: '' },
-        power: { type: String, default: '' },
-        topSpeed: { type: String, default: '' },
-        model: { type: String, default: '' },
-        drivetrain: { type: String, default: '' },
-        transmission: { type: String, default: '' },
-        productionUnits: { type: String, default: '' },
-        fuelType: { type: String, default: '' }
+        subscribers: { type: String, default: '' },
+        views: { type: String, default: '' },
+        category: { type: String, default: '' },
+        location: { type: String, default: '' },
+        joinDate: { type: String, default: '' }
     },
     sources: [{
         title: { type: String, default: '' },
@@ -66,4 +92,4 @@ const dealerNomineeSchema = new mongoose.Schema({
     }]
 }, { timestamps: true });
 
-module.exports = mongoose.model('DealerNominee', dealerNomineeSchema);
+module.exports = mongoose.model('ContentCreatorNominee', contentCreatorNomineeSchema);

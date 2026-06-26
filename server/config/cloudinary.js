@@ -34,6 +34,12 @@ const storage = new CloudinaryStorage({
         folder = folders.verification;
     } else if (req.path.includes('profile')) {
         folder = folders.profile;
+    } else if (req.path.includes('nominee-image')) {
+        const categoryTitle = req.query.category || 'general';
+        const nomineeName = req.query.nominee || 'nominee';
+        const sanitizedCat = categoryTitle.trim().replace(/[\/\?#%&*=+:;\s]/g, '_');
+        const sanitizedNom = nomineeName.trim().replace(/[\/\?#%&*=+:;\s]/g, '_');
+        folder = `cmscategory/${sanitizedCat}/${sanitizedNom}`;
     } else if (req.path.includes('category')) {
         const categoryTitle = req.query.title || 'general';
         const sanitizedTitle = categoryTitle.trim().replace(/[\/\?#%&*=+:;]/g, '_');

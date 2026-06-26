@@ -83,12 +83,17 @@ const rankingCategorySchema = new mongoose.Schema({
     },
     assetNominees: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'AssetNominee'
+        refPath: 'nomineeModel'
     }],
     dealerNominees: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'DealerNominee'
-    }]
+        refPath: 'nomineeModel'
+    }],
+    nomineeModel: {
+        type: String,
+        enum: ['CarNominee', 'EstateNominee', 'YachtNominee', 'BikeNominee', 'ContentCreatorNominee', 'OtherNominee', 'AssetNominee', 'DealerNominee'],
+        default: 'OtherNominee'
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('RankingCategory', rankingCategorySchema);

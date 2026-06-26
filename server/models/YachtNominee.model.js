@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const dealerNomineeSchema = new mongoose.Schema({
+const yachtNomineeSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RankingCategory',
@@ -18,6 +18,21 @@ const dealerNomineeSchema = new mongoose.Schema({
     image: {
         type: String,
         default: ''
+    },
+    targetType: {
+        type: String,
+        enum: ['Assets', 'Dealers'],
+        default: 'Assets'
+    },
+    asset: {
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'assetModel',
+        required: false
+    },
+    assetModel: {
+        type: String,
+        enum: ['YachtAsset', 'Listing'],
+        required: false
     },
     dealer: {
         type: mongoose.Schema.Types.ObjectId,
@@ -49,16 +64,15 @@ const dealerNomineeSchema = new mongoose.Schema({
         default: ''
     },
     keyDetails: {
-        price: { type: String, default: '' },
-        year: { type: String, default: '' },
+        length: { type: String, default: '' },
+        beam: { type: String, default: '' },
+        draft: { type: String, default: '' },
+        cabins: { type: String, default: '' },
+        guests: { type: String, default: '' },
         engine: { type: String, default: '' },
-        power: { type: String, default: '' },
-        topSpeed: { type: String, default: '' },
-        model: { type: String, default: '' },
-        drivetrain: { type: String, default: '' },
-        transmission: { type: String, default: '' },
-        productionUnits: { type: String, default: '' },
-        fuelType: { type: String, default: '' }
+        speed: { type: String, default: '' },
+        price: { type: String, default: '' },
+        year: { type: String, default: '' }
     },
     sources: [{
         title: { type: String, default: '' },
@@ -66,4 +80,4 @@ const dealerNomineeSchema = new mongoose.Schema({
     }]
 }, { timestamps: true });
 
-module.exports = mongoose.model('DealerNominee', dealerNomineeSchema);
+module.exports = mongoose.model('YachtNominee', yachtNomineeSchema);

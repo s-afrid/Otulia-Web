@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const dealerNomineeSchema = new mongoose.Schema({
+const carNomineeSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RankingCategory',
@@ -18,6 +18,21 @@ const dealerNomineeSchema = new mongoose.Schema({
     image: {
         type: String,
         default: ''
+    },
+    targetType: {
+        type: String,
+        enum: ['Assets', 'Dealers'],
+        default: 'Assets'
+    },
+    asset: {
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'assetModel',
+        required: false
+    },
+    assetModel: {
+        type: String,
+        enum: ['CarAsset', 'Listing'],
+        required: false
     },
     dealer: {
         type: mongoose.Schema.Types.ObjectId,
@@ -66,4 +81,4 @@ const dealerNomineeSchema = new mongoose.Schema({
     }]
 }, { timestamps: true });
 
-module.exports = mongoose.model('DealerNominee', dealerNomineeSchema);
+module.exports = mongoose.model('CarNominee', carNomineeSchema);

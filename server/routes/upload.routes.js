@@ -43,4 +43,7 @@ router.post('/category-cover', authMiddleware, upload.single('image'), sendFileR
 // Category banner upload
 router.post('/category-banner', authMiddleware, upload.single('image'), sendFileResponse);
 
+// Nominee image upload
+router.post('/nominee-image', authMiddleware, upload.single('image'), sendFileResponse);
+
 module.exports = router;
