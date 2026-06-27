@@ -71,6 +71,16 @@ const Navbar = ({
         <ul className="hidden lg:flex items-center justify-center gap-[clamp(16px,3vw,48px)] absolute left-1/2 -translate-x-1/2 w-auto">
           <li>
             <NavLink
+              to="/ranking"
+              className={({ isActive }) =>
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+              }
+            >
+              RANKINGS
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
               to="/shop"
               className={({ isActive }) =>
                 `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
