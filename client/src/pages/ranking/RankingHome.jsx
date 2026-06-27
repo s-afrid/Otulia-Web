@@ -40,18 +40,21 @@ function RankingHome() {
     fetchCategories();
   }, []);
 
+  const isTypeMatching = (type, param) => {
+    if (!type || !param) return false;
+    const t = type.toLowerCase().replace(/\s+/g, "").replace(/s$/, ""); // remove trailing 's'
+    const p = param.toLowerCase().replace(/\s+/g, "").replace(/s$/, ""); // remove trailing 's'
+    return t === p;
+  };
+
+  const filteredCategories = categories.filter(cat => 
+    isTypeMatching(cat.type, category || "cars")
+  );
+
   // Determine active slug
   let activeSlug = slug;
-  if (!activeSlug && categories.length > 0) {
-    if (category) {
-      // Find first category matching the category URL parameter (e.g. "realestate")
-      const matched = categories.find(cat => 
-        cat.type && cat.type.toLowerCase().replace(/\s+/g, "") === category.toLowerCase()
-      );
-      activeSlug = matched ? matched.slug : categories[0].slug;
-    } else {
-      activeSlug = categories[0].slug;
-    }
+  if (!activeSlug && filteredCategories.length > 0) {
+    activeSlug = filteredCategories[0].slug;
   }
   if (!activeSlug) {
     activeSlug = "hypercars";
@@ -234,7 +237,7 @@ function RankingHome() {
 
   return (
     <>
-      <Sidebar categories={categories} activeSlug={activeSlug} />
+      <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
       <div className="ml-[300px]">
         <Navbar_Ranking hideSearch={true} />
