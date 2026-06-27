@@ -12,8 +12,8 @@ import {
 const logoSrc = "/logos/logo_inverted.png";
 
 function Sidebar({ categories = [], activeSlug }) {
-  const { slug } = useParams();
-  const currentSlug = activeSlug || slug || "hypercars";
+  const { category, slug } = useParams();
+  const currentSlug = activeSlug || slug;
 
   let navItems = [];
   if (categories && categories.length > 0) {
@@ -21,12 +21,13 @@ function Sidebar({ categories = [], activeSlug }) {
       {
         label: "All Rankings",
         icon: FiGrid,
-        path: "/ranking",
+        path: `/ranking/${category || "cars"}`,
+        slug: undefined,
       },
       ...categories.map((cat) => ({
         label: cat.title,
         icon: FiPackage,
-        path: `/ranking/${cat.type ? cat.type.toLowerCase().replace(" ", "") : "cars"}/${cat.slug}`,
+        path: `/ranking/${cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : "cars"}/${cat.slug}`,
         slug: cat.slug,
       }))
     ];
@@ -35,7 +36,8 @@ function Sidebar({ categories = [], activeSlug }) {
       {
         label: "All Rankings",
         icon: FiGrid,
-        path: "/ranking",
+        path: `/ranking/${category || "cars"}`,
+        slug: undefined,
       },
       {
         label: "Best Hypercars",
@@ -110,8 +112,8 @@ function Sidebar({ categories = [], activeSlug }) {
       <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-2 border-r border-[#EAEAEA]">
         {navItems.map((item) => {
           const isActive =
-            item.path === "/ranking"
-              ? window.location.pathname === "/ranking"
+            item.slug === undefined
+              ? !slug
               : currentSlug === item.slug;
 
           return (

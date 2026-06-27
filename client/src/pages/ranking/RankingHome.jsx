@@ -32,13 +32,23 @@ function RankingHome() {
         if (res.ok) {
           const data = await res.json();
           setCategories(data);
+          if (!slug) {
+            setLoading(false);
+          }
+        } else {
+          if (!slug) {
+            setLoading(false);
+          }
         }
       } catch (err) {
         console.error("Error fetching categories:", err);
+        if (!slug) {
+          setLoading(false);
+        }
       }
     };
     fetchCategories();
-  }, []);
+  }, [slug]);
 
   const isTypeMatching = (type, param) => {
     if (!type || !param) return false;
@@ -99,12 +109,13 @@ function RankingHome() {
   };
 
   useEffect(() => {
-    if (categories.length > 0 || slug) {
-      fetchCategoryDetails(activeSlug);
+    if (slug) {
+      fetchCategoryDetails(slug);
     } else {
-      fetchCategoryDetails("hypercars");
+      setActiveCategory(null);
+      setLoading(false);
     }
-  }, [categories, activeSlug]);
+  }, [slug]);
 
   // Handle voting action
   const handleVote = async (nomineeId, catId) => {
@@ -262,6 +273,63 @@ function RankingHome() {
                 </div>
               )}
             </>
+          ) : !slug ? (
+            <div className="pt-[110px]">
+              <div className="mb-10">
+                <h1 className="text-[42px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em] text-black">
+                  {category ? (category.toLowerCase() === "realestate" ? "Real Estate" : category.toLowerCase() === "contentcreators" ? "Content Creator" : "Automotive") : "Automotive"}{" "}
+                  <span className="text-[#C9920E]">Rankings</span>
+                </h1>
+                <p className="mt-5 max-w-[650px] text-[18px] leading-[1.65] text-[#4B5563]">
+                  Explore all our curated ranking categories. See what's leading the industry based on verified votes and user popularity.
+                </p>
+              </div>
+
+              {filteredCategories.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredCategories.map((cat) => {
+                    const nomineeCount = cat.nomineeLimit || (cat.assetNominees || []).length;
+                    return (
+                      <div key={cat._id} className="overflow-hidden rounded-[12px] border border-[#E5E7EB] bg-white flex flex-col shadow-sm hover:shadow-md transition">
+                        <div className="h-[200px] w-full bg-gray-100 relative">
+                          <img 
+                            src={cat.categoryImage || cat.bannerImage || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop"} 
+                            alt={cat.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute top-3 left-3 bg-black/60 text-white text-[11px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm backdrop-blur-sm">
+                            {cat.type}
+                          </div>
+                        </div>
+                        
+                        <div className="p-5 flex-1 flex flex-col">
+                          <h3 className="text-xl font-bold text-black mb-2">{cat.title}</h3>
+                          <p className="text-[14px] text-gray-500 line-clamp-3 mb-6 flex-1">
+                            {cat.shortDescription || "No description available."}
+                          </p>
+                          
+                          <div className="flex items-center justify-between border-t border-[#ECECEC] pt-4 mt-auto">
+                            <div className="text-[13px] text-gray-500">
+                              <span className="font-bold text-black">{nomineeCount}</span> Nominees
+                            </div>
+                            <button 
+                              onClick={() => navigate(`/ranking/${category || "cars"}/${cat.slug}`)}
+                              className="flex items-center gap-1.5 text-[14px] font-semibold text-[#D48D2A] hover:text-[#B58252] transition"
+                            >
+                              Explore Rankings &rsaquo;
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-20 text-gray-500 font-medium border border-dashed border-[#E5E7EB] rounded-xl">
+                  No ranking categories found for this section.
+                </div>
+              )}
+            </div>
           ) : (
             <div className="text-center py-40 text-gray-500">
               No active rankings found.
