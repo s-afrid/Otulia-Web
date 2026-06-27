@@ -156,7 +156,7 @@ router.post("/vote", authMiddleware, async (req, res) => {
             }
         } else {
             // Check if user has voted for THIS nominee
-            const hasVotedThis = nominee.votedBy.includes(userId);
+            const hasVotedThis = nominee.votedBy.some(id => id.toString() === userId.toString());
             if (hasVotedThis) {
                 return res.status(400).json({ error: "ALREADY_VOTED_FOR_THIS_NOMINEE" });
             }

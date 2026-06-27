@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaBolt, FaHome, FaTree, FaBed, FaBath } from "react-icons/fa";
+import { FaBolt, FaHome, FaTree, FaBed, FaBath, FaUsers, FaEye, FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
 import { LuTimerReset } from "react-icons/lu";
 import { MdOutlineSpeed } from "react-icons/md";
 import { TbEngine } from "react-icons/tb";
@@ -16,7 +16,7 @@ import { rankings as staticRankings } from "../../data/rankings";
 function RankingHome() {
   const { category, slug } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
 
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
@@ -127,10 +127,11 @@ function RankingHome() {
 
     setIsVoting(true);
     try {
-      const res = await fetch("/api/rankings/vote", {
+       const res = await fetch("/api/rankings/vote", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ categoryId: catId, nomineeId }),
       });
@@ -178,12 +179,18 @@ function RankingHome() {
       const keyDetails = nominee.keyDetails || {};
       
       const isEstate = activeCategory.type === "Real Estate" || activeCategory.type === "realestate";
+      const isContentCreator = activeCategory.type === "Content Creator" || activeCategory.type === "Content Creators" || activeCategory.type === "contentcreators";
       
       if (isEstate) {
         if (keyDetails.livingArea) stats.push({ icon: FaHome, value: keyDetails.livingArea, label: "Living Area" });
         if (keyDetails.landSize) stats.push({ icon: FaTree, value: keyDetails.landSize, label: "Land Size" });
         if (keyDetails.bedroom) stats.push({ icon: FaBed, value: keyDetails.bedroom, label: "Bedrooms" });
         if (keyDetails.bathroom) stats.push({ icon: FaBath, value: keyDetails.bathroom, label: "Bathrooms" });
+      } else if (isContentCreator) {
+        if (keyDetails.subscribers) stats.push({ icon: FaUsers, value: keyDetails.subscribers, label: "Subscribers" });
+        if (keyDetails.views) stats.push({ icon: FaEye, value: keyDetails.views, label: "Total Views" });
+        if (keyDetails.location) stats.push({ icon: FaMapMarkerAlt, value: keyDetails.location, label: "Location" });
+        if (keyDetails.joinDate) stats.push({ icon: FaCalendarAlt, value: keyDetails.joinDate, label: "Joined" });
       } else {
         if (keyDetails.power) stats.push({ icon: FaBolt, value: keyDetails.power, label: "Power" });
         if (keyDetails.topSpeed) stats.push({ icon: MdOutlineSpeed, value: keyDetails.topSpeed, label: "Top Speed" });
@@ -210,11 +217,23 @@ function RankingHome() {
         { label: "Category", value: activeCategory.title },
         { label: "Property Type", value: keyDetails.propertyType || "Estate" },
         { label: "Status", value: keyDetails.availabilityStatus || "For Sale" }
+      ] : isContentCreator ? [
+        { label: "Category", value: activeCategory.title },
+        { label: "Channel", value: nominee.channelName || nominee.name },
+        { label: "Genre", value: keyDetails.category || "Entertainment" }
       ] : [
         { label: "Category", value: activeCategory.title },
         { label: "Origin", value: nominee.brand || "Global" },
         { label: "Body Type", value: nominee.model || "Coupe" }
       ];
+
+      const socialLinks = [];
+      if (isContentCreator) {
+        if (nominee.youtube) socialLinks.push({ platform: "youtube", url: nominee.youtube });
+        if (nominee.instagram) socialLinks.push({ platform: "instagram", url: nominee.instagram });
+        if (nominee.twitter || nominee.x) socialLinks.push({ platform: "twitter", url: nominee.twitter || nominee.x });
+        if (nominee.tiktok) socialLinks.push({ platform: "tiktok", url: nominee.tiktok });
+      }
 
       return {
         rank: nominee.rank || 1,
@@ -227,18 +246,23 @@ function RankingHome() {
         category: activeCategory.title,
         origin: nominee.brand || "Global",
         bodyType: nominee.model || "Coupe",
+        price: keyDetails.price || "",
+        location: nominee.brand || "",
+        showBadgeOnImage: nominee.rank === 1 && isEstate,
+        badge: isEstate ? "NEW FOR 2026" : "",
         votes: formattedVotes,
         sourcesCount: (nominee.sources || []).length.toString(),
         showTagOnHeader: nominee.rank === 1,
-        tag: nominee.rank === 1 ? "TOP RATED" : "",
+        tag: nominee.rank === 1 ? (isEstate ? "New for 2026" : "TOP RATED") : "",
         showTopRatedBadge: nominee.rank === 1,
         progress: `${Math.min(100, Math.max(5, (votesVal / Math.max(1, totalVotesVal)) * 100))}%`,
         progressColor: nominee.rank === 1 ? "#D6A125" : "#1F2937",
-        status: nominee.rank === 1 ? "Leader" : "Contender",
+        status: nominee.rank === 1 ? "Leading" : "Strong Contender",
         statusIcon: nominee.rank === 1 ? "trophy" : "star",
         statusColor: nominee.rank === 1 ? "#D6A125" : "#6B7280",
         _id: nominee._id,
         categoryId: activeCategory._id,
+        socialLinks,
       };
     });
   };

@@ -3,6 +3,7 @@ require("dotenv").config();
 const RankingCategory = require("../models/RankingCategory.model");
 const CarNominee = require("../models/CarNominee.model");
 const EstateNominee = require("../models/EstateNominee.model");
+const ContentCreatorNominee = require("../models/ContentCreatorNominee.model");
 
 const seedData = [
   {
@@ -122,6 +123,63 @@ const seedData = [
         ]
       }
     ]
+  },
+  {
+    category: {
+      title: "Top Content Creators",
+      slug: "top-content-creators",
+      type: "Content Creator",
+      targetType: "Assets",
+      shortDescription: "The most popular content creators of 2026.",
+      detailedDescription: "Curated list of the world's most influential and popular content creators across YouTube, Instagram, TikTok, and Twitter.",
+      status: "Active",
+      nomineeLimit: 10,
+      nomineeModel: "ContentCreatorNominee",
+      displayOrder: 1,
+    },
+    nominees: [
+      {
+        name: "MrBeast",
+        detail: "Pioneer of high-budget YouTube stunt videos and philanthropist.",
+        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
+        channelName: "MrBeast",
+        youtube: "https://www.youtube.com/@mrbeast",
+        instagram: "https://www.instagram.com/mrbeast",
+        twitter: "https://twitter.com/mrbeast",
+        tiktok: "https://www.tiktok.com/@mrbeast",
+        votes: 12500,
+        keyDetails: {
+          subscribers: "300M",
+          views: "50B",
+          category: "Entertainment",
+          location: "USA",
+          joinDate: "2012"
+        },
+        sources: [
+          { title: "YouTube Channel", url: "https://www.youtube.com/@mrbeast" }
+        ]
+      },
+      {
+        name: "PewDiePie",
+        detail: "One of the most famous individual gaming and vlog content creators on YouTube.",
+        image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1200&auto=format&fit=crop",
+        channelName: "PewDiePie",
+        youtube: "https://www.youtube.com/@pewdiepie",
+        instagram: "https://www.instagram.com/pewdiepie",
+        twitter: "https://twitter.com/pewdiepie",
+        votes: 9800,
+        keyDetails: {
+          subscribers: "111M",
+          views: "29B",
+          category: "Gaming",
+          location: "Sweden",
+          joinDate: "2010"
+        },
+        sources: [
+          { title: "YouTube Channel", url: "https://www.youtube.com/@pewdiepie" }
+        ]
+      }
+    ]
   }
 ];
 
@@ -133,6 +191,7 @@ async function seed() {
   await RankingCategory.deleteMany({});
   await CarNominee.deleteMany({});
   await EstateNominee.deleteMany({});
+  await ContentCreatorNominee.deleteMany({});
   console.log("Cleaned existing rankings data");
 
   for (const item of seedData) {
@@ -147,6 +206,8 @@ async function seed() {
         nominee = new CarNominee({ ...nom, category: category._id });
       } else if (item.category.nomineeModel === "EstateNominee") {
         nominee = new EstateNominee({ ...nom, category: category._id });
+      } else if (item.category.nomineeModel === "ContentCreatorNominee") {
+        nominee = new ContentCreatorNominee({ ...nom, category: category._id });
       }
       await nominee.save();
       nomineeIds.push(nominee._id);
