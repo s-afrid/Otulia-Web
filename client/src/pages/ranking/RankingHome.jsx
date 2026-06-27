@@ -220,7 +220,8 @@ function RankingHome() {
       ] : isContentCreator ? [
         { label: "Category", value: activeCategory.title },
         { label: "Channel", value: nominee.channelName || nominee.name },
-        { label: "Genre", value: keyDetails.category || "Entertainment" }
+        { label: "Genre", value: keyDetails.category || "Entertainment" },
+        { label: "Status", value: nominee.status || "Active" }
       ] : [
         { label: "Category", value: activeCategory.title },
         { label: "Origin", value: nominee.brand || "Global" },
@@ -246,7 +247,9 @@ function RankingHome() {
         category: activeCategory.title,
         origin: nominee.brand || "Global",
         bodyType: nominee.model || "Coupe",
-        price: keyDetails.price || "",
+        price: isContentCreator 
+          ? (keyDetails.subscribers ? `${keyDetails.subscribers} Subscribers` : "")
+          : (keyDetails.price || ""),
         location: nominee.brand || "",
         showBadgeOnImage: nominee.rank === 1 && isEstate,
         badge: isEstate ? "NEW FOR 2026" : "",
