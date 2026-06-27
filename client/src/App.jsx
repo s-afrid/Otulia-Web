@@ -250,6 +250,7 @@ function App() {
           <Route path="/asset/:category/:id" element={<Asset />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/ranking" element={<RankingHome />} />
+          <Route path="/ranking/:category" element={<RankingHome />} />
           <Route path="/ranking/:category/:slug" element={<RankingHome />} />
           <Route path="/journal" element={<JournalHome />} />
 

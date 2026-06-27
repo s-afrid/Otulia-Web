@@ -11,58 +11,76 @@ import {
 } from "react-icons/fi";
 const logoSrc = "/logos/logo_inverted.png";
 
-function Sidebar() {
+function Sidebar({ categories = [], activeSlug }) {
   const { slug } = useParams();
+  const currentSlug = activeSlug || slug || "hypercars";
 
-  const navItems = [
-    {
-      label: "All Rankings",
-      icon: FiGrid,
-      path: "/ranking",
-    },
-    {
-      label: "Best Hypercars",
-      icon: FiPackage,
-      path: "/ranking/cars/hypercars",
-      slug: "hypercars",
-    },
-    {
-      label: "Best Luxury Cars",
-      icon: FiUsers,
-      path: "/ranking/cars/luxury-cars",
-      slug: "luxury-cars",
-    },
-    {
-      label: "Best Luxury SUVs",
-      icon: FiPieChart,
-      path: "/ranking/cars/luxury-suvs",
-      slug: "luxury-suvs",
-    },
-    {
-      label: "Best Electric Cars",
-      icon: FiGlobe,
-      path: "/ranking/cars/electric-cars",
-      slug: "electric-cars",
-    },
-    {
-      label: "Best Sports Cars",
-      icon: FiCreditCard,
-      path: "/ranking/cars/sports-cars",
-      slug: "sports-cars",
-    },
-    {
-      label: "Best Supercars",
-      icon: FiSettings,
-      path: "/ranking/cars/supercars",
-      slug: "supercars",
-    },
-    {
-      label: "Best Car Brands",
-      icon: FiSettings,
-      path: "/ranking/cars/car-brands",
-      slug: "car-brands",
-    },
-  ];
+  let navItems = [];
+  if (categories && categories.length > 0) {
+    navItems = [
+      {
+        label: "All Rankings",
+        icon: FiGrid,
+        path: "/ranking",
+      },
+      ...categories.map((cat) => ({
+        label: cat.title,
+        icon: FiPackage,
+        path: `/ranking/${cat.type ? cat.type.toLowerCase().replace(" ", "") : "cars"}/${cat.slug}`,
+        slug: cat.slug,
+      }))
+    ];
+  } else {
+    navItems = [
+      {
+        label: "All Rankings",
+        icon: FiGrid,
+        path: "/ranking",
+      },
+      {
+        label: "Best Hypercars",
+        icon: FiPackage,
+        path: "/ranking/cars/hypercars",
+        slug: "hypercars",
+      },
+      {
+        label: "Best Luxury Cars",
+        icon: FiUsers,
+        path: "/ranking/cars/luxury-cars",
+        slug: "luxury-cars",
+      },
+      {
+        label: "Best Luxury SUVs",
+        icon: FiPieChart,
+        path: "/ranking/cars/luxury-suvs",
+        slug: "luxury-suvs",
+      },
+      {
+        label: "Best Electric Cars",
+        icon: FiGlobe,
+        path: "/ranking/cars/electric-cars",
+        slug: "electric-cars",
+      },
+      {
+        label: "Best Sports Cars",
+        icon: FiCreditCard,
+        path: "/ranking/cars/sports-cars",
+        slug: "sports-cars",
+      },
+      {
+        label: "Best Supercars",
+        icon: FiSettings,
+        path: "/ranking/cars/supercars",
+        slug: "supercars",
+      },
+      {
+        label: "Best Car Brands",
+        icon: FiSettings,
+        path: "/ranking/cars/car-brands",
+        slug: "car-brands",
+      },
+    ];
+  }
 
   return (
     <aside
@@ -94,7 +112,7 @@ function Sidebar() {
           const isActive =
             item.path === "/ranking"
               ? window.location.pathname === "/ranking"
-              : slug === item.slug;
+              : currentSlug === item.slug;
 
           return (
             <Link

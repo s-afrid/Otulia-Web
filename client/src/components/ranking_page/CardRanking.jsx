@@ -10,7 +10,7 @@ import { LuTimerReset } from "react-icons/lu";
 import { MdOutlineSpeed } from "react-icons/md";
 import { TbEngine } from "react-icons/tb";
 
-function RankingCard({ cars }) {
+function RankingCard({ cars, onVote, isVoting }) {
   return (
     <div className="space-y-3">
       {cars.map((car) => (
@@ -133,27 +133,43 @@ function RankingCard({ cars }) {
               </div>
 
               {/* Meta */}
-              <div className="mt-4 flex items-center gap-4 border-t border-[#ECECEC] pt-3 text-[13px] text-[#6B7280]">
-                <span>
-                  Category:{" "}
-                  <span className="font-medium text-[#111827] tracking-normal">
-                    {car.category}
-                  </span>
-                </span>
-                <span>|</span>
-                <span>
-                  Origin:{" "}
-                  <span className="font-medium text-[#111827] tracking-normal">
-                    {car.origin}
-                  </span>
-                </span>
-                <span>|</span>
-                <span>
-                  Body Type:{" "}
-                  <span className="font-medium text-[#111827] tracking-normal">
-                    {car.bodyType}
-                  </span>
-                </span>
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[#ECECEC] pt-3 text-[13px] text-[#6B7280]">
+                {car.meta && car.meta.length > 0 ? (
+                  car.meta.map((meta, mIdx) => (
+                    <React.Fragment key={mIdx}>
+                      <span>
+                        {meta.label}:{" "}
+                        <span className="font-medium text-[#111827] tracking-normal">
+                          {meta.value}
+                        </span>
+                      </span>
+                      {mIdx !== car.meta.length - 1 && <span>|</span>}
+                    </React.Fragment>
+                  ))
+                ) : (
+                  <>
+                    <span>
+                      Category:{" "}
+                      <span className="font-medium text-[#111827] tracking-normal">
+                        {car.category}
+                      </span>
+                    </span>
+                    <span>|</span>
+                    <span>
+                      Origin:{" "}
+                      <span className="font-medium text-[#111827] tracking-normal">
+                        {car.origin}
+                      </span>
+                    </span>
+                    <span>|</span>
+                    <span>
+                      Body Type:{" "}
+                      <span className="font-medium text-[#111827] tracking-normal">
+                        {car.bodyType}
+                      </span>
+                    </span>
+                  </>
+                )}
               </div>
 
               {/* Links */}
@@ -171,7 +187,11 @@ function RankingCard({ cars }) {
 
             {/* VOTE PANEL */}
             <div className="flex w-[170px] shrink-0 flex-col items-center border-l border-[#E5E7EB] px-5 py-4">
-              <button className="h-[54px] w-full rounded-[8px] bg-black text-[14px] font-semibold text-white transition hover:bg-[#1F2937]">
+              <button 
+                onClick={() => onVote && onVote(car._id, car.categoryId)}
+                disabled={isVoting}
+                className={`h-[54px] w-full rounded-[8px] bg-black text-[14px] font-semibold text-white transition hover:bg-[#1F2937] ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
                 Vote
               </button>
 

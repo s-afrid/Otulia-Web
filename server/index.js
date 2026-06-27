@@ -116,6 +116,7 @@ app.use("/api/coupon", couponRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/admin", require("./routes/admin.routes.js"));
 app.use("/api/car-ranking", carRankingRoutes);
+app.use("/api/rankings", require("./routes/rankings.routes.js"));
 
 const startTime = new Date().toISOString();
 
