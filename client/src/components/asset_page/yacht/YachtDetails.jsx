@@ -230,7 +230,7 @@ Reference ID: #${refId}
           <div className="flex items-center gap-4 mb-4">
             <h1 
               className="text-2xl md:text-3xl font-normal text-black leading-snug"
-              style={{ fontFamily: 'Canela, "Times New Roman", Times, serif' }}
+              style={{ fontFamily: '"Times New Roman", Times, serif' }}
             >
               {title}
             </h1>

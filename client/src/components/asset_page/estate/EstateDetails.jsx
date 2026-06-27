@@ -245,7 +245,7 @@ Reference ID: #${refId}
               <h1
                 className="text-2xl md:text-3xl font-normal text-black leading-snug"
                 style={{
-                  fontFamily: 'Canela, "Times New Roman", Times, serif',
+                  fontFamily: '"Times New Roman", Times, serif',
                 }}
               >
                 {title}
