@@ -227,8 +227,8 @@ const AssetCard = ({ item }) => {
                   className="truncate translate-y-px pb-1"
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
-                    fontWeight: 800,
-                    fontSize: "18px",
+                    fontWeight: 500,
+                    fontSize: "20px",
                     lineHeight: 1.15,
                     color: "#2A2A2A",
                   }}
