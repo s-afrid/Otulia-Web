@@ -32,7 +32,7 @@ const Navbar = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isDarkText = (!isHeroPage || isScrolled) && !forceTransparent;
+  const isDarkText = false;
 
   const sidebarWidth = "260px";
 
@@ -42,9 +42,9 @@ top-0
 right-0
 h-[88px]
 z-50
-bg-white
+bg-[#09090b]
 border-b
-border-[#EAEAEA]
+border-zinc-800
 flex
 items-center
 justify-between
@@ -56,8 +56,7 @@ px-10
     width: "calc(100vw - 260px)",
   };
 
-  const logoSrc =
-    isScrolled || !isHeroPage ? "/logos/logo_inverted.png" : "/logos/logo.png";
+  const logoSrc = "/logos/logo.png";
 
   return (
     <nav className={navClasses} style={navStyle}>

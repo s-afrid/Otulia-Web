@@ -9,7 +9,7 @@ import {
   FiCreditCard,
   FiSettings,
 } from "react-icons/fi";
-const logoSrc = "/logos/logo_inverted.png";
+const logoSrc = "/logos/logo.png";
 
 function Sidebar({ categories = [], activeSlug }) {
   const { category, slug } = useParams();
@@ -92,14 +92,14 @@ function Sidebar({ categories = [], activeSlug }) {
       top-0
       w-[260px]
       h-screen
-      bg-white
+      bg-[#09090b]
       z-40
       flex
       flex-col
     "
     >
       {/* Header */}
-      <div className="h-[88px] flex items-center px-6 border-b border-[#EAEAEA]">
+      <div className="h-[88px] flex items-center px-6 border-b border-zinc-800">
         <img
           className="w-[clamp(100px,10vw,160px)] h-auto object-contain transition-all"
           alt="logo"
@@ -109,7 +109,7 @@ function Sidebar({ categories = [], activeSlug }) {
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-2 border-r border-[#EAEAEA]">
+      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-2 border-r border-zinc-800">
         {navItems.map((item) => {
           const isActive =
             item.slug === undefined
@@ -131,8 +131,8 @@ function Sidebar({ categories = [], activeSlug }) {
               transition-all
               ${
                 isActive
-                  ? "bg-[#FFF8F0] text-[#D48D2A]"
-                  : "text-[#6B7280] hover:bg-gray-50"
+                  ? "bg-zinc-900/60 text-[#D48D2A]"
+                  : "text-[#A1A1AA] hover:bg-zinc-900/40 hover:text-white"
               }
             `}
             >

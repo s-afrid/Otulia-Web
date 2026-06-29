@@ -87,10 +87,10 @@ export default function RankingCategoryPage() {
       <Sidebar activeTab={activeTab} setActiveTab={handleTabChange} />
       <Navbar_Ranking hideSearch={true} />
 
-      <main className="ml-[clamp(180px,14vw,320px)] min-h-screen bg-[#FDFDFD]">
+      <main className="ml-[260px] min-h-screen bg-[#09090b] text-white">
         <HeaderRanking activeTab={activeTab} count={rankings.length} />
         
-        <div className="px-8 pb-20 space-y-6">
+        <div className="px-8 pb-20 space-y-6 bg-[#09090b]">
           {loading ? (
             <div className="flex justify-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D6A125]"></div>
@@ -104,7 +104,7 @@ export default function RankingCategoryPage() {
               <RankingCard key={item.car._id} data={item} />
             ))
           ) : (
-            <div className="text-center py-20 text-gray-500 font-medium">
+            <div className="text-center py-20 text-zinc-400 font-medium">
               No rankings found for this category.
             </div>
           )}

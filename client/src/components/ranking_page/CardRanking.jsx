@@ -301,11 +301,11 @@ function RankingCard({ cars, onVote, isVoting }) {
         return (
           <div
             key={car._id}
-            className="overflow-hidden rounded-[12px] border border-[#E5E7EB] bg-white shadow-sm hover:shadow-md transition"
+            className="overflow-hidden rounded-[12px] border border-zinc-800 bg-[#161618] hover:shadow-md transition"
           >
             <div className="flex flex-col md:flex-row min-h-[260px]">
               {/* IMAGE */}
-              <div className="relative shrink-0 w-full md:w-[360px] h-[220px] md:h-auto bg-gray-100">
+              <div className="relative shrink-0 w-full md:w-[360px] h-[220px] md:h-auto bg-zinc-950">
                 <img
                   src={car.image}
                   alt={car.name}
@@ -346,12 +346,12 @@ function RankingCard({ cars, onVote, isVoting }) {
               </div>
 
               {/* CONTENT */}
-              <div className="flex flex-1 flex-col px-6 py-5">
+              <div className="flex flex-1 flex-col px-6 py-5 bg-[#161618]">
                 {/* Header */}
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3 flex-wrap">
-                      <h2 className="text-[28px] font-bold tracking-tight text-[#111827] font-serif">
+                      <h2 className="text-[28px] font-bold tracking-tight text-white font-serif">
                         {car.name}
                       </h2>
                       {car.showTagOnHeader && car.tag && (
@@ -363,15 +363,15 @@ function RankingCard({ cars, onVote, isVoting }) {
                     
                     {/* Location */}
                     {car.location && (
-                      <div className="mt-1.5 flex items-center gap-1.5 text-[13px] text-gray-500 font-medium">
-                        <FiMapPin className="text-[14px] text-gray-400" />
+                      <div className="mt-1.5 flex items-center gap-1.5 text-[13px] text-zinc-400 font-medium">
+                        <FiMapPin className="text-[14px] text-zinc-500" />
                         <span>{car.location}</span>
                       </div>
                     )}
 
                     {/* Price */}
                     {car.price && (
-                      <div className="mt-2 text-[26px] font-extrabold text-black leading-tight">
+                      <div className="mt-2 text-[26px] font-extrabold text-white leading-tight">
                         {car.price}
                       </div>
                     )}
@@ -385,7 +385,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                         width: "60px",
                         height: "60px",
                         borderColor: "#D6A125",
-                        backgroundColor: "#FFFBF0",
+                        backgroundColor: "#1e1b10",
                       }}
                     >
                       <FaStar
@@ -408,7 +408,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                 </div>
 
                 {/* Description */}
-                <p className="mt-3 text-[14px] leading-relaxed text-[#4B5563] tracking-normal">
+                <p className="mt-3 text-[14px] leading-relaxed text-zinc-400 tracking-normal">
                   {car.description}
                 </p>
 
@@ -419,14 +419,14 @@ function RankingCard({ cars, onVote, isVoting }) {
                       const Icon = stat.icon;
                       return (
                         <div key={index} className="flex items-start gap-2.5">
-                          <div className="p-1 rounded bg-gray-50">
-                            <Icon className="text-[16px] text-gray-600" />
+                          <div className="p-1 rounded bg-zinc-950/60 border border-zinc-800">
+                            <Icon className="text-[16px] text-zinc-400" />
                           </div>
                           <div>
-                            <div className="text-[14px] font-bold text-[#111827] tracking-tight leading-tight">
+                            <div className="text-[14px] font-bold text-white tracking-tight leading-tight">
                               {stat.value}
                             </div>
-                            <div className="text-[11px] text-[#6B7280] font-medium tracking-normal mt-0.5">
+                            <div className="text-[11px] text-[#A1A1AA] font-medium tracking-normal mt-0.5">
                               {stat.label}
                             </div>
                           </div>
@@ -437,13 +437,13 @@ function RankingCard({ cars, onVote, isVoting }) {
                 )}
 
                 {/* Meta */}
-                <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[#ECECEC] pt-3 text-[12px] text-[#6B7280]">
+                <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-zinc-850 pt-3 text-[12px] text-[#A1A1AA]">
                   {car.meta && car.meta.length > 0 ? (
                     car.meta.map((meta, mIdx) => (
                       <React.Fragment key={mIdx}>
                         <span>
                           {meta.label}:{" "}
-                          <span className="font-semibold text-[#111827] tracking-normal inline-flex items-center gap-1">
+                          <span className="font-semibold text-white tracking-normal inline-flex items-center gap-1">
                             {meta.value}
                             {meta.label === "Status" && (
                               <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
@@ -457,21 +457,21 @@ function RankingCard({ cars, onVote, isVoting }) {
                     <>
                       <span>
                         Category:{" "}
-                        <span className="font-semibold text-[#111827] tracking-normal">
+                        <span className="font-semibold text-white tracking-normal">
                           {car.category}
                         </span>
                       </span>
                       <span>|</span>
                       <span>
                         Origin:{" "}
-                        <span className="font-semibold text-[#111827] tracking-normal">
+                        <span className="font-semibold text-white tracking-normal">
                           {car.origin}
                         </span>
                       </span>
                       <span>|</span>
                       <span>
                         Body Type:{" "}
-                        <span className="font-semibold text-[#111827] tracking-normal">
+                        <span className="font-semibold text-white tracking-normal">
                           {car.bodyType}
                         </span>
                       </span>
@@ -480,13 +480,13 @@ function RankingCard({ cars, onVote, isVoting }) {
                 </div>
 
                 {/* Links */}
-                <div className="mt-5 flex gap-8 pt-3 border-t border-gray-100">
+                <div className="mt-5 flex gap-8 pt-3 border-t border-zinc-850">
                   {car.socialLinks && car.socialLinks.length > 0 ? (
                     <a
                       href={car.socialLinks[0].url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-[13px] font-bold text-[#111827] hover:text-[#D6A125] transition-colors"
+                      className="flex items-center gap-1.5 text-[13px] font-bold text-white hover:text-[#D6A125] transition-colors"
                     >
                       View Channel
                       <FaArrowRight className="text-[11px]" />
@@ -496,13 +496,13 @@ function RankingCard({ cars, onVote, isVoting }) {
                       href={car.listingLink || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-[13px] font-bold text-[#111827] hover:text-[#D6A125] transition-colors"
+                      className="flex items-center gap-1.5 text-[13px] font-bold text-white hover:text-[#D6A125] transition-colors"
                     >
                       View Full Listing
                       <FaArrowRight className="text-[11px]" />
                     </a>
                   )}
-                  <button className="flex items-center gap-1.5 text-[13px] font-bold text-[#111827] hover:text-[#D6A125] transition-colors">
+                  <button className="flex items-center gap-1.5 text-[13px] font-bold text-white hover:text-[#D6A125] transition-colors">
                     View Sources ({car.sourcesCount})
                     <FaArrowRight className="text-[11px]" />
                   </button>
@@ -510,24 +510,24 @@ function RankingCard({ cars, onVote, isVoting }) {
               </div>
 
               {/* VOTE PANEL */}
-              <div className="flex w-full md:w-[180px] shrink-0 flex-col items-center border-t md:border-t-0 md:border-l border-[#E5E7EB] px-6 py-6 bg-gray-50/30">
+              <div className="flex w-full md:w-[180px] shrink-0 flex-col items-center justify-between border-t md:border-t-0 md:border-l border-zinc-800 px-6 py-6 bg-zinc-950/20">
                 <button
                   onClick={() => onVote && onVote(car._id, car.categoryId)}
                   disabled={isVoting}
-                  className={`h-[48px] w-full rounded-[8px] bg-black text-[14px] font-bold text-white transition hover:bg-gray-800 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`h-[48px] w-full rounded-[8px] border border-[#D6A125] bg-transparent text-[14px] font-bold text-white transition hover:bg-[#D6A125]/10 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   Vote
                 </button>
 
-                <div className="mt-6 text-center">
-                  <div className="text-[32px] tracking-tight font-extrabold text-[#111827]">
+                <div className="text-center my-6 flex-1 flex flex-col justify-center">
+                  <div className="text-[32px] tracking-tight font-extrabold text-white leading-none">
                     {car.votes}
                   </div>
-                  <div className="text-[12px] font-bold uppercase tracking-wider text-gray-400 mt-0.5">Votes</div>
+                  <div className="text-[12px] text-zinc-500 font-medium mt-1.5 leading-none">Votes</div>
                 </div>
 
-                <div className="mt-auto w-full pt-6">
-                  <div className="h-[6px] w-full rounded-full bg-[#E5E7EB]">
+                <div className="w-full">
+                  <div className="h-[6px] w-full rounded-full bg-zinc-800">
                     <div
                       className="h-[6px] rounded-full transition-all duration-500"
                       style={{

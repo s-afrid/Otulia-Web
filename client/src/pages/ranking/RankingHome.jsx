@@ -284,10 +284,10 @@ function RankingHome() {
     <>
       <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
-      <div className="ml-[300px]">
+      <div className="ml-[260px] min-h-screen bg-[#09090b] text-white">
         <Navbar_Ranking hideSearch={true} />
 
-        <div className="px-8 pb-20">
+        <div className="px-8 pb-20 bg-[#09090b]">
           {loading ? (
             <div className="flex justify-center py-40">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D6A125]"></div>
@@ -302,7 +302,7 @@ function RankingHome() {
               {cardsData.length > 0 ? (
                 <RankingCard cars={cardsData} onVote={handleVote} isVoting={isVoting} />
               ) : (
-                <div className="text-center py-20 text-gray-500 font-medium">
+                <div className="text-center py-20 text-zinc-400 font-medium">
                   No nominees found in this category.
                 </div>
               )}
@@ -310,11 +310,11 @@ function RankingHome() {
           ) : !slug ? (
             <div className="pt-[110px]">
               <div className="mb-10">
-                <h1 className="text-[42px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em] text-black">
+                <h1 className="text-[42px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em] text-white">
                   {category ? (category.toLowerCase() === "realestate" ? "Real Estate" : category.toLowerCase() === "contentcreators" ? "Content Creator" : "Automotive") : "Automotive"}{" "}
                   <span className="text-[#C9920E]">Rankings</span>
                 </h1>
-                <p className="mt-5 max-w-[650px] text-[18px] leading-[1.65] text-[#4B5563]">
+                <p className="mt-5 max-w-[650px] text-[18px] leading-[1.65] text-[#A1A1AA]">
                   Explore all our curated ranking categories. See what's leading the industry based on verified votes and user popularity.
                 </p>
               </div>
@@ -324,8 +324,8 @@ function RankingHome() {
                   {filteredCategories.map((cat) => {
                     const nomineeCount = cat.nomineeLimit || (cat.assetNominees || []).length;
                     return (
-                      <div key={cat._id} className="overflow-hidden rounded-[12px] border border-[#E5E7EB] bg-white flex flex-col shadow-sm hover:shadow-md transition">
-                        <div className="h-[200px] w-full bg-gray-100 relative">
+                      <div key={cat._id} className="overflow-hidden rounded-[12px] border border-zinc-800 bg-[#161618] flex flex-col shadow-sm hover:shadow-md transition">
+                        <div className="h-[200px] w-full bg-zinc-950 relative">
                           <img 
                             src={cat.categoryImage || cat.bannerImage || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop"} 
                             alt={cat.title}
@@ -337,14 +337,14 @@ function RankingHome() {
                         </div>
                         
                         <div className="p-5 flex-1 flex flex-col">
-                          <h3 className="text-xl font-bold text-black mb-2">{cat.title}</h3>
-                          <p className="text-[14px] text-gray-500 line-clamp-3 mb-6 flex-1">
+                          <h3 className="text-xl font-bold text-white mb-2">{cat.title}</h3>
+                          <p className="text-[14px] text-zinc-400 line-clamp-3 mb-6 flex-1">
                             {cat.shortDescription || "No description available."}
                           </p>
                           
-                          <div className="flex items-center justify-between border-t border-[#ECECEC] pt-4 mt-auto">
-                            <div className="text-[13px] text-gray-500">
-                              <span className="font-bold text-black">{nomineeCount}</span> Nominees
+                          <div className="flex items-center justify-between border-t border-zinc-850 pt-4 mt-auto">
+                            <div className="text-[13px] text-zinc-400">
+                              <span className="font-bold text-white">{nomineeCount}</span> Nominees
                             </div>
                             <button 
                               onClick={() => navigate(`/ranking/${category || "cars"}/${cat.slug}`)}
@@ -359,13 +359,13 @@ function RankingHome() {
                   })}
                 </div>
               ) : (
-                <div className="text-center py-20 text-gray-500 font-medium border border-dashed border-[#E5E7EB] rounded-xl">
+                <div className="text-center py-20 text-zinc-400 font-medium border border-dashed border-zinc-800 rounded-xl">
                   No ranking categories found for this section.
                 </div>
               )}
             </div>
           ) : (
-            <div className="text-center py-40 text-gray-500">
+            <div className="text-center py-40 text-zinc-400">
               No active rankings found.
             </div>
           )}
