@@ -92,7 +92,7 @@ function Sidebar({ categories = [], activeSlug }) {
       top-0
       w-[260px]
       h-screen
-      bg-[#09090b]
+      bg-zinc-950
       z-40
       flex
       flex-col

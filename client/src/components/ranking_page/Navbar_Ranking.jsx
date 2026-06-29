@@ -42,7 +42,7 @@ top-0
 right-0
 h-[88px]
 z-50
-bg-[#09090b]
+bg-zinc-950
 border-b
 border-zinc-800
 flex

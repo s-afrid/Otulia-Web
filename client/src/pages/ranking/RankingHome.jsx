@@ -273,6 +273,13 @@ function RankingHome() {
         genre: keyDetails.category || "",
         views: keyDetails.views || "",
         subscribers: keyDetails.subscribers || "",
+        isEstate,
+        livingArea: keyDetails.livingArea || "",
+        landSize: keyDetails.landSize || "",
+        bedrooms: keyDetails.bedroom || "",
+        bathrooms: keyDetails.bathroom || "",
+        propertyType: keyDetails.propertyType || "Estate",
+        availabilityStatus: keyDetails.availabilityStatus || "For Sale",
       };
     });
   };
@@ -284,10 +291,10 @@ function RankingHome() {
     <>
       <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
-      <div className="ml-[260px] min-h-screen bg-[#09090b] text-white">
+      <div style={{ marginLeft: "260px" }} className="min-h-screen bg-zinc-950 text-white">
         <Navbar_Ranking hideSearch={true} />
 
-        <div className="px-8 pb-20 bg-[#09090b]">
+        <div className="px-8 pb-20 bg-zinc-950">
           {loading ? (
             <div className="flex justify-center py-40">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D6A125]"></div>

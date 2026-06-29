@@ -87,10 +87,10 @@ export default function RankingCategoryPage() {
       <Sidebar activeTab={activeTab} setActiveTab={handleTabChange} />
       <Navbar_Ranking hideSearch={true} />
 
-      <main className="ml-[260px] min-h-screen bg-[#09090b] text-white">
+      <main style={{ marginLeft: "260px" }} className="min-h-screen bg-zinc-950 text-white">
         <HeaderRanking activeTab={activeTab} count={rankings.length} />
         
-        <div className="px-8 pb-20 space-y-6 bg-[#09090b]">
+        <div className="px-8 pb-20 space-y-6 bg-zinc-950">
           {loading ? (
             <div className="flex justify-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D6A125]"></div>
