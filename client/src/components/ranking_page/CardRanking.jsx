@@ -10,270 +10,550 @@ import {
   FaTwitter,
   FaTiktok,
   FaGlobe,
+  FaCalendarAlt,
+  FaTag,
+  FaUsers,
 } from "react-icons/fa";
 import { FiMapPin } from "react-icons/fi";
 import { LuTimerReset } from "react-icons/lu";
 import { MdOutlineSpeed } from "react-icons/md";
 import { TbEngine } from "react-icons/tb";
 
+import youtubeIcon from "../../assets/icons/social/youtube.svg";
+import instagramIcon from "../../assets/icons/social/instagram.svg";
+import xIcon from "../../assets/icons/social/x.svg";
+
 function RankingCard({ cars, onVote, isVoting }) {
+  const getInitials = (name) => {
+    if (!name) return "CC";
+    if (name.includes("Andrew Tate")) {
+      return "SG";
+    }
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0].substring(0, 2).toUpperCase();
+  };
+
+  const getCreatorStats = (car) => {
+    const total = car.subscribers || "0";
+    
+    if (car.name === "MrBeast") {
+      return {
+        total: "300M+",
+        youtube: "270M+",
+        instagram: "45M+",
+        twitter: "25M+"
+      };
+    }
+    
+    if (car.name === "PewDiePie") {
+      return {
+        total: "111M+",
+        youtube: "111M+",
+        instagram: "22M+",
+        twitter: "19M+"
+      };
+    }
+
+    if (car.name.includes("Andrew Tate") || (car.channelName && car.channelName.includes("Tate Car Reviews"))) {
+      return {
+        total: "2.52M+",
+        youtube: "2.30M+",
+        instagram: "180K+",
+        twitter: "40K+"
+      };
+    }
+    
+    const cleanSubscribers = (sub) => {
+      if (!sub) return { num: 0, suffix: "" };
+      const num = parseFloat(sub);
+      const suffix = sub.replace(/[0-9.]/g, '') || "";
+      return { num, suffix };
+    };
+
+    const { num, suffix } = cleanSubscribers(total);
+    if (isNaN(num) || num <= 0) {
+      return {
+        total: total || "0",
+        youtube: total || "0",
+        instagram: "10K+",
+        twitter: "5K+"
+      };
+    }
+
+    const yt = (num * 0.9).toFixed(1);
+    const ig = (num * 0.15).toFixed(1);
+    const tw = (num * 0.05).toFixed(1);
+
+    const format = (val) => {
+      const cleanVal = parseFloat(val).toString();
+      const cleanSuffix = suffix.includes('+') ? suffix : suffix + '+';
+      return cleanVal + cleanSuffix;
+    };
+
+    return {
+      total: total.includes('+') ? total : total + '+',
+      youtube: format(yt),
+      instagram: format(ig),
+      twitter: format(tw)
+    };
+  };
+
   return (
     <div className="space-y-4">
-      {cars.map((car) => (
-        <div
-          key={car._id}
-          className="overflow-hidden rounded-[12px] border border-[#E5E7EB] bg-white shadow-sm hover:shadow-md transition"
-        >
-          <div className="flex flex-col md:flex-row min-h-[260px]">
-            {/* IMAGE */}
-            <div className="relative shrink-0 w-full md:w-[360px] h-[220px] md:h-auto bg-gray-100">
-              <img
-                src={car.image}
-                alt={car.name}
-                className="w-full h-full object-cover"
-              />
-
-              {/* Rank Ribbon */}
-              <div className="absolute left-4 top-0">
-                <div
-                  className="flex w-[40px] flex-col items-center py-2.5 text-black rounded-b-[4px]"
-                  style={{ backgroundColor: car.rankColor }}
-                >
-                  <FaTrophy
-                    className="text-[14px]"
-                    style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+      {cars.map((car) => {
+        if (car.isContentCreator) {
+          const stats = getCreatorStats(car);
+          return (
+            <div
+              key={car._id}
+              className="overflow-hidden rounded-[12px] border border-zinc-800 bg-[#09090b] text-white shadow-sm hover:shadow-md transition duration-300"
+            >
+              <div className="flex flex-col md:flex-row min-h-[260px]">
+                {/* IMAGE */}
+                <div className="relative shrink-0 w-full md:w-[320px] h-[220px] md:h-auto bg-zinc-950">
+                  <img
+                    src={car.image}
+                    alt={car.name}
+                    className="w-full h-full object-cover"
                   />
-                  <span
-                    className="mt-1 text-[18px] font-bold leading-none"
-                    style={{ color: car.rank === 1 ? "#000" : "#fff" }}
-                  >
-                    {car.rank}
-                  </span>
-                </div>
-                <div
-                  className="mx-auto h-0 w-0 border-l-[20px] border-r-[20px] border-t-[10px] border-l-transparent border-r-transparent"
-                  style={{ borderTopColor: car.rankColor }}
-                />
-              </div>
 
-              {/* Bottom Image Tag */}
-              {car.showBadgeOnImage && car.badge && (
-                <div className="absolute bottom-4 left-4">
-                  <span className="rounded-[4px] bg-black/80 px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
-                    {car.badge}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* CONTENT */}
-            <div className="flex flex-1 flex-col px-6 py-5">
-              {/* Header */}
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <h2 className="text-[28px] font-bold tracking-tight text-[#111827] font-serif">
-                      {car.name}
-                    </h2>
-                    {car.showTagOnHeader && car.tag && (
-                      <span className="rounded-[4px] bg-[#4C2D95] px-2 py-0.5 text-[11px] font-semibold text-white">
-                        {car.tag}
-                      </span>
-                    )}
-                  </div>
-                  
-                  {/* Location */}
-                  {car.location && (
-                    <div className="mt-1.5 flex items-center gap-1.5 text-[13px] text-gray-500 font-medium">
-                      <FiMapPin className="text-[14px] text-gray-400" />
-                      <span>{car.location}</span>
-                    </div>
-                  )}
-
-                  {/* Price */}
-                  {car.price && (
-                    <div className="mt-2 text-[26px] font-extrabold text-black leading-tight">
-                      {car.price}
-                    </div>
-                  )}
-                </div>
-
-                {/* Top Rated Badge */}
-                {car.showTopRatedBadge && (
-                  <div
-                    className="flex flex-col items-center justify-center rounded-full border-[3px] text-center shrink-0"
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      borderColor: "#D6A125",
-                      backgroundColor: "#FFFBF0",
-                    }}
-                  >
-                    <FaStar
-                      className="text-[12px] mb-0.5"
-                      style={{ color: "#D6A125" }}
-                    />
+                  {/* Rank Ribbon */}
+                  <div className="absolute left-4 top-0">
                     <div
-                      className="font-bold leading-none"
-                      style={{
-                        fontSize: "8.5px",
-                        color: "#D6A125",
-                      }}
+                      className="flex w-[40px] flex-col items-center py-2.5 text-black rounded-b-[4px]"
+                      style={{ backgroundColor: car.rankColor }}
                     >
-                      TOP
-                      <br />
-                      RATED
+                      <FaTrophy
+                        className="text-[14px]"
+                        style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                      />
+                      <span
+                        className="mt-1 text-[18px] font-bold leading-none"
+                        style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                      >
+                        {car.rank}
+                      </span>
                     </div>
+                    <div
+                      className="mx-auto h-0 w-0 border-l-[20px] border-r-[20px] border-t-[10px] border-l-transparent border-r-transparent"
+                      style={{ borderTopColor: car.rankColor }}
+                    />
                   </div>
-                )}
-              </div>
+                </div>
 
-              {/* Description */}
-              <p className="mt-3 text-[14px] leading-relaxed text-[#4B5563] tracking-normal">
-                {car.description}
-              </p>
-
-              {/* Stats */}
-              {car.stats && car.stats.length > 0 && (
-                <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {car.stats.map((stat, index) => {
-                    const Icon = stat.icon;
-                    return (
-                      <div key={index} className="flex items-start gap-2.5">
-                        <div className="p-1 rounded bg-gray-50">
-                          <Icon className="text-[16px] text-gray-600" />
-                        </div>
-                        <div>
-                          <div className="text-[14px] font-bold text-[#111827] tracking-tight leading-tight">
-                            {stat.value}
-                          </div>
-                          <div className="text-[11px] text-[#6B7280] font-medium tracking-normal mt-0.5">
-                            {stat.label}
-                          </div>
+                {/* CONTENT */}
+                <div className="flex flex-1 flex-col px-6 py-5 bg-[#09090b] justify-between">
+                  <div>
+                    {/* Header */}
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-12 h-12 rounded-full border border-zinc-700 bg-black flex items-center justify-center text-white font-bold text-base shrink-0 select-none">
+                        {getInitials(car.name)}
+                      </div>
+                      <div>
+                        <h2 className="text-[24px] font-bold tracking-tight text-white leading-tight">
+                          {car.name}
+                        </h2>
+                        <div className="text-[13px] text-zinc-400 font-medium mt-0.5">
+                          Channel : <span className="text-zinc-300">{car.channelName || car.name}</span>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                    </div>
 
-              {/* Meta */}
-              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[#ECECEC] pt-3 text-[12px] text-[#6B7280]">
-                {car.meta && car.meta.length > 0 ? (
-                  car.meta.map((meta, mIdx) => (
-                    <React.Fragment key={mIdx}>
-                      <span>
-                        {meta.label}:{" "}
-                        <span className="font-semibold text-[#111827] tracking-normal inline-flex items-center gap-1">
-                          {meta.value}
-                          {meta.label === "Status" && (
-                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-                          )}
+                    {/* Meta/Tags */}
+                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px]">
+                      {car.location && (
+                        <span className="flex items-center gap-1.5 text-white">
+                          <FiMapPin className="text-[#D6A125]" />
+                          {car.location}
                         </span>
-                      </span>
-                      {mIdx !== car.meta.length - 1 && <span>|</span>}
-                    </React.Fragment>
-                  ))
-                ) : (
-                  <>
-                    <span>
-                      Category:{" "}
-                      <span className="font-semibold text-[#111827] tracking-normal">
-                        {car.category}
-                      </span>
-                    </span>
-                    <span>|</span>
-                    <span>
-                      Origin:{" "}
-                      <span className="font-semibold text-[#111827] tracking-normal">
-                        {car.origin}
-                      </span>
-                    </span>
-                    <span>|</span>
-                    <span>
-                      Body Type:{" "}
-                      <span className="font-semibold text-[#111827] tracking-normal">
-                        {car.bodyType}
-                      </span>
-                    </span>
-                  </>
-                )}
-              </div>
+                      )}
+                      {car.joinDate && (
+                        <span className="flex items-center gap-1.5 text-white">
+                          <FaCalendarAlt className="text-[#D6A125]" />
+                          {car.joinDate}
+                        </span>
+                      )}
+                      {car.genre && (
+                        <span className="flex items-center gap-1.5 text-white">
+                          <FaTag className="text-[#D6A125]" />
+                          {car.genre}
+                        </span>
+                      )}
+                    </div>
 
-              {/* Links */}
-              <div className="mt-5 flex gap-8 pt-3 border-t border-gray-100">
-                {car.socialLinks && car.socialLinks.length > 0 ? (
-                  <a
-                    href={car.socialLinks[0].url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-[13px] font-bold text-[#111827] hover:text-[#D6A125] transition-colors"
+                    {/* Description */}
+                    <p className="mt-3.5 text-[14px] leading-relaxed text-zinc-400 font-normal">
+                      {car.description}
+                    </p>
+                  </div>
+
+                  <div>
+                    {/* Divider */}
+                    <div className="my-4 border-t border-zinc-800" />
+
+                    {/* Social Counters */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 py-1">
+                      {/* Total Subscribers */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded bg-[#161618] border border-zinc-800 flex items-center justify-center text-[#D6A125] shrink-0">
+                          <FaUsers className="text-lg" />
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider leading-none">Total Subscribers</div>
+                          <div className="text-[15px] font-extrabold text-white mt-1 leading-none">{stats.total}</div>
+                        </div>
+                      </div>
+
+                      {/* YouTube */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded bg-[#161618] border border-zinc-800 flex items-center justify-center shrink-0">
+                          <img src={youtubeIcon} alt="YouTube" className="w-5 h-5 object-contain" />
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider leading-none">YouTube Subscribers</div>
+                          <div className="text-[15px] font-extrabold text-white mt-1 leading-none">{stats.youtube}</div>
+                        </div>
+                      </div>
+
+                      {/* Instagram */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded bg-[#161618] border border-zinc-800 flex items-center justify-center shrink-0">
+                          <img src={instagramIcon} alt="Instagram" className="w-5 h-5 object-contain" />
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider leading-none">Instagram Followers</div>
+                          <div className="text-[15px] font-extrabold text-white mt-1 leading-none">{stats.instagram}</div>
+                        </div>
+                      </div>
+
+                      {/* Twitter / X */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded bg-[#161618] border border-zinc-800 flex items-center justify-center shrink-0">
+                          <img src={xIcon} alt="Twitter" className="w-5 h-5 object-contain" />
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider leading-none">Twitter Followers</div>
+                          <div className="text-[15px] font-extrabold text-white mt-1 leading-none">{stats.twitter}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* View Links Button */}
+                    <a
+                      href={car.socialLinks?.[0]?.url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/10 text-[#D6A125] text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded transition duration-200"
+                    >
+                      <span>View all Links</span>
+                      <FaArrowRight className="text-[11px]" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* VOTE PANEL */}
+                <div className="flex w-full md:w-[180px] shrink-0 flex-col items-center justify-between border-t md:border-t-0 md:border-l border-zinc-800 px-6 py-6 bg-zinc-950/20">
+                  <button
+                    onClick={() => onVote && onVote(car._id, car.categoryId)}
+                    disabled={isVoting}
+                    className={`h-[48px] w-full rounded-[8px] border border-[#D6A125] bg-transparent text-[14px] font-bold text-white transition hover:bg-[#D6A125]/10 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    View Channel
-                    <FaArrowRight className="text-[11px]" />
-                  </a>
-                ) : (
-                  <a
-                    href={car.listingLink || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-[13px] font-bold text-[#111827] hover:text-[#D6A125] transition-colors"
-                  >
-                    View Full Listing
-                    <FaArrowRight className="text-[11px]" />
-                  </a>
-                )}
-                <button className="flex items-center gap-1.5 text-[13px] font-bold text-[#111827] hover:text-[#D6A125] transition-colors">
-                  View Sources ({car.sourcesCount})
-                  <FaArrowRight className="text-[11px]" />
-                </button>
+                    Vote
+                  </button>
+
+                  <div className="text-center my-6 flex-1 flex flex-col justify-center">
+                    <div className="text-[32px] tracking-tight font-extrabold text-white leading-none">
+                      {car.votes}
+                    </div>
+                    <div className="text-[12px] text-zinc-500 font-medium mt-1.5 leading-none">
+                      {car.rawVotes ? car.rawVotes.toLocaleString() : "0"}
+                    </div>
+                  </div>
+
+                  <div className="w-full">
+                    {/* Gold separator line */}
+                    <div className="w-full border-t border-[#D6A125] my-4" />
+
+                    <div className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 bg-zinc-900/60 border border-zinc-800 rounded">
+                      {car.statusIcon === "trophy" ? (
+                        <FaTrophy className="text-[#D6A125] text-[11px]" />
+                      ) : (
+                        <FaStar className="text-zinc-400 text-[11px]" />
+                      )}
+                      <span
+                        className="text-[11px] font-bold uppercase tracking-wider"
+                        style={{ color: car.rank === 1 ? "#D6A125" : "#A1A1AA" }}
+                      >
+                        {car.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+          );
+        }
 
-            {/* VOTE PANEL */}
-            <div className="flex w-full md:w-[180px] shrink-0 flex-col items-center border-t md:border-t-0 md:border-l border-[#E5E7EB] px-6 py-6 bg-gray-50/30">
-              <button
-                onClick={() => onVote && onVote(car._id, car.categoryId)}
-                disabled={isVoting}
-                className={`h-[48px] w-full rounded-[8px] bg-black text-[14px] font-bold text-white transition hover:bg-gray-800 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                Vote
-              </button>
+        // ORIGINAL AUTOMOTIVE CARD
+        return (
+          <div
+            key={car._id}
+            className="overflow-hidden rounded-[12px] border border-[#E5E7EB] bg-white shadow-sm hover:shadow-md transition"
+          >
+            <div className="flex flex-col md:flex-row min-h-[260px]">
+              {/* IMAGE */}
+              <div className="relative shrink-0 w-full md:w-[360px] h-[220px] md:h-auto bg-gray-100">
+                <img
+                  src={car.image}
+                  alt={car.name}
+                  className="w-full h-full object-cover"
+                />
 
-              <div className="mt-6 text-center">
-                <div className="text-[32px] tracking-tight font-extrabold text-[#111827]">
-                  {car.votes}
-                </div>
-                <div className="text-[12px] font-bold uppercase tracking-wider text-gray-400 mt-0.5">Votes</div>
-              </div>
-
-              <div className="mt-auto w-full pt-6">
-                <div className="h-[6px] w-full rounded-full bg-[#E5E7EB]">
+                {/* Rank Ribbon */}
+                <div className="absolute left-4 top-0">
                   <div
-                    className="h-[6px] rounded-full transition-all duration-500"
-                    style={{
-                      width: car.progress,
-                      backgroundColor: car.progressColor,
-                    }}
+                    className="flex w-[40px] flex-col items-center py-2.5 text-black rounded-b-[4px]"
+                    style={{ backgroundColor: car.rankColor }}
+                  >
+                    <FaTrophy
+                      className="text-[14px]"
+                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                    />
+                    <span
+                      className="mt-1 text-[18px] font-bold leading-none"
+                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                    >
+                      {car.rank}
+                    </span>
+                  </div>
+                  <div
+                    className="mx-auto h-0 w-0 border-l-[20px] border-r-[20px] border-t-[10px] border-l-transparent border-r-transparent"
+                    style={{ borderTopColor: car.rankColor }}
                   />
                 </div>
 
-                <div
-                  className="mt-3 flex items-center justify-center gap-1.5 text-[12px] font-bold uppercase tracking-wider"
-                  style={{ color: car.statusColor }}
-                >
-                  {car.statusIcon === "trophy" ? (
-                    <FaTrophy className="text-[11px]" />
-                  ) : (
-                    <FaRegStar className="text-[11px]" />
+                {/* Bottom Image Tag */}
+                {car.showBadgeOnImage && car.badge && (
+                  <div className="absolute bottom-4 left-4">
+                    <span className="rounded-[4px] bg-black/80 px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                      {car.badge}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* CONTENT */}
+              <div className="flex flex-1 flex-col px-6 py-5">
+                {/* Header */}
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <h2 className="text-[28px] font-bold tracking-tight text-[#111827] font-serif">
+                        {car.name}
+                      </h2>
+                      {car.showTagOnHeader && car.tag && (
+                        <span className="rounded-[4px] bg-[#4C2D95] px-2 py-0.5 text-[11px] font-semibold text-white">
+                          {car.tag}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Location */}
+                    {car.location && (
+                      <div className="mt-1.5 flex items-center gap-1.5 text-[13px] text-gray-500 font-medium">
+                        <FiMapPin className="text-[14px] text-gray-400" />
+                        <span>{car.location}</span>
+                      </div>
+                    )}
+
+                    {/* Price */}
+                    {car.price && (
+                      <div className="mt-2 text-[26px] font-extrabold text-black leading-tight">
+                        {car.price}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Top Rated Badge */}
+                  {car.showTopRatedBadge && (
+                    <div
+                      className="flex flex-col items-center justify-center rounded-full border-[3px] text-center shrink-0"
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        borderColor: "#D6A125",
+                        backgroundColor: "#FFFBF0",
+                      }}
+                    >
+                      <FaStar
+                        className="text-[12px] mb-0.5"
+                        style={{ color: "#D6A125" }}
+                      />
+                      <div
+                        className="font-bold leading-none"
+                        style={{
+                          fontSize: "8.5px",
+                          color: "#D6A125",
+                        }}
+                      >
+                        TOP
+                        <br />
+                        RATED
+                      </div>
+                    </div>
                   )}
-                  <span>{car.status}</span>
+                </div>
+
+                {/* Description */}
+                <p className="mt-3 text-[14px] leading-relaxed text-[#4B5563] tracking-normal">
+                  {car.description}
+                </p>
+
+                {/* Stats */}
+                {car.stats && car.stats.length > 0 && (
+                  <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {car.stats.map((stat, index) => {
+                      const Icon = stat.icon;
+                      return (
+                        <div key={index} className="flex items-start gap-2.5">
+                          <div className="p-1 rounded bg-gray-50">
+                            <Icon className="text-[16px] text-gray-600" />
+                          </div>
+                          <div>
+                            <div className="text-[14px] font-bold text-[#111827] tracking-tight leading-tight">
+                              {stat.value}
+                            </div>
+                            <div className="text-[11px] text-[#6B7280] font-medium tracking-normal mt-0.5">
+                              {stat.label}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Meta */}
+                <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[#ECECEC] pt-3 text-[12px] text-[#6B7280]">
+                  {car.meta && car.meta.length > 0 ? (
+                    car.meta.map((meta, mIdx) => (
+                      <React.Fragment key={mIdx}>
+                        <span>
+                          {meta.label}:{" "}
+                          <span className="font-semibold text-[#111827] tracking-normal inline-flex items-center gap-1">
+                            {meta.value}
+                            {meta.label === "Status" && (
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                            )}
+                          </span>
+                        </span>
+                        {mIdx !== car.meta.length - 1 && <span>|</span>}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <>
+                      <span>
+                        Category:{" "}
+                        <span className="font-semibold text-[#111827] tracking-normal">
+                          {car.category}
+                        </span>
+                      </span>
+                      <span>|</span>
+                      <span>
+                        Origin:{" "}
+                        <span className="font-semibold text-[#111827] tracking-normal">
+                          {car.origin}
+                        </span>
+                      </span>
+                      <span>|</span>
+                      <span>
+                        Body Type:{" "}
+                        <span className="font-semibold text-[#111827] tracking-normal">
+                          {car.bodyType}
+                        </span>
+                      </span>
+                    </>
+                  )}
+                </div>
+
+                {/* Links */}
+                <div className="mt-5 flex gap-8 pt-3 border-t border-gray-100">
+                  {car.socialLinks && car.socialLinks.length > 0 ? (
+                    <a
+                      href={car.socialLinks[0].url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-[13px] font-bold text-[#111827] hover:text-[#D6A125] transition-colors"
+                    >
+                      View Channel
+                      <FaArrowRight className="text-[11px]" />
+                    </a>
+                  ) : (
+                    <a
+                      href={car.listingLink || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-[13px] font-bold text-[#111827] hover:text-[#D6A125] transition-colors"
+                    >
+                      View Full Listing
+                      <FaArrowRight className="text-[11px]" />
+                    </a>
+                  )}
+                  <button className="flex items-center gap-1.5 text-[13px] font-bold text-[#111827] hover:text-[#D6A125] transition-colors">
+                    View Sources ({car.sourcesCount})
+                    <FaArrowRight className="text-[11px]" />
+                  </button>
+                </div>
+              </div>
+
+              {/* VOTE PANEL */}
+              <div className="flex w-full md:w-[180px] shrink-0 flex-col items-center border-t md:border-t-0 md:border-l border-[#E5E7EB] px-6 py-6 bg-gray-50/30">
+                <button
+                  onClick={() => onVote && onVote(car._id, car.categoryId)}
+                  disabled={isVoting}
+                  className={`h-[48px] w-full rounded-[8px] bg-black text-[14px] font-bold text-white transition hover:bg-gray-800 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  Vote
+                </button>
+
+                <div className="mt-6 text-center">
+                  <div className="text-[32px] tracking-tight font-extrabold text-[#111827]">
+                    {car.votes}
+                  </div>
+                  <div className="text-[12px] font-bold uppercase tracking-wider text-gray-400 mt-0.5">Votes</div>
+                </div>
+
+                <div className="mt-auto w-full pt-6">
+                  <div className="h-[6px] w-full rounded-full bg-[#E5E7EB]">
+                    <div
+                      className="h-[6px] rounded-full transition-all duration-500"
+                      style={{
+                        width: car.progress,
+                        backgroundColor: car.progressColor,
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    className="mt-3 flex items-center justify-center gap-1.5 text-[12px] font-bold uppercase tracking-wider"
+                    style={{ color: car.statusColor }}
+                  >
+                    {car.statusIcon === "trophy" ? (
+                      <FaTrophy className="text-[11px]" />
+                    ) : (
+                      <FaRegStar className="text-[11px]" />
+                    )}
+                    <span>{car.status}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

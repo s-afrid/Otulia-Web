@@ -250,10 +250,11 @@ function RankingHome() {
         price: isContentCreator 
           ? (keyDetails.subscribers ? `${keyDetails.subscribers} Subscribers` : "")
           : (keyDetails.price || ""),
-        location: nominee.brand || "",
+        location: isContentCreator ? (keyDetails.location || nominee.brand || "") : (nominee.brand || ""),
         showBadgeOnImage: nominee.rank === 1 && isEstate,
         badge: isEstate ? "NEW FOR 2026" : "",
         votes: formattedVotes,
+        rawVotes: votesVal,
         sourcesCount: (nominee.sources || []).length.toString(),
         showTagOnHeader: nominee.rank === 1,
         tag: nominee.rank === 1 ? (isEstate ? "New for 2026" : "TOP RATED") : "",
@@ -266,6 +267,12 @@ function RankingHome() {
         _id: nominee._id,
         categoryId: activeCategory._id,
         socialLinks,
+        isContentCreator,
+        channelName: nominee.channelName || nominee.name,
+        joinDate: keyDetails.joinDate || "",
+        genre: keyDetails.category || "",
+        views: keyDetails.views || "",
+        subscribers: keyDetails.subscribers || "",
       };
     });
   };
