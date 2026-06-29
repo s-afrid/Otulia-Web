@@ -280,6 +280,11 @@ function RankingHome() {
         bathrooms: keyDetails.bathroom || "",
         propertyType: keyDetails.propertyType || "Estate",
         availabilityStatus: keyDetails.availabilityStatus || "For Sale",
+        isCar: activeCategory.type === "Cars" || activeCategory.type === "cars" || activeCategory.type === "Automotive" || (!isEstate && !isContentCreator),
+        engine: keyDetails.engine || "",
+        power: keyDetails.power || "",
+        topSpeed: keyDetails.topSpeed || "",
+        acceleration: keyDetails.acceleration || "",
       };
     });
   };
