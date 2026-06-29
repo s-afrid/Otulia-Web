@@ -125,9 +125,9 @@ function RankingCard({ cars, onVote, isVoting }) {
           return (
             <div
               key={car._id}
-              className="overflow-hidden rounded-[12px] border border-zinc-800 bg-black text-white shadow-sm hover:shadow-md transition duration-300"
+              className="overflow-hidden rounded-[12px] border border-zinc-800 bg-black text-white shadow-sm hover:shadow-md transition duration-300 md:h-[295px]"
             >
-              <div className="flex flex-col md:flex-row min-h-[260px]">
+              <div className="flex flex-col md:flex-row md:h-[295px]">
                 {/* IMAGE */}
                 <div className="relative shrink-0 w-full md:w-[530px] h-[220px] md:h-[295px] bg-zinc-950">
                   <img
@@ -170,34 +170,34 @@ function RankingCard({ cars, onVote, isVoting }) {
                 </div>
 
                 {/* CONTENT */}
-                <div className="flex flex-1 flex-col px-6 py-5 bg-black justify-between">
+                <div className="flex flex-1 flex-col px-6 pt-3.5 pb-3 bg-black justify-between md:h-[295px]">
                   <div>
                     {/* Header */}
                     <div>
-                      <h2 className="text-[26px] font-bold tracking-tight text-white leading-tight">
+                      <h2 className="text-[21px] font-bold tracking-tight text-white leading-tight">
                         {car.name === "Beverly Hills Ultra Estate" ? "Beverly Hills Ultra Luxury" : car.name}
                       </h2>
-                      <div className="text-[14px] text-zinc-500 font-medium mt-1">
+                      <div className="text-[13px] text-zinc-500 font-medium mt-0.5">
                         {displayLocation}
                       </div>
                     </div>
 
                     {/* Price */}
                     {displayPrice && (
-                      <div className="mt-2 text-[26px] font-bold text-white">
+                      <div className="mt-1 text-[21px] font-bold text-white leading-none">
                         {displayPrice}
                       </div>
                     )}
 
                     {/* Description */}
-                    <p className="mt-3.5 text-[14px] leading-relaxed text-zinc-500 font-normal">
+                    <p className="mt-1.5 text-[12.5px] leading-snug text-zinc-500 font-normal line-clamp-2">
                       {car.description}
                     </p>
                   </div>
 
                   <div>
                     {/* Combined Stats and Meta Block */}
-                    <div className="border border-zinc-800 rounded-[8px] bg-zinc-950/20 px-4 py-3 mt-4">
+                    <div className="border border-zinc-800 rounded-[8px] bg-zinc-950/20 px-4 py-2 mt-2.5">
                       {/* Estate Metrics Counters */}
                       <div className="flex items-center justify-between py-1">
                         {/* Living Area */}
@@ -260,7 +260,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                       </div>
 
                       {/* Divider */}
-                      <div className="border-t border-zinc-800 my-2" />
+                      <div className="border-t border-zinc-800 my-1.5" />
 
                       {/* Meta information */}
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-zinc-500 font-medium">
@@ -284,7 +284,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                       href={car.listingLink || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/5 text-[#D6A125] text-[13px] font-bold px-4 py-2.5 rounded-[4px] transition duration-200 w-full"
+                      className="mt-2.5 flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/5 text-[#D6A125] text-[12px] font-bold px-4 py-1.5 rounded-[4px] transition duration-200 w-full"
                     >
                       <span>View all Links</span>
                       <FaArrowRight className="text-[11px]" />
