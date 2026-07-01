@@ -46,6 +46,87 @@ router.get("/categories", async (req, res) => {
 });
 
 /**
+ * GET SEARCH SUGGESTIONS FOR CATEGORIES AND NOMINEES
+ */
+router.get("/search", async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q || q.trim() === '') {
+            return res.json({ categories: [], nominees: [] });
+        }
+        
+        // Escape regex special chars to prevent issues
+        const escapedQ = q.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const regex = new RegExp(escapedQ, 'i');
+        
+        // Find matching active categories
+        const categories = await RankingCategory.find({
+            status: "Active",
+            $or: [
+                { title: { $regex: regex } },
+                { shortDescription: { $regex: regex } }
+            ]
+        }).limit(5);
+        
+        // Find matching nominees across all models
+        const nomineePromises = Object.entries(nomineeModelMap).map(async ([modelName, Model]) => {
+            return Model.find({
+                $or: [
+                    { name: { $regex: regex } },
+                    { brand: { $regex: regex } },
+                    { model: { $regex: regex } },
+                    { description: { $regex: regex } }
+                ]
+            })
+            .populate('category')
+            .limit(5);
+        });
+        
+        const nomineeResults = await Promise.all(nomineePromises);
+        const allNominees = nomineeResults.flat();
+        
+        // Filter out nominee records that don't have a valid active category
+        const activeNominees = allNominees.filter(nominee => nominee.category && nominee.category.status === 'Active');
+        
+        // Map category items
+        const mappedCategories = categories.map(cat => ({
+            id: cat._id,
+            title: cat.title,
+            slug: cat.slug,
+            type: cat.type,
+            image: cat.categoryImage || cat.bannerImage,
+            shortDescription: cat.shortDescription,
+            url: `/ranking/${cat.type.toLowerCase().replace(/\s+/g, "").replace(/contentcreator/i, "contentcreators")}/${cat.slug}`
+        }));
+        
+        // Map nominee items
+        const mappedNominees = activeNominees.map(nominee => {
+            const cat = nominee.category;
+            const categoryUrlParam = cat.type.toLowerCase().replace(/\s+/g, "").replace(/contentcreator/i, "contentcreators");
+            return {
+                id: nominee._id,
+                name: nominee.name,
+                brand: nominee.brand,
+                model: nominee.model,
+                image: nominee.image,
+                description: nominee.description || nominee.detail,
+                categoryTitle: cat.title,
+                categorySlug: cat.slug,
+                url: `/ranking/${categoryUrlParam}/${cat.slug}`
+            };
+        }).slice(0, 8); // limit final nominees to 8
+        
+        res.json({
+            categories: mappedCategories,
+            nominees: mappedNominees
+        });
+    } catch (err) {
+        console.error("Rankings search error:", err);
+        res.status(500).json({ error: "SEARCH_FAILED" });
+    }
+});
+
+/**
  * GET A SINGLE RANKING CATEGORY BY SLUG (WITH NOMINEES SORTED BY VOTES DESC)
  */
 router.get("/category/:slug", async (req, res) => {

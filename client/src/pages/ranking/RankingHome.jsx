@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FaBolt, FaHome, FaTree, FaBed, FaBath, FaUsers, FaEye, FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
 import { LuTimerReset } from "react-icons/lu";
 import { MdOutlineSpeed } from "react-icons/md";
@@ -16,6 +16,7 @@ import { rankings as staticRankings } from "../../data/rankings";
 function RankingHome() {
   const { category, slug } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, token } = useAuth();
 
   const [categories, setCategories] = useState([]);
@@ -116,6 +117,29 @@ function RankingHome() {
       setLoading(false);
     }
   }, [slug]);
+
+  // Scroll to nominee if hash exists in URL
+  useEffect(() => {
+    if (!loading && activeCategory && location.hash) {
+      const targetId = location.hash.substring(1);
+      if (targetId) {
+        // Wait a short moment to ensure cards are fully rendered
+        const timer = setTimeout(() => {
+          const element = document.getElementById(targetId);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+            
+            // Add premium visual flash highlight effect to the target card
+            element.classList.add("ring-2", "ring-[#D6A125]", "scale-[1.01]", "z-10");
+            setTimeout(() => {
+              element.classList.remove("ring-2", "ring-[#D6A125]", "scale-[1.01]", "z-10");
+            }, 2500);
+          }
+        }, 400);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [loading, activeCategory, location.hash]);
 
   // Handle voting action
   const handleVote = async (nomineeId, catId) => {

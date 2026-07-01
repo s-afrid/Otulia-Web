@@ -125,6 +125,7 @@ function RankingCard({ cars, onVote, isVoting }) {
           return (
             <div
               key={car._id}
+              id={car._id}
               className="overflow-hidden rounded-[12px] border border-zinc-800 bg-black text-white shadow-sm hover:shadow-md transition duration-300 md:h-[295px]"
             >
               <div className="flex flex-col md:flex-row md:h-[295px]">
@@ -365,6 +366,7 @@ function RankingCard({ cars, onVote, isVoting }) {
           return (
             <div
               key={car._id}
+              id={car._id}
               className="overflow-hidden rounded-[12px] border border-zinc-800 bg-[#09090b] text-white shadow-sm hover:shadow-md transition duration-300"
             >
               <div className="flex flex-col md:flex-row min-h-[260px]">
@@ -561,6 +563,7 @@ function RankingCard({ cars, onVote, isVoting }) {
         return (
           <div
             key={car._id}
+            id={car._id}
             className="overflow-hidden rounded-[12px] border border-zinc-800 bg-black text-white shadow-sm hover:shadow-md transition duration-300 md:h-[295px]"
           >
             <div className="flex flex-col md:flex-row md:h-[295px]">

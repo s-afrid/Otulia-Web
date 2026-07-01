@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, NavLink } from "react-router-dom";
 import Cart from "../navbar/Cart";
 import Search from "../navbar/Search";
+import RankingSearch from "./RankingSearch";
 import LoginButton from "../navbar/LoginButton";
 import ProfileDropdown from "../navbar/Profile_dropdown";
 import NavbarMobile from "../Navbar_mobile";
@@ -61,6 +62,11 @@ px-10
   return (
     <nav className={navClasses} style={navStyle}>
       <div className="w-full flex items-center justify-between relative">
+        {/* Left side: Search Bar */}
+        <div className="hidden md:block w-[240px] lg:w-[320px] z-10">
+          <RankingSearch />
+        </div>
+
         {/* 2. DESKTOP MENU - Center Column (Absolute centered) */}
         <ul className="hidden lg:flex items-center justify-center gap-[clamp(16px,3vw,48px)] absolute left-1/2 -translate-x-1/2 w-auto">
           <li>
