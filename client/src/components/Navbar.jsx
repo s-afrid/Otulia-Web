@@ -79,7 +79,7 @@ const Navbar = ({
               RANKINGS
             </NavLink>
           </li>
-          <li>
+          {/* <li>
             <NavLink
               to="/shop"
               className={({ isActive }) =>
@@ -88,7 +88,7 @@ const Navbar = ({
             >
               SHOP ALL
             </NavLink>
-          </li>
+          </li> */}
           <li>
             <NavLink
               to="/rent"
