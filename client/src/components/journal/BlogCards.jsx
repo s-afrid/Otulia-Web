@@ -4,8 +4,7 @@ const blogPosts = [
     tag: "Ownership Guides",
     category: "Cars",
     title: "The True Cost of Owning a Luxury Car: Beyond the Purchase Price",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/Savills-hero-375x250.webp",
+    image: "../../src/assets/journal/true_cost.png",
     author: "Otulia Editorial Team",
     date: "30 June",
     readTime: "9",
@@ -17,8 +16,7 @@ const blogPosts = [
     category: "Cars",
     title:
       "How to Verify a Luxury Car's History and Authenticity Before You Buy",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/Dakota-Johnson-375x250.webp",
+    image: "../../src/assets/journal/verify.png",
     author: "Otulia Editorial Team",
     date: "26 June",
     readTime: "8",
@@ -29,8 +27,7 @@ const blogPosts = [
     tag: "Seller Playbook",
     category: "Real Estate",
     title: "How to Stage a Luxury Home to Sell Faster (and for More)",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/Selena-Gomez-hero-375x250.webp",
+    image: "../../src/assets/journal/sell_faster.png",
     author: "Otulia Editorial Team",
     date: "30 June",
     readTime: "8",
@@ -42,8 +39,7 @@ const blogPosts = [
     category: "Real Estate",
     title:
       "Luxury Real Estate Trends 2026: What Buyers and Sellers Need to Know",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/Evohe-hero-375x250.webp",
+    image: "../../src/assets/journal/trends.png",
     author: "Otulia Editorial Team",
     date: "25 June",
     readTime: "8",
@@ -55,8 +51,7 @@ const blogPosts = [
     category: "Real Estate",
     title:
       "Jumbo Loans Explained: What Buyers Need to Know Before Financing a Luxury Home",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/2200xxs-1-1-380x214.webp",
+    image: "../../src/assets/journal/jumbo.png",
     author: "Otulia Editorial Team",
     date: "30 June",
     readTime: "8",
@@ -68,8 +63,7 @@ const blogPosts = [
     category: "Real Estate",
     title:
       "Which Exotic Cars Hold Their Value Best? A Guide to Investment-Grade Vehicles",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/02/First-team_hero-375x250.webp",
+    image: "../../src/assets/journal/exotic_car.png",
     author: "Otulia Editorial Team",
     date: "30 June",
     readTime: "8",
@@ -128,7 +122,7 @@ function BlogCard({ post }) {
         <img
           src={post.image}
           alt={post.title}
-          className="w-full h-[190px] object-cover group-hover:scale-[1.03] transition-transform duration-500"
+          className="w-full h-[190px] object-cover object-top group-hover:scale-[1.03] transition-transform duration-500"
           loading="lazy"
         />
       </div>
@@ -193,11 +187,11 @@ export default function BlogCards() {
         </div>
 
         {/* Load More */}
-        <div className="flex justify-center mt-14">
+        {/* <div className="flex justify-center mt-14">
           <button className="px-10 py-3 border border-black text-xs font-semibold uppercase tracking-widest text-black hover:bg-black hover:text-white transition-colors duration-200">
             Load More
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );
