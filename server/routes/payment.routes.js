@@ -215,13 +215,26 @@ router.post('/capture-order', authMiddleware, async (req, res) => {
 router.post(['/activate-with-coupon', '/direct-activate'], authMiddleware, async (req, res) => {
     const { plan, couponCode } = req.body;
     
-    if (!plan || !couponCode) {
+    const isFreePlan = plan === 'Free' || plan === 'Freemium';
+
+    if (!isFreePlan && (!plan || !couponCode)) {
         return res.status(400).json({ error: "Plan and coupon code are required" });
     }
 
     try {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ error: "User not found" });
+
+        if (isFreePlan) {
+            user.plan = 'Freemium';
+            user.planExpiresAt = null;
+            await user.save();
+
+            // Update assets
+            await updateUserAssetsAgent(user._id, { plan: 'Freemium' });
+
+            return res.json({ success: true, message: "Successfully activated Free plan", user });
+        }
 
         // Validate coupon
         const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });

@@ -89,12 +89,18 @@ const PricingSection = () => {
     intent: "capture",
   };
 
+  const isPlanActive = (planName) => {
+    if (user?.plan === planName) return true;
+    if (planName === "Free" && user?.plan === "Freemium") return true;
+    return false;
+  };
+
   const handlePlanSelection = (plan) => {
     if (!isAuthenticated) {
       navigate("/login", { state: { from: "/pricing" } });
       return;
     }
-    if (user?.plan === plan.name) return;
+    if (isPlanActive(plan.name)) return;
     if (plan.name === "Free") {
       handleDirectActivation(plan);
       return;
@@ -142,7 +148,8 @@ const PricingSection = () => {
   };
 
   const handleDirectActivation = async (planOverride = null) => {
-    const planToActivate = planOverride || selectedPlan;
+    // Fallback to selectedPlan if planOverride is not a plan object (e.g., if called via onClick event)
+    const planToActivate = (planOverride && typeof planOverride === "object" && 'name' in planOverride) ? planOverride : selectedPlan;
     setIsActivating(true);
     try {
       const response = await fetch("/api/payment/direct-activate", {
@@ -360,7 +367,7 @@ const PricingSection = () => {
               </p>
               <button
                 onClick={() => handlePlanSelection(plan)}
-                disabled={loadingPlanId === plan.id || user?.plan === plan.name}
+                disabled={loadingPlanId === plan.id || isPlanActive(plan.name)}
                 className={`
                   w-full py-3.5 rounded-full font-extrabold text-[11px] tracking-[0.2em] uppercase transition-all duration-200
                   ${
@@ -368,10 +375,10 @@ const PricingSection = () => {
                       ? "border-2 border-[#b18b24] text-[#b18b24] hover:bg-[#b18b24] hover:text-white"
                       : "bg-[#b18b24] text-white hover:brightness-110"
                   }
-                  ${user?.plan === plan.name ? "opacity-50 cursor-default" : "active:scale-95"}
+                  ${isPlanActive(plan.name) ? "opacity-50 cursor-default" : "active:scale-95"}
                 `}
               >
-                {user?.plan === plan.name ? "Active" : "Get Started"}
+                {isPlanActive(plan.name) ? "Active" : "Get Started"}
               </button>
             </div>
           </div>
@@ -509,7 +516,7 @@ const PricingSection = () => {
                 {selectedPlan.name === "Premium Basic" &&
                 appliedCoupon?.code === "FREE100" ? (
                   <button
-                    onClick={handleDirectActivation}
+                    onClick={() => handleDirectActivation()}
                     disabled={isActivating}
                     className="w-full py-4 bg-[#b18b24] text-white font-extrabold rounded-full uppercase tracking-widest text-[12px] hover:brightness-110 transition-all active:scale-95 disabled:opacity-50"
                   >
