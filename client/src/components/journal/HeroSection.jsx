@@ -1,21 +1,21 @@
 const heroArticles = [
   {
     id: 1,
-    tag: "Local Knowledge",
-    category: "Real Estate",
-    title: "The Unveiled Elegance of Arezzo: A True Tuscan Sanctuary",
+    tag: "Ownership Guides",
+    category: "Cars",
+    title: "The True Cost of Owning a Luxury Car: Beyond the Purchase Price",
     excerpt:
-      "From Renaissance art and medieval hilltop villages to rolling vineyards and sun-drenched olive groves, the province of Arezzo offers an authentic, unhurried way of life in one of Italy's most captivating landscapes.",
+      "A six-figure price tag is the easiest number to plan for. The harder numbers — depreciation, insurance, and maintenance — are the ones that decide whether a luxury car is affordable to keep, not just to buy.",
     image:
       "https://www.jamesedition.com/stories/wp-content/uploads/2026/05/Best-Realty_hero-1240x826.webp",
     featured: true,
   },
   {
     id: 2,
-    tag: "Handpicked by JE",
-    category: "Real Estate",
+    tag: "Buyer Protection",
+    category: "Cars",
     title:
-      "Belgravia Townhouse on Wilton Crescent: Six Floors of Exceptional Living",
+      "How to Verify a Luxury Car's History and Authenticity Before You Buy",
     excerpt:
       "Masterfully renovated and furnished to a remarkable standard, this seven-bedroom residence on one of London's most prestigious crescents delivers exceptional design, wellness amenities, and an unrivaled Belgravia address.",
     image:
@@ -24,12 +24,11 @@ const heroArticles = [
   },
   {
     id: 3,
-    tag: "Market Trends",
+    tag: "Seller Playbook",
     category: "Real Estate",
-    title:
-      "Lake Maggiore: Northern Italy's Rising Luxury Destination for International Buyers",
+    title: "How to Stage a Luxury Home to Sell Faster",
     excerpt:
-      "As global attention shifts from saturated lake markets, Lake Maggiore offers a unique combination of heritage architecture, strategic positioning, and long-term investment potential across its shores.",
+      "Staged luxury homes priced at $2 million-plus sell up to 45% faster than the market average. The investment is almost always small relative to the gain — but where and how you stage matters as much as whether you stage at all.",
     image:
       "https://www.jamesedition.com/stories/wp-content/uploads/2026/05/BHHS-Palazzo_hero-1240x826.webp",
     featured: false,
@@ -65,7 +64,10 @@ export default function HeroSection() {
         {/* Two-column layout: large featured + stacked side */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
           {/* Featured (large left) */}
-          <a href="#" className="group block">
+          <a
+            href="/journal/the-true-cost-of-owning-a-luxurycar"
+            className="group block"
+          >
             <div className="overflow-hidden rounded-sm">
               <img
                 src={featured.image}
@@ -102,7 +104,7 @@ export default function HeroSection() {
             {sideArticles.map((article, idx) => (
               <a
                 key={article.id}
-                href="#"
+                href="/journal/how-to-verify-a-luxury-car-history-and-authenticity-before-you-buy"
                 className={`group flex gap-5 ${
                   idx < sideArticles.length - 1
                     ? "pb-8 border-b border-gray-100"

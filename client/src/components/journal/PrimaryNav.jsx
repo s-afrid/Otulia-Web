@@ -31,9 +31,11 @@ export default function PrimaryNavbar() {
 
           {/* Center title */}
           <div className="hidden md:block absolute left-1/2 -translate-x-1/2">
-            <span className="text-2xl font-serif font-normal tracking-tight text-gray-900">
-              The Journal
-            </span>
+            <NavLink to={"/journal"}>
+              <span className="text-2xl font-serif font-normal tracking-tight text-gray-900">
+                The Journal
+              </span>
+            </NavLink>
           </div>
 
           {/* Right — Advertise link + mobile hamburger */}

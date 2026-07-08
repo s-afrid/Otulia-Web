@@ -1,20 +1,20 @@
 import React from "react";
 import HeroSection from "../../components/journal/HeroSection";
 import BlogCards from "../../components/journal/BlogCards";
-// import NavbarJournal from "../../components/journal/NavbarJournal";
 import PrimaryNavbar from "../../components/journal/PrimaryNav";
 import SecondaryNavbar from "../../components/journal/SecondaryNav";
+import JumboLoanGuideArticle from "../../components/journal/Stories/StoryFive";
 
-function JournalHome() {
+function JournalStoryFive() {
   return (
     <div className="min-h-screen bg-white font-sans antialiased">
       {/* <NavbarJournal hideSearch={true} /> */}
       <PrimaryNavbar />
       <SecondaryNavbar />
-      <HeroSection />
-      <BlogCards />
+
+      <JumboLoanGuideArticle />
     </div>
   );
 }
 
-export default JournalHome;
+export default JournalStoryFive;

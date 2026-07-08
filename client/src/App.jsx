@@ -16,6 +16,14 @@ const Asset = lazy(() => import("./pages/Asset"));
 const Blogs = lazy(() => import("./pages/Blogs"));
 const Ranking = lazy(() => import("./pages/ranking/RankingHome"));
 const Journal = lazy(() => import("./pages/journal/JournalHome"));
+const JournalStoryOne = lazy(() => import("./pages/journal/JournalStoryOne"));
+const JournalStoryTwo = lazy(() => import("./pages/journal/JournalStoryTwo"));
+const JournalStoryThree = lazy(
+  () => import("./pages/journal/JournalStoryThree"),
+);
+const JournalStoryFour = lazy(() => import("./pages/journal/JournalStoryFour"));
+const JournalStoryFive = lazy(() => import("./pages/journal/JournalStoryFive"));
+const JournalStorySix = lazy(() => import("./pages/journal/JournalStorySix"));
 
 // Company pages
 const About = lazy(() => import("./pages/company_pages/About"));
@@ -253,6 +261,30 @@ function App() {
           <Route path="/ranking/:category" element={<RankingHome />} />
           <Route path="/ranking/:category/:slug" element={<RankingHome />} />
           <Route path="/journal" element={<JournalHome />} />
+          <Route
+            path="/journal/the-true-cost-of-owning-a-luxurycar"
+            element={<JournalStoryOne />}
+          />
+          <Route
+            path="/journal/how-to-verify-a-luxury-car-history-and-authenticity-before-you-buy"
+            element={<JournalStoryTwo />}
+          />
+          <Route
+            path="/journal/how-to-stage-a-luxury-home-to-sell-faster"
+            element={<JournalStoryThree />}
+          />
+          <Route
+            path="/journal/luxury-real-estate-trends-2026-what-buyers-and-sellers-need-to-know"
+            element={<JournalStoryFour />}
+          />
+          <Route
+            path="/journal/jumbo-loans-explained-what-buyers-need-to-know-before-financing-a-luxury-home"
+            element={<JournalStoryFive />}
+          />
+          <Route
+            path="/journal/which-exotic-cars-hold-their-value-best-a-guide-to-investment-grade-vehicles"
+            element={<JournalStorySix />}
+          />
 
           {/* Auth routes */}
           <Route path="/login" element={<LoginPage />} />
