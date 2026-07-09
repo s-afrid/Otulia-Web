@@ -1,74 +1,73 @@
 const blogPosts = [
   {
     id: 1,
-    tag: "Handpicked by JE",
-    category: "Real Estate",
-    title:
-      "Six Senses Comporta Brings Branded Wellness Residences to Portugal's Elite Atlantic Coast",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/Savills-hero-375x250.webp",
-    author: "Sandie Braeckman",
-    date: "10 June",
-    readTime: "6",
+    tag: "Ownership Guides",
+    category: "Cars",
+    title: "The True Cost of Owning a Luxury Car: Beyond the Purchase Price",
+    image: "../../src/assets/journal/true_cost.png",
+    author: "Otulia Editorial Team",
+    date: "30 June",
+    readTime: "9",
+    link: "/journal/the-true-cost-of-owning-a-luxurycar",
   },
   {
     id: 2,
-    tag: "Unique Living",
-    category: "Real Estate",
+    tag: "Buyer Protection",
+    category: "Cars",
     title:
-      "Dakota Johnson Parts With Carl Maston's Midcentury Masterpiece Above Chateau Marmont for $6 Million",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/Dakota-Johnson-375x250.webp",
-    author: "Sandie Braeckman",
-    date: "10 June",
-    readTime: "5",
+      "How to Verify a Luxury Car's History and Authenticity Before You Buy",
+    image: "../../src/assets/journal/verify.png",
+    author: "Otulia Editorial Team",
+    date: "26 June",
+    readTime: "8",
+    link: "/journal/how-to-verify-a-luxury-car-history-and-authenticity-before-you-buy",
   },
   {
     id: 3,
-    tag: "Unique Living",
+    tag: "Seller Playbook",
     category: "Real Estate",
-    title: "Inside Selena Gomez's Encino Compound, Once Built for Tom Petty",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/Selena-Gomez-hero-375x250.webp",
-    author: "Sandie Braeckman",
-    date: "10 June",
-    readTime: "4",
+    title: "How to Stage a Luxury Home to Sell Faster (and for More)",
+    image: "../../src/assets/journal/sell_faster.png",
+    author: "Otulia Editorial Team",
+    date: "30 June",
+    readTime: "8",
+    link: "/journal/how-to-stage-a-luxury-home-to-sell-faster",
   },
   {
     id: 4,
-    tag: "Handpicked by JE",
+    tag: "Market Intelligence",
     category: "Real Estate",
     title:
-      "Villa Infinity Mare: A Cliffside Coastal Masterpiece Overlooking the Mediterranean",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/Evohe-hero-375x250.webp",
-    author: "Sandie Braeckman",
-    date: "10 June",
-    readTime: "5",
+      "Luxury Real Estate Trends 2026: What Buyers and Sellers Need to Know",
+    image: "../../src/assets/journal/trends.png",
+    author: "Otulia Editorial Team",
+    date: "25 June",
+    readTime: "8",
+    link: "/journal/luxury-real-estate-trends-2026-what-buyers-and-sellers-need-to-know",
   },
   {
     id: 5,
-    tag: null,
+    tag: "Financing Guide",
     category: "Real Estate",
     title:
-      "Selling Marbella: A Market Guide for Luxury Real Estate Professionals",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/06/2200xxs-1-1-380x214.webp",
-    author: "Andrew Bateman",
-    date: "10 June",
-    readTime: "2",
+      "Jumbo Loans Explained: What Buyers Need to Know Before Financing a Luxury Home",
+    image: "../../src/assets/journal/jumbo.png",
+    author: "Otulia Editorial Team",
+    date: "30 June",
+    readTime: "8",
+    link: "/journal/jumbo-loans-explained-what-buyers-need-to-know-before-financing-a-luxury-home",
   },
   {
     id: 6,
-    tag: null,
+    tag: "Collector Insight",
     category: "Real Estate",
     title:
-      "Everything Is Brand: The Agent's Playbook for Visibility, Trust & Growth in the Age of AI",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/02/First-team_hero-375x250.webp",
-    author: "Andrew Bateman",
-    date: "10 June",
-    readTime: "2",
+      "Which Exotic Cars Hold Their Value Best? A Guide to Investment-Grade Vehicles",
+    image: "../../src/assets/journal/exotic_car.png",
+    author: "Otulia Editorial Team",
+    date: "30 June",
+    readTime: "8",
+    link: "/journal/which-exotic-cars-hold-their-value-best-a-guide-to-investment-grade-vehicles",
   },
   {
     id: 7,
@@ -78,7 +77,7 @@ const blogPosts = [
       "Marketing to the Top 5%: How to Find, Reach and Win the Luxury Buyer",
     image:
       "https://www.jamesedition.com/stories/wp-content/uploads/2026/05/2200xxs-8-375x250.webp",
-    author: "Andrew Bateman",
+    author: "Otulia Editorial Team",
     date: "10 June",
     readTime: "< 1",
   },
@@ -90,7 +89,7 @@ const blogPosts = [
       "The Bermuda Rebirth: A Professional's Guide to Tax-Neutral Residency and Luxury Real Estate",
     image:
       "https://www.jamesedition.com/stories/wp-content/uploads/2026/05/2200xxs-9-375x250.webp",
-    author: "Andrew Bateman",
+    author: "Otulia Editorial Team",
     date: "9 June",
     readTime: "< 1",
   },
@@ -117,13 +116,13 @@ function ClockIcon() {
 
 function BlogCard({ post }) {
   return (
-    <a href="#" className="group flex flex-col bg-white">
+    <a href={post.link} className="group flex flex-col bg-white">
       {/* Image */}
       <div className="overflow-hidden rounded-sm mb-4">
         <img
           src={post.image}
           alt={post.title}
-          className="w-full h-[190px] object-cover group-hover:scale-[1.03] transition-transform duration-500"
+          className="w-full h-[190px] object-cover object-top group-hover:scale-[1.03] transition-transform duration-500"
           loading="lazy"
         />
       </div>
@@ -188,11 +187,11 @@ export default function BlogCards() {
         </div>
 
         {/* Load More */}
-        <div className="flex justify-center mt-14">
+        {/* <div className="flex justify-center mt-14">
           <button className="px-10 py-3 border border-black text-xs font-semibold uppercase tracking-widest text-black hover:bg-black hover:text-white transition-colors duration-200">
             Load More
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

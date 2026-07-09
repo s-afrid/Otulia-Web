@@ -1,57 +1,37 @@
 const heroArticles = [
   {
     id: 1,
-    tag: "Local Knowledge",
-    category: "Real Estate",
-    title: "The Unveiled Elegance of Arezzo: A True Tuscan Sanctuary",
+    tag: "Ownership Guides",
+    category: "Cars",
+    title: "The True Cost of Owning a Luxury Car: Beyond the Purchase Price",
     excerpt:
-      "From Renaissance art and medieval hilltop villages to rolling vineyards and sun-drenched olive groves, the province of Arezzo offers an authentic, unhurried way of life in one of Italy's most captivating landscapes.",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/05/Best-Realty_hero-1240x826.webp",
+      "A six-figure price tag is the easiest number to plan for. The harder numbers — depreciation, insurance, and maintenance — are the ones that decide whether a luxury car is affordable to keep, not just to buy.",
+    image: "../../src/assets/journal/true_cost.png",
     featured: true,
   },
   {
     id: 2,
-    tag: "Handpicked by JE",
-    category: "Real Estate",
+    tag: "Buyer Protection",
+    category: "Cars",
     title:
-      "Belgravia Townhouse on Wilton Crescent: Six Floors of Exceptional Living",
+      "How to Verify a Luxury Car's History and Authenticity Before You Buy",
     excerpt:
       "Masterfully renovated and furnished to a remarkable standard, this seven-bedroom residence on one of London's most prestigious crescents delivers exceptional design, wellness amenities, and an unrivaled Belgravia address.",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/04/Sothebys-Dubai-UK_hero-1240x826.webp",
+    image: "../../src/assets/journal/verify.png",
     featured: false,
+    link: "/journal/how-to-verify-a-luxury-car-history-and-authenticity-before-you-buy",
   },
   {
     id: 3,
-    tag: "Market Trends",
+    tag: "Seller Playbook",
     category: "Real Estate",
-    title:
-      "Lake Maggiore: Northern Italy's Rising Luxury Destination for International Buyers",
+    title: "How to Stage a Luxury Home to Sell Faster",
     excerpt:
-      "As global attention shifts from saturated lake markets, Lake Maggiore offers a unique combination of heritage architecture, strategic positioning, and long-term investment potential across its shores.",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/05/BHHS-Palazzo_hero-1240x826.webp",
+      "Staged luxury homes priced at $2 million-plus sell up to 45% faster than the market average. The investment is almost always small relative to the gain — but where and how you stage matters as much as whether you stage at all.",
+    image: "./../src/assets/journal/sell_faster.png",
     featured: false,
+    link: "/journal/how-to-stage-a-luxury-home-to-sell-faster",
   },
-];
-
-const categoryTabs = [
-  "Real Estate",
-  "Cars",
-  "Yachts",
-  "Watches",
-  "Lifestyle",
-  "Guides",
-];
-
-const tagPills = [
-  "Unique Living",
-  "Handpicked by JE",
-  "Market Trends",
-  "Local Knowledge",
-  "The Insider",
-  "Business Lens",
 ];
 
 export default function HeroSection() {
@@ -65,12 +45,15 @@ export default function HeroSection() {
         {/* Two-column layout: large featured + stacked side */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
           {/* Featured (large left) */}
-          <a href="#" className="group block">
+          <a
+            href="/journal/the-true-cost-of-owning-a-luxurycar"
+            className="group block"
+          >
             <div className="overflow-hidden rounded-sm">
               <img
                 src={featured.image}
                 alt={featured.title}
-                className="w-full h-[480px] object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                className="w-full h-[600px] object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
               />
             </div>
             <div className="mt-5">
@@ -102,7 +85,7 @@ export default function HeroSection() {
             {sideArticles.map((article, idx) => (
               <a
                 key={article.id}
-                href="#"
+                href={article.link}
                 className={`group flex gap-5 ${
                   idx < sideArticles.length - 1
                     ? "pb-8 border-b border-gray-100"
@@ -113,7 +96,7 @@ export default function HeroSection() {
                   <img
                     src={article.image}
                     alt={article.title}
-                    className="w-[140px] h-[100px] object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                    className="w-[140px] h-[100px] object-cover object-top group-hover:scale-[1.03] transition-transform duration-500"
                   />
                 </div>
                 <div className="flex flex-col justify-center">
@@ -139,17 +122,19 @@ export default function HeroSection() {
             ))}
 
             {/* Extra featured card */}
-            <a href="#" className="group block pt-2">
+            <a
+              href="/journal/luxury-real-estate-trends-2026-what-buyers-and-sellers-need-to-know"
+              className="group block pt-2"
+            >
               <div className="overflow-hidden rounded-sm mb-4">
                 <img
-                  src="https://www.jamesedition.com/stories/wp-content/uploads/2026/03/Celebtiry-homes_hero-1240x826.webp"
-                  alt="Celebrity Homes"
-                  className="w-full h-[170px] object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                  src="../../src/assets/journal/trends.png"
+                  className="w-full h-[170px] object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
                 />
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[#c8a96e] montserrat">
-                  Unique Living
+                  Market Intelligence
                 </span>
                 <span className="text-gray-300 text-xs">·</span>
                 <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 montserrat">
@@ -162,8 +147,8 @@ export default function HeroSection() {
                   fontFamily: "'Kaisei Decol', serif",
                 }}
               >
-                From 1920s Paris to Modern Malibu: Star-Linked Homes Define a
-                Century of Cinematic Luxury
+                Luxury Real Estate Trends 2026: What Buyers and Sellers Need to
+                Know
               </h3>
             </a>
           </div>

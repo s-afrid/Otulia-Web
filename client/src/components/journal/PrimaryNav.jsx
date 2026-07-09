@@ -31,15 +31,17 @@ export default function PrimaryNavbar() {
 
           {/* Center title */}
           <div className="hidden md:block absolute left-1/2 -translate-x-1/2">
-            <span className="text-2xl font-serif font-normal tracking-tight text-gray-900">
-              The Journal
-            </span>
+            <NavLink to={"/journal"}>
+              <span className="text-2xl font-serif font-normal tracking-tight text-gray-900">
+                The Journal
+              </span>
+            </NavLink>
           </div>
 
           {/* Right — Advertise link + mobile hamburger */}
           <div className="flex items-center gap-6">
             <a
-              href="#"
+              href="/pricing"
               className="hidden md:block text-xs font-medium tracking-widest text-gray-600 hover:text-gray-900 transition-colors uppercase"
             >
               Advertise With Us
