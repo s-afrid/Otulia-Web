@@ -340,7 +340,7 @@ export default function LuxuryHomeStagingArticle() {
   const [openFaq, setOpenFaq] = useState(0);
 
   return (
-    <div className="min-h-screen w-full bg-[#F7F4EC] text-[#1C1A17]">
+    <div className="min-h-screen w-full  text-[#1C1A17]">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=Inter:wght@400;500;600&display=swap');
         .font-display { font-family: 'Fraunces', serif; }

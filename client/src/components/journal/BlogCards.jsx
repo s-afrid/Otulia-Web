@@ -1,10 +1,18 @@
+import { Link } from "react-router-dom";
+import true_cost from "/src/assets/journal/true_cost.png";
+import verify from "/src/assets/journal/verify.png";
+import sell_faster from "/src/assets/journal/sell_faster.png";
+import trends from "/src/assets/journal/trends.png";
+import jumbo from "/src/assets/journal/jumbo.png";
+import exotic_car from "/src/assets/journal/exotic_car.png";
+
 const blogPosts = [
   {
     id: 1,
     tag: "Ownership Guides",
     category: "Cars",
     title: "The True Cost of Owning a Luxury Car: Beyond the Purchase Price",
-    image: "../../src/assets/journal/true_cost.png",
+    image: true_cost,
     author: "Otulia Editorial Team",
     date: "30 June",
     readTime: "9",
@@ -16,7 +24,7 @@ const blogPosts = [
     category: "Cars",
     title:
       "How to Verify a Luxury Car's History and Authenticity Before You Buy",
-    image: "../../src/assets/journal/verify.png",
+    image: verify,
     author: "Otulia Editorial Team",
     date: "26 June",
     readTime: "8",
@@ -27,7 +35,7 @@ const blogPosts = [
     tag: "Seller Playbook",
     category: "Real Estate",
     title: "How to Stage a Luxury Home to Sell Faster (and for More)",
-    image: "../../src/assets/journal/sell_faster.png",
+    image: sell_faster,
     author: "Otulia Editorial Team",
     date: "30 June",
     readTime: "8",
@@ -39,7 +47,7 @@ const blogPosts = [
     category: "Real Estate",
     title:
       "Luxury Real Estate Trends 2026: What Buyers and Sellers Need to Know",
-    image: "../../src/assets/journal/trends.png",
+    image: trends,
     author: "Otulia Editorial Team",
     date: "25 June",
     readTime: "8",
@@ -51,7 +59,7 @@ const blogPosts = [
     category: "Real Estate",
     title:
       "Jumbo Loans Explained: What Buyers Need to Know Before Financing a Luxury Home",
-    image: "../../src/assets/journal/jumbo.png",
+    image: jumbo,
     author: "Otulia Editorial Team",
     date: "30 June",
     readTime: "8",
@@ -60,10 +68,10 @@ const blogPosts = [
   {
     id: 6,
     tag: "Collector Insight",
-    category: "Real Estate",
+    category: "Cars",
     title:
       "Which Exotic Cars Hold Their Value Best? A Guide to Investment-Grade Vehicles",
-    image: "../../src/assets/journal/exotic_car.png",
+    image: exotic_car,
     author: "Otulia Editorial Team",
     date: "30 June",
     readTime: "8",
@@ -115,8 +123,11 @@ function ClockIcon() {
 }
 
 function BlogCard({ post }) {
+  const CardWrapper = post.link ? Link : "div";
+  const wrapperProps = post.link ? { to: post.link } : {};
+
   return (
-    <a href={post.link} className="group flex flex-col bg-white">
+    <CardWrapper {...wrapperProps} className="group flex flex-col bg-white">
       {/* Image */}
       <div className="overflow-hidden rounded-sm mb-4">
         <img
@@ -162,11 +173,15 @@ function BlogCard({ post }) {
           {post.readTime} min.
         </span>
       </div>
-    </a>
+    </CardWrapper>
   );
 }
 
-export default function BlogCards() {
+export default function BlogCards({ activeCategory = null }) {
+  const filteredPosts = activeCategory
+    ? blogPosts.filter((post) => post.category === activeCategory)
+    : blogPosts;
+
   return (
     <section className="w-full bg-white">
       <div className="mx-auto px-25 pb-16">
@@ -174,17 +189,23 @@ export default function BlogCards() {
         <div className="flex items-center gap-4 mb-8">
           <div className="h-px flex-1 bg-gray-100" />
           <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 px-2">
-            Latest Stories
+            {activeCategory ? `${activeCategory} Stories` : "Latest Stories"}
           </span>
           <div className="h-px flex-1 bg-gray-100" />
         </div>
 
         {/* Cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-          {blogPosts.map((post) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
-        </div>
+        {filteredPosts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+            {filteredPosts.map((post) => (
+              <BlogCard key={post.id} post={post} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-gray-400 text-sm py-16">
+            No stories in this category yet — check back soon.
+          </p>
+        )}
 
         {/* Load More */}
         {/* <div className="flex justify-center mt-14">

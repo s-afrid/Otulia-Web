@@ -132,6 +132,8 @@ import welcomeSound from "./assets/sounds/theme.mp3";
 import RankingHome from "./pages/ranking/RankingHome";
 import RankingCategoryPage from "./pages/ranking/RankingCategoryPage";
 import JournalHome from "./pages/journal/JournalHome";
+import JournalArticlePage from "./pages/journal/JournalArticlePage";
+import JournalLayout from "./layouts/JournalLayout";
 
 // Simple fallback while lazy components load
 const PageLoader = () => <div className="w-full h-screen bg-white"></div>;
@@ -260,8 +262,11 @@ function App() {
           <Route path="/ranking" element={<RankingHome />} />
           <Route path="/ranking/:category" element={<RankingHome />} />
           <Route path="/ranking/:category/:slug" element={<RankingHome />} />
-          <Route path="/journal" element={<JournalHome />} />
-          <Route
+          <Route element={<JournalLayout />}>
+            <Route path="/journal" element={<JournalHome />} />
+            <Route path="/journal/:slug" element={<JournalArticlePage />} />
+          </Route>
+          {/* <Route
             path="/journal/the-true-cost-of-owning-a-luxurycar"
             element={<JournalStoryOne />}
           />
@@ -284,7 +289,7 @@ function App() {
           <Route
             path="/journal/which-exotic-cars-hold-their-value-best-a-guide-to-investment-grade-vehicles"
             element={<JournalStorySix />}
-          />
+          /> */}
 
           {/* Auth routes */}
           <Route path="/login" element={<LoginPage />} />
