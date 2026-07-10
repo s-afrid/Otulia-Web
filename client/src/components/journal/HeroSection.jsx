@@ -1,3 +1,9 @@
+import true_cost from "/src/assets/journal/true_cost.png";
+import verify from "/src/assets/journal/verify.png";
+import sell_faster from "/src/assets/journal/sell_faster.png";
+import trends from "/src/assets/journal/trends.png";
+import { Link } from "react-router-dom";
+
 const heroArticles = [
   {
     id: 1,
@@ -6,7 +12,7 @@ const heroArticles = [
     title: "The True Cost of Owning a Luxury Car: Beyond the Purchase Price",
     excerpt:
       "A six-figure price tag is the easiest number to plan for. The harder numbers — depreciation, insurance, and maintenance — are the ones that decide whether a luxury car is affordable to keep, not just to buy.",
-    image: "../../src/assets/journal/true_cost.png",
+    image: true_cost,
     featured: true,
   },
   {
@@ -17,7 +23,7 @@ const heroArticles = [
       "How to Verify a Luxury Car's History and Authenticity Before You Buy",
     excerpt:
       "Masterfully renovated and furnished to a remarkable standard, this seven-bedroom residence on one of London's most prestigious crescents delivers exceptional design, wellness amenities, and an unrivaled Belgravia address.",
-    image: "../../src/assets/journal/verify.png",
+    image: verify,
     featured: false,
     link: "/journal/how-to-verify-a-luxury-car-history-and-authenticity-before-you-buy",
   },
@@ -28,7 +34,7 @@ const heroArticles = [
     title: "How to Stage a Luxury Home to Sell Faster",
     excerpt:
       "Staged luxury homes priced at $2 million-plus sell up to 45% faster than the market average. The investment is almost always small relative to the gain — but where and how you stage matters as much as whether you stage at all.",
-    image: "./../src/assets/journal/sell_faster.png",
+    image: sell_faster,
     featured: false,
     link: "/journal/how-to-stage-a-luxury-home-to-sell-faster",
   },
@@ -45,8 +51,8 @@ export default function HeroSection() {
         {/* Two-column layout: large featured + stacked side */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
           {/* Featured (large left) */}
-          <a
-            href="/journal/the-true-cost-of-owning-a-luxurycar"
+          <Link
+            to="/journal/the-true-cost-of-owning-a-luxurycar"
             className="group block"
           >
             <div className="overflow-hidden rounded-sm">
@@ -78,14 +84,14 @@ export default function HeroSection() {
                 {featured.excerpt}
               </p>
             </div>
-          </a>
+          </Link>
 
           {/* Side stack */}
           <div className="flex flex-col gap-8">
             {sideArticles.map((article, idx) => (
-              <a
+              <Link
                 key={article.id}
-                href={article.link}
+                to={article.link}
                 className={`group flex gap-5 ${
                   idx < sideArticles.length - 1
                     ? "pb-8 border-b border-gray-100"
@@ -118,17 +124,17 @@ export default function HeroSection() {
                     {article.title}
                   </h3>
                 </div>
-              </a>
+              </Link>
             ))}
 
             {/* Extra featured card */}
-            <a
-              href="/journal/luxury-real-estate-trends-2026-what-buyers-and-sellers-need-to-know"
+            <Link
+              to="/journal/luxury-real-estate-trends-2026-what-buyers-and-sellers-need-to-know"
               className="group block pt-2"
             >
               <div className="overflow-hidden rounded-sm mb-4">
                 <img
-                  src="../../src/assets/journal/trends.png"
+                  src={trends}
                   className="w-full h-[170px] object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
                 />
               </div>
@@ -150,7 +156,7 @@ export default function HeroSection() {
                 Luxury Real Estate Trends 2026: What Buyers and Sellers Need to
                 Know
               </h3>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

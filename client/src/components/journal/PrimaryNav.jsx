@@ -73,7 +73,7 @@ export default function PrimaryNavbar() {
         </div>
 
         {/* Category links — desktop */}
-        <div className="hidden md:flex items-center justify-center gap-8 mt-4">
+        {/* <div className="hidden md:flex items-center justify-center gap-8 mt-4">
           {primaryLinks.map((link) => (
             <a
               key={link.label}
@@ -83,7 +83,7 @@ export default function PrimaryNavbar() {
               {link.label}
             </a>
           ))}
-        </div>
+        </div> */}
 
         {/* Mobile dropdown */}
         {menuOpen && (
