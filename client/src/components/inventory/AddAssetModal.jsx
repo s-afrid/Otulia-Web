@@ -151,7 +151,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             // If we're uploading a new cover, we treat it as starting fresh for images
             // But we keep the gallery if it was already there or being uploaded
         }
-        else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 14));
+        // else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 14));
+        else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 49));
         else if (type === 'document') setDocuments(prev => [...prev, ...files].slice(0, 5));
     };
 
@@ -1390,7 +1391,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     </div>
                                                     <div>
                                                         <h4 className="text-sm font-bold text-gray-900">Gallery</h4>
-                                                        <p className="text-xs text-gray-400">Additional interior and detail shots (Max 14)</p>
+                                                        {/* <p className="text-xs text-gray-400">Additional interior and detail shots (Max 14)</p> */}
+                                                        <p className="text-xs text-gray-400">Additional interior and detail shots (Max 49)</p>
                                                     </div>
                                                 </div>
 
