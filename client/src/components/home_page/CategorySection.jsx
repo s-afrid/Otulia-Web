@@ -1,9 +1,12 @@
 import React from 'react'
 import numberWithCommas from '../../modules/numberwithcomma'
-import { Navigate, useNavigate } from 'react-router-dom'
+// import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useSnackbar } from '../../contexts/SnackbarContext'
 
 const CategorySection = () => {
     const navigate = useNavigate();
+    const { showSnackbar } = useSnackbar();
 
     const categories = [
         {
@@ -55,7 +58,18 @@ const CategorySection = () => {
             {/* Grid */}
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2'>
                 {categories.map((cat) => (
-                    <div onClick={() => { navigate(`/category/${cat.navigate}`) }} key={cat.id} className='relative group overflow-hidden aspect-[3/4] cursor-pointer'>
+                    // <div onClick={() => { navigate(`/category/${cat.navigate}`) }} key={cat.id} className='relative group overflow-hidden aspect-[3/4] cursor-pointer'>
+                    <div 
+                        onClick={() => { 
+                            if (cat.navigate === 'yachts' || cat.navigate === 'bikes') {
+                                showSnackbar("COMING SOON");
+                            } else {
+                                navigate(`/category/${cat.navigate}`);
+                            }
+                        }} 
+                        key={cat.id} 
+                        className='relative group overflow-hidden aspect-[3/4] cursor-pointer'
+                    >
                         <img
                             src={cat.image}
                             alt={cat.alt}

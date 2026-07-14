@@ -6,13 +6,16 @@ import LoginButton from '../navbar/LoginButton';
 import Category_Navbar_Mobile from './Category_Navbar_Mobile';
 import { IoMdMenu } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
+// import { useAuth } from '../../contexts/AuthContext'; 
 import { useAuth } from '../../contexts/AuthContext'; 
+import { useSnackbar } from '../../contexts/SnackbarContext'; 
 
 const Category_Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
     const { isAuthenticated, loading } = useAuth(); 
+    const { showSnackbar } = useSnackbar();
     
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -59,9 +62,26 @@ const Category_Navbar = () => {
                 {/* Center Section: Navigation Links */}
                 <div className='hidden lg:flex flex-[2] items-center justify-center gap-8 md:gap-14'>
                     {navLinks.map(link => (
+                        /* <NavLink 
+                            key={link.to}
+                            to={link.to} 
+                            className={({ isActive }) => `
+                                relative py-2 text-[12px] font-medium tracking-[0.2em] uppercase montserrat transition-all duration-300
+                                ${isActive ? (isScrolled ? 'text-black after:w-full' : 'text-white after:w-full') : (isScrolled ? 'text-gray-400 hover:text-black after:w-0' : 'text-white/60 hover:text-white after:w-0')}
+                                after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:bg-current after:transition-all after:duration-300
+                            `}
+                        >
+                            {link.text}
+                        </NavLink> */
                         <NavLink 
                             key={link.to}
                             to={link.to} 
+                            onClick={(e) => {
+                                if (link.to.includes('yachts') || link.to.includes('bikes')) {
+                                    e.preventDefault();
+                                    showSnackbar("COMING SOON");
+                                }
+                            }}
                             className={({ isActive }) => `
                                 relative py-2 text-[12px] font-medium tracking-[0.2em] uppercase montserrat transition-all duration-300
                                 ${isActive ? (isScrolled ? 'text-black after:w-full' : 'text-white after:w-full') : (isScrolled ? 'text-gray-400 hover:text-black after:w-0' : 'text-white/60 hover:text-white after:w-0')}

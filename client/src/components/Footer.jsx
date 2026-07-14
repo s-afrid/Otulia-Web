@@ -1,8 +1,10 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSnackbar } from '../contexts/SnackbarContext'
 
 const Footer = () => {
     const navigate = useNavigate()
+    const { showSnackbar } = useSnackbar()
     const discover = [
         {
             id:1,
@@ -87,7 +89,21 @@ const Footer = () => {
                     <h3 className="text-sm font-bold text-black uppercase tracking-widest">Discover</h3>
                     <ul className="flex flex-col gap-3">
                         {discover.map(item => (
-                            <li key={item.id}><a href={`${item.navigate}`} className="text-sm text-gray-500 hover:text-black">{item.name}</a></li>
+                            // <li key={item.id}><a href={`${item.navigate}`} className="text-sm text-gray-500 hover:text-black">{item.name}</a></li>
+                            <li key={item.id}>
+                                <a 
+                                    href={`${item.navigate}`} 
+                                    onClick={(e) => {
+                                        if (item.navigate.includes('yachts') || item.navigate.includes('bikes')) {
+                                            e.preventDefault();
+                                            showSnackbar("COMING SOON");
+                                        }
+                                    }} 
+                                    className="text-sm text-gray-500 hover:text-black"
+                                >
+                                    {item.name}
+                                </a>
+                            </li>
                         ))}
                     </ul>
                 </div>

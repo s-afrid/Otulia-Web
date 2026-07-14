@@ -2,11 +2,13 @@ import React from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import LoginButton from '../navbar/LoginButton';
 import { useAuth } from '../../contexts/AuthContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 import UserURL from '../../assets/user.png';
 import { FiGrid, FiLogOut, FiShoppingCart } from 'react-icons/fi';
 
 const Category_Navbar_Mobile = ({ navLinks }) => {
   const { isAuthenticated, loading, user, logout } = useAuth();
+  const { showSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -21,9 +23,22 @@ const Category_Navbar_Mobile = ({ navLinks }) => {
         {/* Navigation Links */}
         <div className='flex flex-col gap-3 mt-5'>
           {navLinks.map(link => (
+            /* <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) => isActive ? 'bg-black text-white rounded-2xl py-2 px-3 montserrat w-fit' : 'py-2 px-3 montserrat'}
+            >
+              {link.text}
+            </NavLink> */
             <NavLink
               key={link.to}
               to={link.to}
+              onClick={(e) => {
+                if (link.to.includes('yachts') || link.to.includes('bikes')) {
+                  e.preventDefault();
+                  showSnackbar("COMING SOON");
+                }
+              }}
               className={({ isActive }) => isActive ? 'bg-black text-white rounded-2xl py-2 px-3 montserrat w-fit' : 'py-2 px-3 montserrat'}
             >
               {link.text}

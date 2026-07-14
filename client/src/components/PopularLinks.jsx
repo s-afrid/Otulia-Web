@@ -1,6 +1,8 @@
 import React from 'react'
+import { useSnackbar } from '../contexts/SnackbarContext'
 
 const PopularLinks = () => {
+    const { showSnackbar } = useSnackbar();
     const linkGroups = [
         {
             title: 'Cities & Regions',
@@ -73,8 +75,22 @@ const PopularLinks = () => {
                         <h3 className="text-sm font-bold text-black uppercase tracking-wider">{group.title}</h3>
                         <ul className="flex flex-col gap-2">
                             {group.links.map((link, lIdx) => (
+                                // <li key={lIdx}>
+                                //     <a href={link.path} className="text-sm text-gray-500 hover:text-black transition-colors">
+                                //         {link.name}
+                                //     </a>
+                                // </li>
                                 <li key={lIdx}>
-                                    <a href={link.path} className="text-sm text-gray-500 hover:text-black transition-colors">
+                                    <a 
+                                        href={link.path} 
+                                        onClick={(e) => {
+                                            if (link.path.includes('yachts') || link.path.includes('bikes')) {
+                                                e.preventDefault();
+                                                showSnackbar("COMING SOON");
+                                            }
+                                        }}
+                                        className="text-sm text-gray-500 hover:text-black transition-colors"
+                                    >
                                         {link.name}
                                     </a>
                                 </li>
