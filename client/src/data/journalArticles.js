@@ -4,6 +4,10 @@ import StageHomeArticle from "../components/journal/Stories/StoryThree";
 import RealEstateTrendsArticle from "../components/journal/Stories/StoryFour";
 import JumboLoanGuideArticle from "../components/journal/Stories/StoryFive";
 import ExoticCarsArticle from "../components/journal/Stories/StorySix";
+import McLarenSupercar from "../components/journal/Stories/StorySeven";
+import Ferrari12CilindriManualeGallery from "../components/journal/Stories/StoryEight";
+import BieberNYCCondoArticle from "../components/journal/Stories/StoryNine";
+import DjokovicPropertyPortfolioArticle from "../components/journal/Stories/StoryTen";
 
 export const journalArticles = {
   "the-true-cost-of-owning-a-luxurycar": {
@@ -32,4 +36,21 @@ export const journalArticles = {
       component: ExoticCarsArticle,
       title: "Which Exotic Cars Hold Their Value Best",
     },
+  "mclaren-just-unveiled-its-first-new-supercar-since-2024": {
+    component: McLarenSupercar,
+    title: "McLaren Just Unveiled Its First New Supercar Since 2024",
+  },
+  "photos-2027-ferrari-12cilindri-manuale": {
+    component: Ferrari12CilindriManualeGallery,
+    title: "The 2027 Ferrari 12Cilindri Manuale in Photos",
+  },
+  "justin-hailey-bieber-buy-west-village-condo": {
+    component: BieberNYCCondoArticle,
+    title:
+      "Justin and Hailey Bieber Just Bought a $12 Million N.Y.C. Pied-à-Terre",
+  },
+  "novak-djokovic-property-portfolio": {
+    component: DjokovicPropertyPortfolioArticle,
+    title: "Inside Novak Djokovic’s Global Property Portfolio",
+  },
 };

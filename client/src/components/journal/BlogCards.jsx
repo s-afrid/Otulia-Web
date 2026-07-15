@@ -5,6 +5,10 @@ import sell_faster from "/src/assets/journal/sell_faster.png";
 import trends from "/src/assets/journal/trends.png";
 import jumbo from "/src/assets/journal/jumbo.png";
 import exotic_car from "/src/assets/journal/exotic_car.png";
+import bieber from "/src/assets/journal/blog_nine/hero.png";
+import mclaren from "/src/assets/journal/blog_seven/hero.png";
+import ferrari from "/src/assets/journal/blog_eight/hero.png";
+import novak from "/src/assets/journal/blog_ten/hero.png";
 
 const blogPosts = [
   {
@@ -79,27 +83,48 @@ const blogPosts = [
   },
   {
     id: 7,
-    tag: null,
-    category: "Real Estate",
-    title:
-      "Marketing to the Top 5%: How to Find, Reach and Win the Luxury Buyer",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/05/2200xxs-8-375x250.webp",
+    tag: "Ownership Guides",
+    category: "Cars",
+    title: "McLaren Just Unveiled Its First New Supercar Since 2024",
+    image: mclaren,
     author: "Otulia Editorial Team",
     date: "10 June",
     readTime: "< 1",
+    link: "/journal/mclaren-just-unveiled-its-first-new-supercar-since-2024",
   },
   {
     id: 8,
-    tag: null,
+    tag: "Showcase",
+    category: "Cars",
+    title: "The 2027 Ferrari 12Cilindri Manuale in Photos",
+    image: ferrari,
+    author: "Otulia Editorial Team",
+    date: "14 July",
+    readTime: "< 1",
+    link: "/journal/photos-2027-ferrari-12cilindri-manuale",
+  },
+  {
+    id: 9,
+    tag: "Real Estate News",
     category: "Real Estate",
     title:
-      "The Bermuda Rebirth: A Professional's Guide to Tax-Neutral Residency and Luxury Real Estate",
-    image:
-      "https://www.jamesedition.com/stories/wp-content/uploads/2026/05/2200xxs-9-375x250.webp",
+      "Justin and Hailey Bieber Just Bought a $12 Million N.Y.C. Pied-à-Terre",
+    image: bieber,
     author: "Otulia Editorial Team",
-    date: "9 June",
-    readTime: "< 1",
+    date: "14 July",
+    readTime: "<4",
+    link: "/journal/justin-hailey-bieber-buy-west-village-condo",
+  },
+  {
+    id: 10,
+    tag: "Celebrity Real Estate",
+    category: "Real Estate",
+    title: "Inside Novak Djokovic’s Global Property Portfolio",
+    image: novak,
+    author: "Otulia Editorial Team",
+    date: "14 July",
+    readTime: "<10",
+    link: "/journal/novak-djokovic-property-portfolio",
   },
 ];
 
