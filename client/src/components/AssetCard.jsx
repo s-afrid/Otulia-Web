@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import numberWithCommas from "../modules/numberwithcomma";
 import { useAuth } from "../contexts/AuthContext";
-import { FiHeart, FiMapPin, FiPlay } from "react-icons/fi";
+import { FiHeart, FiMapPin, FiPlay, FiTrash2 } from "react-icons/fi";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 
 const AssetCard = ({ item }) => {
@@ -126,6 +126,34 @@ const AssetCard = ({ item }) => {
     }
   };
 
+  const handleDeleteClick = async (e) => {
+    e.stopPropagation();
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete this asset: "${item.title}"? This action cannot be undone.`
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`/api/listings/${item._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete the asset");
+      }
+
+      alert("Asset deleted successfully.");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting asset:", error);
+      alert(error.message || "An error occurred while deleting the asset.");
+    }
+  };
+
   return (
     <div
       onClick={() => navigate(`/asset/${category}/${item._id}`)}
@@ -204,6 +232,25 @@ const AssetCard = ({ item }) => {
             style={{ width: "2.7cqi", height: "2.7cqi" /* w-4 h-4 (16px) */ }}
           />
         </button>
+
+        {/* FLOATING DELETE BUTTON FOR ADMIN */}
+        {user?.role === "admin" && (
+          <button
+            onClick={handleDeleteClick}
+            className="absolute z-10 bg-white/90 hover:bg-red-600 group/btn rounded-full shadow-md transition-all duration-300 transform hover:scale-110 flex items-center justify-center border border-red-200"
+            style={{
+              bottom: "2.7cqi",
+              right: "2.7cqi",
+              padding: "1.5cqi",
+            }}
+            title="Delete Asset"
+          >
+            <FiTrash2
+              className="text-red-600 group-hover/btn:text-white transition-colors duration-200"
+              style={{ width: "3cqi", height: "3cqi" }}
+            />
+          </button>
+        )}
       </div>
 
       {/* CONTENT AREA */}

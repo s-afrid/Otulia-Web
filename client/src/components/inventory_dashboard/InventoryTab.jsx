@@ -314,13 +314,17 @@ const InventoryTab = ({
                   >
                     <FiEdit2 className="text-[13px] text-[#667085]" /> Edit
                   </button>
-                  <div className="w-px self-stretch bg-[#E9ECF1] my-1 shrink-0" />
-                  <button
-                    onClick={() => confirmDelete(item.id)}
-                    className="flex-1 flex items-center justify-center gap-1.5 text-[11px] font-medium text-[#374151] hover:bg-[#F9FAFB] transition-colors py-1.5 inter"
-                  >
-                    <FiTrash2 className="text-[13px] text-[#667085]" /> Delete
-                  </button>
+                  {user?.role === 'admin' && (
+                    <>
+                      <div className="w-px self-stretch bg-[#E9ECF1] my-1 shrink-0" />
+                      <button
+                        onClick={() => confirmDelete(item.id)}
+                        className="flex-1 flex items-center justify-center gap-1.5 text-[11px] font-medium text-[#374151] hover:bg-[#F9FAFB] transition-colors py-1.5 inter"
+                      >
+                        <FiTrash2 className="text-[13px] text-[#667085]" /> Delete
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

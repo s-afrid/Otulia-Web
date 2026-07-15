@@ -364,16 +364,18 @@ const MyListings = () => {
                   >
                     <FiEdit2 className="text-lg" />
                   </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      confirmDelete(item._id);
-                    }}
-                    className="bg-white/90 backdrop-blur-md text-red-600 p-2.5 rounded-full shadow-lg hover:bg-red-600 hover:text-white transition-all transform hover:scale-110"
-                    title="Delete Listing"
-                  >
-                    <FiTrash2 className="text-lg" />
-                  </button>
+                  {user?.role === 'admin' && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        confirmDelete(item._id);
+                      }}
+                      className="bg-white/90 backdrop-blur-md text-red-600 p-2.5 rounded-full shadow-lg hover:bg-red-600 hover:text-white transition-all transform hover:scale-110"
+                      title="Delete Listing"
+                    >
+                      <FiTrash2 className="text-lg" />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

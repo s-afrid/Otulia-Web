@@ -1091,34 +1091,78 @@ router.delete('/:id', authMiddleware, async (req, res) => {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ error: "User not found" });
 
-        const listingEntry = user.myListings.find(entry => entry.item && entry.item.toString() === id);
-        if (!listingEntry) {
-            console.warn(`[Delete Listing] Unauthorized/Invalid ID for user ${user.email}`);
-            return res.status(404).json({ error: "Listing not found in your profile." });
+        // Ensure user is admin
+        if (user.role !== 'admin') {
+            console.warn(`[Delete Listing] Access denied for user ${user.email} (Not Admin)`);
+            return res.status(403).json({ error: "Only admins are allowed to delete assets." });
         }
 
-        const modelName = listingEntry.itemModel || 'Listing';
-        let Model;
-        let categoryName;
-        switch (modelName) {
-            case 'CarAsset': Model = CarAsset; categoryName = 'Car'; break;
-            case 'BikeAsset': Model = BikeAsset; categoryName = 'Bike'; break;
-            case 'YachtAsset': Model = YachtAsset; categoryName = 'Yacht'; break;
-            case 'EstateAsset': Model = EstateAsset; categoryName = 'Estate'; break;
-            default: Model = Listing; categoryName = 'General';
-        }
+        // Search for the listing across all models
+        let Model = null;
+        let categoryName = '';
+        let listing = null;
 
-        const listing = await Model.findById(id);
+        listing = await CarAsset.findById(id);
         if (listing) {
-            console.log(`[Delete Listing] Purging Cloudinary folder for asset ${id}...`);
-            const folderPath = `${categoryName}/${id}`;
-            await deleteFolderFromCloudinary(folderPath);
-            await Model.findByIdAndDelete(id);
+            Model = CarAsset;
+            categoryName = 'Car';
         }
 
-        await User.findByIdAndUpdate(req.user.id, { $pull: { myListings: { item: id } } });
+        if (!listing) {
+            listing = await BikeAsset.findById(id);
+            if (listing) {
+                Model = BikeAsset;
+                categoryName = 'Bike';
+            }
+        }
 
-        console.log(`[Delete Listing] SUCCESS: Asset ${id} removed for ${user.email}`);
+        if (!listing) {
+            listing = await YachtAsset.findById(id);
+            if (listing) {
+                Model = YachtAsset;
+                categoryName = 'Yacht';
+            }
+        }
+
+        if (!listing) {
+            listing = await EstateAsset.findById(id);
+            if (listing) {
+                Model = EstateAsset;
+                categoryName = 'Estate';
+            }
+        }
+
+        if (!listing) {
+            listing = await Listing.findById(id);
+            if (listing) {
+                Model = Listing;
+                categoryName = 'General';
+            }
+        }
+
+        if (!listing) {
+            return res.status(404).json({ error: "Listing not found" });
+        }
+
+        // Delete from Cloudinary folder if exists
+        console.log(`[Delete Listing] Purging Cloudinary folder for asset ${id}...`);
+        const folderPath = `${categoryName}/${id}`;
+        await deleteFolderFromCloudinary(folderPath);
+        
+        // Delete the document
+        await Model.findByIdAndDelete(id);
+
+        // Remove from myListings and favorites of any user
+        await User.updateMany(
+            { "myListings.item": id },
+            { $pull: { myListings: { item: id } } }
+        );
+        await User.updateMany(
+            { "favorites.assetId": id },
+            { $pull: { favorites: { assetId: id } } }
+        );
+
+        console.log(`[Delete Listing] SUCCESS: Asset ${id} removed by admin ${user.email}`);
         res.json({ message: "Listing deleted successfully" });
     } catch (error) {
         console.error("[Delete Listing] ERROR:", error.message);
