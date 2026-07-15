@@ -364,7 +364,7 @@ const MyListings = () => {
                   >
                     <FiEdit2 className="text-lg" />
                   </button>
-                  {user?.role === 'admin' && (
+                  {(user?.role === 'admin' || user?.myListings?.some(entry => (entry.item?._id || entry.item) === item._id)) && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

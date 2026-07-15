@@ -1091,10 +1091,13 @@ router.delete('/:id', authMiddleware, async (req, res) => {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ error: "User not found" });
 
-        // Ensure user is admin
-        if (user.role !== 'admin') {
-            console.warn(`[Delete Listing] Access denied for user ${user.email} (Not Admin)`);
-            return res.status(403).json({ error: "Only admins are allowed to delete assets." });
+        const isAdmin = user.role === 'admin';
+        const isOwner = user.myListings.some(entry => entry.item && entry.item.toString() === id);
+
+        // Ensure user is admin or the owner who listed the asset
+        if (!isAdmin && !isOwner) {
+            console.warn(`[Delete Listing] Access denied for user ${user.email} (Not Admin and Not Owner)`);
+            return res.status(403).json({ error: "Only admins or the owner who listed the asset are allowed to delete it." });
         }
 
         // Search for the listing across all models

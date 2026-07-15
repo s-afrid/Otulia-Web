@@ -314,7 +314,7 @@ const InventoryTab = ({
                   >
                     <FiEdit2 className="text-[13px] text-[#667085]" /> Edit
                   </button>
-                  {user?.role === 'admin' && (
+                  {(user?.role === 'admin' || user?.myListings?.some(entry => (entry.item?._id || entry.item) === item.id)) && (
                     <>
                       <div className="w-px self-stretch bg-[#E9ECF1] my-1 shrink-0" />
                       <button
