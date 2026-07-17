@@ -146,7 +146,7 @@ const deleteFolderFromCloudinary = async (folderPath) => {
         console.log(`Cloudinary folder deleted: ${folderPath}`);
     } catch (err) {
         // If folder doesn't exist or other error, log it but don't crash
-        console.error(`Cloudinary folder deletion error (${folderPath}):`, err.message);
+        console.error(`Cloudinary folder deletion error (${folderPath}):`, err.message || err.error?.message || err);
     }
 };
 
@@ -209,8 +209,8 @@ const getBrandLogoPath = (category, brandName) => {
  * POST /api/listings/create
  */
 router.post('/create', authMiddleware, upload.fields([
-    { name: 'images', maxCount: 15 },
-    { name: 'documents', maxCount: 3 },
+    { name: 'images', maxCount: 50 },
+    { name: 'documents', maxCount: 5 },
     { name: 'registrationRC', maxCount: 1 },
     { name: 'insurance', maxCount: 1 },
     { name: 'serviceHistory', maxCount: 1 },
@@ -640,8 +640,8 @@ router.post('/create', authMiddleware, upload.fields([
  * PUT /api/listings/:id
  */
 router.put('/:id', authMiddleware, upload.fields([
-    { name: 'images', maxCount: 15 },
-    { name: 'documents', maxCount: 3 },
+    { name: 'images', maxCount: 50 },
+    { name: 'documents', maxCount: 5 },
     { name: 'registrationRC', maxCount: 1 },
     { name: 'insurance', maxCount: 1 },
     { name: 'serviceHistory', maxCount: 1 },
@@ -1149,7 +1149,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 
         // Delete from Cloudinary folder if exists
         console.log(`[Delete Listing] Purging Cloudinary folder for asset ${id}...`);
-        const folderPath = `${categoryName}/${id}`;
+        const folderPath = getAssetFolderPath(categoryName, id);
         await deleteFolderFromCloudinary(folderPath);
         
         // Delete the document

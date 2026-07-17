@@ -175,10 +175,10 @@ app.use((err, req, res, next) => {
           "One or more files are too large. Maximum allowed size per file is 5MB.",
       });
     }
-    console.error(`[Multer Error] ${err.code}: ${err.message}`);
+    console.error(`[Multer Error] ${err.code}: ${err.message}${err.field ? ` (field: ${err.field})` : ''}`);
     return res
       .status(400)
-      .json({ error: "UPLOAD_ERROR", message: err.message });
+      .json({ error: "UPLOAD_ERROR", message: `${err.message}${err.field ? ` (field: ${err.field})` : ''}` });
   }
 
   // Generic error fallback
