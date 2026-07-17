@@ -275,7 +275,7 @@ const AssetCard = ({ item }) => {
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
                     fontWeight: 500,
-                    fontSize: "18px",
+                    fontSize: "3cqi",
                     lineHeight: "100%",
                     letterSpacing: "0%",
                     color: "#2A2A2A",
