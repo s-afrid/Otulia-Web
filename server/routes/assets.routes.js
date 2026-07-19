@@ -1101,17 +1101,32 @@ router.get("/similar/:category/:id", async (req, res) => {
     if (!currentAsset) return res.status(404).json({ message: "Asset not found" });
 
     // Define similarity criteria: 
-    // 1. Same brand/builder (for vehicles) or same location (for estates)
+    // 1. Same brand/builder (for vehicles) or same location/propertyType (for estates)
     // 2. Similar price (+/- 20%)
-    const priceMin = currentAsset.price * 0.8;
-    const priceMax = currentAsset.price * 1.2;
+    const priceMin = (currentAsset.price || 0) * 0.8;
+    const priceMax = (currentAsset.price || 0) * 1.2;
 
     let orClauses = [];
     
+    // Helper to safely escape strings for regex
+    const escapeRegex = (text) => {
+      if (!text) return '';
+      const specials = ['-', '/', '\\\\', '^', '$', '*', '+', '?', '.', '(', ')', '|', '[', ']', '{', '}'];
+      let result = '';
+      for (let i = 0; i < text.length; i++) {
+        if (specials.includes(text[i])) result += '\\\\' + text[i];
+        else result += text[i];
+      }
+      return result;
+    };
+
     if (catLower.includes('estate')) {
-      // For estates: Location is primary
+      // For estates: Location and PropertyType are primary
       if (currentAsset.location) {
-        orClauses.push({ location: { $regex: currentAsset.location, $options: 'i' } });
+        orClauses.push({ location: { $regex: escapeRegex(currentAsset.location), $options: 'i' } });
+      }
+      if (currentAsset.keySpecifications && currentAsset.keySpecifications.propertyType) {
+        orClauses.push({ 'keySpecifications.propertyType': currentAsset.keySpecifications.propertyType });
       }
     } else {
       // For vehicles: Brand/Builder is primary
@@ -1128,18 +1143,22 @@ router.get("/similar/:category/:id", async (req, res) => {
       $or: orClauses
     };
 
-    // To ensure "First Brand/Location then Price" priority, we can fetch them and sort or use a weighted approach.
-    // For simplicity and performance, we'll fetch them and use JS to sort by match type.
+    // Fetch up to 20 similar assets
     const similar = await Model.find(query).limit(20); 
     
     const sortedSimilar = similar.sort((a, b) => {
-      // Priority 1: Brand/Location match
+      // Priority 1: Brand/Location/Type match
       let aMatch = false;
       let bMatch = false;
 
       if (catLower.includes('estate')) {
-        aMatch = a.location === currentAsset.location;
-        bMatch = b.location === currentAsset.location;
+        const aLocMatch = a.location === currentAsset.location;
+        const bLocMatch = b.location === currentAsset.location;
+        const aTypeMatch = a.keySpecifications?.propertyType === currentAsset.keySpecifications?.propertyType;
+        const bTypeMatch = b.keySpecifications?.propertyType === currentAsset.keySpecifications?.propertyType;
+        
+        aMatch = aLocMatch || aTypeMatch;
+        bMatch = bLocMatch || bTypeMatch;
       } else {
         aMatch = (a.brand && a.brand === currentAsset.brand) || (a.builder && a.builder === currentAsset.builder);
         bMatch = (b.brand && b.brand === currentAsset.brand) || (b.builder && b.builder === currentAsset.builder);
