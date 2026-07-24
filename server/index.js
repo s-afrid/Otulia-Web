@@ -75,26 +75,41 @@ console.log(`[Static] Serving files from: ${distPath}`);
 // Diagnostic: Check if dist exists
 const fs = require("fs");
 if (fs.existsSync(distPath)) {
-  console.log(`[Static] dist folder found. Contents:`, fs.readdirSync(distPath));
+  console.log(
+    `[Static] dist folder found. Contents:`,
+    fs.readdirSync(distPath),
+  );
   const assetsPath = path.join(distPath, "assets");
   if (fs.existsSync(assetsPath)) {
-     console.log(`[Static] assets folder found. Example files:`, fs.readdirSync(assetsPath).slice(0, 5));
+    console.log(
+      `[Static] assets folder found. Example files:`,
+      fs.readdirSync(assetsPath).slice(0, 5),
+    );
   } else {
-     console.warn(`[Static] WARNING: assets folder NOT found at ${assetsPath}`);
+    console.warn(`[Static] WARNING: assets folder NOT found at ${assetsPath}`);
   }
 } else {
   console.error(`[Static] ERROR: dist folder NOT found at ${distPath}`);
 }
 
-app.use(express.static(distPath, {
-  setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html')) {
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    } else if (filePath.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|webp|woff|woff2|ttf|eot)$/)) {
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    }
-  }
-}));
+app.use(
+  express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".html")) {
+        res.setHeader(
+          "Cache-Control",
+          "no-store, no-cache, must-revalidate, proxy-revalidate",
+        );
+      } else if (
+        filePath.match(
+          /\.(js|css|png|jpg|jpeg|gif|ico|svg|webp|woff|woff2|ttf|eot)$/,
+        )
+      ) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      }
+    },
+  }),
+);
 
 // routes register
 app.use("/api/auth", authRoutes);
@@ -126,13 +141,13 @@ app.get("/api/debug-assets", (req, res) => {
     distExists: fs.existsSync(distPath),
     distContents: fs.existsSync(distPath) ? fs.readdirSync(distPath) : [],
     assetsPath: path.join(distPath, "assets"),
-    assetsContents: []
+    assetsContents: [],
   };
-  
+
   if (fs.existsSync(results.assetsPath)) {
     results.assetsContents = fs.readdirSync(results.assetsPath).slice(0, 20); // First 20 files
   }
-  
+
   res.json(results);
 });
 
@@ -141,7 +156,7 @@ app.get("/health", (req, res) => {
     status: "OK",
     service: "Otulia Backend",
     deployedAt: startTime,
-    version: "1.0.1-diagnostic"
+    version: "1.0.1-diagnostic",
   });
 });
 
@@ -152,11 +167,14 @@ app.use(
 
 app.use((req, res) => {
   // If the request has a file extension (like .js, .css, .png) or is an API route, return 404
-  if (req.path.match(/\.[^\/]+$/) || req.path.startsWith('/api/')) {
+  if (req.path.match(/\.[^\/]+$/) || req.path.startsWith("/api/")) {
     res.status(404).send("File not found");
   } else {
     // Prevent caching for the entry point
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate",
+    );
     // Otherwise, serve the React app index.html for client-side routing
     res.sendFile(path.join(__dirname, "../client/dist/index.html"));
   }
@@ -175,10 +193,13 @@ app.use((err, req, res, next) => {
           "One or more files are too large. Maximum allowed size per file is 5MB.",
       });
     }
-    console.error(`[Multer Error] ${err.code}: ${err.message}${err.field ? ` (field: ${err.field})` : ''}`);
-    return res
-      .status(400)
-      .json({ error: "UPLOAD_ERROR", message: `${err.message}${err.field ? ` (field: ${err.field})` : ''}` });
+    console.error(
+      `[Multer Error] ${err.code}: ${err.message}${err.field ? ` (field: ${err.field})` : ""}`,
+    );
+    return res.status(400).json({
+      error: "UPLOAD_ERROR",
+      message: `${err.message}${err.field ? ` (field: ${err.field})` : ""}`,
+    });
   }
 
   // Generic error fallback

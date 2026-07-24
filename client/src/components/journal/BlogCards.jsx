@@ -203,9 +203,14 @@ function BlogCard({ post }) {
 }
 
 export default function BlogCards({ activeCategory = null }) {
-  const filteredPosts = activeCategory
-    ? blogPosts.filter((post) => post.category === activeCategory)
-    : blogPosts;
+  const filteredPosts = (
+    activeCategory
+      ? blogPosts.filter((post) => post.category === activeCategory)
+      : blogPosts
+  )
+
+    .slice()
+    .reverse();
 
   return (
     <section className="w-full bg-white">

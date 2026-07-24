@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { FiX, FiCheck, FiHome } from 'react-icons/fi';
-import { getAmenityIcon } from '../../../utils/assetIcons';
+import React, { useState } from "react";
+import { FiX, FiCheck, FiHome } from "react-icons/fi";
+import { getAmenityIcon } from "../../../utils/assetIcons";
 
 const getFeatureIcon = (name) => {
   return getAmenityIcon(name, "w-5 h-5");
@@ -201,7 +201,7 @@ const EstateFeatures = ({ item }) => {
                 <span className="text-[#D48D2A] text-lg shrink-0 flex items-center justify-center ">
                   {getFeatureIcon(amenity)}
                 </span>
-                <span className="text-xs md:text-sm font-bold text-gray-800 montserrat truncate">
+                <span className="text-xs md:text-sm font-normal text-gray-800 montserrat truncate">
                   {amenity}
                 </span>
               </div>
