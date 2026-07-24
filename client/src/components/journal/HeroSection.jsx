@@ -1,7 +1,7 @@
-import true_cost from "/src/assets/journal/true_cost.png";
-import verify from "/src/assets/journal/verify.png";
-import sell_faster from "/src/assets/journal/sell_faster.png";
-import trends from "/src/assets/journal/trends.png";
+import mainPostimg from "/src/assets/journal/blog_seven/hero.png";
+import sidePostone from "/src/assets/journal/blog_eight/hero.png";
+import sidePostTwo from "/src/assets/journal/blog_nine/hero.png";
+import sidePostThree from "/src/assets/journal/blog_ten/hero.png";
 import { Link } from "react-router-dom";
 
 const heroArticles = [
@@ -9,34 +9,33 @@ const heroArticles = [
     id: 1,
     tag: "Ownership Guides",
     category: "Cars",
-    title: "The True Cost of Owning a Luxury Car: Beyond the Purchase Price",
+    title: "McLaren Just Unveiled Its First New Supercar Since 2024",
     excerpt:
-      "A six-figure price tag is the easiest number to plan for. The harder numbers — depreciation, insurance, and maintenance — are the ones that decide whether a luxury car is affordable to keep, not just to buy.",
-    image: true_cost,
+      "The company's first new car since 2024 is the ultimate evolution of the 720S.",
+    image: mainPostimg,
     featured: true,
   },
   {
     id: 2,
-    tag: "Buyer Protection",
+    tag: "Showcase",
     category: "Cars",
-    title:
-      "How to Verify a Luxury Car's History and Authenticity Before You Buy",
-    excerpt:
-      "Masterfully renovated and furnished to a remarkable standard, this seven-bedroom residence on one of London's most prestigious crescents delivers exceptional design, wellness amenities, and an unrivaled Belgravia address.",
-    image: verify,
+    title: "The 2027 Ferrari 12Cilindri Manuale in Photos",
+    excerpt: "It's the first Prancing Horse with a stick shift since 2012.",
+    image: sidePostone,
     featured: false,
-    link: "/journal/how-to-verify-a-luxury-car-history-and-authenticity-before-you-buy",
+    link: "/journal/photos-2027-ferrari-12cilindri-manuale",
   },
   {
     id: 3,
-    tag: "Seller Playbook",
+    tag: "Real Estate News",
     category: "Real Estate",
-    title: "How to Stage a Luxury Home to Sell Faster",
+    title:
+      "Justin and Hailey Bieber Just Bought a $12 Million N.Y.C. Pied-\u00e0-Terre",
     excerpt:
       "Staged luxury homes priced at $2 million-plus sell up to 45% faster than the market average. The investment is almost always small relative to the gain — but where and how you stage matters as much as whether you stage at all.",
-    image: sell_faster,
+    image: sidePostTwo,
     featured: false,
-    link: "/journal/how-to-stage-a-luxury-home-to-sell-faster",
+    link: "/journal/justin-hailey-bieber-buy-west-village-condo",
   },
 ];
 
@@ -52,7 +51,7 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
           {/* Featured (large left) */}
           <Link
-            to="/journal/the-true-cost-of-owning-a-luxurycar"
+            to="/journal/mclaren-just-unveiled-its-first-new-supercar-since-2024"
             className="group block"
           >
             <div className="overflow-hidden rounded-sm">
@@ -129,18 +128,18 @@ export default function HeroSection() {
 
             {/* Extra featured card */}
             <Link
-              to="/journal/luxury-real-estate-trends-2026-what-buyers-and-sellers-need-to-know"
+              to="/journal/novak-djokovic-property-portfolio"
               className="group block pt-2"
             >
               <div className="overflow-hidden rounded-sm mb-4">
                 <img
-                  src={trends}
+                  src={sidePostThree}
                   className="w-full h-[170px] object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
                 />
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[#c8a96e] montserrat">
-                  Market Intelligence
+                  Celebrity Real Estate
                 </span>
                 <span className="text-gray-300 text-xs">·</span>
                 <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 montserrat">
@@ -153,8 +152,7 @@ export default function HeroSection() {
                   fontFamily: "'Kaisei Decol', serif",
                 }}
               >
-                Luxury Real Estate Trends 2026: What Buyers and Sellers Need to
-                Know
+                Inside Novak Djokovic's Global Property Portfolio
               </h3>
             </Link>
           </div>
