@@ -89,45 +89,45 @@ function RankingHeader({ data }) {
           </div>
 
           {/* Bottom Stats Row inside Banner */}
-          <div className="flex items-center gap-4 sm:gap-6 flex-wrap pt-3 border-t border-zinc-700/50">
+          <div className="flex items-center gap-5 sm:gap-7 flex-wrap pt-4 border-t border-zinc-700/50">
             {/* Stat 1: Nominees */}
-            <div className="flex items-center gap-2.5">
-              <FaTrophy className="text-[#D48D2A] text-base sm:text-lg shrink-0" />
-              <div>
-                <span className="font-extrabold text-sm sm:text-base text-white block leading-none">
+            <div className="flex items-center gap-3">
+              <FaTrophy className="text-[#D48D2A] text-2xl sm:text-3xl shrink-0" />
+              <div className="flex flex-col justify-center">
+                <span className="font-black text-base sm:text-lg text-white leading-tight">
                   {data.nominees || "0"}
                 </span>
-                <span className="text-[9px] tracking-wider text-zinc-400 font-bold uppercase">
+                <span className="text-[10px] tracking-widest text-zinc-400 font-bold uppercase mt-0.5">
                   NOMINEES
                 </span>
               </div>
             </div>
 
-            <div className="h-5 w-[1px] bg-zinc-700/60" />
+            <div className="h-7 w-[1px] bg-zinc-700/60" />
 
             {/* Stat 2: Total Votes */}
-            <div className="flex items-center gap-2.5">
-              <FaUsers className="text-zinc-300 text-base sm:text-lg shrink-0" />
-              <div>
-                <span className="font-extrabold text-sm sm:text-base text-white block leading-none">
+            <div className="flex items-center gap-3">
+              <FaUsers className="text-zinc-300 text-2xl sm:text-3xl shrink-0" />
+              <div className="flex flex-col justify-center">
+                <span className="font-black text-base sm:text-lg text-white leading-tight">
                   {data.votes ? `${data.votes}${data.votes.endsWith('+') || data.votes.endsWith('K') ? '' : '+'}` : "0"}
                 </span>
-                <span className="text-[9px] tracking-wider text-zinc-400 font-bold uppercase">
+                <span className="text-[10px] tracking-widest text-zinc-400 font-bold uppercase mt-0.5">
                   TOTAL VOTES
                 </span>
               </div>
             </div>
 
-            <div className="h-5 w-[1px] bg-zinc-700/60" />
+            <div className="h-7 w-[1px] bg-zinc-700/60" />
 
             {/* Stat 3: Last Updated */}
-            <div className="flex items-center gap-2.5">
-              <FaRegCalendarAlt className="text-zinc-300 text-base sm:text-lg shrink-0" />
-              <div>
-                <span className="font-extrabold text-xs sm:text-xs text-white block leading-none uppercase">
+            <div className="flex items-center gap-3">
+              <FaRegCalendarAlt className="text-zinc-300 text-2xl sm:text-3xl shrink-0" />
+              <div className="flex flex-col justify-center">
+                <span className="font-black text-xs sm:text-sm text-white leading-tight uppercase">
                   {data.updated || "MAY 2026"}
                 </span>
-                <span className="text-[9px] tracking-wider text-zinc-400 font-bold uppercase">
+                <span className="text-[10px] tracking-widest text-zinc-400 font-bold uppercase mt-0.5">
                   LAST UPDATED
                 </span>
               </div>
