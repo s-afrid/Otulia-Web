@@ -359,13 +359,20 @@ function RankingHome() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredCategories.map((cat) => {
                     const nomineeCount = cat.nomineeLimit || (cat.assetNominees || []).length;
+                    const catType = cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : (category || "cars");
+                    const targetPath = `/ranking/${catType}/${cat.slug}`;
+
                     return (
-                      <div key={cat._id} className="overflow-hidden rounded-[12px] border border-zinc-800 bg-[#161618] flex flex-col shadow-sm hover:shadow-md transition">
-                        <div className="h-[200px] w-full bg-zinc-950 relative">
+                      <div 
+                        key={cat._id} 
+                        onClick={() => navigate(targetPath)}
+                        className="overflow-hidden rounded-[12px] border border-zinc-800 bg-[#161618] flex flex-col shadow-sm hover:shadow-lg hover:border-zinc-700 transition duration-300 cursor-pointer group"
+                      >
+                        <div className="h-[200px] w-full bg-zinc-950 relative overflow-hidden">
                           <img 
                             src={cat.categoryImage || cat.bannerImage || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop"} 
                             alt={cat.title}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
                           <div className="absolute top-3 left-3 bg-black/60 text-white text-[11px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm backdrop-blur-sm">
                             {cat.type}
@@ -373,7 +380,7 @@ function RankingHome() {
                         </div>
                         
                         <div className="p-5 flex-1 flex flex-col">
-                          <h3 className="text-xl font-bold text-white mb-2">{cat.title}</h3>
+                          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#D48D2A] transition duration-200">{cat.title}</h3>
                           <p className="text-[14px] text-zinc-400 line-clamp-3 mb-6 flex-1">
                             {cat.shortDescription || "No description available."}
                           </p>
@@ -382,12 +389,11 @@ function RankingHome() {
                             <div className="text-[13px] text-zinc-400">
                               <span className="font-bold text-white">{nomineeCount}</span> Nominees
                             </div>
-                            <button 
-                              onClick={() => navigate(`/ranking/${category || "cars"}/${cat.slug}`)}
-                              className="flex items-center gap-1.5 text-[14px] font-semibold text-[#D48D2A] hover:text-[#B58252] transition"
+                            <span 
+                              className="flex items-center gap-1.5 text-[14px] font-semibold text-[#D48D2A] group-hover:text-[#F3B344] transition duration-200"
                             >
                               Explore Rankings &rsaquo;
-                            </button>
+                            </span>
                           </div>
                         </div>
                       </div>
