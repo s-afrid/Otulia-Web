@@ -736,26 +736,28 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
  * Helper to extract public_id from Cloudinary URL
  */
 const getPublicIdFromUrl = (url) => {
-    if (!url || !url.includes('cloudinary')) return null;
+    if (!url || typeof url !== 'string' || !url.includes('cloudinary')) return null;
     try {
-        const uploadSplit = url.split('/upload/');
+        const decodedUrl = decodeURIComponent(url);
+        const uploadSplit = decodedUrl.split('/upload/');
         if (uploadSplit.length < 2) return null;
         
         const afterUpload = uploadSplit[1];
         const parts = afterUpload.split('/');
         
         const relevantParts = parts.filter(part => {
-            if (part.includes(',') || part.includes('_')) return false;
-            if (/^v\d+$/.test(part)) return false;
+            if (/^v\d+$/.test(part)) return false; // skip version string e.g. v1721812345
+            if (part.includes(',')) return false;  // skip transformation segment e.g. c_fill,w_300
+            if (/^(c|w|h|q|f|e|b|r|a|g|fl|pg|dn|so|eo|o|x|y|bo|co|l|u|t)_[a-zA-Z0-9_-]+/.test(part)) return false;
             return true;
         });
         
-        const fullPublicId = relevantParts.join('/');
+        let fullPublicId = relevantParts.join('/');
         const dotIndex = fullPublicId.lastIndexOf('.');
         if (dotIndex !== -1) {
-            return fullPublicId.substring(0, dotIndex);
+            fullPublicId = fullPublicId.substring(0, dotIndex);
         }
-        return fullPublicId;
+        return fullPublicId || null;
     } catch (err) {
         console.error("Error parsing Cloudinary URL in admin.routes:", err);
         return null;
@@ -772,7 +774,6 @@ router.delete("/ranking-categories/:id", authMiddleware, adminCheck, async (req,
 
         // Find all associated nominees first to grab their image URLs from all models
         let allNominees = [];
-        // Legacy
         const legacyAssets = await AssetNominee.find({ category: category._id });
         const legacyDealers = await DealerNominee.find({ category: category._id });
         allNominees.push(...legacyAssets, ...legacyDealers);
@@ -783,22 +784,70 @@ router.delete("/ranking-categories/:id", authMiddleware, adminCheck, async (req,
         }
 
         // Gather all image URLs from the category and its nominees
-        const urlsToDelete = [];
-        if (category.categoryImage) urlsToDelete.push(category.categoryImage);
-        if (category.bannerImage) urlsToDelete.push(category.bannerImage);
+        const urlsToDelete = new Set();
+        if (category.categoryImage) urlsToDelete.add(category.categoryImage);
+        if (category.bannerImage) urlsToDelete.add(category.bannerImage);
+        if (category.icon) urlsToDelete.add(category.icon);
+
         allNominees.forEach(nom => {
-            if (nom.image) urlsToDelete.push(nom.image);
+            if (nom.image) urlsToDelete.add(nom.image);
+            if (nom.banner) urlsToDelete.add(nom.banner);
+            if (nom.coverImage) urlsToDelete.add(nom.coverImage);
+            if (nom.bannerImage) urlsToDelete.add(nom.bannerImage);
+            if (nom.avatar) urlsToDelete.add(nom.avatar);
         });
 
-        // Trigger Cloudinary deletion asynchronously
-        urlsToDelete.forEach(url => {
+        const foldersToDelete = new Set();
+
+        // 1. Delete image files from Cloudinary and record their containing folders
+        const deletePromises = Array.from(urlsToDelete).map(async (url) => {
             const publicId = getPublicIdFromUrl(url);
             if (publicId) {
-                cloudinary.uploader.destroy(publicId)
-                    .then(result => console.log(`[Cloudinary] Successfully deleted ${publicId}:`, result))
-                    .catch(err => console.error(`[Cloudinary] Failed to delete ${publicId}:`, err));
+                // Collect parent folders of this publicId
+                const parts = publicId.split('/');
+                while (parts.length > 1) {
+                    parts.pop();
+                    const folderPath = parts.join('/');
+                    if (folderPath && folderPath !== 'cmscategory') {
+                        foldersToDelete.add(folderPath);
+                    }
+                }
+
+                try {
+                    let result = await cloudinary.uploader.destroy(publicId, { invalidate: true });
+                    if (result.result !== 'ok') {
+                        result = await cloudinary.uploader.destroy(publicId, { resource_type: 'raw', invalidate: true });
+                    }
+                    console.log(`[Cloudinary] Successfully deleted file ${publicId}:`, result);
+                } catch (err) {
+                    console.error(`[Cloudinary] Failed to delete file ${publicId}:`, err);
+                }
             }
         });
+
+        await Promise.all(deletePromises);
+
+        // Also add direct category title sanitizations to foldersToDelete in case category was empty
+        if (category.title) {
+            const sanitizedCatTitle = category.title.trim().replace(/[\/\?#%&*=+:;\s]/g, '_');
+            const sanitizedCatTitleNoSpaces = category.title.trim().replace(/[\/\?#%&*=+:;]/g, '_');
+            foldersToDelete.add(`cmscategory/${sanitizedCatTitle}`);
+            foldersToDelete.add(`cmscategory/${sanitizedCatTitleNoSpaces}`);
+        }
+
+        // 2. Sort folders from deepest to shallowest (longest path length first)
+        const sortedFolders = Array.from(foldersToDelete).sort((a, b) => b.split('/').length - a.split('/').length);
+
+        // 3. Delete Cloudinary folders sequentially
+        for (const folderPath of sortedFolders) {
+            try {
+                const result = await cloudinary.api.delete_folder(folderPath);
+                console.log(`[Cloudinary] Successfully deleted folder ${folderPath}:`, result);
+            } catch (err) {
+                // Log notice for folder cleanup
+                console.log(`[Cloudinary] Folder delete status for ${folderPath}:`, err.message || err);
+            }
+        }
 
         // Delete nominees and category from database
         await AssetNominee.deleteMany({ category: category._id });

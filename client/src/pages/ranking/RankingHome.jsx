@@ -188,6 +188,9 @@ function RankingHome() {
       updated: activeCategory.updatedAt 
         ? new Date(activeCategory.updatedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
         : "May 2026",
+      categoryImage: activeCategory.categoryImage || "",
+      bannerImage: activeCategory.bannerImage || "",
+      coverImage: activeCategory.bannerImage || activeCategory.categoryImage || "",
     };
   };
 
@@ -323,7 +326,7 @@ function RankingHome() {
       <div style={{ marginLeft: "260px" }} className="min-h-screen bg-zinc-950 text-white">
         <Navbar_Ranking hideSearch={true} />
 
-        <div className="px-8 pb-20 bg-zinc-950">
+        <div className="px-8 pt-[88px] pb-12 bg-zinc-950">
           {loading ? (
             <div className="flex justify-center py-40">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D6A125]"></div>
@@ -344,7 +347,7 @@ function RankingHome() {
               )}
             </>
           ) : !slug ? (
-            <div className="pt-[110px]">
+            <div className="pt-4">
               <div className="mb-10">
                 <h1 className="text-[42px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em] text-white">
                   {category ? (category.toLowerCase() === "realestate" ? "Real Estate" : category.toLowerCase() === "contentcreators" ? "Content Creator" : "Automotive") : "Automotive"}{" "}
@@ -361,6 +364,11 @@ function RankingHome() {
                     const nomineeCount = cat.nomineeLimit || (cat.assetNominees || []).length;
                     const catType = cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : (category || "cars");
                     const targetPath = `/ranking/${catType}/${cat.slug}`;
+                    const fallbackImg = (cat.type || "").toLowerCase().includes("estate") || (cat.type || "").toLowerCase().includes("real")
+                      ? "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop"
+                      : (cat.type || "").toLowerCase().includes("creator")
+                      ? "https://images.unsplash.com/photo-1598550476439-6847785fcea6?q=80&w=1200&auto=format&fit=crop"
+                      : "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1200&auto=format&fit=crop";
 
                     return (
                       <div 
@@ -370,7 +378,7 @@ function RankingHome() {
                       >
                         <div className="h-[200px] w-full bg-zinc-950 relative overflow-hidden">
                           <img 
-                            src={cat.categoryImage || cat.bannerImage || "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop"} 
+                            src={cat.categoryImage || cat.bannerImage || fallbackImg} 
                             alt={cat.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />

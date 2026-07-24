@@ -13,70 +13,24 @@ function Sidebar({ categories = [], activeSlug }) {
   const [nomineeReason, setNomineeReason] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  let navItems = [];
-  if (categories && categories.length > 0) {
-    navItems = [
-      {
-        label: "All Rankings",
-        path: `/ranking/${category || "cars"}`,
-        slug: undefined,
-      },
-      ...categories.map((cat) => {
-        let formattedTitle = cat.title;
-        if (!formattedTitle.toLowerCase().includes("2026") && !formattedTitle.toLowerCase().includes("all")) {
-          formattedTitle = `${formattedTitle} Of 2026`;
-        }
-        return {
-          label: formattedTitle,
-          path: `/ranking/${cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : "cars"}/${cat.slug}`,
-          slug: cat.slug,
-        };
-      })
-    ];
-  } else {
-    navItems = [
-      {
-        label: "All Rankings",
-        path: `/ranking/${category || "cars"}`,
-        slug: undefined,
-      },
-      {
-        label: "Best Hypercars Of 2026",
-        path: "/ranking/cars/hypercars",
-        slug: "hypercars",
-      },
-      {
-        label: "Best Supercars Of 2026",
-        path: "/ranking/cars/supercars",
-        slug: "supercars",
-      },
-      {
-        label: "Fastest Cars Of 2026",
-        path: "/ranking/cars/fastest-cars",
-        slug: "fastest-cars",
-      },
-      {
-        label: "Slowest Cars Of 2026",
-        path: "/ranking/cars/slowest-cars",
-        slug: "slowest-cars",
-      },
-      {
-        label: "Ugliest Cars Of 2026",
-        path: "/ranking/cars/ugliest-cars",
-        slug: "ugliest-cars",
-      },
-      {
-        label: "Classic Cars Of 2026",
-        path: "/ranking/cars/classic-cars",
-        slug: "classic-cars",
-      },
-      {
-        label: "Best SUV's Of 2026",
-        path: "/ranking/cars/best-suvs",
-        slug: "best-suvs",
-      },
-    ];
-  }
+  const navItems = [
+    {
+      label: "All Rankings",
+      path: `/ranking/${category || "cars"}`,
+      slug: undefined,
+    },
+    ...(categories || []).map((cat) => {
+      let formattedTitle = cat.title;
+      if (!formattedTitle.toLowerCase().includes("2026") && !formattedTitle.toLowerCase().includes("all")) {
+        formattedTitle = `${formattedTitle} Of 2026`;
+      }
+      return {
+        label: formattedTitle,
+        path: `/ranking/${cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : (category || "cars")}/${cat.slug}`,
+        slug: cat.slug,
+      };
+    })
+  ];
 
   const handleNominateSubmit = (e) => {
     e.preventDefault();

@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/auth.middleware');
 
 // Helper to extract public_id from Cloudinary URL
 const getPublicIdFromUrl = (url) => {
-    if (!url || !url.includes('cloudinary')) return null;
+    if (!url || typeof url !== 'string' || !url.includes('cloudinary')) return null;
     try {
         const uploadSplit = url.split('/upload/');
         if (uploadSplit.length < 2) return null;
@@ -15,17 +15,18 @@ const getPublicIdFromUrl = (url) => {
         const parts = afterUpload.split('/');
         
         const relevantParts = parts.filter(part => {
-            if (part.includes(',') || part.includes('_')) return false;
-            if (/^v\d+$/.test(part)) return false;
+            if (/^v\d+$/.test(part)) return false; // skip version string e.g. v1721812345
+            if (part.includes(',')) return false;  // skip transformation segment e.g. c_fill,w_300
+            if (/^(c|w|h|q|f|e|b|r|a|g|fl|pg|dn|so|eo|o|x|y|bo|co|l|u|t)_[a-zA-Z0-9_-]+/.test(part)) return false;
             return true;
         });
         
-        const fullPublicId = relevantParts.join('/');
+        let fullPublicId = relevantParts.join('/');
         const dotIndex = fullPublicId.lastIndexOf('.');
         if (dotIndex !== -1) {
-            return fullPublicId.substring(0, dotIndex);
+            fullPublicId = fullPublicId.substring(0, dotIndex);
         }
-        return fullPublicId;
+        return fullPublicId || null;
     } catch (err) {
         console.error("Error parsing Cloudinary URL in upload.routes:", err);
         return null;
