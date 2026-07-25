@@ -164,7 +164,6 @@ function RankingHome() {
       if (!res.ok) {
         alert(data.error ? data.error.replace(/_/g, " ") : "Failed to vote.");
       } else {
-        alert("Thank you for your vote!");
         fetchCategoryDetails(activeSlug);
       }
     } catch (err) {

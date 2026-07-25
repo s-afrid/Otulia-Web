@@ -13,6 +13,7 @@ const ContentCreatorNominee = require("../models/ContentCreatorNominee.model");
 const OtherNominee = require("../models/OtherNominee.model");
 const AssetNominee = require("../models/AssetNominee.model");
 const DealerNominee = require("../models/DealerNominee.model");
+const VoteLog = require("../models/VoteLog.model");
 
 const nomineeModelMap = {
     'CarNominee': CarNominee,
@@ -199,7 +200,32 @@ router.get("/category/:slug", async (req, res) => {
 });
 
 /**
- * CAST A VOTE FOR A NOMINEE
+ * GET VOTES CAST BY CURRENT USER TODAY
+ */
+router.get("/votes-today", authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const votesCastToday = await VoteLog.countDocuments({
+            userId,
+            createdAt: { $gte: startOfToday }
+        });
+
+        res.json({
+            votesToday: votesCastToday,
+            votesRemaining: Math.max(0, 3 - votesCastToday),
+            dailyLimit: 3
+        });
+    } catch (err) {
+        console.error("GET votes-today error:", err);
+        res.status(500).json({ error: "FETCH_VOTES_TODAY_FAILED" });
+    }
+});
+
+/**
+ * CAST A VOTE FOR A NOMINEE (LIMIT: 3 VOTES PER USER PER DAY, ALL VOTES ADDED)
  */
 router.post("/vote", authMiddleware, async (req, res) => {
     try {
@@ -225,33 +251,47 @@ router.post("/vote", authMiddleware, async (req, res) => {
             return res.status(404).json({ error: "NOMINEE_NOT_FOUND" });
         }
         
-        // Check vote limits
-        if (!category.allowMultipleVotes) {
-            // Check if user has voted for ANY nominee in this category
-            const hasVotedAny = await NomineeModel.findOne({ 
-                category: categoryId, 
-                votedBy: userId 
+        // Calculate start of today (midnight)
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        // Check user's daily vote count (3 votes max per day)
+        const votesCastToday = await VoteLog.countDocuments({
+            userId,
+            createdAt: { $gte: startOfToday }
+        });
+
+        if (votesCastToday >= 3) {
+            return res.status(400).json({ 
+                error: "You have reached your daily limit of 3 votes. Please try again tomorrow.",
+                dailyLimit: 3,
+                votesToday: votesCastToday,
+                votesRemaining: 0
             });
-            if (hasVotedAny) {
-                return res.status(400).json({ error: "ALREADY_VOTED_IN_THIS_CATEGORY" });
-            }
-        } else {
-            // Check if user has voted for THIS nominee
-            const hasVotedThis = nominee.votedBy.some(id => id.toString() === userId.toString());
-            if (hasVotedThis) {
-                return res.status(400).json({ error: "ALREADY_VOTED_FOR_THIS_NOMINEE" });
-            }
         }
         
-        // Record vote
+        // Record vote: Increment total votes for the nominee
         nominee.votes = (nominee.votes || 0) + 1;
-        nominee.votedBy.push(userId);
+        if (!nominee.votedBy.some(id => id.toString() === userId.toString())) {
+            nominee.votedBy.push(userId);
+        }
         await nominee.save();
         
+        // Save vote entry to VoteLog
+        await VoteLog.create({
+            userId,
+            categoryId,
+            nomineeId
+        });
+
+        const newVotesToday = votesCastToday + 1;
+
         res.json({ 
             success: true, 
             message: "Vote cast successfully", 
-            votes: nominee.votes 
+            votes: nominee.votes,
+            votesToday: newVotesToday,
+            votesRemaining: Math.max(0, 3 - newVotesToday)
         });
     } catch (err) {
         console.error("POST vote error:", err);
