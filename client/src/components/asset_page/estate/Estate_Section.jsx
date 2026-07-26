@@ -126,9 +126,9 @@ const Estate_Section = () => {
       <EstateFeatures item={info} />
 
       {info.priceHistory && info.priceHistory.length > 0 && (
-        <PriceHistoryChart 
-          priceHistory={info.priceHistory} 
-          options={info.priceHistoryOptions} 
+        <PriceHistoryChart
+          priceHistory={info.priceHistory}
+          options={info.priceHistoryOptions}
         />
       )}
 
