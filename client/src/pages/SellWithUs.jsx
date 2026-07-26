@@ -265,10 +265,9 @@ function Sellwithus() {
 
       {/* NUMBERED_CARDS */}
 
-      <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
+      <section className="w-full bg-white py-5 px-6 md:px-10 lg:px-16">
         <div className="max-w-[1600px] mx-auto">
           {/* Top Line */}
-          <div className="w-full h-[1px] bg-black/10 mb-10"></div>
 
           {/* Heading */}
           <h2
@@ -592,12 +591,18 @@ function Sellwithus() {
                 searchable, shareable, and verifiable worldwide with a single
                 code.
               </p>
-              <img className="mt-12 w-full max-w-[420px] object-contain" src={NJM} />
+              <img
+                className="mt-12 w-full max-w-[420px] object-contain"
+                src={NJM}
+              />
             </div>
 
             {/* RIGHT VISUAL AREA */}
             <div className="relative flex items-center justify-center lg:justify-end">
-              <img src={NJMcard} className="w-full max-w-[880px] object-contain" />
+              <img
+                src={NJMcard}
+                className="w-full max-w-[880px] object-contain"
+              />
             </div>
           </div>
         </div>
@@ -612,7 +617,10 @@ function Sellwithus() {
             {/* LEFT IMAGE PLACEHOLDER */}
             <div className="lg:flex-[1.3] flex">
               <div className="w-full max-w-[1050px] bg-white/40 rounded-[8px] flex">
-                <img src={RankingCard} className="w-full h-auto object-contain shadow-sm" />
+                <img
+                  src={RankingCard}
+                  className="w-full h-auto object-contain shadow-sm"
+                />
               </div>
             </div>
 
@@ -638,9 +646,9 @@ function Sellwithus() {
                 {/* DESCRIPTION */}
                 <p className="mt-8 max-w-xl text-black/75 text-[20px] md:text-[22px] leading-relaxed font-light">
                   Your listings and company profile are added as nominees in
-                  global luxury rankings released every six months, helping drive
-                  millions of buyers toward your assets and increasing regional
-                  visibility, inquiries, and sales.
+                  global luxury rankings released every six months, helping
+                  drive millions of buyers toward your assets and increasing
+                  regional visibility, inquiries, and sales.
                 </p>
               </div>
 
@@ -798,11 +806,10 @@ function Sellwithus() {
           {/* Buttons */}
           <div className="mt-12 flex flex-col sm:flex-row items-center gap-4">
             <NavLink to="/pricing">
-            <button className="bg-black text-white px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-[#1a1a1a] cursor-pointer">
-              List Your Asset Now →
-            </button>
+              <button className="bg-black text-white px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-[#1a1a1a] cursor-pointer">
+                List Your Asset Now →
+              </button>
             </NavLink>
-            
 
             <button className="border border-black/30 text-black px-10 py-4 text-[11px] tracking-[0.28em] uppercase transition-all duration-300 hover:bg-black hover:text-white">
               Book a Demo
