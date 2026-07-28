@@ -271,7 +271,13 @@ function RankingHome() {
         stats,
         meta,
         category: activeCategory.title,
-        origin: nominee.brand || "Global",
+        brand: keyDetails.brand || nominee.brand || (nominee.name ? nominee.name.split(" ")[0] : "Bugatti"),
+        model: keyDetails.model || nominee.model || (nominee.name ? nominee.name.split(" ").slice(1).join(" ") : "Tourbillon"),
+        year: keyDetails.year || nominee.year || "2026",
+        productionUnits: keyDetails.productionUnits || nominee.productionUnits || keyDetails.productionLimit || nominee.productionLimit || "250",
+        productionLimit: keyDetails.productionUnits || nominee.productionUnits || keyDetails.productionLimit || nominee.productionLimit || "250",
+        country: keyDetails.country || nominee.country || keyDetails.origin || nominee.origin || nominee.brand || "Global",
+        origin: keyDetails.country || nominee.country || keyDetails.origin || nominee.origin || nominee.brand || "Global",
         bodyType: nominee.model || "Coupe",
         price: isContentCreator 
           ? (keyDetails.subscribers ? `${keyDetails.subscribers} Subscribers` : "")
@@ -311,6 +317,7 @@ function RankingHome() {
         power: keyDetails.power || "",
         topSpeed: keyDetails.topSpeed || "",
         acceleration: keyDetails.acceleration || "",
+        listingLink: nominee.listingLink || keyDetails.listingLink || "",
       };
     });
   };

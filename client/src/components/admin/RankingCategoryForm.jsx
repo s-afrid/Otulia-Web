@@ -213,6 +213,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                          drivetrain: asset.specification?.drive || '',
                                          transmission: asset.specification?.transmission || '',
                                          productionUnits: '',
+                                         country: asset.location?.country || asset.location || '',
                                          fuelType: asset.specification?.fuel || ''
                                      },
                                     sources: [
@@ -272,6 +273,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                 drivetrain: '',
                                 transmission: '',
                                 productionUnits: '',
+                                country: '',
                                 fuelType: ''
                             },
                             sources: [
@@ -520,6 +522,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                             { label: 'Drivetrain', key: 'drivetrain', placeholder: 'AWD' },
                             { label: 'Transmission', key: 'transmission', placeholder: '8-Speed Dual Clutch' },
                             { label: 'Production Units', key: 'productionUnits', placeholder: '250 Units' },
+                            { label: 'Country', key: 'country', placeholder: 'Italy' },
                             { label: 'Fuel Type', key: 'fuelType', placeholder: 'E85 Petrol' }
                         ].map((field) => (
                             <div key={field.key}>

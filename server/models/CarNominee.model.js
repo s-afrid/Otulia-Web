@@ -73,6 +73,7 @@ const carNomineeSchema = new mongoose.Schema({
         drivetrain: { type: String, default: '' },
         transmission: { type: String, default: '' },
         productionUnits: { type: String, default: '' },
+        country: { type: String, default: '' },
         fuelType: { type: String, default: '' }
     },
     sources: [{

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FaTrophy,
   FaBolt,
@@ -17,6 +17,7 @@ import {
   FaTree,
   FaBed,
   FaBath,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import { FiMapPin } from "react-icons/fi";
 import { LuTimerReset } from "react-icons/lu";
@@ -29,6 +30,142 @@ import xIcon from "../../assets/icons/social/x.svg";
 import estateIcon from "../../assets/icons/estate_icon.png";
 
 function RankingCard({ cars, onVote, isVoting }) {
+  const [openSnackbarId, setOpenSnackbarId] = useState(null);
+
+  const getCarLinks = (car) => {
+    const list = [];
+
+    if (Array.isArray(car.sources) && car.sources.length > 0) {
+      car.sources.forEach((src, idx) => {
+        if (typeof src === "string" && src.trim()) {
+          const formatted = src.startsWith("http") ? src : `https://${src}`;
+          list.push({
+            title: `Source ${idx + 1}`,
+            url: formatted,
+          });
+        } else if (src && typeof src === "object") {
+          const linkUrl = src.url || src.link || src.href;
+          if (linkUrl) {
+            const formatted = linkUrl.startsWith("http") || linkUrl.startsWith("/") ? linkUrl : `https://${linkUrl}`;
+            list.push({
+              title: src.title || src.name || `Source ${idx + 1}`,
+              url: formatted,
+            });
+          }
+        }
+      });
+    }
+
+    if (car.listingLink && car.listingLink !== "#") {
+      const formatted = car.listingLink.startsWith("http") || car.listingLink.startsWith("/")
+        ? car.listingLink
+        : `https://${car.listingLink}`;
+      if (!list.some((item) => item.url === formatted)) {
+        list.push({
+          title: car.name ? `${car.name} Official Listing` : "Official Listing",
+          url: formatted,
+        });
+      }
+    }
+
+    if (Array.isArray(car.socialLinks) && car.socialLinks.length > 0) {
+      car.socialLinks.forEach((s) => {
+        if (s && s.url) {
+          const formatted = s.url.startsWith("http") ? s.url : `https://${s.url}`;
+          if (!list.some((item) => item.url === formatted)) {
+            const platformName = s.platform
+              ? s.platform.charAt(0).toUpperCase() + s.platform.slice(1)
+              : "Social Link";
+            list.push({
+              title: `${platformName} Page`,
+              url: formatted,
+            });
+          }
+        }
+      });
+    }
+
+    const platforms = [
+      { key: "youtube", title: "YouTube Channel" },
+      { key: "instagram", title: "Instagram Profile" },
+      { key: "twitter", title: "Twitter / X Profile" },
+      { key: "tiktok", title: "TikTok Profile" },
+      { key: "website", title: "Official Website" },
+    ];
+    platforms.forEach((p) => {
+      const val = car[p.key];
+      if (val && typeof val === "string" && val.trim().length > 3) {
+        const formatted = val.startsWith("http") ? val : `https://${val}`;
+        if (!list.some((item) => item.url === formatted)) {
+          list.push({
+            title: p.title,
+            url: formatted,
+          });
+        }
+      }
+    });
+
+    if (list.length === 0) {
+      const brandOrName = car.name || car.brand || "Nominee";
+      list.push({
+        title: `${brandOrName} Official Web Page`,
+        url: car.listingLink && car.listingLink !== "#" ? car.listingLink : `https://www.google.com/search?q=${encodeURIComponent(brandOrName)}`,
+      });
+    }
+
+    return list;
+  };
+
+  const renderLinksSnackbar = (car) => {
+    const links = getCarLinks(car);
+    return (
+      <div
+        className="absolute bottom-full mb-2 left-0 z-50 w-72 md:w-80 rounded-xl border border-[#D6A125]/80 bg-zinc-900/95 backdrop-blur-md p-3.5 shadow-2xl text-white animate-in fade-in zoom-in-95 duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-zinc-800 pb-2 mb-2">
+          <div className="flex items-center gap-2">
+            <FaGlobe className="text-[#D6A125] text-xs" />
+            <span className="text-[12px] font-bold text-[#D6A125] uppercase tracking-wider">
+              Links & Sources ({links.length})
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenSnackbarId(null);
+            }}
+            className="text-zinc-400 hover:text-white text-xs font-bold w-5 h-5 rounded flex items-center justify-center hover:bg-zinc-800 transition"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+          {links.map((item, idx) => (
+            <a
+              key={idx}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-black/60 border border-zinc-800 hover:border-[#D6A125]/60 hover:bg-[#D6A125]/10 transition duration-150"
+            >
+              <div className="flex flex-col min-w-0">
+                <span className="text-[12px] font-semibold text-white group-hover:text-[#D6A125] transition truncate">
+                  {item.title}
+                </span>
+                <span className="text-[10px] text-zinc-400 font-mono truncate mt-0.5">
+                  {item.url.replace(/^https?:\/\//, '')}
+                </span>
+              </div>
+              <FaExternalLinkAlt className="text-[10px] text-zinc-400 group-hover:text-[#D6A125] shrink-0" />
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  };
   const getInitials = (name) => {
     if (!name) return "CC";
     if (name.includes("Andrew Tate")) {
@@ -192,7 +329,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                       )}
 
                       {/* Description */}
-                      <p className="mt-1 text-[11.5px] leading-snug text-zinc-500 font-normal line-clamp-2">
+                      <p className="mt-1 text-[11.5px] leading-snug text-zinc-500 font-normal truncate">
                         {car.description}
                       </p>
                     </div>
@@ -282,15 +419,17 @@ function RankingCard({ cars, onVote, isVoting }) {
                       </div>
 
                       {/* View all Links Button */}
-                      <a
-                        href={car.listingLink || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-1.5 flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/5 text-[#D6A125] text-[11.5px] font-bold px-3.5 py-1 rounded-[4px] transition duration-200 w-full"
-                      >
-                        <span>View all Links</span>
-                        <FaArrowRight className="text-[10px]" />
-                      </a>
+                      <div className="relative mt-1.5 w-full">
+                        <button
+                          type="button"
+                          onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
+                          className="flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/10 text-[#D6A125] text-[11.5px] font-bold px-3.5 py-1 rounded-[4px] transition duration-200 w-full"
+                        >
+                          <span>View all Links</span>
+                          <FaArrowRight className="text-[10px]" />
+                        </button>
+                        {openSnackbarId === car._id && renderLinksSnackbar(car)}
+                      </div>
                     </div>
                   </div>
 
@@ -445,7 +584,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                       </div>
 
                       {/* Description */}
-                      <p className="mt-2 text-[12.5px] leading-snug text-zinc-400 font-normal line-clamp-2">
+                      <p className="mt-2 text-[12.5px] leading-snug text-zinc-400 font-normal truncate">
                         {car.description}
                       </p>
                     </div>
@@ -502,15 +641,17 @@ function RankingCard({ cars, onVote, isVoting }) {
                       </div>
 
                       {/* View Links Button */}
-                      <a
-                        href={car.socialLinks?.[0]?.url || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-2 flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/10 text-[#D6A125] text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded transition duration-200"
-                      >
-                        <span>View all Links</span>
-                        <FaArrowRight className="text-[10px]" />
-                      </a>
+                      <div className="relative mt-2 w-full">
+                        <button
+                          type="button"
+                          onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
+                          className="flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/10 text-[#D6A125] text-[11px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded transition duration-200 w-full"
+                        >
+                          <span>View all Links</span>
+                          <FaArrowRight className="text-[10px]" />
+                        </button>
+                        {openSnackbarId === car._id && renderLinksSnackbar(car)}
+                      </div>
                     </div>
                   </div>
 
@@ -612,127 +753,119 @@ function RankingCard({ cars, onVote, isVoting }) {
             {/* CONTENT BOX */}
             <div className="flex flex-col md:flex-row flex-1 h-[210px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
               {/* CONTENT (80% width ratio) */}
-              <div className="flex flex-[4] md:w-[80%] flex-col px-5 py-2.5 bg-black justify-between h-[210px]">
+              <div className="flex flex-[4] md:w-[80%] flex-col px-5 py-3 bg-black justify-between h-[210px]">
+                <div>
+                  {/* Header */}
                   <div>
-                    {/* Header */}
-                    <div>
-                      <h2 className="text-[19px] font-bold tracking-tight text-white leading-tight">
-                        {car.name}
-                      </h2>
-                      <div className="text-[12px] text-zinc-500 font-medium mt-0.5">
-                        {car.location}
-                      </div>
-                    </div>
-
-                    {/* Price */}
-                    {displayCarPrice && (
-                      <div className="mt-0.5 text-[18px] font-bold text-white leading-none">
-                        {displayCarPrice}
-                      </div>
-                    )}
-
-                    {/* Description */}
-                    <p className="mt-1 text-[11.5px] leading-snug text-zinc-500 font-normal line-clamp-2">
+                    <h2 className="text-[22px] font-bold tracking-tight text-white leading-tight">
+                      {car.name}
+                    </h2>
+                    <p className="mt-1 text-[12.5px] leading-snug text-zinc-400 font-normal truncate">
                       {car.description}
                     </p>
                   </div>
 
-                  <div>
-                    {/* Combined Stats and Meta Block */}
-                    <div className="border border-zinc-800 rounded-[8px] bg-zinc-950/20 px-3.5 py-1.5 mt-1.5">
-                      {/* Metrics Counters */}
-                      <div className="flex items-center justify-between py-0.5">
-                        {/* Engine */}
-                        {car.engine && (
-                          <div className="flex items-center gap-2.5 flex-1 justify-start">
-                            <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
-                            </svg>
-                            <div className="flex flex-col">
-                              <span className="text-[13px] font-bold text-white leading-none">{car.engine}</span>
-                              <span className="text-[10px] text-zinc-500 font-medium mt-0.5 leading-none">Engine</span>
-                            </div>
-                          </div>
-                        )}
-
-                        {car.engine && car.power && <div className="w-[1px] bg-zinc-800 self-stretch mx-2.5" />}
-
-                        {/* Power */}
-                        {car.power && (
-                          <div className="flex items-center gap-2.5 flex-1 justify-start">
-                            <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                            </svg>
-                            <div className="flex flex-col">
-                              <span className="text-[13px] font-bold text-white leading-none">{car.power}</span>
-                              <span className="text-[10px] text-zinc-500 font-medium mt-0.5 leading-none">Power</span>
-                            </div>
-                          </div>
-                        )}
-
-                        {car.power && car.topSpeed && <div className="w-[1px] bg-zinc-800 self-stretch mx-2.5" />}
-
-                        {/* Top Speed */}
-                        {car.topSpeed && (
-                          <div className="flex items-center gap-2.5 flex-1 justify-start">
-                            <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <div className="flex flex-col">
-                              <span className="text-[13px] font-bold text-white leading-none">{car.topSpeed}</span>
-                              <span className="text-[10px] text-zinc-500 font-medium mt-0.5 leading-none">Top Speed</span>
-                            </div>
-                          </div>
-                        )}
-
-                        {car.topSpeed && displayAcceleration && <div className="w-[1px] bg-zinc-800 self-stretch mx-2.5" />}
-
-                        {/* Acceleration */}
-                        {displayAcceleration && (
-                          <div className="flex items-center gap-2.5 flex-1 justify-start">
-                            <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 21v-2.25m-6.364-.386l1.591-1.591M3 12h2.25m.386-6.364l1.591 1.591" />
-                            </svg>
-                            <div className="flex flex-col">
-                              <span className="text-[13px] font-bold text-white leading-none">{displayAcceleration}</span>
-                              <span className="text-[10px] text-zinc-500 font-medium mt-0.5 leading-none">{accelerationLabel}</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Divider */}
-                      <div className="border-t border-zinc-800 my-1" />
-
-                      {/* Meta information */}
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10.5px] text-zinc-500 font-medium">
-                        <span>
-                          Category: <span className="text-zinc-300 font-semibold">{car.category}</span>
+                  {/* Metrics Counters Row */}
+                  <div className="flex flex-wrap items-center gap-3.5 md:gap-5 py-2 mt-1">
+                    {/* Power */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <FaBolt className="text-[#EAB308] text-[24px] shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[13.5px] font-bold text-white leading-none">
+                          {car.power || "1,800 HP"}
                         </span>
-                        <span>|</span>
-                        <span>
-                          Origin: <span className="text-zinc-300 font-semibold">{car.origin}</span>
-                        </span>
-                        <span>|</span>
-                        <span className="inline-flex items-center gap-1">
-                          Body Type: <span className="text-zinc-300 font-semibold">{car.bodyType}</span>
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block ml-0.5" />
+                        <span className="text-[10px] text-zinc-500 font-medium mt-1 leading-none">
+                          Power
                         </span>
                       </div>
                     </div>
 
-                    {/* View all Links Button */}
-                    <a
-                      href={car.listingLink || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-1.5 flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/5 text-[#D6A125] text-[11.5px] font-bold px-3.5 py-1 rounded-[4px] transition duration-200 w-full"
-                    >
-                      <span>View all Links</span>
-                      <FaArrowRight className="text-[10px]" />
-                    </a>
+                    <div className="w-[1px] bg-zinc-800 h-6 shrink-0" />
+
+                    {/* Acceleration / 0-60 MPH */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <LuTimerReset className="text-zinc-300 text-[24px] shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[13.5px] font-bold text-white leading-none">
+                          {car.acceleration || "2.0 Sec"}
+                        </span>
+                        <span className="text-[10px] text-zinc-500 font-medium mt-1 leading-none">
+                          0-60 MPH
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="w-[1px] bg-zinc-800 h-6 shrink-0" />
+
+                    {/* Top Speed */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <MdOutlineSpeed className="text-zinc-300 text-[24px] shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[13.5px] font-bold text-white leading-none">
+                          {car.topSpeed || "445 Kmph"}
+                        </span>
+                        <span className="text-[10px] text-zinc-500 font-medium mt-1 leading-none">
+                          Top Speed
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="w-[1px] bg-zinc-800 h-6 shrink-0" />
+
+                    {/* Engine */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <TbEngine className="text-zinc-300 text-[24px] shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[13.5px] font-bold text-white leading-none">
+                          {car.engine || "8.3 L W16"}
+                        </span>
+                        <span className="text-[10px] text-zinc-500 font-medium mt-1 leading-none">
+                          Engine
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Horizontal Divider Line */}
+                  <div className="border-t border-zinc-800/80 w-full my-1.5" />
+
+                  {/* Meta information */}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-zinc-500 font-normal">
+                    <span>
+                      Brand : <span className="text-white font-semibold">{car.brand || car.location || "Bugatti"}</span>
+                    </span>
+                    <span className="text-zinc-700">|</span>
+                    <span>
+                      Model : <span className="text-white font-semibold">{car.model || car.bodyType || "Tourbillon"}</span>
+                    </span>
+                    <span className="text-zinc-700">|</span>
+                    <span>
+                      Year : <span className="text-white font-semibold">{car.year || "2026"}</span>
+                    </span>
+                    <span className="text-zinc-700">|</span>
+                    <span>
+                      Production Limit : <span className="text-white font-semibold">{car.productionUnits || car.productionLimit || car.limit || "250"}</span>
+                    </span>
+                    <span className="text-zinc-700">|</span>
+                    <span>
+                      Origin : <span className="text-white font-semibold">{car.country || car.origin || "Italy"}</span>
+                    </span>
                   </div>
                 </div>
+
+                {/* View all Links Button */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
+                    className="flex items-center gap-1.5 text-[#D6A125] hover:text-[#e5b338] text-[12px] font-bold transition duration-200 w-fit pb-1"
+                  >
+                    <span>View all Links</span>
+                    <FaArrowRight className="text-[10px]" />
+                  </button>
+                  {openSnackbarId === car._id && renderLinksSnackbar(car)}
+                </div>
+              </div>
 
               {/* VOTE PANEL (20% width ratio) */}
               <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-[210px] flex-col items-center justify-between border-t md:border-t-0 md:border-l border-zinc-850 px-6 py-3 bg-transparent">
