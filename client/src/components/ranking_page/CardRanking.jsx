@@ -166,6 +166,53 @@ function RankingCard({ cars, onVote, isVoting }) {
       </div>
     );
   };
+
+  const getCountryFlagInfo = (countryStr, brandStr) => {
+    const raw = (countryStr || brandStr || "").trim();
+    if (!raw) return { iso: "un", flagUrl: "https://flagcdn.com/w20/un.png", flagUrl2x: "https://flagcdn.com/w40/un.png", name: "Global" };
+
+    const lower = raw.toLowerCase();
+    const brandLower = (brandStr || "").toLowerCase();
+    const combined = lower + " " + brandLower;
+
+    let iso = "un";
+    let name = raw;
+
+    if (lower.includes("italy") || lower.includes("italian")) { iso = "it"; name = "Italy"; }
+    else if (lower.includes("france") || lower.includes("french")) { iso = "fr"; name = "France"; }
+    else if (lower.includes("germany") || lower.includes("german")) { iso = "de"; name = "Germany"; }
+    else if (lower.includes("united kingdom") || lower.includes("uk") || lower.includes("britain") || lower.includes("british") || lower.includes("england")) { iso = "gb"; name = "United Kingdom"; }
+    else if (lower.includes("united states") || lower.includes("usa") || lower.includes("us") || lower.includes("american")) { iso = "us"; name = "United States"; }
+    else if (lower.includes("japan") || lower.includes("japanese")) { iso = "jp"; name = "Japan"; }
+    else if (lower.includes("sweden") || lower.includes("swedish")) { iso = "se"; name = "Sweden"; }
+    else if (lower.includes("croatia") || lower.includes("croatian")) { iso = "hr"; name = "Croatia"; }
+    else if (lower.includes("austria") || lower.includes("austrian")) { iso = "at"; name = "Austria"; }
+    else if (lower.includes("switzerland") || lower.includes("swiss")) { iso = "ch"; name = "Switzerland"; }
+    else if (lower.includes("canada") || lower.includes("canadian")) { iso = "ca"; name = "Canada"; }
+    else if (lower.includes("australia") || lower.includes("australian")) { iso = "au"; name = "Australia"; }
+    else if (lower.includes("india") || lower.includes("indian")) { iso = "in"; name = "India"; }
+    else if (lower.includes("greece") || lower.includes("greek")) { iso = "gr"; name = "Greece"; }
+    else if (lower.includes("monaco")) { iso = "mc"; name = "Monaco"; }
+    else if (lower.includes("spain") || lower.includes("spanish")) { iso = "es"; name = "Spain"; }
+    else if (lower.includes("netherlands") || lower.includes("dutch")) { iso = "nl"; name = "Netherlands"; }
+    else if (lower.includes("united arab emirates") || lower.includes("uae") || lower.includes("dubai")) { iso = "ae"; name = "UAE"; }
+    else if (combined.includes("ferrari") || combined.includes("lamborghini") || combined.includes("pagani") || combined.includes("maserati") || combined.includes("alfa romeo") || combined.includes("fiat")) { iso = "it"; }
+    else if (combined.includes("bugatti") || combined.includes("alpine") || combined.includes("peugeot") || combined.includes("renault")) { iso = "fr"; }
+    else if (combined.includes("porsche") || combined.includes("bmw") || combined.includes("mercedes") || combined.includes("audi") || combined.includes("volkswagen") || combined.includes("maybach") || combined.includes("ruf")) { iso = "de"; }
+    else if (combined.includes("roll") || combined.includes("bentley") || combined.includes("aston") || combined.includes("mclaren") || combined.includes("lotus") || combined.includes("jaguar")) { iso = "gb"; }
+    else if (combined.includes("ford") || combined.includes("chevrolet") || combined.includes("corvette") || combined.includes("dodge") || combined.includes("shelby") || combined.includes("hennessey") || combined.includes("tesla")) { iso = "us"; }
+    else if (combined.includes("koenigsegg") || combined.includes("volvo")) { iso = "se"; }
+    else if (combined.includes("rimac")) { iso = "hr"; }
+    else if (combined.includes("toyota") || combined.includes("lexus") || combined.includes("nissan") || combined.includes("honda")) { iso = "jp"; }
+
+    return {
+      iso,
+      flagUrl: `https://flagcdn.com/w20/${iso}.png`,
+      flagUrl2x: `https://flagcdn.com/w40/${iso}.png`,
+      name,
+    };
+  };
+
   const getInitials = (name) => {
     if (!name) return "CC";
     if (name.includes("Andrew Tate")) {
@@ -433,8 +480,11 @@ function RankingCard({ cars, onVote, isVoting }) {
                     </div>
                   </div>
 
+                {/* VERTICAL DIVIDER LINE */}
+                <div className="hidden md:block w-[1px] h-[160px] bg-[#545454] my-auto shrink-0" />
+
                 {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-[210px] flex-col items-center justify-between border-t md:border-t-0 md:border-l border-zinc-850 px-6 py-3 bg-transparent">
+                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-[210px] flex-col items-center justify-between border-t md:border-t-0 px-6 py-3 bg-transparent">
                   {/* Top Rated Badge */}
                   {car.showTopRatedBadge ? (
                     <div className="flex flex-col items-center justify-center shrink-0 mb-4 select-none">
@@ -655,8 +705,11 @@ function RankingCard({ cars, onVote, isVoting }) {
                     </div>
                   </div>
 
+                {/* VERTICAL DIVIDER LINE */}
+                <div className="hidden md:block w-[1px] h-[160px] bg-[#545454] my-auto shrink-0" />
+
                 {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-[210px] flex-col items-center justify-between border-t md:border-t-0 md:border-l border-zinc-800 px-6 py-3.5 bg-zinc-950/20">
+                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-[210px] flex-col items-center justify-between border-t md:border-t-0 px-6 py-3.5 bg-zinc-950/20">
                   <button
                     onClick={() => onVote && onVote(car._id, car.categoryId)}
                     disabled={isVoting}
@@ -848,7 +901,18 @@ function RankingCard({ cars, onVote, isVoting }) {
                     </span>
                     <span className="text-zinc-700">|</span>
                     <span>
-                      Origin : <span className="text-white font-semibold">{car.country || car.origin || "Italy"}</span>
+                      Origin :{" "}
+                      <span className="inline-flex items-center gap-1.5 text-white font-semibold align-middle">
+                        <img
+                          src={getCountryFlagInfo(car.country || car.origin, car.brand).flagUrl}
+                          srcSet={`${getCountryFlagInfo(car.country || car.origin, car.brand).flagUrl2x} 2x`}
+                          alt={getCountryFlagInfo(car.country || car.origin, car.brand).name}
+                          className="w-4 h-auto rounded-[2px] object-contain shadow-xs inline-block"
+                        />
+                        <span>
+                          {getCountryFlagInfo(car.country || car.origin, car.brand).name}
+                        </span>
+                      </span>
                     </span>
                   </div>
                 </div>
@@ -867,65 +931,42 @@ function RankingCard({ cars, onVote, isVoting }) {
                 </div>
               </div>
 
-              {/* VOTE PANEL (20% width ratio) */}
-              <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-[210px] flex-col items-center justify-between border-t md:border-t-0 md:border-l border-zinc-850 px-6 py-3 bg-transparent">
-                {/* Top Rated Badge */}
-                {car.showTopRatedBadge ? (
-                  <div className="flex flex-col items-center justify-center shrink-0 select-none">
-                    <div className="relative flex items-center justify-center w-[46px] h-[48px]">
-                      <svg className="absolute inset-0 w-full h-full text-[#D6A125]" viewBox="0 0 24 28" fill="rgba(214,161,37,0.05)">
-                        <path d="M12 2C6.5 2 2 4.5 2 4.5V14c0 7.5 10 12 10 12s10-4.5 10-12V4.5S17.5 2 12 2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      <div className="z-10 flex flex-col items-center justify-center text-[#D6A125] font-bold leading-none text-center">
-                        <span className="text-[8px] uppercase tracking-wider font-extrabold">Top</span>
-                        <span className="text-[8px] uppercase tracking-wider font-extrabold mt-0.5">Rated</span>
-                        <svg className="w-2.5 h-2.5 mt-0.5 fill-current" viewBox="0 0 24 24">
-                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="h-[48px]" />
-                )}
+              {/* VERTICAL DIVIDER LINE */}
+              <div className="hidden md:block w-[1px] h-[160px] bg-[#545454] my-auto shrink-0" />
 
+              {/* VOTE PANEL (20% width ratio) */}
+              <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-[210px] flex-col items-center justify-between border-t md:border-t-0 px-6 py-3.5 bg-black select-none">
                 <button
                   onClick={() => onVote && onVote(car._id, car.categoryId)}
                   disabled={isVoting}
-                  className={`h-[36px] w-full max-w-[280px] rounded-[6px] border border-[#D6A125] bg-transparent text-[13px] font-bold text-white transition hover:bg-[#D6A125]/10 select-none ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`h-[44px] w-full rounded-[10px] border border-[#D6A125] bg-transparent text-[18px] font-bold text-[#D6A125] transition duration-200 hover:bg-[#D6A125]/10 select-none ${
+                    isVoting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   Vote
                 </button>
 
-                <div className="text-center my-1 flex-1 flex flex-col justify-center">
-                  <div className="text-[26px] tracking-tight font-extrabold text-white leading-none">
-                    {car.votes}
+                <div className="text-center my-auto flex flex-col items-center justify-center py-1">
+                  <div className="text-[32px] tracking-tight font-extrabold text-white leading-none">
+                    {car.votes || "0"}
                   </div>
                   <div className="text-[11px] text-zinc-500 font-medium mt-1 leading-none">
-                    Votes
+                    {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
                   </div>
                 </div>
 
-                <div className="w-full max-w-[280px]">
-                  {/* Gold Progress bar */}
-                  <div className="w-full bg-zinc-800 h-[3px] rounded-full overflow-hidden">
-                    <div
-                      className="bg-[#D6A125] h-full rounded-full transition-all duration-500"
-                      style={{ width: car.progress }}
-                    />
-                  </div>
+                <div className="w-full">
+                  {/* Gold solid line */}
+                  <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-3" />
 
-                  <div className="w-full flex items-center justify-center gap-1.5 py-1 px-3 bg-transparent rounded mt-1.5">
-                    {car.statusIcon === "trophy" ? (
-                      <FaTrophy className="text-[#D6A125] text-[11px]" />
+                  <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
+                    {car.statusIcon === "trophy" || car.rank === 1 ? (
+                      <FaTrophy className="text-[#D6A125] text-[12px]" />
                     ) : (
-                      <FaStar className="text-zinc-400 text-[11px]" />
+                      <FaStar className="text-[#D6A125] text-[12px]" />
                     )}
-                    <span
-                      className="text-[11px] font-bold uppercase tracking-wider text-[#D6A125]"
-                      style={{ color: car.rank === 1 ? "#D6A125" : "#A1A1AA" }}
-                    >
-                      {car.status}
+                    <span className="text-[12px] font-bold text-[#D6A125]">
+                      {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
                     </span>
                   </div>
                 </div>
