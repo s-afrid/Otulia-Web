@@ -760,10 +760,10 @@ function RankingCard({ cars, onVote, isVoting }) {
           <div
             key={car._id}
             id={car._id}
-            className="flex flex-col md:flex-row gap-3 md:gap-4 w-full max-w-full md:w-[1577px] h-auto md:h-[210px]"
+            className="flex flex-col md:flex-row gap-3 md:gap-4 w-full max-w-[1577px] h-auto md:h-[210px] mx-auto"
           >
             {/* IMAGES */}
-            <div className="relative shrink-0 w-full md:w-[437px] h-[180px] md:h-[210px] bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+            <div className="relative shrink-0 w-full md:w-[320px] lg:w-[380px] xl:w-[437px] h-[180px] md:h-[210px] bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
               <img
                 src={car.image}
                 alt={car.name}
@@ -804,30 +804,30 @@ function RankingCard({ cars, onVote, isVoting }) {
             </div>
 
             {/* CONTENT BOX */}
-            <div className="flex flex-col md:flex-row flex-1 h-[210px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+            <div className="flex flex-col md:flex-row flex-1 h-auto md:h-[210px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
               {/* CONTENT (80% width ratio) */}
-              <div className="flex flex-[4] md:w-[80%] flex-col px-5 py-3 bg-black justify-between h-[210px]">
+              <div className="flex flex-col flex-1 md:w-[75%] lg:w-[80%] px-4 sm:px-5 py-3 bg-black justify-between min-h-0 md:h-[210px]">
                 <div>
                   {/* Header */}
                   <div>
-                    <h2 className="text-[22px] font-bold tracking-tight text-white leading-tight">
+                    <h2 className="text-[18px] sm:text-[20px] md:text-[22px] font-bold tracking-tight text-white leading-tight">
                       {car.name}
                     </h2>
-                    <p className="mt-1 text-[12.5px] leading-snug text-zinc-400 font-normal truncate">
+                    <p className="mt-1 text-[11.5px] sm:text-[12.5px] leading-snug text-zinc-400 font-normal truncate">
                       {car.description}
                     </p>
                   </div>
 
                   {/* Metrics Counters Row */}
-                  <div className="flex flex-wrap items-center gap-3.5 md:gap-5 py-2 mt-1">
+                  <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 md:gap-4 lg:gap-5 py-2 mt-1 overflow-x-auto no-scrollbar">
                     {/* Power */}
                     <div className="flex items-center gap-2 shrink-0">
-                      <FaBolt className="text-[#EAB308] text-[24px] shrink-0" />
+                      <FaBolt className="text-[#EAB308] text-[20px] sm:text-[24px] shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[13.5px] font-bold text-white leading-none">
+                        <span className="text-[12.5px] sm:text-[13.5px] font-bold text-white leading-none">
                           {car.power || "1,800 HP"}
                         </span>
-                        <span className="text-[10px] text-zinc-500 font-medium mt-1 leading-none">
+                        <span className="text-[9.5px] sm:text-[10px] text-zinc-500 font-medium mt-1 leading-none">
                           Power
                         </span>
                       </div>
@@ -837,12 +837,12 @@ function RankingCard({ cars, onVote, isVoting }) {
 
                     {/* Acceleration / 0-60 MPH */}
                     <div className="flex items-center gap-2 shrink-0">
-                      <LuTimerReset className="text-zinc-300 text-[24px] shrink-0" />
+                      <LuTimerReset className="text-zinc-300 text-[20px] sm:text-[24px] shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[13.5px] font-bold text-white leading-none">
+                        <span className="text-[12.5px] sm:text-[13.5px] font-bold text-white leading-none">
                           {car.acceleration || "2.0 Sec"}
                         </span>
-                        <span className="text-[10px] text-zinc-500 font-medium mt-1 leading-none">
+                        <span className="text-[9.5px] sm:text-[10px] text-zinc-500 font-medium mt-1 leading-none">
                           0-60 MPH
                         </span>
                       </div>
@@ -852,12 +852,12 @@ function RankingCard({ cars, onVote, isVoting }) {
 
                     {/* Top Speed */}
                     <div className="flex items-center gap-2 shrink-0">
-                      <MdOutlineSpeed className="text-zinc-300 text-[24px] shrink-0" />
+                      <MdOutlineSpeed className="text-zinc-300 text-[20px] sm:text-[24px] shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[13.5px] font-bold text-white leading-none">
+                        <span className="text-[12.5px] sm:text-[13.5px] font-bold text-white leading-none">
                           {car.topSpeed || "445 Kmph"}
                         </span>
-                        <span className="text-[10px] text-zinc-500 font-medium mt-1 leading-none">
+                        <span className="text-[9.5px] sm:text-[10px] text-zinc-500 font-medium mt-1 leading-none">
                           Top Speed
                         </span>
                       </div>
@@ -867,12 +867,12 @@ function RankingCard({ cars, onVote, isVoting }) {
 
                     {/* Engine */}
                     <div className="flex items-center gap-2 shrink-0">
-                      <TbEngine className="text-zinc-300 text-[24px] shrink-0" />
+                      <TbEngine className="text-zinc-300 text-[20px] sm:text-[24px] shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[13.5px] font-bold text-white leading-none">
+                        <span className="text-[12.5px] sm:text-[13.5px] font-bold text-white leading-none">
                           {car.engine || "8.3 L W16"}
                         </span>
-                        <span className="text-[10px] text-zinc-500 font-medium mt-1 leading-none">
+                        <span className="text-[9.5px] sm:text-[10px] text-zinc-500 font-medium mt-1 leading-none">
                           Engine
                         </span>
                       </div>
@@ -883,7 +883,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                   <div className="border-t border-zinc-800/80 w-full my-1.5" />
 
                   {/* Meta information */}
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-zinc-500 font-normal">
+                  <div className="flex flex-wrap items-center gap-x-2.5 sm:gap-x-3 gap-y-1 text-[10.5px] sm:text-[11px] text-zinc-500 font-normal">
                     <span>
                       Brand : <span className="text-white font-semibold">{car.brand || car.location || "Bugatti"}</span>
                     </span>
@@ -918,7 +918,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                 </div>
 
                 {/* View all Links Button */}
-                <div className="relative">
+                <div className="relative mt-2 md:mt-0">
                   <button
                     type="button"
                     onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
@@ -935,37 +935,37 @@ function RankingCard({ cars, onVote, isVoting }) {
               <div className="hidden md:block w-[1px] h-[160px] bg-[#545454] my-auto shrink-0" />
 
               {/* VOTE PANEL (20% width ratio) */}
-              <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-[210px] flex-col items-center justify-between border-t md:border-t-0 px-6 py-3.5 bg-black select-none">
+              <div className="flex flex-[1] w-full md:w-[25%] lg:w-[20%] shrink-0 h-auto md:h-[210px] flex-col items-center justify-between border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-3.5 bg-black select-none">
                 <button
                   onClick={() => onVote && onVote(car._id, car.categoryId)}
                   disabled={isVoting}
-                  className={`h-[44px] w-full rounded-[10px] border border-[#D6A125] bg-transparent text-[18px] font-bold text-[#D6A125] transition duration-200 hover:bg-[#D6A125]/10 select-none ${
+                  className={`h-[40px] sm:h-[44px] w-full max-w-[280px] rounded-[10px] border border-[#D6A125] bg-transparent text-[16px] sm:text-[18px] font-bold text-[#D6A125] transition duration-200 hover:bg-[#D6A125]/10 select-none ${
                     isVoting ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >
                   Vote
                 </button>
 
-                <div className="text-center my-auto flex flex-col items-center justify-center py-1">
-                  <div className="text-[32px] tracking-tight font-extrabold text-white leading-none">
+                <div className="text-center my-3 md:my-auto flex flex-col items-center justify-center py-1">
+                  <div className="text-[26px] sm:text-[30px] md:text-[32px] tracking-tight font-extrabold text-white leading-none">
                     {car.votes || "0"}
                   </div>
-                  <div className="text-[11px] text-zinc-500 font-medium mt-1 leading-none">
+                  <div className="text-[10.5px] sm:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
                     {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
                   </div>
                 </div>
 
-                <div className="w-full">
+                <div className="w-full max-w-[280px]">
                   {/* Gold solid line */}
-                  <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-3" />
+                  <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-2.5 sm:mb-3" />
 
                   <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
                     {car.statusIcon === "trophy" || car.rank === 1 ? (
-                      <FaTrophy className="text-[#D6A125] text-[12px]" />
+                      <FaTrophy className="text-[#D6A125] text-[11px] sm:text-[12px]" />
                     ) : (
-                      <FaStar className="text-[#D6A125] text-[12px]" />
+                      <FaStar className="text-[#D6A125] text-[11px] sm:text-[12px]" />
                     )}
-                    <span className="text-[12px] font-bold text-[#D6A125]">
+                    <span className="text-[11px] sm:text-[12px] font-bold text-[#D6A125]">
                       {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
                     </span>
                   </div>
