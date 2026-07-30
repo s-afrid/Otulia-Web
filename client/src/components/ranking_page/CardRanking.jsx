@@ -556,10 +556,10 @@ function RankingCard({ cars, onVote, isVoting }) {
             <div
               key={car._id}
               id={car._id}
-              className="flex flex-col md:flex-row items-start gap-3 md:gap-4 w-full max-w-full md:w-[calc(1140px+430px)] h-auto md:h-[380px]"
+              className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-full md:w-[calc(1140px+430px)] h-auto md:h-[380px]"
             >
               {/* IMAGES */}
-              <div className="relative shrink-0 w-full md:w-[430px] h-[220px] md:h-[300px] bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              <div className="relative shrink-0 w-full md:w-[430px] h-[220px] md:h-[300px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
                 <img
                   src={car.image}
                   alt={car.name}
@@ -591,113 +591,111 @@ function RankingCard({ cars, onVote, isVoting }) {
               </div>
 
               {/* CONTENT BOX */}
-              <div className="flex flex-col md:flex-row flex-1 md:w-[1140px] h-auto md:h-[380px] rounded-[12px] border border-zinc-800 bg-[#09090b] text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              <div className="flex flex-col md:flex-row flex-1 md:w-[1140px] h-auto md:h-[380px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
                 {/* CONTENT (80% width ratio) */}
-                <div className="flex flex-[4] md:w-[80%] flex-col px-6 py-5 bg-[#09090b] justify-between h-auto md:h-[380px]">
+                <div className="flex flex-[4] md:w-[80%] flex-col px-7 py-6 bg-black justify-between h-auto md:h-[380px]">
                     <div>
                       {/* Header */}
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-full border border-zinc-700 bg-black flex items-center justify-center text-white font-bold text-base shrink-0 select-none">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-12 h-12 rounded-[10px] border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-lg shrink-0 select-none">
                           {getInitials(car.name)}
                         </div>
                         <div>
-                          <h2 className="text-[22px] font-bold tracking-tight text-white leading-tight">
+                          <h2 className="text-[25px] font-bold tracking-tight text-white leading-tight">
                             {car.name}
                           </h2>
-                          <div className="text-[13px] text-zinc-400 font-medium mt-0.5">
+                          <div className="text-[13.5px] text-zinc-400 font-medium mt-0.5">
                             Channel : <span className="text-zinc-300">{car.channelName || car.name}</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Meta/Tags */}
-                      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px]">
+                      <div className="mt-3.5 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[13.5px]">
                         {car.location && (
-                          <span className="flex items-center gap-1.5 text-white">
-                            <FiMapPin className="text-[#D6A125]" />
+                          <span className="flex items-center gap-2 text-white font-medium">
+                            <FiMapPin className="text-[#D6A125] text-sm" />
                             {car.location}
                           </span>
                         )}
                         {car.joinDate && (
-                          <span className="flex items-center gap-1.5 text-white">
-                            <FaCalendarAlt className="text-[#D6A125]" />
+                          <span className="flex items-center gap-2 text-white font-medium">
+                            <FaCalendarAlt className="text-[#D6A125] text-sm" />
                             {car.joinDate}
                           </span>
                         )}
                         {car.genre && (
-                          <span className="flex items-center gap-1.5 text-white">
-                            <FaTag className="text-[#D6A125]" />
+                          <span className="flex items-center gap-2 text-white font-medium">
+                            <FaTag className="text-[#D6A125] text-sm" />
                             {car.genre}
                           </span>
                         )}
                       </div>
 
                       {/* Description */}
-                      <p className="mt-3 text-[13px] leading-relaxed text-zinc-400 font-normal line-clamp-3">
+                      <p className="mt-3.5 text-[13.5px] leading-relaxed text-zinc-400 font-normal line-clamp-3">
                         {car.description}
                       </p>
                     </div>
 
                     <div>
                       {/* Divider */}
-                      <div className="my-3 border-t border-zinc-800" />
+                      <div className="my-3.5 border-t border-zinc-800/80" />
 
-                      {/* Social Counters */}
-                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 py-1">
+                      {/* Social Counters Bar Container */}
+                      <div className="bg-[#121214] border border-zinc-800/80 rounded-[6px] px-4 py-3 flex items-center justify-between">
                         {/* Total Subscribers */}
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded bg-[#161618] border border-zinc-800 flex items-center justify-center text-[#D6A125] shrink-0">
-                            <FaUsers className="text-base" />
-                          </div>
-                          <div>
-                            <div className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider leading-none">Total Subscribers</div>
-                            <div className="text-[14px] font-extrabold text-white mt-1 leading-none">{stats.total}</div>
+                        <div className="flex items-center gap-3 flex-1 justify-start">
+                          <FaUsers className="text-[#D6A125] text-xl shrink-0" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-zinc-400 font-semibold leading-none">Total Subscribers</span>
+                            <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.total}</span>
                           </div>
                         </div>
 
-                        {/* YouTube */}
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded bg-[#161618] border border-zinc-800 flex items-center justify-center shrink-0">
-                            <img src={youtubeIcon} alt="YouTube" className="w-4.5 h-4.5 object-contain" />
-                          </div>
-                          <div>
-                            <div className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider leading-none">YouTube</div>
-                            <div className="text-[14px] font-extrabold text-white mt-1 leading-none">{stats.youtube}</div>
+                        <div className="w-[1px] h-7 bg-zinc-800/80 mx-2" />
+
+                        {/* YouTube Subscribers */}
+                        <div className="flex items-center gap-3 flex-1 justify-center">
+                          <img src={youtubeIcon} alt="YouTube" className="w-5 h-5 object-contain shrink-0" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-zinc-400 font-semibold leading-none">YouTube Subscribers</span>
+                            <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.youtube}</span>
                           </div>
                         </div>
 
-                        {/* Instagram */}
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded bg-[#161618] border border-zinc-800 flex items-center justify-center shrink-0">
-                            <img src={instagramIcon} alt="Instagram" className="w-4.5 h-4.5 object-contain" />
-                          </div>
-                          <div>
-                            <div className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider leading-none">Instagram</div>
-                            <div className="text-[14px] font-extrabold text-white mt-1 leading-none">{stats.instagram}</div>
+                        <div className="w-[1px] h-7 bg-zinc-800/80 mx-2" />
+
+                        {/* Instagram Followers */}
+                        <div className="flex items-center gap-3 flex-1 justify-center">
+                          <img src={instagramIcon} alt="Instagram" className="w-5 h-5 object-contain shrink-0" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-zinc-400 font-semibold leading-none">Instagram Followers</span>
+                            <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.instagram}</span>
                           </div>
                         </div>
 
-                        {/* Twitter / X */}
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded bg-[#161618] border border-zinc-800 flex items-center justify-center shrink-0">
-                            <img src={xIcon} alt="Twitter" className="w-4.5 h-4.5 object-contain" />
-                          </div>
-                          <div>
-                            <div className="text-[9.5px] text-zinc-500 font-bold uppercase tracking-wider leading-none">Twitter</div>
-                            <div className="text-[14px] font-extrabold text-white mt-1 leading-none">{stats.twitter}</div>
+                        <div className="w-[1px] h-7 bg-zinc-800/80 mx-2" />
+
+                        {/* Twitter Followers */}
+                        <div className="flex items-center gap-3 flex-1 justify-end">
+                          <img src={xIcon} alt="Twitter" className="w-4.5 h-4.5 object-contain shrink-0" />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-zinc-400 font-semibold leading-none">Twitter Followers</span>
+                            <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.twitter}</span>
                           </div>
                         </div>
                       </div>
 
                       {/* View Links Button */}
-                      <div className="relative mt-3 w-full">
+                      <div className="relative mt-3.5 w-full">
                         <button
                           type="button"
                           onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
-                          className="flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/10 text-[#D6A125] text-[12px] font-bold uppercase tracking-wider px-4 py-2 rounded transition duration-200 w-full"
+                          className="flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/10 text-[#D6A125] text-[13.5px] font-bold px-5 py-2.5 rounded-[8px] transition duration-200 w-full select-none"
                         >
                           <span>View all Links</span>
-                          <FaArrowRight className="text-[11px]" />
+                          <FaArrowRight className="text-[13px]" />
                         </button>
                         {openSnackbarId === car._id && renderLinksSnackbar(car)}
                       </div>
@@ -705,39 +703,39 @@ function RankingCard({ cars, onVote, isVoting }) {
                   </div>
 
                 {/* VERTICAL DIVIDER LINE */}
-                <div className="hidden md:block w-[1px] h-[300px] bg-[#545454] my-auto shrink-0" />
+                <div className="hidden md:block w-[1px] h-[300px] bg-zinc-800/80 my-auto shrink-0" />
 
                 {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[380px] flex-col items-center justify-between border-t md:border-t-0 px-6 py-5 bg-zinc-950/20">
+                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[380px] flex-col items-center justify-between border-t md:border-t-0 px-6 py-7 bg-black select-none">
                   <button
                     onClick={() => onVote && onVote(car._id, car.categoryId)}
                     disabled={isVoting}
-                    className={`h-[48px] w-full rounded-[8px] border border-[#D6A125] bg-transparent text-[15px] font-bold text-white transition hover:bg-[#D6A125]/10 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`h-[44px] w-[140px] rounded-[8px] border border-[#D6A125] bg-transparent text-[18px] font-bold text-white transition hover:bg-[#D6A125]/10 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     Vote
                   </button>
 
-                  <div className="text-center my-6 flex-1 flex flex-col justify-center">
+                  <div className="text-center my-4 flex-1 flex flex-col justify-center items-center">
                     <div className="text-[36px] tracking-tight font-extrabold text-white leading-none">
                       {car.votes}
                     </div>
-                    <div className="text-[13px] text-zinc-500 font-medium mt-1.5 leading-none">
+                    <div className="text-[12px] text-zinc-500 font-normal mt-2 leading-none">
                       {car.rawVotes ? car.rawVotes.toLocaleString() : "0"}
                     </div>
                   </div>
 
-                  <div className="w-full">
+                  <div className="w-full flex flex-col items-center">
                     {/* Gold separator line */}
-                    <div className="w-full border-t border-[#D6A125] my-4" />
+                    <div className="w-[140px] bg-[#D6A125] h-[3px] rounded-full my-3" />
 
-                    <div className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 bg-zinc-900/60 border border-zinc-800 rounded">
+                    <div className="flex items-center justify-center gap-1.5 py-1.5 px-4 bg-[#141416] border border-zinc-800/80 rounded-[6px]">
                       {car.statusIcon === "trophy" ? (
                         <FaTrophy className="text-[#D6A125] text-[12px]" />
                       ) : (
                         <FaStar className="text-zinc-400 text-[12px]" />
                       )}
                       <span
-                        className="text-[12px] font-bold uppercase tracking-wider"
+                        className="text-[13px] font-bold"
                         style={{ color: car.rank === 1 ? "#D6A125" : "#A1A1AA" }}
                       >
                         {car.status}
