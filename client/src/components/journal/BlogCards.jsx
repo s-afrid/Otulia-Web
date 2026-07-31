@@ -9,6 +9,10 @@ import bieber from "/src/assets/journal/blog_nine/hero.png";
 import mclaren from "/src/assets/journal/blog_seven/hero.png";
 import ferrari from "/src/assets/journal/blog_eight/hero.png";
 import novak from "/src/assets/journal/blog_ten/hero.png";
+import haaland from "/src/assets/journal/blog_eleven/hero.webp";
+import terry from "/src/assets/journal/blog_twelve/hero_image.webp";
+import zendaya from "/src/assets/journal/blog_thirteen/hero.webp";
+import porsche from "/src/assets/journal/blog_fourteen/hero.webp";
 
 const blogPosts = [
   {
@@ -119,12 +123,59 @@ const blogPosts = [
     id: 10,
     tag: "Celebrity Real Estate",
     category: "Real Estate",
-    title: "Inside Novak Djokovic’s Global Property Portfolio",
+    title: "Inside Novak Djokovic's Global Property Portfolio",
     image: novak,
     author: "Otulia Editorial Team",
     date: "14 July",
     readTime: "<10",
     link: "/journal/novak-djokovic-property-portfolio",
+  },
+  {
+    id: 11,
+    tag: "Celebrity Collection",
+    category: "Cars",
+    title:
+      "From Ferrari to Bugatti: Inside Erling Haaland's Multimillion-Dollar Car Collection",
+    image: haaland,
+    author: "Otulia Editorial Team",
+    date: "28 July",
+    readTime: "8",
+    link: "/journal/erling-haaland-multimillion-dollar-car-collection",
+  },
+  {
+    id: 12,
+    tag: "Celebrity Real Estate",
+    category: "Real Estate",
+    title:
+      "Hollywood Star Terry Crews Buys Luxury Residence at Binghatti Aquarise in Dubai",
+    image: terry,
+    author: "Otulia Editorial Team",
+    date: "28 July",
+    readTime: "6",
+    link: "/journal/terry-crews-binghatti-aquarise-dubai",
+  },
+  {
+    id: 13,
+    tag: "Celebrity Real Estate",
+    category: "Real Estate",
+    title: "Inside Zendaya and Tom Holland's $22 Million Property Portfolio",
+    image: zendaya,
+    author: "Otulia Editorial Team",
+    date: "28 July",
+    readTime: "8",
+    link: "/journal/zendaya-tom-holland-property-portfolio",
+  },
+  {
+    id: 14,
+    tag: "Road Test",
+    category: "Cars",
+    title:
+      "Road Test: Porsche's All-Electric Cayenne Delivers Uncommon S.U.V. Power With Poise",
+    image: porsche,
+    author: "Otulia Editorial Team",
+    date: "28 July",
+    readTime: "10",
+    link: "/journal/porsche-cayenne-turbo-coupe-electric-road-test",
   },
 ];
 
