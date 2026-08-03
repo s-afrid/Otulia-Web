@@ -8,6 +8,10 @@ import McLarenSupercar from "../components/journal/Stories/StorySeven";
 import Ferrari12CilindriManualeGallery from "../components/journal/Stories/StoryEight";
 import BieberNYCCondoArticle from "../components/journal/Stories/StoryNine";
 import DjokovicPropertyPortfolioArticle from "../components/journal/Stories/StoryTen";
+import HaalandCarCollectionArticle from "../components/journal/Stories/StoryEleven";
+import TerryCrewsBinghattiArticle from "../components/journal/Stories/StoryTwelve";
+import ZendayaTomHollandPortfolioArticle from "../components/journal/Stories/StoryThirteen";
+import PorscheCayenneElectricArticle from "../components/journal/Stories/StoryFourteen";
 
 export const journalArticles = {
   "the-true-cost-of-owning-a-luxurycar": {
@@ -51,6 +55,25 @@ export const journalArticles = {
   },
   "novak-djokovic-property-portfolio": {
     component: DjokovicPropertyPortfolioArticle,
-    title: "Inside Novak Djokovic’s Global Property Portfolio",
+    title: "Inside Novak Djokovic's Global Property Portfolio",
+  },
+  "erling-haaland-multimillion-dollar-car-collection": {
+    component: HaalandCarCollectionArticle,
+    title:
+      "From Ferrari to Bugatti: Inside Erling Haaland's Multimillion-Dollar Car Collection",
+  },
+  "terry-crews-binghatti-aquarise-dubai": {
+    component: TerryCrewsBinghattiArticle,
+    title:
+      "Hollywood Star Terry Crews Buys Luxury Residence at Binghatti Aquarise in Dubai",
+  },
+  "zendaya-tom-holland-property-portfolio": {
+    component: ZendayaTomHollandPortfolioArticle,
+    title: "Inside Zendaya and Tom Holland's $22 Million Property Portfolio",
+  },
+  "porsche-cayenne-turbo-coupe-electric-road-test": {
+    component: PorscheCayenneElectricArticle,
+    title:
+      "Road Test: Porsche's All-Electric Cayenne Delivers Uncommon S.U.V. Power With Poise",
   },
 };
