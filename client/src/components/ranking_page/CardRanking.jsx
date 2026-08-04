@@ -595,10 +595,10 @@ function RankingCard({ cars, onVote, isVoting }) {
             <div
               key={car._id}
               id={car._id}
-              className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-full md:w-[calc(1140px+430px)] h-auto md:h-[310px]"
+              className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-full xl:max-w-[1570px] h-auto md:h-[310px]"
             >
               {/* IMAGES (Appears on the left) */}
-              <div className="relative shrink-0 w-full md:w-[430px] h-[220px] md:h-[310px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[220px] md:h-[310px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
                 <img
                   src={bannerImageUrl}
                   alt={car.name}
@@ -630,12 +630,12 @@ function RankingCard({ cars, onVote, isVoting }) {
               </div>
 
               {/* CONTENT BOX (Appears on the right) */}
-              <div className="flex flex-col md:flex-row flex-1 md:w-[1140px] h-auto md:h-[310px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              <div className="flex flex-col md:flex-row flex-1 w-full max-w-full rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300 h-auto md:h-[310px]">
                 {/* CONTENT (80% width ratio) */}
-                <div className="flex flex-[4] md:w-[80%] flex-col px-6 py-4 bg-black justify-between h-auto md:h-[310px]">
+                <div className="flex flex-[4] w-full md:w-[75%] lg:w-[80%] flex-col px-4 sm:px-6 py-4 bg-black justify-between h-auto md:h-[310px]">
                   {/* Header */}
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-[82px] h-[79px] rounded-full border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-lg shrink-0 select-none overflow-hidden relative">
+                  <div className="flex items-center gap-3 sm:gap-3.5">
+                    <div className="w-[68px] h-[66px] sm:w-[82px] sm:h-[79px] rounded-full border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-base sm:text-lg shrink-0 select-none overflow-hidden relative">
                       {profilePicUrl ? (
                         <img
                           src={profilePicUrl}
@@ -650,46 +650,46 @@ function RankingCard({ cars, onVote, isVoting }) {
                         />
                       ) : null}
                       <div
-                        className="w-full h-full rounded-full items-center justify-center text-white font-bold text-lg select-none"
+                        className="w-full h-full rounded-full items-center justify-center text-white font-bold text-base sm:text-lg select-none"
                         style={{ display: profilePicUrl ? 'none' : 'flex' }}
                       >
                         {getInitials(car.name)}
                       </div>
                     </div>
-                    <div className="flex flex-col justify-center h-[79px]">
-                      <h2 className="text-[38px] lg:text-[42px] font-extrabold tracking-tight text-white leading-none">
+                    <div className="flex flex-col justify-center h-[66px] sm:h-[79px]">
+                      <h2 className="text-[26px] sm:text-[34px] lg:text-[42px] font-extrabold tracking-tight text-white leading-none">
                         {car.name}
                       </h2>
-                      <div className="text-[15px] lg:text-[16px] text-zinc-400 font-medium mt-2 leading-none">
+                      <div className="text-[13px] sm:text-[15px] lg:text-[16px] text-zinc-400 font-medium mt-1 sm:mt-2 leading-none">
                         Channel : <span className="text-zinc-300">{car.channelName || car.name}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Meta/Tags */}
-                  <div className="mt-2.5 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[13.5px]">
+                  <div className="mt-2.5 flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1.5 text-[12px] sm:text-[13.5px]">
                     {car.location && (
-                      <span className="flex items-center gap-2 text-white font-medium">
-                        <FiMapPin className="text-[#D6A125] text-sm" />
+                      <span className="flex items-center gap-1.5 sm:gap-2 text-white font-medium">
+                        <FiMapPin className="text-[#D6A125] text-xs sm:text-sm" />
                         {car.location}
                       </span>
                     )}
                     {car.joinDate && (
-                      <span className="flex items-center gap-2 text-white font-medium">
-                        <FaCalendarAlt className="text-[#D6A125] text-sm" />
+                      <span className="flex items-center gap-1.5 sm:gap-2 text-white font-medium">
+                        <FaCalendarAlt className="text-[#D6A125] text-xs sm:text-sm" />
                         {car.joinDate}
                       </span>
                     )}
                     {car.genre && (
-                      <span className="flex items-center gap-2 text-white font-medium">
-                        <FaTag className="text-[#D6A125] text-sm" />
+                      <span className="flex items-center gap-1.5 sm:gap-2 text-white font-medium">
+                        <FaTag className="text-[#D6A125] text-xs sm:text-sm" />
                         {car.genre}
                       </span>
                     )}
                   </div>
 
                   {/* Description */}
-                  <p className="mt-2 text-[13.5px] leading-relaxed text-zinc-400 font-normal line-clamp-3">
+                  <p className="mt-2 text-[12.5px] sm:text-[13.5px] leading-relaxed text-zinc-400 font-normal line-clamp-2 sm:line-clamp-3">
                     {car.description}
                   </p>
 
@@ -697,40 +697,40 @@ function RankingCard({ cars, onVote, isVoting }) {
                   <div className="my-2 border-t border-zinc-800/80" />
 
                   {/* Social Counters Bar Container */}
-                  <div className="bg-[#121214] border border-zinc-800/80 rounded-[6px] py-2.5 grid grid-cols-4 divide-x divide-zinc-800/80 items-center">
+                  <div className="bg-[#121214] border border-zinc-800/80 rounded-[6px] py-2 sm:py-2.5 grid grid-cols-2 sm:grid-cols-4 gap-y-2 sm:gap-y-0 divide-y sm:divide-y-0 sm:divide-x divide-zinc-800/80 items-center">
                     {/* Total Subscribers */}
-                    <div className="flex items-center justify-center gap-3 px-2">
-                      <FaUsers className="text-[#D6A125] text-[24px] shrink-0" />
+                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
+                      <FaUsers className="text-[#D6A125] text-[18px] sm:text-[24px] shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-zinc-400 font-semibold leading-none">Total Subscribers</span>
-                        <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.total}</span>
+                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">Total Subscribers</span>
+                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.total}</span>
                       </div>
                     </div>
 
                     {/* YouTube Subscribers */}
-                    <div className="flex items-center justify-center gap-3 px-2">
-                      <img src={youtubeIcon} alt="YouTube" className="w-6 h-6 object-contain shrink-0" />
+                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
+                      <img src={youtubeIcon} alt="YouTube" className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-zinc-400 font-semibold leading-none">YouTube Subscribers</span>
-                        <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.youtube}</span>
+                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">YouTube Subscribers</span>
+                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.youtube}</span>
                       </div>
                     </div>
 
                     {/* Instagram Followers */}
-                    <div className="flex items-center justify-center gap-3 px-2">
-                      <img src={instagramIcon} alt="Instagram" className="w-6 h-6 object-contain shrink-0" />
+                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
+                      <img src={instagramIcon} alt="Instagram" className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-zinc-400 font-semibold leading-none">Instagram Followers</span>
-                        <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.instagram}</span>
+                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">Instagram Followers</span>
+                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.instagram}</span>
                       </div>
                     </div>
 
                     {/* Twitter Followers */}
-                    <div className="flex items-center justify-center gap-3 px-2">
-                      <img src={xIcon} alt="Twitter" className="w-[22px] h-[22px] object-contain shrink-0" />
+                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
+                      <img src={xIcon} alt="Twitter" className="w-4.5 h-4.5 sm:w-[22px] sm:h-[22px] object-contain shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-zinc-400 font-semibold leading-none">Twitter Followers</span>
-                        <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.twitter}</span>
+                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">Twitter Followers</span>
+                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.twitter}</span>
                       </div>
                     </div>
                   </div>
@@ -740,10 +740,10 @@ function RankingCard({ cars, onVote, isVoting }) {
                     <button
                       type="button"
                       onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
-                      className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[13.5px] font-bold transition duration-200 w-fit select-none"
+                      className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[12.5px] sm:text-[13.5px] font-bold transition duration-200 w-fit select-none"
                     >
                       <span>View all Links</span>
-                      <FaArrowRight className="text-[13px]" />
+                      <FaArrowRight className="text-[12px] sm:text-[13px]" />
                     </button>
                     {openSnackbarId === car._id && renderLinksSnackbar(car)}
                   </div>
@@ -753,36 +753,36 @@ function RankingCard({ cars, onVote, isVoting }) {
                 <div className="hidden md:block w-[1px] h-[250px] bg-zinc-800/80 my-auto shrink-0" />
 
                 {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[310px] flex-col items-center justify-center gap-2.5 border-t md:border-t-0 px-6 py-4 bg-black select-none">
+                <div className="flex flex-[1] w-full md:w-[25%] lg:w-[20%] shrink-0 h-auto md:h-[310px] flex-col items-center justify-center gap-2.5 border-t md:border-t-0 px-4 sm:px-6 py-4 bg-black select-none">
                   <button
                     onClick={() => onVote && onVote(car._id, car.categoryId)}
                     disabled={isVoting}
-                    className={`h-[44px] w-[140px] rounded-[8px] border border-[#D6A125] bg-transparent text-[18px] font-bold text-white transition hover:bg-[#D6A125]/10 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`h-[40px] sm:h-[44px] w-[130px] sm:w-[140px] rounded-[8px] border border-[#D6A125] bg-transparent text-[16px] sm:text-[18px] font-bold text-white transition hover:bg-[#D6A125]/10 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     Vote
                   </button>
 
                   <div className="text-center flex flex-col justify-center items-center py-1">
-                    <div className="text-[36px] tracking-tight font-extrabold text-white leading-none">
+                    <div className="text-[30px] sm:text-[36px] tracking-tight font-extrabold text-white leading-none">
                       {car.votes}
                     </div>
-                    <div className="text-[12px] text-zinc-500 font-normal mt-1.5 leading-none">
+                    <div className="text-[11px] sm:text-[12px] text-zinc-500 font-normal mt-1.5 leading-none">
                       {car.rawVotes ? car.rawVotes.toLocaleString() : "0"}
                     </div>
                   </div>
 
                   <div className="w-full flex flex-col items-center">
                     {/* Gold separator line */}
-                    <div className="w-[140px] bg-[#D6A125] h-[3px] rounded-full mb-3" />
+                    <div className="w-[120px] sm:w-[140px] bg-[#D6A125] h-[3px] rounded-full mb-3" />
 
-                    <div className="flex items-center justify-center gap-1.5 py-1.5 px-4 bg-[#141416] border border-zinc-800/80 rounded-[6px]">
+                    <div className="flex items-center justify-center gap-1.5 py-1.5 px-3.5 sm:px-4 bg-[#141416] border border-zinc-800/80 rounded-[6px]">
                       {car.statusIcon === "trophy" ? (
                         <FaTrophy className="text-[#D6A125] text-[12px]" />
                       ) : (
                         <FaStar className="text-zinc-400 text-[12px]" />
                       )}
                       <span
-                        className="text-[13px] font-bold"
+                        className="text-[12px] sm:text-[13px] font-bold"
                         style={{ color: car.rank === 1 ? "#D6A125" : "#A1A1AA" }}
                       >
                         {car.status}
