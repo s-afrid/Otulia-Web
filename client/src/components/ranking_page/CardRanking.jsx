@@ -225,6 +225,42 @@ function RankingCard({ cars, onVote, isVoting }) {
     return parts[0].substring(0, 2).toUpperCase();
   };
 
+  const getCreatorProfilePic = (car) => {
+    if (car.profilePic) return car.profilePic;
+    if (car.profilePicture) return car.profilePicture;
+    if (car.avatar) return car.avatar;
+    if (car.profileImage) return car.profileImage;
+    if (car.keyDetails?.profilePic) return car.keyDetails.profilePic;
+    if (car.keyDetails?.profilePicture) return car.keyDetails.profilePicture;
+    
+    if (car.image && car.banner && car.image !== car.banner) {
+      return car.image;
+    }
+
+    if (car.name === "MrBeast") {
+      return "https://unavatar.io/youtube/@mrbeast";
+    }
+    if (car.name === "PewDiePie") {
+      return "https://unavatar.io/youtube/@pewdiepie";
+    }
+    if (car.name && car.name.includes("Andrew Tate")) {
+      return "https://unavatar.io/twitter/Cobratate";
+    }
+    
+    if (car.youtube) {
+      const parts = car.youtube.trim().split('/');
+      const handle = parts[parts.length - 1] || parts[parts.length - 2];
+      if (handle) return `https://unavatar.io/youtube/${handle.replace('@', '')}`;
+    }
+    if (car.twitter || car.x) {
+      const handle = (car.twitter || car.x).trim().split('/').pop();
+      if (handle) return `https://unavatar.io/twitter/${handle}`;
+    }
+    
+    return car.image || null;
+  };
+
+
   const getCreatorStats = (car) => {
     const total = car.subscribers || "0";
     
@@ -552,44 +588,15 @@ function RankingCard({ cars, onVote, isVoting }) {
         }
         if (car.isContentCreator) {
           const stats = getCreatorStats(car);
+          const profilePicUrl = getCreatorProfilePic(car);
+          const bannerImageUrl = car.banner || car.bannerImage || car.coverImage || car.image;
+
           return (
             <div
               key={car._id}
               id={car._id}
               className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-full md:w-[calc(1140px+430px)] h-auto md:h-[380px]"
             >
-              {/* IMAGES */}
-              <div className="relative shrink-0 w-full md:w-[430px] h-[220px] md:h-[300px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
-                <img
-                  src={car.image}
-                  alt={car.name}
-                  className="w-full h-full object-cover"
-                />
-
-                {/* Rank Ribbon */}
-                <div className="absolute left-4 top-0">
-                  <div
-                    className="flex w-[36px] flex-col items-center py-2 text-black rounded-b-[4px]"
-                    style={{ backgroundColor: car.rankColor }}
-                  >
-                    <FaTrophy
-                      className="text-[12px]"
-                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
-                    />
-                    <span
-                      className="mt-0.5 text-[15px] font-bold leading-none"
-                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
-                    >
-                      {car.rank}
-                    </span>
-                  </div>
-                  <div
-                    className="mx-auto h-0 w-0 border-l-[18px] border-r-[18px] border-t-[8px] border-l-transparent border-r-transparent"
-                    style={{ borderTopColor: car.rankColor }}
-                  />
-                </div>
-              </div>
-
               {/* CONTENT BOX */}
               <div className="flex flex-col md:flex-row flex-1 md:w-[1140px] h-auto md:h-[380px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
                 {/* CONTENT (80% width ratio) */}
@@ -597,8 +604,26 @@ function RankingCard({ cars, onVote, isVoting }) {
                     <div>
                       {/* Header */}
                       <div className="flex items-center gap-3.5">
-                        <div className="w-12 h-12 rounded-[10px] border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-lg shrink-0 select-none">
-                          {getInitials(car.name)}
+                        <div className="w-12 h-12 rounded-[10px] border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-lg shrink-0 select-none overflow-hidden relative">
+                          {profilePicUrl ? (
+                            <img
+                              src={profilePicUrl}
+                              alt={car.name}
+                              className="w-full h-full object-cover rounded-[10px]"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                if (e.target.nextSibling) {
+                                  e.target.nextSibling.style.display = 'flex';
+                                }
+                              }}
+                            />
+                          ) : null}
+                          <div
+                            className="w-full h-full items-center justify-center text-white font-bold text-lg select-none"
+                            style={{ display: profilePicUrl ? 'none' : 'flex' }}
+                          >
+                            {getInitials(car.name)}
+                          </div>
                         </div>
                         <div>
                           <h2 className="text-[25px] font-bold tracking-tight text-white leading-tight">
@@ -742,6 +767,38 @@ function RankingCard({ cars, onVote, isVoting }) {
                       </span>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* IMAGES / COVER BANNER (Appears on the right) */}
+              <div className="relative shrink-0 w-full md:w-[430px] h-[220px] md:h-[300px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+                <img
+                  src={bannerImageUrl}
+                  alt={car.name}
+                  className="w-full h-full object-cover"
+                />
+
+                {/* Rank Ribbon */}
+                <div className="absolute left-4 top-0">
+                  <div
+                    className="flex w-[36px] flex-col items-center py-2 text-black rounded-b-[4px]"
+                    style={{ backgroundColor: car.rankColor }}
+                  >
+                    <FaTrophy
+                      className="text-[12px]"
+                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                    />
+                    <span
+                      className="mt-0.5 text-[15px] font-bold leading-none"
+                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                    >
+                      {car.rank}
+                    </span>
+                  </div>
+                  <div
+                    className="mx-auto h-0 w-0 border-l-[18px] border-r-[18px] border-t-[8px] border-l-transparent border-r-transparent"
+                    style={{ borderTopColor: car.rankColor }}
+                  />
                 </div>
               </div>
             </div>
