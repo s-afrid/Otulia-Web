@@ -595,10 +595,10 @@ function RankingCard({ cars, onVote, isVoting }) {
             <div
               key={car._id}
               id={car._id}
-              className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-full md:w-[calc(1140px+430px)] h-auto md:h-[380px]"
+              className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-full md:w-[calc(1140px+430px)] h-auto md:h-[310px]"
             >
               {/* IMAGES (Appears on the left) */}
-              <div className="relative shrink-0 w-full md:w-[430px] h-[220px] md:h-[300px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              <div className="relative shrink-0 w-full md:w-[430px] h-[220px] md:h-[310px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
                 <img
                   src={bannerImageUrl}
                   alt={car.name}
@@ -630,134 +630,130 @@ function RankingCard({ cars, onVote, isVoting }) {
               </div>
 
               {/* CONTENT BOX (Appears on the right) */}
-              <div className="flex flex-col md:flex-row flex-1 md:w-[1140px] h-auto md:h-[380px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              <div className="flex flex-col md:flex-row flex-1 md:w-[1140px] h-auto md:h-[310px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
                 {/* CONTENT (80% width ratio) */}
-                <div className="flex flex-[4] md:w-[80%] flex-col px-7 py-6 bg-black justify-between h-auto md:h-[380px]">
-                    <div>
-                      {/* Header */}
-                      <div className="flex items-center gap-3.5">
-                        <div className="w-[82px] h-[79px] rounded-full border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-lg shrink-0 select-none overflow-hidden relative">
-                          {profilePicUrl ? (
-                            <img
-                              src={profilePicUrl}
-                              alt={car.name}
-                              className="w-full h-full object-cover rounded-full"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                                if (e.target.nextSibling) {
-                                  e.target.nextSibling.style.display = 'flex';
-                                }
-                              }}
-                            />
-                          ) : null}
-                          <div
-                            className="w-full h-full rounded-full items-center justify-center text-white font-bold text-lg select-none"
-                            style={{ display: profilePicUrl ? 'none' : 'flex' }}
-                          >
-                            {getInitials(car.name)}
-                          </div>
-                        </div>
-                        <div className="flex flex-col justify-center h-[79px]">
-                          <h2 className="text-[38px] lg:text-[42px] font-extrabold tracking-tight text-white leading-none">
-                            {car.name}
-                          </h2>
-                          <div className="text-[15px] lg:text-[16px] text-zinc-400 font-medium mt-2 leading-none">
-                            Channel : <span className="text-zinc-300">{car.channelName || car.name}</span>
-                          </div>
-                        </div>
+                <div className="flex flex-[4] md:w-[80%] flex-col px-6 py-4 bg-black justify-between h-auto md:h-[310px]">
+                  {/* Header */}
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-[82px] h-[79px] rounded-full border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-lg shrink-0 select-none overflow-hidden relative">
+                      {profilePicUrl ? (
+                        <img
+                          src={profilePicUrl}
+                          alt={car.name}
+                          className="w-full h-full object-cover rounded-full"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            if (e.target.nextSibling) {
+                              e.target.nextSibling.style.display = 'flex';
+                            }
+                          }}
+                        />
+                      ) : null}
+                      <div
+                        className="w-full h-full rounded-full items-center justify-center text-white font-bold text-lg select-none"
+                        style={{ display: profilePicUrl ? 'none' : 'flex' }}
+                      >
+                        {getInitials(car.name)}
                       </div>
-
-                      {/* Meta/Tags */}
-                      <div className="mt-3.5 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[13.5px]">
-                        {car.location && (
-                          <span className="flex items-center gap-2 text-white font-medium">
-                            <FiMapPin className="text-[#D6A125] text-sm" />
-                            {car.location}
-                          </span>
-                        )}
-                        {car.joinDate && (
-                          <span className="flex items-center gap-2 text-white font-medium">
-                            <FaCalendarAlt className="text-[#D6A125] text-sm" />
-                            {car.joinDate}
-                          </span>
-                        )}
-                        {car.genre && (
-                          <span className="flex items-center gap-2 text-white font-medium">
-                            <FaTag className="text-[#D6A125] text-sm" />
-                            {car.genre}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Description */}
-                      <p className="mt-3.5 text-[13.5px] leading-relaxed text-zinc-400 font-normal line-clamp-3">
-                        {car.description}
-                      </p>
                     </div>
-
-                    <div>
-                      {/* Divider */}
-                      <div className="my-3.5 border-t border-zinc-800/80" />
-
-                      {/* Social Counters Bar Container */}
-                      <div className="bg-[#121214] border border-zinc-800/80 rounded-[6px] py-3 grid grid-cols-4 divide-x divide-zinc-800/80 items-center">
-                        {/* Total Subscribers */}
-                        <div className="flex items-center justify-center gap-3 px-2">
-                          <FaUsers className="text-[#D6A125] text-[24px] shrink-0" />
-                          <div className="flex flex-col">
-                            <span className="text-[10px] text-zinc-400 font-semibold leading-none">Total Subscribers</span>
-                            <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.total}</span>
-                          </div>
-                        </div>
-
-                        {/* YouTube Subscribers */}
-                        <div className="flex items-center justify-center gap-3 px-2">
-                          <img src={youtubeIcon} alt="YouTube" className="w-6 h-6 object-contain shrink-0" />
-                          <div className="flex flex-col">
-                            <span className="text-[10px] text-zinc-400 font-semibold leading-none">YouTube Subscribers</span>
-                            <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.youtube}</span>
-                          </div>
-                        </div>
-
-                        {/* Instagram Followers */}
-                        <div className="flex items-center justify-center gap-3 px-2">
-                          <img src={instagramIcon} alt="Instagram" className="w-6 h-6 object-contain shrink-0" />
-                          <div className="flex flex-col">
-                            <span className="text-[10px] text-zinc-400 font-semibold leading-none">Instagram Followers</span>
-                            <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.instagram}</span>
-                          </div>
-                        </div>
-
-                        {/* Twitter Followers */}
-                        <div className="flex items-center justify-center gap-3 px-2">
-                          <img src={xIcon} alt="Twitter" className="w-[22px] h-[22px] object-contain shrink-0" />
-                          <div className="flex flex-col">
-                            <span className="text-[10px] text-zinc-400 font-semibold leading-none">Twitter Followers</span>
-                            <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.twitter}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* View Links Button */}
-                      <div className="relative mt-3">
-                        <button
-                          type="button"
-                          onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
-                          className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[13.5px] font-bold transition duration-200 w-fit select-none"
-                        >
-                          <span>View all Links</span>
-                          <FaArrowRight className="text-[13px]" />
-                        </button>
-                        {openSnackbarId === car._id && renderLinksSnackbar(car)}
+                    <div className="flex flex-col justify-center h-[79px]">
+                      <h2 className="text-[38px] lg:text-[42px] font-extrabold tracking-tight text-white leading-none">
+                        {car.name}
+                      </h2>
+                      <div className="text-[15px] lg:text-[16px] text-zinc-400 font-medium mt-2 leading-none">
+                        Channel : <span className="text-zinc-300">{car.channelName || car.name}</span>
                       </div>
                     </div>
                   </div>
 
+                  {/* Meta/Tags */}
+                  <div className="mt-2.5 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[13.5px]">
+                    {car.location && (
+                      <span className="flex items-center gap-2 text-white font-medium">
+                        <FiMapPin className="text-[#D6A125] text-sm" />
+                        {car.location}
+                      </span>
+                    )}
+                    {car.joinDate && (
+                      <span className="flex items-center gap-2 text-white font-medium">
+                        <FaCalendarAlt className="text-[#D6A125] text-sm" />
+                        {car.joinDate}
+                      </span>
+                    )}
+                    {car.genre && (
+                      <span className="flex items-center gap-2 text-white font-medium">
+                        <FaTag className="text-[#D6A125] text-sm" />
+                        {car.genre}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  <p className="mt-2 text-[13.5px] leading-relaxed text-zinc-400 font-normal line-clamp-3">
+                    {car.description}
+                  </p>
+
+                  {/* Divider */}
+                  <div className="my-2 border-t border-zinc-800/80" />
+
+                  {/* Social Counters Bar Container */}
+                  <div className="bg-[#121214] border border-zinc-800/80 rounded-[6px] py-2.5 grid grid-cols-4 divide-x divide-zinc-800/80 items-center">
+                    {/* Total Subscribers */}
+                    <div className="flex items-center justify-center gap-3 px-2">
+                      <FaUsers className="text-[#D6A125] text-[24px] shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-zinc-400 font-semibold leading-none">Total Subscribers</span>
+                        <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.total}</span>
+                      </div>
+                    </div>
+
+                    {/* YouTube Subscribers */}
+                    <div className="flex items-center justify-center gap-3 px-2">
+                      <img src={youtubeIcon} alt="YouTube" className="w-6 h-6 object-contain shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-zinc-400 font-semibold leading-none">YouTube Subscribers</span>
+                        <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.youtube}</span>
+                      </div>
+                    </div>
+
+                    {/* Instagram Followers */}
+                    <div className="flex items-center justify-center gap-3 px-2">
+                      <img src={instagramIcon} alt="Instagram" className="w-6 h-6 object-contain shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-zinc-400 font-semibold leading-none">Instagram Followers</span>
+                        <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.instagram}</span>
+                      </div>
+                    </div>
+
+                    {/* Twitter Followers */}
+                    <div className="flex items-center justify-center gap-3 px-2">
+                      <img src={xIcon} alt="Twitter" className="w-[22px] h-[22px] object-contain shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-zinc-400 font-semibold leading-none">Twitter Followers</span>
+                        <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.twitter}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* View Links Button */}
+                  <div className="relative mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
+                      className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[13.5px] font-bold transition duration-200 w-fit select-none"
+                    >
+                      <span>View all Links</span>
+                      <FaArrowRight className="text-[13px]" />
+                    </button>
+                    {openSnackbarId === car._id && renderLinksSnackbar(car)}
+                  </div>
+                </div>
+
                 {/* VERTICAL DIVIDER LINE */}
-                <div className="hidden md:block w-[1px] h-[300px] bg-zinc-800/80 my-auto shrink-0" />
+                <div className="hidden md:block w-[1px] h-[250px] bg-zinc-800/80 my-auto shrink-0" />
 
                 {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[380px] flex-col items-center justify-center gap-3.5 border-t md:border-t-0 px-6 py-6 bg-black select-none">
+                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[310px] flex-col items-center justify-center gap-2.5 border-t md:border-t-0 px-6 py-4 bg-black select-none">
                   <button
                     onClick={() => onVote && onVote(car._id, car.categoryId)}
                     disabled={isVoting}
