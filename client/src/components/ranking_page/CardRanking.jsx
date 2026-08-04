@@ -26,7 +26,7 @@ import { TbEngine } from "react-icons/tb";
 
 import youtubeIcon from "../../assets/icons/social/youtube.svg";
 import instagramIcon from "../../assets/icons/social/instagram.svg";
-import xIcon from "../../assets/icons/social/x.svg";
+import xIcon from "../../assets/icons/social/x_inverted.svg";
 import estateIcon from "../../assets/icons/estate_icon.png";
 
 function RankingCard({ cars, onVote, isVoting }) {
@@ -147,7 +147,7 @@ function RankingCard({ cars, onVote, isVoting }) {
             <a
               key={idx}
               href={item.url}
-              target="_blank"
+              target="_blank" 
               rel="noopener noreferrer"
               className="group flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-black/60 border border-zinc-800 hover:border-[#D6A125]/60 hover:bg-[#D6A125]/10 transition duration-150"
             >
@@ -597,19 +597,51 @@ function RankingCard({ cars, onVote, isVoting }) {
               id={car._id}
               className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-full md:w-[calc(1140px+430px)] h-auto md:h-[380px]"
             >
-              {/* CONTENT BOX */}
+              {/* IMAGES (Appears on the left) */}
+              <div className="relative shrink-0 w-full md:w-[430px] h-[220px] md:h-[300px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+                <img
+                  src={bannerImageUrl}
+                  alt={car.name}
+                  className="w-full h-full object-cover"
+                />
+
+                {/* Rank Ribbon */}
+                <div className="absolute left-4 top-0">
+                  <div
+                    className="flex w-[36px] flex-col items-center py-2 text-black rounded-b-[4px]"
+                    style={{ backgroundColor: car.rankColor }}
+                  >
+                    <FaTrophy
+                      className="text-[12px]"
+                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                    />
+                    <span
+                      className="mt-0.5 text-[15px] font-bold leading-none"
+                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                    >
+                      {car.rank}
+                    </span>
+                  </div>
+                  <div
+                    className="mx-auto h-0 w-0 border-l-[18px] border-r-[18px] border-t-[8px] border-l-transparent border-r-transparent"
+                    style={{ borderTopColor: car.rankColor }}
+                  />
+                </div>
+              </div>
+
+              {/* CONTENT BOX (Appears on the right) */}
               <div className="flex flex-col md:flex-row flex-1 md:w-[1140px] h-auto md:h-[380px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
                 {/* CONTENT (80% width ratio) */}
                 <div className="flex flex-[4] md:w-[80%] flex-col px-7 py-6 bg-black justify-between h-auto md:h-[380px]">
                     <div>
                       {/* Header */}
                       <div className="flex items-center gap-3.5">
-                        <div className="w-12 h-12 rounded-[10px] border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-lg shrink-0 select-none overflow-hidden relative">
+                        <div className="w-[82px] h-[79px] rounded-full border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-lg shrink-0 select-none overflow-hidden relative">
                           {profilePicUrl ? (
                             <img
                               src={profilePicUrl}
                               alt={car.name}
-                              className="w-full h-full object-cover rounded-[10px]"
+                              className="w-full h-full object-cover rounded-full"
                               onError={(e) => {
                                 e.target.style.display = 'none';
                                 if (e.target.nextSibling) {
@@ -619,17 +651,17 @@ function RankingCard({ cars, onVote, isVoting }) {
                             />
                           ) : null}
                           <div
-                            className="w-full h-full items-center justify-center text-white font-bold text-lg select-none"
+                            className="w-full h-full rounded-full items-center justify-center text-white font-bold text-lg select-none"
                             style={{ display: profilePicUrl ? 'none' : 'flex' }}
                           >
                             {getInitials(car.name)}
                           </div>
                         </div>
-                        <div>
-                          <h2 className="text-[25px] font-bold tracking-tight text-white leading-tight">
+                        <div className="flex flex-col justify-center h-[79px]">
+                          <h2 className="text-[38px] lg:text-[42px] font-extrabold tracking-tight text-white leading-none">
                             {car.name}
                           </h2>
-                          <div className="text-[13.5px] text-zinc-400 font-medium mt-0.5">
+                          <div className="text-[15px] lg:text-[16px] text-zinc-400 font-medium mt-2 leading-none">
                             Channel : <span className="text-zinc-300">{car.channelName || car.name}</span>
                           </div>
                         </div>
@@ -668,43 +700,37 @@ function RankingCard({ cars, onVote, isVoting }) {
                       <div className="my-3.5 border-t border-zinc-800/80" />
 
                       {/* Social Counters Bar Container */}
-                      <div className="bg-[#121214] border border-zinc-800/80 rounded-[6px] px-4 py-3 flex items-center justify-between">
+                      <div className="bg-[#121214] border border-zinc-800/80 rounded-[6px] py-3 grid grid-cols-4 divide-x divide-zinc-800/80 items-center">
                         {/* Total Subscribers */}
-                        <div className="flex items-center gap-3 flex-1 justify-start">
-                          <FaUsers className="text-[#D6A125] text-xl shrink-0" />
+                        <div className="flex items-center justify-center gap-3 px-2">
+                          <FaUsers className="text-[#D6A125] text-[24px] shrink-0" />
                           <div className="flex flex-col">
                             <span className="text-[10px] text-zinc-400 font-semibold leading-none">Total Subscribers</span>
                             <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.total}</span>
                           </div>
                         </div>
 
-                        <div className="w-[1px] h-7 bg-zinc-800/80 mx-2" />
-
                         {/* YouTube Subscribers */}
-                        <div className="flex items-center gap-3 flex-1 justify-center">
-                          <img src={youtubeIcon} alt="YouTube" className="w-5 h-5 object-contain shrink-0" />
+                        <div className="flex items-center justify-center gap-3 px-2">
+                          <img src={youtubeIcon} alt="YouTube" className="w-6 h-6 object-contain shrink-0" />
                           <div className="flex flex-col">
                             <span className="text-[10px] text-zinc-400 font-semibold leading-none">YouTube Subscribers</span>
                             <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.youtube}</span>
                           </div>
                         </div>
 
-                        <div className="w-[1px] h-7 bg-zinc-800/80 mx-2" />
-
                         {/* Instagram Followers */}
-                        <div className="flex items-center gap-3 flex-1 justify-center">
-                          <img src={instagramIcon} alt="Instagram" className="w-5 h-5 object-contain shrink-0" />
+                        <div className="flex items-center justify-center gap-3 px-2">
+                          <img src={instagramIcon} alt="Instagram" className="w-6 h-6 object-contain shrink-0" />
                           <div className="flex flex-col">
                             <span className="text-[10px] text-zinc-400 font-semibold leading-none">Instagram Followers</span>
                             <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.instagram}</span>
                           </div>
                         </div>
 
-                        <div className="w-[1px] h-7 bg-zinc-800/80 mx-2" />
-
                         {/* Twitter Followers */}
-                        <div className="flex items-center gap-3 flex-1 justify-end">
-                          <img src={xIcon} alt="Twitter" className="w-4.5 h-4.5 object-contain shrink-0" />
+                        <div className="flex items-center justify-center gap-3 px-2">
+                          <img src={xIcon} alt="Twitter" className="w-[22px] h-[22px] object-contain shrink-0" />
                           <div className="flex flex-col">
                             <span className="text-[10px] text-zinc-400 font-semibold leading-none">Twitter Followers</span>
                             <span className="text-[14.5px] font-bold text-white mt-1 leading-none">{stats.twitter}</span>
@@ -713,11 +739,11 @@ function RankingCard({ cars, onVote, isVoting }) {
                       </div>
 
                       {/* View Links Button */}
-                      <div className="relative mt-3.5 w-full">
+                      <div className="relative mt-3">
                         <button
                           type="button"
                           onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
-                          className="flex items-center justify-between border border-[#D6A125] bg-transparent hover:bg-[#D6A125]/10 text-[#D6A125] text-[13.5px] font-bold px-5 py-2.5 rounded-[8px] transition duration-200 w-full select-none"
+                          className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[13.5px] font-bold transition duration-200 w-fit select-none"
                         >
                           <span>View all Links</span>
                           <FaArrowRight className="text-[13px]" />
@@ -731,7 +757,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                 <div className="hidden md:block w-[1px] h-[300px] bg-zinc-800/80 my-auto shrink-0" />
 
                 {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[380px] flex-col items-center justify-between border-t md:border-t-0 px-6 py-7 bg-black select-none">
+                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[380px] flex-col items-center justify-center gap-3.5 border-t md:border-t-0 px-6 py-6 bg-black select-none">
                   <button
                     onClick={() => onVote && onVote(car._id, car.categoryId)}
                     disabled={isVoting}
@@ -740,18 +766,18 @@ function RankingCard({ cars, onVote, isVoting }) {
                     Vote
                   </button>
 
-                  <div className="text-center my-4 flex-1 flex flex-col justify-center items-center">
+                  <div className="text-center flex flex-col justify-center items-center py-1">
                     <div className="text-[36px] tracking-tight font-extrabold text-white leading-none">
                       {car.votes}
                     </div>
-                    <div className="text-[12px] text-zinc-500 font-normal mt-2 leading-none">
+                    <div className="text-[12px] text-zinc-500 font-normal mt-1.5 leading-none">
                       {car.rawVotes ? car.rawVotes.toLocaleString() : "0"}
                     </div>
                   </div>
 
                   <div className="w-full flex flex-col items-center">
                     {/* Gold separator line */}
-                    <div className="w-[140px] bg-[#D6A125] h-[3px] rounded-full my-3" />
+                    <div className="w-[140px] bg-[#D6A125] h-[3px] rounded-full mb-3" />
 
                     <div className="flex items-center justify-center gap-1.5 py-1.5 px-4 bg-[#141416] border border-zinc-800/80 rounded-[6px]">
                       {car.statusIcon === "trophy" ? (
@@ -767,38 +793,6 @@ function RankingCard({ cars, onVote, isVoting }) {
                       </span>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              {/* IMAGES / COVER BANNER (Appears on the right) */}
-              <div className="relative shrink-0 w-full md:w-[430px] h-[220px] md:h-[300px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
-                <img
-                  src={bannerImageUrl}
-                  alt={car.name}
-                  className="w-full h-full object-cover"
-                />
-
-                {/* Rank Ribbon */}
-                <div className="absolute left-4 top-0">
-                  <div
-                    className="flex w-[36px] flex-col items-center py-2 text-black rounded-b-[4px]"
-                    style={{ backgroundColor: car.rankColor }}
-                  >
-                    <FaTrophy
-                      className="text-[12px]"
-                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
-                    />
-                    <span
-                      className="mt-0.5 text-[15px] font-bold leading-none"
-                      style={{ color: car.rank === 1 ? "#000" : "#fff" }}
-                    >
-                      {car.rank}
-                    </span>
-                  </div>
-                  <div
-                    className="mx-auto h-0 w-0 border-l-[18px] border-r-[18px] border-t-[8px] border-l-transparent border-r-transparent"
-                    style={{ borderTopColor: car.rankColor }}
-                  />
                 </div>
               </div>
             </div>
