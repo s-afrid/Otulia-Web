@@ -52,45 +52,42 @@ function RankingHeader({ data }) {
       )}
 
       {/* Main Cover Banner Box */}
-      <div className="relative w-full rounded-2xl overflow-hidden border border-zinc-800/80 shadow-2xl min-h-[280px] md:min-h-[320px] flex items-center bg-black">
+      <div className="relative w-full h-[300px] rounded-2xl overflow-hidden border border-zinc-800/80 shadow-2xl bg-black flex items-center justify-center">
         {/* Banner Cover Image */}
         <img
           src={coverImg}
           alt={data.titleMain || "Category Banner"}
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-center"
         />
 
         {/* Gradient Overlay for Text Contrast */}
+        {/* 
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-transparent w-full md:w-3/4 lg:w-3/5" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+        */}
 
         {/* Content Container inside Banner */}
+        {/* 
         <div className="relative z-10 p-5 sm:p-7 md:p-8 max-w-2xl text-white flex flex-col justify-between min-h-full">
           <div>
-            {/* TOP tag */}
             <span className="text-[#D48D2A] font-bold text-xs md:text-sm tracking-[0.25em] uppercase mb-0.5 block">
               {tag}
             </span>
 
-            {/* Main Title White */}
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-none">
               {main}
             </h1>
 
-            {/* Title Gold */}
             <div className="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-[#D48D2A] leading-none mt-1 mb-3">
               {sub}
             </div>
 
-            {/* Description */}
             <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed max-w-xl font-normal mb-5">
               {data.description || "Ranking the world's most extreme machines that push the limits of speed, engineering, and innovation."}
             </p>
           </div>
 
-          {/* Bottom Stats Row inside Banner */}
           <div className="flex items-center gap-5 sm:gap-7 flex-wrap pt-4 border-t border-zinc-700/50">
-            {/* Stat 1: Nominees */}
             <div className="flex items-center gap-3">
               <FaTrophy className="text-[#D48D2A] text-2xl sm:text-3xl shrink-0" />
               <div className="flex flex-col justify-center">
@@ -105,7 +102,6 @@ function RankingHeader({ data }) {
 
             <div className="h-7 w-[1px] bg-zinc-700/60" />
 
-            {/* Stat 2: Total Votes */}
             <div className="flex items-center gap-3">
               <FaUsers className="text-zinc-300 text-2xl sm:text-3xl shrink-0" />
               <div className="flex flex-col justify-center">
@@ -120,7 +116,6 @@ function RankingHeader({ data }) {
 
             <div className="h-7 w-[1px] bg-zinc-700/60" />
 
-            {/* Stat 3: Last Updated */}
             <div className="flex items-center gap-3">
               <FaRegCalendarAlt className="text-zinc-300 text-2xl sm:text-3xl shrink-0" />
               <div className="flex flex-col justify-center">
@@ -133,7 +128,8 @@ function RankingHeader({ data }) {
               </div>
             </div>
           </div>
-        </div>
+        </div> 
+        */}
       </div>
     </section>
   );
