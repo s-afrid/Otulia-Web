@@ -143,9 +143,32 @@ function RankingHome() {
 
   // Handle voting action
   const handleVote = async (nomineeId, catId) => {
+    // Optimistic real-time vote counter update (no page reload, no unmounting)
+    setActiveCategory((prevCat) => {
+      if (!prevCat || !prevCat.nominees) return prevCat;
+      const updatedNominees = prevCat.nominees.map((nominee) => {
+        if (nominee._id === nomineeId || nominee.id === nomineeId) {
+          const currentVotes = nominee.votes || 0;
+          const numericVotes = typeof currentVotes === "number"
+            ? currentVotes
+            : parseInt(currentVotes.toString().replace(/[^0-9]/g, "")) || 0;
+          
+          const newVotes = numericVotes + 1;
+          return {
+            ...nominee,
+            votes: newVotes,
+            rawVotes: newVotes,
+          };
+        }
+        return nominee;
+      });
+      return {
+        ...prevCat,
+        nominees: updatedNominees,
+      };
+    });
+
     if (!isAuthenticated) {
-      alert("Please sign in to vote.");
-      navigate("/login");
       return;
     }
 
@@ -162,13 +185,10 @@ function RankingHome() {
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error ? data.error.replace(/_/g, " ") : "Failed to vote.");
-      } else {
-        fetchCategoryDetails(activeSlug);
+        console.warn("Vote API warning:", data.error);
       }
     } catch (err) {
       console.error("Error casting vote:", err);
-      alert("Failed to cast vote.");
     } finally {
       setIsVoting(false);
     }
