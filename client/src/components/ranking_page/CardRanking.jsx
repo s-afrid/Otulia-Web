@@ -520,64 +520,38 @@ function RankingCard({ cars, onVote, isVoting }) {
                 <div className="hidden md:block w-[1px] h-[240px] bg-zinc-800 my-auto shrink-0" />
 
                 {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[190px] lg:w-[220px] xl:w-[240px] shrink-0 h-auto md:h-[300px] flex-col items-center justify-between border-t md:border-t-0 border-zinc-800 md:border-none px-4 lg:px-6 py-4 md:py-5 bg-transparent select-none">
-                  {/* Top Rated Badge */}
-                  {car.showTopRatedBadge ? (
-                    <div className="flex flex-col items-center justify-center shrink-0 mb-1 select-none">
-                      <div className="relative flex items-center justify-center w-[48px] lg:w-[52px] h-[54px] lg:h-[60px]">
-                        <svg className="absolute inset-0 w-full h-full text-[#D6A125]" viewBox="0 0 24 28" fill="rgba(214,161,37,0.05)">
-                          <path d="M12 2C6.5 2 2 4.5 2 4.5V14c0 7.5 10 12 10 12s10-4.5 10-12V4.5S17.5 2 12 2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <div className="z-10 flex flex-col items-center justify-center text-[#D6A125] font-bold leading-none text-center">
-                          <span className="text-[8px] lg:text-[8.5px] uppercase tracking-wider font-extrabold">Top</span>
-                          <span className="text-[8px] lg:text-[8.5px] uppercase tracking-wider font-extrabold mt-0.5">Rated</span>
-                          <svg className="w-2.5 h-2.5 mt-1 fill-current" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="h-[54px] lg:h-[60px]" />
-                  )}
-
+                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[300px] flex-col items-center justify-center gap-4 md:gap-5 border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-5 bg-black select-none">
                   <button
                     onClick={() => onVote && onVote(car._id, car.categoryId)}
                     disabled={isVoting}
-                    className={`h-[40px] lg:h-[42px] w-full rounded-[8px] border border-[#D6A125] bg-transparent text-[14px] lg:text-[15px] font-bold text-white transition hover:bg-[#D6A125]/10 select-none ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border border-[#D6A125] bg-transparent text-[16px] md:text-[18px] font-bold text-[#D6A125] transition duration-200 hover:bg-[#D6A125]/10 select-none ${
+                      isVoting ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                   >
                     Vote
                   </button>
 
-                  <div className="text-center my-2 flex-1 flex flex-col justify-center">
-                    <div className="text-[28px] lg:text-[32px] tracking-tight font-extrabold text-white leading-none">
-                      {car.votes}
+                  <div className="text-center flex flex-col items-center justify-center py-0.5">
+                    <div className="text-[26px] md:text-[32px] tracking-tight font-extrabold text-white leading-none">
+                      {car.votes || "0"}
                     </div>
-                    <div className="text-[11px] lg:text-[12px] text-zinc-400 font-medium mt-1 leading-none">
-                      Votes
+                    <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
+                      {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
                     </div>
                   </div>
 
-                  <div className="w-full">
-                    {/* Gold Progress bar */}
-                    <div className="w-full bg-zinc-800 h-[3px] rounded-full overflow-hidden">
-                      <div
-                        className="bg-[#D6A125] h-full rounded-full transition-all duration-500"
-                        style={{ width: car.progress }}
-                      />
-                    </div>
+                  <div className="w-full max-w-[280px] md:max-w-none">
+                    {/* Gold solid line */}
+                    <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-2.5 md:mb-3" />
 
-                    <div className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 bg-transparent rounded mt-3">
-                      {car.statusIcon === "trophy" ? (
-                        <FaTrophy className="text-[#D6A125] text-[12px] lg:text-[13px]" />
+                    <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
+                      {car.statusIcon === "trophy" || car.rank === 1 ? (
+                        <FaTrophy className="text-[#D6A125] text-[11px] md:text-[12px]" />
                       ) : (
-                        <FaStar className="text-zinc-400 text-[12px] lg:text-[13px]" />
+                        <FaStar className="text-[#D6A125] text-[11px] md:text-[12px]" />
                       )}
-                      <span
-                        className="text-[12px] lg:text-[13px] font-bold uppercase tracking-wider text-[#D6A125]"
-                        style={{ color: car.rank === 1 ? "#D6A125" : "#A1A1AA" }}
-                      >
-                        {car.status}
+                      <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
+                        {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
                       </span>
                     </div>
                   </div>
@@ -753,39 +727,38 @@ function RankingCard({ cars, onVote, isVoting }) {
                 <div className="hidden md:block w-[1px] h-[250px] bg-zinc-800/80 my-auto shrink-0" />
 
                 {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[25%] lg:w-[20%] shrink-0 h-auto md:h-[310px] flex-col items-center justify-center gap-2.5 border-t md:border-t-0 px-4 sm:px-6 py-4 bg-black select-none">
+                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[310px] flex-col items-center justify-center gap-4 md:gap-5 border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-5 bg-black select-none">
                   <button
                     onClick={() => onVote && onVote(car._id, car.categoryId)}
                     disabled={isVoting}
-                    className={`h-[40px] sm:h-[44px] w-[130px] sm:w-[140px] rounded-[8px] border border-[#D6A125] bg-transparent text-[16px] sm:text-[18px] font-bold text-white transition hover:bg-[#D6A125]/10 ${isVoting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border border-[#D6A125] bg-transparent text-[16px] md:text-[18px] font-bold text-[#D6A125] transition duration-200 hover:bg-[#D6A125]/10 select-none ${
+                      isVoting ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                   >
                     Vote
                   </button>
 
-                  <div className="text-center flex flex-col justify-center items-center py-1">
-                    <div className="text-[30px] sm:text-[36px] tracking-tight font-extrabold text-white leading-none">
-                      {car.votes}
+                  <div className="text-center flex flex-col items-center justify-center py-0.5">
+                    <div className="text-[26px] md:text-[32px] tracking-tight font-extrabold text-white leading-none">
+                      {car.votes || "0"}
                     </div>
-                    <div className="text-[11px] sm:text-[12px] text-zinc-500 font-normal mt-1.5 leading-none">
-                      {car.rawVotes ? car.rawVotes.toLocaleString() : "0"}
+                    <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
+                      {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
                     </div>
                   </div>
 
-                  <div className="w-full flex flex-col items-center">
-                    {/* Gold separator line */}
-                    <div className="w-[120px] sm:w-[140px] bg-[#D6A125] h-[3px] rounded-full mb-3" />
+                  <div className="w-full max-w-[280px] md:max-w-none">
+                    {/* Gold solid line */}
+                    <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-2.5 md:mb-3" />
 
-                    <div className="flex items-center justify-center gap-1.5 py-1.5 px-3.5 sm:px-4 bg-[#141416] border border-zinc-800/80 rounded-[6px]">
-                      {car.statusIcon === "trophy" ? (
-                        <FaTrophy className="text-[#D6A125] text-[12px]" />
+                    <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
+                      {car.statusIcon === "trophy" || car.rank === 1 ? (
+                        <FaTrophy className="text-[#D6A125] text-[11px] md:text-[12px]" />
                       ) : (
-                        <FaStar className="text-zinc-400 text-[12px]" />
+                        <FaStar className="text-[#D6A125] text-[11px] md:text-[12px]" />
                       )}
-                      <span
-                        className="text-[12px] sm:text-[13px] font-bold"
-                        style={{ color: car.rank === 1 ? "#D6A125" : "#A1A1AA" }}
-                      >
-                        {car.status}
+                      <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
+                        {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
                       </span>
                     </div>
                   </div>
@@ -978,7 +951,7 @@ function RankingCard({ cars, onVote, isVoting }) {
               <div className="hidden md:block w-[1px] h-[160px] bg-[#545454] my-auto shrink-0" />
 
               {/* VOTE PANEL (20% width ratio) */}
-              <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[210px] flex-col items-center justify-between border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-3.5 bg-black select-none">
+              <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[210px] flex-col items-center justify-center gap-3.5 md:gap-4 border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-3.5 bg-black select-none">
                 <button
                   onClick={() => onVote && onVote(car._id, car.categoryId)}
                   disabled={isVoting}
@@ -989,7 +962,7 @@ function RankingCard({ cars, onVote, isVoting }) {
                   Vote
                 </button>
 
-                <div className="text-center my-3 md:my-auto flex flex-col items-center justify-center py-1">
+                <div className="text-center flex flex-col items-center justify-center py-0.5">
                   <div className="text-[26px] md:text-[32px] tracking-tight font-extrabold text-white leading-none">
                     {car.votes || "0"}
                   </div>
