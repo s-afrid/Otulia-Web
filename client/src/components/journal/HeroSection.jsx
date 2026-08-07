@@ -2,6 +2,11 @@ import mainPostimg from "/src/assets/journal/blog_seven/hero.png";
 import sidePostone from "/src/assets/journal/blog_eight/hero.png";
 import sidePostTwo from "/src/assets/journal/blog_nine/hero.png";
 import sidePostThree from "/src/assets/journal/blog_ten/hero.png";
+import novak from "/src/assets/journal/blog_ten/hero.png";
+import haaland from "/src/assets/journal/blog_eleven/hero.webp";
+import terry from "/src/assets/journal/blog_twelve/hero_image.webp";
+import zendaya from "/src/assets/journal/blog_thirteen/hero.webp";
+import porsche from "/src/assets/journal/blog_fourteen/hero.webp";
 import { Link } from "react-router-dom";
 
 const heroArticles = [
@@ -9,33 +14,35 @@ const heroArticles = [
     id: 1,
     tag: "Ownership Guides",
     category: "Cars",
-    title: "McLaren Just Unveiled Its First New Supercar Since 2024",
+    title:
+      "Hollywood Star Terry Crews Buys Luxury Residence at Binghatti Aquarise in Dubai",
     excerpt:
-      "The company's first new car since 2024 is the ultimate evolution of the 720S.",
-    image: mainPostimg,
+      "Binghatti Developers has welcomed another global icon to its international portfolio of buyers, as Hollywood actor and television personality Terry Crews officially signed for an apartment at Binghatti Aquarise during the project's grand launch in Dubai.",
+    image: terry,
     featured: true,
   },
   {
     id: 2,
-    tag: "Showcase",
-    category: "Cars",
-    title: "The 2027 Ferrari 12Cilindri Manuale in Photos",
-    excerpt: "It's the first Prancing Horse with a stick shift since 2012.",
-    image: sidePostone,
+    tag: "Celebrity Real Estate",
+    category: "Real Estate",
+    title: "Inside Zendaya and Tom Holland's $22 Million Property Portfolio",
+    excerpt:
+      "The longtime couple's real estate holdings include multiple California properties, a luxury Brooklyn condo, and a renovated London home.",
+    image: zendaya,
     featured: false,
-    link: "/journal/photos-2027-ferrari-12cilindri-manuale",
+    link: "/journal/zendaya-tom-holland-property-portfolio",
   },
   {
     id: 3,
     tag: "Real Estate News",
     category: "Real Estate",
     title:
-      "Justin and Hailey Bieber Just Bought a $12 Million N.Y.C. Pied-\u00e0-Terre",
+      "Road Test: Porsche's All-Electric Cayenne Delivers Uncommon S.U.V. Power With Poise",
     excerpt:
-      "Staged luxury homes priced at $2 million-plus sell up to 45% faster than the market average. The investment is almost always small relative to the gain — but where and how you stage matters as much as whether you stage at all.",
-    image: sidePostTwo,
+      "On a test drive in Germany, the 2027 Porsche Cayenne Turbo Coupe Electric floored us with its ability to summon more muscle than the 918 Spyder.",
+    image: porsche,
     featured: false,
-    link: "/journal/justin-hailey-bieber-buy-west-village-condo",
+    link: "/journal/porsche-cayenne-turbo-coupe-electric-road-test",
   },
 ];
 
@@ -51,7 +58,7 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
           {/* Featured (large left) */}
           <Link
-            to="/journal/mclaren-just-unveiled-its-first-new-supercar-since-2024"
+            to="/journal/terry-crews-binghatti-aquarise-dubai"
             className="group block"
           >
             <div className="overflow-hidden rounded-sm">
@@ -128,22 +135,22 @@ export default function HeroSection() {
 
             {/* Extra featured card */}
             <Link
-              to="/journal/novak-djokovic-property-portfolio"
+              to="/journal/erling-haaland-multimillion-dollar-car-collection"
               className="group block pt-2"
             >
               <div className="overflow-hidden rounded-sm mb-4">
                 <img
-                  src={sidePostThree}
+                  src={haaland}
                   className="w-full h-[170px] object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
                 />
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-[#c8a96e] montserrat">
-                  Celebrity Real Estate
+                  Celebrity Collection
                 </span>
                 <span className="text-gray-300 text-xs">·</span>
                 <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 montserrat">
-                  Real Estate
+                  Cars
                 </span>
               </div>
               <h3
@@ -152,7 +159,8 @@ export default function HeroSection() {
                   fontFamily: "'Kaisei Decol', serif",
                 }}
               >
-                Inside Novak Djokovic's Global Property Portfolio
+                "From Ferrari to Bugatti: Inside Erling Haaland's
+                Multimillion-Dollar Car Collection"
               </h3>
             </Link>
           </div>

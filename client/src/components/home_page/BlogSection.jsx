@@ -1,47 +1,54 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import mainPostimg from "../../assets/journal/blog_seven/hero.png";
-import sidePostone from "../../assets/journal/blog_eight/hero.png";
-import sidePostTwo from "../../assets/journal/blog_nine/hero.png";
-import sidePostThree from "../../assets/journal/blog_ten/hero.png";
+// import mainPostimg from "../../assets/journal/blog_seven/hero.png";
+// import sidePostone from "../../assets/journal/blog_eight/hero.png";
+// import sidePostTwo from "../../assets/journal/blog_nine/hero.png";
+// import sidePostThree from "../../assets/journal/blog_ten/hero.png";
+
+import mainPostimg from "../../assets/journal/blog_eleven/hero.webp";
+import sidePostone from "../../assets/journal/blog_twelve/hero_image.webp";
+import sidePostTwo from "../../assets/journal/blog_thirteen/hero.webp";
+import sidePostThree from "../../assets/journal/blog_fourteen/hero.webp";
 
 const BlogSection = () => {
   const navigate = useNavigate();
 
   const mainPost = {
-    title: "McLaren Just Unveiled Its First New Supercar Since 2024",
-    date: "30 June 2026",
+    title:
+      "From Ferrari to Bugatti: Inside Erling Haaland's Multimillion-Dollar Car Collection",
+    date: "28 July 2026",
     snippet:
-      "The company's first new car since 2024 is the ultimate evolution of the 720S.",
+      "Goal-scoring records and Birkin bags aren't the only things the soccer star collects.",
     image: mainPostimg,
-    navigate:
-      "/journal/mclaren-just-unveiled-its-first-new-supercar-since-2024",
+    navigate: "/journal/erling-haaland-multimillion-dollar-car-collection",
   };
 
   const sidePosts = [
     {
-      title: "The 2027 Ferrari 12Cilindri Manuale in Photos",
-      date: "16 July 2026",
-      snippet: "It's the first Prancing Horse with a stick shift since 2012.",
+      title:
+        "Hollywood Star Terry Crews Buys Luxury Residence at Binghatti Aquarise in Dubai",
+      date: "28 July 2026",
+      snippet:
+        "Binghatti Developers has welcomed another global icon to its international portfolio of buyers, as...",
       image: sidePostone,
-      navigate: "/journal/photos-2027-ferrari-12cilindri-manuale",
+      navigate: "/journal/terry-crews-binghatti-aquarise-dubai",
+    },
+    {
+      title: "Inside Zendaya and Tom Holland's $22 Million Property Portfolio",
+      date: "28 July 2026",
+      snippet:
+        "The longtime couple's real estate holdings include multiple California properties, a luxury Brooklyn condo, and a renovated London home.",
+      image: sidePostTwo,
+      navigate: "/journal/zendaya-tom-holland-property-portfolio",
     },
     {
       title:
-        "Justin and Hailey Bieber Just Bought a $12 Million N.Y.C. Pied-\u00e0-Terre",
-      date: "16 July 2026",
+        "Road Test: Porsche's All-Electric Cayenne Delivers Uncommon S.U.V. Power With Poise",
+      date: "28 July 2026",
       snippet:
-        "The four-bedroom apartment sits in a curvaceous West Village building overlooking the Hudson River.",
-      image: sidePostTwo,
-      navigate: "/journal/justin-hailey-bieber-buy-west-village-condo",
-    },
-    {
-      title: "Inside Novak Djokovic's Global Property Portfolio",
-      date: "16 July 2026",
-      snippet:
-        "The Serbian tennis star has owned homes in Monaco, Serbia, Spain, Greece, and the U.S.",
+        "On a test drive in Germany, the 2027 Porsche Cayenne Turbo Coupe Electric floored us with its ability to summon more muscle than the 918 Spyder.",
       image: sidePostThree,
-      navigate: "/journal/novak-djokovic-property-portfolio",
+      navigate: "/journal/porsche-cayenne-turbo-coupe-electric-road-test",
     },
   ];
 
