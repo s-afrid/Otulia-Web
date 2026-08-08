@@ -30,9 +30,11 @@ import instagramIcon from "../../assets/icons/social/instagram.svg";
 import xIcon from "../../assets/icons/social/x_inverted.svg";
 import estateIcon from "../../assets/icons/estate_icon.png";
 
-function RankingCard({ cars, onVote, isVoting }) {
+function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
   const [openSnackbarId, setOpenSnackbarId] = useState(null);
-  const [toast, setToast] = useState({ show: false, nomineeName: "" });
+  const [toast, setToast] = useState({ show: false, nomineeName: "", votesLeft: 3, limitReached: false });
+
+  const isLimitReached = votesRemaining <= 0;
 
   const triggerGoldenSparkles = (e) => {
     let originX = 0.5;
@@ -81,11 +83,25 @@ function RankingCard({ cars, onVote, isVoting }) {
 
   const handleVoteClick = (e, car) => {
     e.stopPropagation();
+
+    if (isLimitReached) {
+      setToast({
+        show: true,
+        nomineeName: car.name || "Nominee",
+        votesLeft: 0,
+        limitReached: true,
+      });
+      return;
+    }
+
     triggerGoldenSparkles(e);
 
+    const nextVotesLeft = Math.max(0, votesRemaining - 1);
     setToast({
       show: true,
       nomineeName: car.name || "Nominee",
+      votesLeft: nextVotesLeft,
+      limitReached: false,
     });
 
     if (onVote) {
@@ -100,7 +116,7 @@ function RankingCard({ cars, onVote, isVoting }) {
       }, 4500);
       return () => clearTimeout(timer);
     }
-  }, [toast.show, toast.nomineeName]);
+  }, [toast.show, toast.nomineeName, toast.votesLeft, toast.limitReached]);
 
   const getCarLinks = (car) => {
     const list = [];
@@ -396,9 +412,11 @@ function RankingCard({ cars, onVote, isVoting }) {
     };
   };
 
+  const carList = Array.isArray(cars) ? cars : (data ? [data] : []);
+
   return (
     <div className="space-y-4">
-      {cars.map((car) => {
+      {carList.map((car) => {
         if (car.isEstate) {
           const formatLocation = (loc) => {
             if (!loc) return "";
@@ -593,12 +611,15 @@ function RankingCard({ cars, onVote, isVoting }) {
                 <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[300px] flex-col items-center justify-center gap-4 md:gap-5 border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-5 bg-black select-none">
                   <button
                     onClick={(e) => handleVoteClick(e, car)}
-                    disabled={isVoting}
-                    className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border border-[#D6A125] bg-transparent text-[16px] md:text-[18px] font-bold text-[#D6A125] transition duration-200 hover:bg-[#D6A125]/10 select-none ${
-                      isVoting ? "opacity-50 cursor-not-allowed" : ""
+                    disabled={isVoting || isLimitReached}
+                    title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
+                    className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border text-[16px] md:text-[18px] font-bold transition duration-200 select-none ${
+                      isVoting || isLimitReached
+                        ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
+                        : "border-[#D6A125] bg-transparent text-[#D6A125] hover:bg-[#D6A125]/10 cursor-pointer"
                     }`}
                   >
-                    Vote
+                    {isLimitReached ? "Limit Reached" : "Vote"}
                   </button>
 
                   <div className="text-center flex flex-col items-center justify-center py-0.5">
@@ -800,12 +821,15 @@ function RankingCard({ cars, onVote, isVoting }) {
                 <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[310px] flex-col items-center justify-center gap-4 md:gap-5 border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-5 bg-black select-none">
                   <button
                     onClick={(e) => handleVoteClick(e, car)}
-                    disabled={isVoting}
-                    className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border border-[#D6A125] bg-transparent text-[16px] md:text-[18px] font-bold text-[#D6A125] transition duration-200 hover:bg-[#D6A125]/10 select-none ${
-                      isVoting ? "opacity-50 cursor-not-allowed" : ""
+                    disabled={isVoting || isLimitReached}
+                    title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
+                    className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border text-[16px] md:text-[18px] font-bold transition duration-200 select-none ${
+                      isVoting || isLimitReached
+                        ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
+                        : "border-[#D6A125] bg-transparent text-[#D6A125] hover:bg-[#D6A125]/10 cursor-pointer"
                     }`}
                   >
-                    Vote
+                    {isLimitReached ? "Limit Reached" : "Vote"}
                   </button>
 
                   <div className="text-center flex flex-col items-center justify-center py-0.5">
@@ -1024,12 +1048,15 @@ function RankingCard({ cars, onVote, isVoting }) {
               <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[210px] flex-col items-center justify-center gap-3.5 md:gap-4 border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-3.5 bg-black select-none">
                 <button
                   onClick={(e) => handleVoteClick(e, car)}
-                  disabled={isVoting}
-                  className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border border-[#D6A125] bg-transparent text-[16px] md:text-[18px] font-bold text-[#D6A125] transition duration-200 hover:bg-[#D6A125]/10 select-none ${
-                    isVoting ? "opacity-50 cursor-not-allowed" : ""
+                  disabled={isVoting || isLimitReached}
+                  title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
+                  className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border text-[16px] md:text-[18px] font-bold transition duration-200 select-none ${
+                    isVoting || isLimitReached
+                      ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
+                      : "border-[#D6A125] bg-transparent text-[#D6A125] hover:bg-[#D6A125]/10 cursor-pointer"
                   }`}
                 >
-                  Vote
+                  {isLimitReached ? "Limit Reached" : "Vote"}
                 </button>
 
                 <div className="text-center flex flex-col items-center justify-center py-0.5">
@@ -1064,24 +1091,30 @@ function RankingCard({ cars, onVote, isVoting }) {
 
       {/* FLOATING BOTTOM GOLDEN SNACKBAR / TOAST */}
       {toast.show && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex flex-col overflow-hidden rounded-xl border border-[#D6A125]/80 bg-zinc-950/95 text-white shadow-[0_10px_35px_rgba(214,161,37,0.35)] backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in max-w-[90vw] md:max-w-md select-none">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex flex-col overflow-hidden rounded-xl border border-[#D6A125]/80 bg-zinc-950/95 text-white shadow-[0_10px_35px_rgba(214,161,37,0.35)] backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in max-w-[95vw] sm:max-w-xl w-auto min-w-[320px] select-none">
           <div className="flex items-center gap-3.5 px-5 py-3.5">
             <div className="w-9 h-9 rounded-full bg-[#D6A125]/20 border border-[#D6A125]/50 flex items-center justify-center shrink-0">
               <FaTrophy className="text-[#D6A125] text-base animate-pulse" />
             </div>
-            <div className="flex flex-col min-w-0 pr-2">
+            <div className="flex flex-col min-w-0 pr-2 flex-1">
               <span className="text-[13.5px] font-bold text-white leading-snug flex items-center gap-1.5">
-                <span>Vote Registered!</span>
-                <span className="text-[#D6A125] text-xs">✨</span>
+                <span>{toast.limitReached ? "Daily Limit Reached ⚠️" : "Vote Registered!"}</span>
+                {!toast.limitReached && <span className="text-[#D6A125] text-xs">✨</span>}
               </span>
-              <span className="text-[11.5px] text-zinc-400 font-medium truncate mt-0.5">
-                Thank you for voting for <span className="text-zinc-200 font-semibold">{toast.nomineeName}</span>
+              <span className="text-[11.5px] text-zinc-300 font-medium leading-relaxed mt-0.5 whitespace-normal sm:whitespace-nowrap">
+                {toast.limitReached ? (
+                  <span>You have <span className="text-[#D6A125] font-bold">0 votes</span> left today. Try again tomorrow!</span>
+                ) : (
+                  <span>
+                    Thank you for voting for <span className="text-white font-semibold">{toast.nomineeName}</span>. You have <span className="text-[#D6A125] font-bold">{toast.votesLeft} {toast.votesLeft === 1 ? 'vote' : 'votes'} left</span> today.
+                  </span>
+                )}
               </span>
             </div>
             <button
               type="button"
               onClick={() => setToast((prev) => ({ ...prev, show: false }))}
-              className="text-zinc-400 hover:text-white text-xs font-bold w-6 h-6 rounded-lg flex items-center justify-center hover:bg-zinc-800 transition shrink-0 ml-auto"
+              className="text-zinc-400 hover:text-white text-xs font-bold w-6 h-6 rounded-lg flex items-center justify-center hover:bg-zinc-800 transition shrink-0 ml-2"
             >
               ✕
             </button>

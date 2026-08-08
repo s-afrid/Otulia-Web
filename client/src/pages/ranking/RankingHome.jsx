@@ -141,8 +141,61 @@ function RankingHome() {
     }
   }, [loading, activeCategory, location.hash]);
 
+  const [votesRemaining, setVotesRemaining] = useState(3);
+  const [votesToday, setVotesToday] = useState(0);
+
+  const saveLocalDailyVotes = (count) => {
+    try {
+      const todayStr = new Date().toISOString().split('T')[0];
+      localStorage.setItem('otulia_daily_votes', JSON.stringify({ date: todayStr, votesToday: count }));
+    } catch (e) {
+      console.error("localStorage error:", e);
+    }
+  };
+
+  const fetchVotesToday = async () => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    let localVotesToday = 0;
+    try {
+      const saved = JSON.parse(localStorage.getItem('otulia_daily_votes') || '{}');
+      if (saved.date === todayStr) {
+        localVotesToday = Number(saved.votesToday) || 0;
+      }
+    } catch (e) {}
+
+    if (token) {
+      try {
+        const res = await fetch('/api/rankings/votes-today', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const rem = data.votesRemaining !== undefined ? data.votesRemaining : Math.max(0, 3 - (data.votesToday || 0));
+          const tod = data.votesToday !== undefined ? data.votesToday : (3 - rem);
+          setVotesRemaining(rem);
+          setVotesToday(tod);
+          saveLocalDailyVotes(tod);
+          return;
+        }
+      } catch (err) {
+        console.error("Error fetching votes today:", err);
+      }
+    }
+
+    setVotesToday(localVotesToday);
+    setVotesRemaining(Math.max(0, 3 - localVotesToday));
+  };
+
+  useEffect(() => {
+    fetchVotesToday();
+  }, [token]);
+
   // Handle voting action
   const handleVote = async (nomineeId, catId) => {
+    if (votesRemaining <= 0) {
+      return;
+    }
+
     // Optimistic real-time vote counter update (no page reload, no unmounting)
     setActiveCategory((prevCat) => {
       if (!prevCat || !prevCat.nominees) return prevCat;
@@ -168,13 +221,19 @@ function RankingHome() {
       };
     });
 
-    if (!isAuthenticated) {
+    const newRem = Math.max(0, votesRemaining - 1);
+    const newToday = votesToday + 1;
+    setVotesRemaining(newRem);
+    setVotesToday(newToday);
+    saveLocalDailyVotes(newToday);
+
+    if (!token) {
       return;
     }
 
     setIsVoting(true);
     try {
-       const res = await fetch("/api/rankings/vote", {
+      const res = await fetch("/api/rankings/vote", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -184,8 +243,19 @@ function RankingHome() {
       });
 
       const data = await res.json();
-      if (!res.ok) {
+      if (res.ok) {
+        if (data.votesRemaining !== undefined) {
+          setVotesRemaining(data.votesRemaining);
+          setVotesToday(data.votesToday || (3 - data.votesRemaining));
+          saveLocalDailyVotes(data.votesToday || (3 - data.votesRemaining));
+        }
+      } else {
         console.warn("Vote API warning:", data.error);
+        if (data.votesRemaining !== undefined) {
+          setVotesRemaining(data.votesRemaining);
+          setVotesToday(data.votesToday || 3);
+          saveLocalDailyVotes(data.votesToday || 3);
+        }
       }
     } catch (err) {
       console.error("Error casting vote:", err);
@@ -370,7 +440,7 @@ function RankingHome() {
             <>
               <HeaderRanking data={headerData} />
               {cardsData.length > 0 ? (
-                <RankingCard cars={cardsData} onVote={handleVote} isVoting={isVoting} />
+                <RankingCard cars={cardsData} onVote={handleVote} isVoting={isVoting} votesRemaining={votesRemaining} />
               ) : (
                 <div className="text-center py-20 text-zinc-400 font-medium">
                   No nominees found in this category.
