@@ -147,16 +147,28 @@ const Inventory = () => {
     planExpiresAt: null,
   });
 
+  const formatPhoneWithCode = (val, code) => {
+    if (!val) return "";
+    const selectedCode = code || "+971";
+    const cleanDigits = val.replace(/^\+\d+\s*/, "").trim();
+    if (!cleanDigits) return "";
+    return `${selectedCode} ${cleanDigits}`;
+  };
+
   useEffect(() => {
     if (user) {
+      const pCode = user.phoneCode || "+971";
+      const wCode = user.whatsappCode || "+971";
+      const cCode = user.company?.phoneCode || "+971";
+
       setAgentInfo({
         fullName: user.name || "",
         jobTitle: user.jobTitle || "",
         email: user.email || "",
-        phoneCode: user.phoneCode || "+971",
-        phone: user.phone || "",
-        whatsappCode: user.whatsappCode || "+971",
-        whatsapp: user.whatsapp || "",
+        phoneCode: pCode,
+        phone: formatPhoneWithCode(user.phone || "", pCode),
+        whatsappCode: wCode,
+        whatsapp: formatPhoneWithCode(user.whatsapp || "", wCode),
         contactMethod: user.contactMethod || "WhatsApp",
         language: user.language || "English",
         timezone: user.timezone || "(GMT+4) Dubai, UAE",
@@ -178,8 +190,8 @@ const Inventory = () => {
           user.company?.businessType || "Luxury Cars & Supercars Dealer",
         establishedYear: user.company?.establishedYear || "",
         address: user.company?.address || "",
-        phoneCode: user.company?.phoneCode || "+971",
-        phone: user.company?.phone || "",
+        phoneCode: cCode,
+        phone: formatPhoneWithCode(user.company?.phone || "", cCode),
         description: user.company?.description || "",
         logo: user.company?.companyLogo || "",
         coverImage: user.company?.coverPhoto || "",
@@ -366,6 +378,9 @@ const Inventory = () => {
   const handleSavePersonalDetails = async () => {
     setIsSavingPersonal(true);
     try {
+      const formattedPhone = formatPhoneWithCode(agentInfo.phone, agentInfo.phoneCode);
+      const formattedWhatsapp = formatPhoneWithCode(agentInfo.whatsapp, agentInfo.whatsappCode);
+
       const response = await fetch("/api/auth/update-profile", {
         method: "PUT",
         headers: {
@@ -375,9 +390,9 @@ const Inventory = () => {
         body: JSON.stringify({
           name: agentInfo.fullName,
           jobTitle: agentInfo.jobTitle,
-          phone: agentInfo.phone,
+          phone: formattedPhone,
           phoneCode: agentInfo.phoneCode,
-          whatsapp: agentInfo.whatsapp,
+          whatsapp: formattedWhatsapp,
           whatsappCode: agentInfo.whatsappCode,
           contactMethod: agentInfo.contactMethod,
           language: agentInfo.language,
@@ -408,6 +423,8 @@ const Inventory = () => {
   const handleSaveCompanyDetails = async () => {
     setIsSavingCompany(true);
     try {
+      const formattedCompanyPhone = formatPhoneWithCode(companyInfo.phone, companyInfo.phoneCode);
+
       const response = await fetch("/api/auth/update-profile", {
         method: "PUT",
         headers: {
@@ -422,7 +439,7 @@ const Inventory = () => {
             businessType: companyInfo.businessType,
             establishedYear: companyInfo.establishedYear,
             address: companyInfo.address,
-            phone: companyInfo.phone,
+            phone: formattedCompanyPhone,
             phoneCode: companyInfo.phoneCode,
             description: companyInfo.description,
             companyLogo: companyInfo.logo,

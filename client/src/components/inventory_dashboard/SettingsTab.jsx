@@ -118,6 +118,14 @@ const SettingsTab = ({
     { code: "+90", iso: "tr", name: "Turkey" },
   ];
 
+  const formatPhoneWithCode = (val, code) => {
+    if (!val) return "";
+    const selectedCode = code || "+971";
+    const cleanDigits = val.replace(/^\+\d+\s*/, "").trim();
+    if (!cleanDigits) return "";
+    return `${selectedCode} ${cleanDigits}`;
+  };
+
   const getContactIcon = (method) => {
     if (method === "WhatsApp")
       return <img src={whatsappIcon} alt="WhatsApp" className="w-3.5 h-3.5" />;
@@ -258,12 +266,14 @@ const SettingsTab = ({
                     <FiChevronDown className="ml-3 text-[12px] text-gray-500 pointer-events-none" />
                     <select
                       value={agentInfo.phoneCode}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const newCode = e.target.value;
                         setAgentInfo((p) => ({
                           ...p,
-                          phoneCode: e.target.value,
-                        }))
-                      }
+                          phoneCode: newCode,
+                          phone: formatPhoneWithCode(p.phone, newCode),
+                        }));
+                      }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     >
                       {countryCodes.map((c) => (
@@ -277,7 +287,10 @@ const SettingsTab = ({
                     type="text"
                     value={agentInfo.phone}
                     onChange={(e) =>
-                      setAgentInfo((p) => ({ ...p, phone: e.target.value }))
+                      setAgentInfo((p) => ({
+                        ...p,
+                        phone: formatPhoneWithCode(e.target.value, p.phoneCode),
+                      }))
                     }
                     className="w-full min-w-[120px] bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none"
                     placeholder="Enter phone number"
@@ -302,12 +315,14 @@ const SettingsTab = ({
                     <FiChevronDown className="ml-3 text-[12px] text-gray-500 pointer-events-none" />
                     <select
                       value={agentInfo.whatsappCode}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const newCode = e.target.value;
                         setAgentInfo((p) => ({
                           ...p,
-                          whatsappCode: e.target.value,
-                        }))
-                      }
+                          whatsappCode: newCode,
+                          whatsapp: formatPhoneWithCode(p.whatsapp, newCode),
+                        }));
+                      }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     >
                       {countryCodes.map((c) => (
@@ -321,7 +336,10 @@ const SettingsTab = ({
                     type="text"
                     value={agentInfo.whatsapp}
                     onChange={(e) =>
-                      setAgentInfo((p) => ({ ...p, whatsapp: e.target.value }))
+                      setAgentInfo((p) => ({
+                        ...p,
+                        whatsapp: formatPhoneWithCode(e.target.value, p.whatsappCode),
+                      }))
                     }
                     className="w-full min-w-[120px] bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none"
                     placeholder="Enter WhatsApp number"
@@ -852,12 +870,14 @@ const SettingsTab = ({
                     <FiChevronDown className="ml-3 text-[12px] text-gray-500 pointer-events-none" />
                     <select
                       value={companyInfo.phoneCode}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const newCode = e.target.value;
                         setCompanyInfo((p) => ({
                           ...p,
-                          phoneCode: e.target.value,
-                        }))
-                      }
+                          phoneCode: newCode,
+                          phone: formatPhoneWithCode(p.phone, newCode),
+                        }));
+                      }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     >
                       {countryCodes.map((c) => (
@@ -871,7 +891,10 @@ const SettingsTab = ({
                     type="text"
                     value={companyInfo.phone}
                     onChange={(e) =>
-                      setCompanyInfo((p) => ({ ...p, phone: e.target.value }))
+                      setCompanyInfo((p) => ({
+                        ...p,
+                        phone: formatPhoneWithCode(e.target.value, p.phoneCode),
+                      }))
                     }
                     className="w-full bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none min-w-0"
                     placeholder="Enter phone number"
