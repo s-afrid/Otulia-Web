@@ -28,6 +28,10 @@ const dealerNomineeSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    fakeVotes: {
+        type: Number,
+        default: 0
+    },
     votedBy: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

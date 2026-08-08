@@ -145,33 +145,40 @@ router.get("/category/:slug", async (req, res) => {
             ? (category.assetNominees || [])
             : (category.dealerNominees || []);
             
-        // Sort nominees by votes descending
-        const sortedNominees = [...nominees].sort((a, b) => (b.votes || 0) - (a.votes || 0));
+        // Sort nominees by total votes (real + fake) descending
+        const sortedNominees = [...nominees].sort((a, b) => ((b.votes || 0) + (b.fakeVotes || 0)) - ((a.votes || 0) + (a.fakeVotes || 0)));
         
         // Map ranks
-        const rankedNominees = sortedNominees.map((n, index) => ({
-            id: n._id,
-            _id: n._id,
-            rank: index + 1,
-            name: n.name,
-            detail: n.detail,
-            image: n.image,
-            banner: n.banner || n.coverImage || n.bannerImage || '',
-            profilePic: n.profilePic || n.profilePicture || n.avatar || n.image || '',
-            channelName: n.channelName || '',
-            youtube: n.youtube || '',
-            instagram: n.instagram || '',
-            twitter: n.twitter || '',
-            tiktok: n.tiktok || '',
-            votes: n.votes,
-            votedBy: n.votedBy || [],
-            brand: n.brand || '',
-            model: n.model || '',
-            description: n.description || '',
-            listingLink: n.listingLink || '',
-            keyDetails: n.keyDetails || {},
-            sources: n.sources || []
-        }));
+        const rankedNominees = sortedNominees.map((n, index) => {
+            const realVotes = n.votes || 0;
+            const fakeVotes = n.fakeVotes || 0;
+            const totalVotes = realVotes + fakeVotes;
+            return {
+                id: n._id,
+                _id: n._id,
+                rank: index + 1,
+                name: n.name,
+                detail: n.detail,
+                image: n.image,
+                banner: n.banner || n.coverImage || n.bannerImage || '',
+                profilePic: n.profilePic || n.profilePicture || n.avatar || n.image || '',
+                channelName: n.channelName || '',
+                youtube: n.youtube || '',
+                instagram: n.instagram || '',
+                twitter: n.twitter || '',
+                tiktok: n.tiktok || '',
+                votes: totalVotes,
+                realVotes: realVotes,
+                fakeVotes: fakeVotes,
+                votedBy: n.votedBy || [],
+                brand: n.brand || '',
+                model: n.model || '',
+                description: n.description || '',
+                listingLink: n.listingLink || '',
+                keyDetails: n.keyDetails || {},
+                sources: n.sources || []
+            };
+        });
         
         const totalVotesVal = rankedNominees.reduce((acc, curr) => acc + (curr.votes || 0), 0);
         let formattedVotes = "0";
@@ -292,11 +299,14 @@ router.post("/vote", authMiddleware, async (req, res) => {
         });
 
         const newVotesToday = votesCastToday + 1;
+        const totalNomineeVotes = (nominee.votes || 0) + (nominee.fakeVotes || 0);
 
         res.json({ 
             success: true, 
             message: "Vote cast successfully", 
-            votes: nominee.votes,
+            votes: totalNomineeVotes,
+            realVotes: nominee.votes,
+            fakeVotes: nominee.fakeVotes || 0,
             votesToday: newVotesToday,
             votesRemaining: Math.max(0, 3 - newVotesToday)
         });

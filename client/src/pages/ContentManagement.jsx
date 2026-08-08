@@ -337,6 +337,7 @@ const ContentManagement = () => {
             detail: 'Custom Nominee',
             image: '',
             votes: 0,
+            fakeVotes: 0,
             brand: '',
             model: '',
             description: '',
@@ -672,10 +673,41 @@ const ContentManagement = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="mt-4 sm:mt-0 flex items-center gap-6 shrink-0 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 border-[#1C253B]/50 pt-3 sm:pt-0">
-                                                <div className="text-left sm:text-right">
-                                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Votes Cast</p>
+                                            <div className="mt-4 sm:mt-0 flex flex-wrap items-center gap-4 sm:gap-6 shrink-0 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 border-[#1C253B]/50 pt-3 sm:pt-0">
+                                                <div className="text-center sm:text-right min-w-[65px]">
+                                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Real Votes</p>
                                                     <p className="text-base font-normal text-white canela tracking-wide">{nominee.votes || 0}</p>
+                                                </div>
+
+                                                <div className="text-center sm:text-right" onClick={(e) => e.stopPropagation()}>
+                                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Enter Fake Votes</p>
+                                                    <input 
+                                                        type="number"
+                                                        min="0"
+                                                        value={nominee.fakeVotes !== undefined && nominee.fakeVotes !== null ? nominee.fakeVotes : ''}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value === '' ? 0 : Math.max(0, parseInt(e.target.value, 10) || 0);
+                                                            setViewingCategory(prev => {
+                                                                if (!prev || !prev.nominees) return prev;
+                                                                const updatedNominees = [...prev.nominees];
+                                                                updatedNominees[idx] = {
+                                                                    ...updatedNominees[idx],
+                                                                    fakeVotes: val
+                                                                };
+                                                                return {
+                                                                    ...prev,
+                                                                    nominees: updatedNominees
+                                                                };
+                                                            });
+                                                        }}
+                                                        className="w-24 sm:w-28 bg-[#151D30] border border-[#222E4A] focus:border-[#6366F1] rounded-xl px-3 py-1.5 text-sm font-bold text-white text-center focus:outline-none transition-all"
+                                                        placeholder="0"
+                                                    />
+                                                </div>
+
+                                                <div className="text-center sm:text-right min-w-[65px]">
+                                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Votes Cast</p>
+                                                    <p className="text-base font-normal text-white canela tracking-wide">{(Number(nominee.votes) || 0) + (Number(nominee.fakeVotes) || 0)}</p>
                                                 </div>
 
                                                 <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border ${
@@ -740,6 +772,18 @@ const ContentManagement = () => {
                                             value={editNomineeInlineData.name || ''}
                                             onChange={(e) => setEditNomineeInlineData({ ...editNomineeInlineData, name: e.target.value })}
                                             className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs font-bold text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Enter Fake Votes</label>
+                                        <input 
+                                            type="number"
+                                            min="0"
+                                            value={editNomineeInlineData.fakeVotes !== undefined && editNomineeInlineData.fakeVotes !== null ? editNomineeInlineData.fakeVotes : ''}
+                                            onChange={(e) => setEditNomineeInlineData({ ...editNomineeInlineData, fakeVotes: e.target.value === '' ? 0 : Math.max(0, parseInt(e.target.value, 10) || 0) })}
+                                            className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs font-bold text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                            placeholder="e.g. 500"
                                         />
                                     </div>
 

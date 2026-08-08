@@ -986,6 +986,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                     detail: 'Custom Nominee',
                                     image: '',
                                     votes: 0,
+                                    fakeVotes: 0,
                                     brand: '',
                                     model: '',
                                     description: '',
@@ -1075,6 +1076,18 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                     value={editNomineeData.name || ''}
                                     onChange={(e) => setEditNomineeData({ ...editNomineeData, name: e.target.value })}
                                     className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white font-medium focus:outline-none focus:border-[#6366F1] transition-all"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">Enter Fake Votes</label>
+                                <input 
+                                    type="number"
+                                    min="0"
+                                    value={editNomineeData.fakeVotes !== undefined && editNomineeData.fakeVotes !== null ? editNomineeData.fakeVotes : ''}
+                                    onChange={(e) => setEditNomineeData({ ...editNomineeData, fakeVotes: e.target.value === '' ? 0 : Math.max(0, parseInt(e.target.value, 10) || 0) })}
+                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white font-medium focus:outline-none focus:border-[#6366F1] transition-all"
+                                    placeholder="0"
                                 />
                             </div>
 

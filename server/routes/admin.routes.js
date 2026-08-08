@@ -460,7 +460,8 @@ router.get("/ranking-categories", authMiddleware, adminCheck, async (req, res) =
                     name: n.name,
                     detail: n.detail,
                     image: n.image,
-                    votes: n.votes,
+                    votes: n.votes || 0,
+                    fakeVotes: n.fakeVotes || 0,
                     brand: n.brand || '',
                     model: n.model || '',
                     description: n.description || '',
@@ -474,7 +475,8 @@ router.get("/ranking-categories", authMiddleware, adminCheck, async (req, res) =
                     name: n.name,
                     detail: n.detail,
                     image: n.image,
-                    votes: n.votes,
+                    votes: n.votes || 0,
+                    fakeVotes: n.fakeVotes || 0,
                     brand: n.brand || '',
                     model: n.model || '',
                     description: n.description || '',
@@ -483,7 +485,7 @@ router.get("/ranking-categories", authMiddleware, adminCheck, async (req, res) =
                     sources: n.sources || []
                 }));
 
-            const totalVotesVal = nominees.reduce((acc, curr) => acc + (curr.votes || 0), 0);
+            const totalVotesVal = nominees.reduce((acc, curr) => acc + (curr.votes || 0) + (curr.fakeVotes || 0), 0);
             let formattedVotes = "0";
             if (totalVotesVal >= 1000) {
                 formattedVotes = (totalVotesVal / 1000).toFixed(1) + 'K';
@@ -584,6 +586,7 @@ router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) 
                     detail: nom.detail || '',
                     image: nom.image || '',
                     targetType: targetType,
+                    fakeVotes: nom.fakeVotes !== undefined ? Number(nom.fakeVotes) : 0,
                     brand: nom.brand || '',
                     model: nom.model || '',
                     description: nom.description || '',
@@ -688,7 +691,7 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
         const nomineeIds = [];
         if (nominees && nominees.length > 0) {
             for (const nom of nominees) {
-                const match = existingNominees.find(n => n.name === nom.name);
+                const match = existingNominees.find(n => n.name === nom.name || (nom._id && n._id.toString() === nom._id.toString()) || (nom.id && n._id.toString() === nom.id.toString()));
                 const newNominee = new Model({
                     category: category._id,
                     name: nom.name,
@@ -696,6 +699,7 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
                     image: nom.image || '',
                     targetType: targetType,
                     votes: match ? match.votes : 0,
+                    fakeVotes: nom.fakeVotes !== undefined ? Number(nom.fakeVotes) : (match ? (match.fakeVotes || 0) : 0),
                     votedBy: match ? match.votedBy : [],
                     brand: nom.brand || '',
                     model: nom.model || '',

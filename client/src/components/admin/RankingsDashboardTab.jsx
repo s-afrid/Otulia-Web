@@ -30,7 +30,7 @@ const RankingsKPICard = ({ title, value, growth, icon: Icon, gradientId }) => (
 
 const RankingsDashboardTab = ({ onTabChange, onCreateCategoryClick, categories = [] }) => {
     const totalVotesVal = categories.reduce((sum, c) => {
-        return sum + (c.nominees || []).reduce((acc, nominee) => acc + (nominee.votes || 0), 0);
+        return sum + (c.nominees || []).reduce((acc, nominee) => acc + (nominee.votes || 0) + (nominee.fakeVotes || 0), 0);
     }, 0);
 
     const activeCategoriesCount = categories.filter(c => c.status === 'Active').length;
@@ -69,7 +69,7 @@ const RankingsDashboardTab = ({ onTabChange, onCreateCategoryClick, categories =
     // Distribute votes of each category deterministically across the 30 days based on their voting period
     categories.forEach((cat) => {
         const nomineesList = cat.nominees || [];
-        const catVotes = nomineesList.reduce((sum, n) => sum + (n.votes || 0), 0);
+        const catVotes = nomineesList.reduce((sum, n) => sum + (n.votes || 0) + (n.fakeVotes || 0), 0);
         if (catVotes <= 0) return;
 
         const start = cat.votingPeriodStart ? new Date(cat.votingPeriodStart) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -170,7 +170,7 @@ const RankingsDashboardTab = ({ onTabChange, onCreateCategoryClick, categories =
 
     // Dynamic Top Performing Categories sorted by actual votes
     const topCategories = categories.map(c => {
-        const totalVotesValCat = (c.nominees || []).reduce((acc, curr) => acc + (curr.votes || 0), 0);
+        const totalVotesValCat = (c.nominees || []).reduce((acc, curr) => acc + (curr.votes || 0) + (curr.fakeVotes || 0), 0);
         return {
             id: c.id || c._id,
             title: c.title,
