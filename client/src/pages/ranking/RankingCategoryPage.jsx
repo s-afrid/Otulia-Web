@@ -4,6 +4,7 @@ import Navbar_Ranking from "../../components/ranking_page/Navbar_Ranking";
 import Sidebar from "../../components/ranking_page/DashboardRanking";
 import HeaderRanking from "../../components/ranking_page/HeaderRanking";
 import RankingCard from "../../components/ranking_page/CardRanking";
+import RankingScaleWrapper from "../../components/ranking_page/RankingScaleWrapper";
 
 export default function RankingCategoryPage() {
   const { category } = useParams();
@@ -83,7 +84,7 @@ export default function RankingCategoryPage() {
   }, [category, activeTab]);
 
   return (
-    <>
+    <RankingScaleWrapper>
       <Sidebar activeTab={activeTab} setActiveTab={handleTabChange} />
       <Navbar_Ranking hideSearch={true} />
 
@@ -110,6 +111,6 @@ export default function RankingCategoryPage() {
           )}
         </div>
       </main>
-    </>
+    </RankingScaleWrapper>
   );
 }

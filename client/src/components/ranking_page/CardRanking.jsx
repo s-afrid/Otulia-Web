@@ -660,7 +660,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
             <div
               key={car._id}
               id={car._id}
-              className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-full xl:max-w-[1570px] h-auto md:h-[310px]"
+              className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[310px]"
             >
               {/* IMAGES (Appears on the left) */}
               <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[220px] md:h-[310px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
@@ -871,7 +871,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
           <div
             key={car._id}
             id={car._id}
-            className="flex flex-col md:flex-row gap-3 md:gap-4 w-full max-w-[1577px] h-auto md:h-[210px] mx-auto"
+            className="flex flex-col md:flex-row gap-3 md:gap-4 w-full max-w-[1592px] h-auto md:h-[210px] mx-auto"
           >
             {/* IMAGES */}
             <div className="relative shrink-0 w-full md:w-[320px] lg:w-[380px] xl:w-[437px] h-[180px] md:h-[210px] bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">

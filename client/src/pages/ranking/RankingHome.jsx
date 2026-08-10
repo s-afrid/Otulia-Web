@@ -9,6 +9,7 @@ import Navbar_Ranking from "../../components/ranking_page/Navbar_Ranking";
 import Sidebar from "../../components/ranking_page/DashboardRanking";
 import HeaderRanking from "../../components/ranking_page/HeaderRanking";
 import RankingCard from "../../components/ranking_page/CardRanking";
+import RankingScaleWrapper from "../../components/ranking_page/RankingScaleWrapper";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { rankings as staticRankings } from "../../data/rankings";
@@ -421,7 +422,7 @@ function RankingHome() {
   const cardsData = getMappedCardsData();
 
   return (
-    <>
+    <RankingScaleWrapper>
       <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
       <div style={{ marginLeft: "260px" }} className="min-h-screen bg-zinc-950 text-white">
@@ -522,7 +523,7 @@ function RankingHome() {
           )}
         </div>
       </div>
-    </>
+    </RankingScaleWrapper>
   );
 }
 

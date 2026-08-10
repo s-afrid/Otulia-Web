@@ -54,7 +54,7 @@ px-10
 
   const navStyle = {
     left: "260px",
-    width: "calc(100vw - 260px)",
+    right: 0,
   };
 
   const logoSrc = "/logos/logo.png";
