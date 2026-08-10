@@ -102,6 +102,8 @@
 /* Apply to the root elements to hide the main browser scrollbar */
 html,
 body {
+  background-color: #09090b;
+  color: #ffffff;
   /* Hide scrollbar for Firefox */
   scrollbar-width: none;
   /* Hide scrollbar for IE and Edge */

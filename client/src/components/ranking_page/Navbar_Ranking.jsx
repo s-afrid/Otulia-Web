@@ -35,12 +35,12 @@ const Navbar = ({
 
   const isDarkText = false;
 
-  const sidebarWidth = "260px";
-
   const navClasses = `
 fixed
 top-0
 right-0
+lg:left-[260px]
+left-0
 h-[88px]
 z-50
 bg-zinc-950
@@ -49,11 +49,11 @@ border-zinc-800
 flex
 items-center
 justify-between
-px-10
+px-4
+md:px-10
 `;
 
   const navStyle = {
-    left: "260px",
     right: 0,
   };
 

@@ -425,10 +425,10 @@ function RankingHome() {
     <RankingScaleWrapper>
       <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
-      <div style={{ marginLeft: "260px" }} className="min-h-screen bg-zinc-950 text-white">
+      <div className="min-h-screen bg-zinc-950 text-white lg:ml-[260px] w-full transition-all duration-300">
         <Navbar_Ranking hideSearch={true} />
 
-        <div className="px-8 pt-[88px] pb-12 bg-zinc-950">
+        <div className="px-4 md:px-8 pt-[88px] pb-12 bg-zinc-950">
           {loading ? (
             <div className="flex justify-center py-40">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D6A125]"></div>

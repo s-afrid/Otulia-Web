@@ -52,7 +52,7 @@ function RankingHeader({ data }) {
       )}
 
       {/* Main Cover Banner Box */}
-      <div className="relative w-full rounded-2xl overflow-hidden border border-zinc-800/80 shadow-2xl min-h-[280px] md:min-h-[320px] flex items-center bg-black">
+      <div className="relative w-full rounded-2xl overflow-hidden border border-zinc-800/80 shadow-2xl aspect-[2.8/1] sm:aspect-[3.2/1] md:aspect-[3.6/1] lg:aspect-[4/1] xl:aspect-[4.2/1] min-h-[180px] sm:min-h-[260px] md:min-h-[340px] lg:min-h-[400px] xl:min-h-[450px] flex items-center bg-black">
         {/* Banner Cover Image */}
         <img
           src={coverImg}

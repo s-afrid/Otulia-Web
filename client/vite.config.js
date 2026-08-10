@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
+// Force config reload
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
