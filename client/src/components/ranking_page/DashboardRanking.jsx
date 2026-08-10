@@ -46,7 +46,7 @@ function Sidebar({ categories = [], activeSlug }) {
 
   return (
     <>
-      <aside className="fixed left-0 top-0 w-[260px] h-screen bg-black z-40 flex flex-col border-r border-zinc-900 shadow-2xl select-none font-gilda">
+      <aside className="fixed left-0 top-0 bottom-0 w-[260px] h-full bg-black z-40 flex flex-col border-r border-zinc-900 shadow-2xl select-none font-gilda">
         {/* Header Logo */}
         <div className="h-[88px] flex items-center px-6 border-b border-zinc-900/80 shrink-0">
           <Link to="/">
@@ -95,7 +95,7 @@ function Sidebar({ categories = [], activeSlug }) {
         </nav>
 
         {/* Bottom CTA Card: Nominate Now */}
-        <div className="p-4 border-t border-zinc-900 bg-black shrink-0 font-sans inter">
+        <div className="p-4 border-t border-zinc-900 bg-black shrink-0 font-sans inter mt-auto">
           <div className="rounded-xl border border-zinc-850 bg-[#0B0B0D] p-4 text-center flex flex-col items-center shadow-lg relative overflow-hidden group">
             {/* Background Glow Effect */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#D6A125]/5 to-transparent pointer-events-none" />
