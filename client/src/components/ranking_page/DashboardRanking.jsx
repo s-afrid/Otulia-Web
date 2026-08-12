@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { FaTrophy, FaArrowRight, FaTimes, FaBars } from "react-icons/fa";
+import { FaTrophy, FaArrowRight, FaTimes } from "react-icons/fa";
 
 const logoSrc = "/logos/logo.png";
 
@@ -8,7 +8,6 @@ function Sidebar({ categories = [], activeSlug }) {
   const { category, slug } = useParams();
   const currentSlug = activeSlug || slug;
 
-  const [isOpen, setIsOpen] = useState(false);
   const [showNominateModal, setShowNominateModal] = useState(false);
   const [nomineeName, setNomineeName] = useState("");
   const [nomineeReason, setNomineeReason] = useState("");
@@ -47,33 +46,11 @@ function Sidebar({ categories = [], activeSlug }) {
 
   return (
     <>
-      {/* Mobile Toggle Drawer Floating Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle Rankings Menu"
-        className="lg:hidden fixed bottom-6 left-6 z-50 flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-[#B8812D] via-[#A37025] to-[#8C5E1D] hover:from-[#A37025] hover:to-[#7B5118] text-white font-bold text-sm tracking-wide shadow-2xl transition duration-300 active:scale-95 cursor-pointer border border-[#D6A125]/30"
-      >
-        <FaBars className="text-xs" />
-        <span>Menu</span>
-      </button>
-
-      {/* Mobile Sidebar Overlay Backdrop */}
-      {isOpen && (
-        <div
-          onClick={() => setIsOpen(false)}
-          className="fixed inset-0 bg-black/75 backdrop-blur-xs z-40 lg:hidden transition-opacity duration-300 animate-fade-in"
-        />
-      )}
-
-      {/* Sidebar Aside Panel */}
-      <aside
-        className={`fixed left-0 top-0 bottom-0 w-[260px] h-full bg-black z-45 lg:z-40 flex flex-col border-r border-zinc-900 shadow-2xl select-none font-gilda transition-transform duration-300 lg:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {/* Header Logo & Close Action */}
-        <div className="h-[88px] flex items-center justify-between px-6 border-b border-zinc-900/80 shrink-0">
-          <Link to="/" onClick={() => setIsOpen(false)}>
+      {/* Sidebar Aside Panel (Desktop) */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[260px] h-full bg-black z-40 flex-col border-r border-zinc-900 shadow-2xl select-none font-gilda">
+        {/* Header Logo */}
+        <div className="h-[88px] flex items-center px-6 border-b border-zinc-900/80 shrink-0">
+          <Link to="/">
             <img
               className="w-[140px] h-auto object-contain transition-opacity hover:opacity-90"
               alt="Otulia Logo"
@@ -81,13 +58,6 @@ function Sidebar({ categories = [], activeSlug }) {
               title="Otulia"
             />
           </Link>
-          <button
-            onClick={() => setIsOpen(false)}
-            aria-label="Close Rankings Menu"
-            className="lg:hidden text-zinc-400 hover:text-white p-2 hover:bg-zinc-900 rounded transition"
-          >
-            <FaTimes className="text-base" />
-          </button>
         </div>
 
         {/* Menu Navigation Items */}
@@ -101,7 +71,6 @@ function Sidebar({ categories = [], activeSlug }) {
               <Link
                 key={item.path}
                 to={item.path}
-                onClick={() => setIsOpen(false)}
                 className={`
                   block
                   w-full
@@ -144,10 +113,7 @@ function Sidebar({ categories = [], activeSlug }) {
 
             {/* Nominate Button */}
             <button
-              onClick={() => {
-                setIsOpen(false);
-                setShowNominateModal(true);
-              }}
+              onClick={() => setShowNominateModal(true)}
               className="w-full py-2.5 px-3 rounded-lg bg-gradient-to-r from-[#B8812D] via-[#A37025] to-[#8C5E1D] hover:from-[#A37025] hover:to-[#7B5118] text-white font-semibold text-xs tracking-wide transition duration-200 flex items-center justify-center gap-1.5 cursor-pointer shadow-md active:scale-95 font-sans inter"
             >
               <span>Nominate Now</span>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, NavLink } from "react-router-dom";
 import { FaBolt, FaHome, FaTree, FaBed, FaBath, FaUsers, FaEye, FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
 import { LuTimerReset } from "react-icons/lu";
 import { MdOutlineSpeed } from "react-icons/md";
@@ -429,6 +429,46 @@ function RankingHome() {
         <Navbar_Ranking hideSearch={true} />
 
         <div className="px-4 md:px-8 pt-[88px] pb-12 bg-zinc-950">
+          {/* Mobile Category Switcher Pills */}
+          <div className="flex lg:hidden items-center gap-2 overflow-x-auto no-scrollbar pt-2 pb-4 mb-2">
+            <NavLink
+              to="/ranking/cars"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all border ${
+                  isActive || (!category || category.toLowerCase() === "cars")
+                    ? "bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-white border-[#D6A125]"
+                    : "bg-[#141416] text-zinc-300 border-zinc-800 hover:border-zinc-700"
+                }`
+              }
+            >
+              CARS
+            </NavLink>
+            <NavLink
+              to="/ranking/realestate"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all border ${
+                  isActive || (category && category.toLowerCase() === "realestate")
+                    ? "bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-white border-[#D6A125]"
+                    : "bg-[#141416] text-zinc-300 border-zinc-800 hover:border-zinc-700"
+                }`
+              }
+            >
+              REAL ESTATE
+            </NavLink>
+            <NavLink
+              to="/ranking/contentcreators"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all border ${
+                  isActive || (category && category.toLowerCase() === "contentcreators")
+                    ? "bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-white border-[#D6A125]"
+                    : "bg-[#141416] text-zinc-300 border-zinc-800 hover:border-zinc-700"
+                }`
+              }
+            >
+              CONTENT CREATORS
+            </NavLink>
+          </div>
+
           {loading ? (
             <div className="flex justify-center py-40">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D6A125]"></div>

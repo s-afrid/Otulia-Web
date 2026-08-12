@@ -62,9 +62,19 @@ md:px-10
   return (
     <nav className={navClasses} style={navStyle}>
       <div className="w-full flex items-center justify-between relative">
-        {/* Left side: Search Bar */}
-        <div className="hidden md:block w-[240px] lg:w-[320px] z-10">
-          <RankingSearch />
+        {/* Left side: Logo on mobile/tablet, Search Bar on desktop */}
+        <div className="flex items-center gap-3 z-10">
+          <Link to="/" className="lg:hidden shrink-0 flex items-center">
+            <img
+              className="w-[110px] sm:w-[130px] h-auto object-contain transition-opacity hover:opacity-90"
+              alt="Otulia Logo"
+              src={logoSrc}
+              title="Otulia"
+            />
+          </Link>
+          <div className="hidden md:block w-[240px] lg:w-[320px]">
+            <RankingSearch />
+          </div>
         </div>
 
         {/* 2. DESKTOP MENU - Center Column (Absolute centered) */}
