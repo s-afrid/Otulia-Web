@@ -289,7 +289,8 @@ Reference ID: #${refId}
             </div>
 
             {/* Soul & Ideal Buyer Section */}
-            {(item.specification?.soulOfTheCar || item.specification?.idealBuyer) && (
+            {(item.specification?.soulOfTheCar ||
+              item.specification?.idealBuyer) && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-10 pb-10 border-b border-gray-100">
                 {item.specification?.soulOfTheCar && (
                   <div className="flex flex-col">
@@ -397,54 +398,92 @@ Reference ID: #${refId}
 
             {/* RENTAL BOOKING BOX */}
             {type === "Rent" && (
-              <div className="border border-gray-200 rounded-lg shadow-sm p-5 bg-white mt-2">
-                <h3 className="text-lg font-bold canela mb-3">Book Dates</h3>
-                <div className="flex flex-col gap-3 mb-4">
-                  <div className="flex-1">
-                    <label className="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-400">
+              <div className="mt-10 border border-[#E5E5E5] rounded-xl bg-white p-6 shadow-sm">
+                <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#B58252] mb-5">
+                  Book Your Charter
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                  {/* Start Date */}
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase text-[#1F2937] mb-2">
                       Start Date
                     </label>
-                    <input
-                      type="date"
-                      className="w-full border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black transition-colors"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                    />
+
+                    <div className="relative">
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="w-full h-[44px] border border-[#D9D9D9] rounded-md px-3 text-sm outline-none bg-white"
+                      />
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <label className="block text-xs font-bold uppercase tracking-wider mb-1 text-gray-400">
+
+                  {/* End Date */}
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase text-[#1F2937] mb-2">
                       End Date
                     </label>
-                    <input
-                      type="date"
-                      className="w-full border border-gray-200 p-2.5 rounded-lg text-sm outline-none focus:border-black transition-colors"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                    />
+
+                    <div className="relative">
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="w-full h-[44px] border border-[#D9D9D9] rounded-md px-3 text-sm outline-none bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Guests */}
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase text-[#1F2937] mb-2">
+                      Guests
+                    </label>
+
+                    <select
+                      className="w-full h-[44px] border border-[#D9D9D9] rounded-md px-3 text-sm outline-none bg-white"
+                      defaultValue="8"
+                    >
+                      <option value="2">2 Guests</option>
+                      <option value="4">4 Guests</option>
+                      <option value="6">6 Guests</option>
+                      <option value="8">8 Guests</option>
+                      <option value="10">10 Guests</option>
+                      <option value="12">12 Guests</option>
+                    </select>
                   </div>
                 </div>
 
-                {startDate && endDate && (
-                  <div className="mb-4 p-3 bg-gray-50 rounded-lg flex justify-between items-center border border-gray-100">
-                    <span className="text-xs font-medium text-gray-500">
-                      Total for{" "}
-                      {Math.ceil(
-                        Math.abs(new Date(endDate) - new Date(startDate)) /
-                          (1000 * 60 * 60 * 24),
-                      )}{" "}
-                      days
-                    </span>
-                    <span className="text-lg font-bold font-serif">
-                      $
-                      {numberWithCommas(
-                        Math.ceil(
-                          Math.abs(new Date(endDate) - new Date(startDate)) /
-                            (1000 * 60 * 60 * 24),
-                        ) * price,
-                      )}
-                    </span>
-                  </div>
-                )}
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full h-[44px] bg-black text-[#D4A548] text-[12px] font-bold uppercase tracking-[0.18em] rounded-md hover:bg-[#111] transition"
+                >
+                  Send Booking Request
+                </button>
+
+                <div className="mt-3 flex items-center gap-2 text-[11px] text-gray-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-3.5 h-3.5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-1.5 0h12a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75h-12a.75.75 0 01-.75-.75v-7.5a.75.75 0 01.75-.75z"
+                    />
+                  </svg>
+
+                  <span>
+                    Your details are secure and will only be shared with the
+                    seller.
+                  </span>
+                </div>
               </div>
             )}
 
