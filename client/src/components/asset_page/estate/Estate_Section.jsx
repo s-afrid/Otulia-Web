@@ -98,7 +98,7 @@ const Estate_Section = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-white text-black min-h-screen">
       <SEO
         title={`${info.title} | Luxury Estate`}
         description={info.description}

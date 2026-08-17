@@ -6,7 +6,7 @@ import Asset_Section from '../components/asset_page/Asset_Section'
 const Asset = () => {
   
   return (
-    <div className='pt-24'>
+    <div className='bg-white text-black min-h-screen pt-24'>
       <Navbar hideSearch={true} />
       <main>
         <Asset_Section />

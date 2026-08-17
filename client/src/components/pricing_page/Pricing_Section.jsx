@@ -262,7 +262,7 @@ const PricingSection = () => {
   ];
 
   return (
-    <div className="w-full py-10 px-4 sm:px-6 lg:px-8 bg-[#fcfcfc] montserrat">
+    <div className="w-full py-10 px-4 sm:px-6 lg:px-8 bg-white text-black min-h-screen montserrat">
       {/* Status banner */}
       {statusMessage.text && (
         <div

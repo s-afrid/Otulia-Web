@@ -5,7 +5,7 @@ import SEO from '../components/SEO'
 
 const Pricing = () => {
   return (
-    <div className='pt-24'>
+    <div className='bg-white text-black min-h-screen pt-24'>
       <SEO title="Pricing Plans" description="Choose the perfect plan for your luxury asset business. Scale your global reach with Otulia." />
       <Navbar hideSearch={true} />
       <PricingSection />

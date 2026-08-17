@@ -59,8 +59,8 @@ const SellWithUs_Hero = () => {
         </div>
       </div>
 
-      {/* Subtle bottom gradient to blend with the trust section */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+      {/* Bottom gradient to blend cleanly */}
+      <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white/10 to-transparent pointer-events-none"></div>
     </div>
   );
 };

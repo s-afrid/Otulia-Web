@@ -38,7 +38,7 @@ const Navbar = ({
   // Override if forceTransparent is on
   const isDarkText = (!isHeroPage || isScrolled) && !forceTransparent;
 
-  const navClasses = `fixed ${isScrolled ? "top-0" : "top-[clamp(12px,2vh,24px)]"} left-0 h-[clamp(50px,8vh,80px)] w-screen z-50 transition-all duration-200 flex items-center justify-between px-[clamp(12px,2vw,40px)] py-[clamp(8px,1vh,16px)] ${
+  const navClasses = `fixed ${isScrolled || isProductPage ? "top-0" : "top-[clamp(12px,2vh,24px)]"} left-0 h-[clamp(50px,8vh,80px)] w-screen z-50 transition-all duration-200 flex items-center justify-between px-[clamp(12px,2vw,40px)] py-[clamp(8px,1vh,16px)] ${
     forceTransparent
       ? "bg-transparent text-white"
       : !isHeroPage

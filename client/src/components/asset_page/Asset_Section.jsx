@@ -13,8 +13,8 @@ const Asset_Section = () => {
   const cat = patharray[2]
 
   return (
-    <div className="flex flex-col">
-      <div className="w-full px-6 md:px-10 pt-4">
+    <div className="flex flex-col bg-white text-black min-h-screen">
+      <div className="w-full px-6 md:px-10 pt-4 bg-white">
         <button 
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 px-3 py-1.5 text-black hover:bg-gray-100 rounded-md transition-all font-medium montserrat cursor-pointer w-fit"

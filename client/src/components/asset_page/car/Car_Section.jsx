@@ -106,7 +106,7 @@ const Car_Section = () => {
   }
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="flex flex-col bg-white text-black min-h-screen">
       <SEO
         title={info.title}
         description={info.description}

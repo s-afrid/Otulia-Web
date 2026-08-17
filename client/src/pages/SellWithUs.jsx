@@ -125,7 +125,7 @@ function Sellwithus() {
   ];
 
   return (
-    <>
+    <div className="bg-white text-black min-h-screen">
       {/* NAVBAR */}
       <NavbarSellwithus hideSearch={true} />
 
@@ -819,7 +819,7 @@ function Sellwithus() {
       </section>
       {/* Line */}
       <div className="w-full h-[1px] bg-black/10 mt-15"></div>
-    </>
+    </div>
   );
 }
 
