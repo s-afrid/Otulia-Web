@@ -201,7 +201,7 @@ const SettingsTab = ({
               </div>
               <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex-1">
-                  <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
+                  <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                     Full Name
                   </label>
                   <input
@@ -211,11 +211,11 @@ const SettingsTab = ({
                       setAgentInfo((p) => ({ ...p, fullName: e.target.value }))
                     }
                     placeholder="Enter your full name"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] focus:ring-4 focus:ring-[#D48D2A]/5 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] focus:ring-4 focus:ring-[#D48D2A]/5 outline-none transition-all shadow-sm"
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
+                  <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                     Job Title / Role
                   </label>
                   <input
@@ -225,7 +225,7 @@ const SettingsTab = ({
                       setAgentInfo((p) => ({ ...p, jobTitle: e.target.value }))
                     }
                     placeholder="e.g. Luxury Real Estate Advisor"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] focus:ring-4 focus:ring-[#D48D2A]/5 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] focus:ring-4 focus:ring-[#D48D2A]/5 outline-none transition-all shadow-sm"
                   />
                 </div>
               </div>
@@ -233,7 +233,7 @@ const SettingsTab = ({
 
             <div className="grid grid-cols-12 gap-6">
               <div className="col-span-3">
-                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
+                <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Email Address
                 </label>
                 <div className="relative">
@@ -244,24 +244,24 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, email: e.target.value }))
                     }
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none transition-all shadow-sm"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none transition-all shadow-sm"
                   />
                 </div>
               </div>
               <div className="col-span-3">
-                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
+                <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Phone Number
                 </label>
                 <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
                   <div className="flex items-center px-2 py-1.5 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
-                    <div className="pointer-events-none flex items-center gap-2 font-bold text-gray-700">
+                    <div className="pointer-events-none flex items-center gap-2 font-bold text-black">
                       <img
                         src={`https://flagcdn.com/w20/${countryCodes.find((c) => c.code === agentInfo.phoneCode)?.iso || "ae"}.png`}
                         srcSet={`https://flagcdn.com/w40/${countryCodes.find((c) => c.code === agentInfo.phoneCode)?.iso || "ae"}.png 2x`}
                         alt="flag"
                         className="w-5 h-auto rounded-sm shadow-sm"
                       />
-                      <span>{agentInfo.phoneCode}</span>
+                      <span className="text-black">{agentInfo.phoneCode}</span>
                     </div>
                     <FiChevronDown className="ml-3 text-[12px] text-gray-500 pointer-events-none" />
                     <select
@@ -274,10 +274,10 @@ const SettingsTab = ({
                           phone: formatPhoneWithCode(p.phone, newCode),
                         }));
                       }}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 text-black bg-white"
                     >
                       {countryCodes.map((c) => (
-                        <option key={c.code} value={c.code}>
+                        <option key={c.code} value={c.code} className="text-black bg-white">
                           {c.flag} {c.name} ({c.code})
                         </option>
                       ))}
@@ -292,25 +292,25 @@ const SettingsTab = ({
                         phone: formatPhoneWithCode(e.target.value, p.phoneCode),
                       }))
                     }
-                    className="w-full min-w-[120px] bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none"
+                    className="w-full min-w-[120px] bg-transparent px-4 py-3.5 text-[14px] font-medium text-black placeholder:text-gray-400 focus:outline-none"
                     placeholder="Enter phone number"
                   />
                 </div>
               </div>
               <div className="col-span-3">
-                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
+                <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   WhatsApp Number
                 </label>
                 <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
                   <div className="flex items-center px-2 py-2 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
-                    <div className="pointer-events-none flex items-center gap-2 font-bold text-gray-700">
+                    <div className="pointer-events-none flex items-center gap-2 font-bold text-black">
                       <img
                         src={`https://flagcdn.com/w20/${countryCodes.find((c) => c.code === agentInfo.whatsappCode)?.iso || "ae"}.png`}
                         srcSet={`https://flagcdn.com/w40/${countryCodes.find((c) => c.code === agentInfo.whatsappCode)?.iso || "ae"}.png 2x`}
                         alt="flag"
                         className="w-5 h-auto rounded-sm shadow-sm"
                       />
-                      <span>{agentInfo.whatsappCode}</span>
+                      <span className="text-black">{agentInfo.whatsappCode}</span>
                     </div>
                     <FiChevronDown className="ml-3 text-[12px] text-gray-500 pointer-events-none" />
                     <select
@@ -323,10 +323,10 @@ const SettingsTab = ({
                           whatsapp: formatPhoneWithCode(p.whatsapp, newCode),
                         }));
                       }}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 text-black bg-white"
                     >
                       {countryCodes.map((c) => (
-                        <option key={c.code} value={c.code}>
+                        <option key={c.code} value={c.code} className="text-black bg-white">
                           {c.flag} {c.name} ({c.code})
                         </option>
                       ))}
@@ -341,13 +341,13 @@ const SettingsTab = ({
                         whatsapp: formatPhoneWithCode(e.target.value, p.whatsappCode),
                       }))
                     }
-                    className="w-full min-w-[120px] bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none"
+                    className="w-full min-w-[120px] bg-transparent px-4 py-3.5 text-[14px] font-medium text-black placeholder:text-gray-400 focus:outline-none"
                     placeholder="Enter WhatsApp number"
                   />
                 </div>
               </div>
               <div className="col-span-3">
-                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
+                <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Preferred Contact Method
                 </label>
                 <div className="relative w-full">
@@ -362,17 +362,17 @@ const SettingsTab = ({
                         contactMethod: e.target.value,
                       }))
                     }
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
+                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
                   >
-                    <option value="WhatsApp">WhatsApp</option>
-                    <option value="Email">Email</option>
-                    <option value="Phone Call">Phone Call</option>
+                    <option value="WhatsApp" className="text-black bg-white">WhatsApp</option>
+                    <option value="Email" className="text-black bg-white">Email</option>
+                    <option value="Phone Call" className="text-black bg-white">Phone Call</option>
                   </select>
                   <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
               <div className="col-span-2">
-                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
+                <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Language
                 </label>
                 <div className="relative w-full">
@@ -381,18 +381,18 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, language: e.target.value }))
                     }
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
+                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium text-black focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
                   >
-                    <option value="English">English</option>
-                    <option value="Arabic">Arabic</option>
-                    <option value="French">French</option>
-                    <option value="Spanish">Spanish</option>
+                    <option value="English" className="text-black bg-white">English</option>
+                    <option value="Arabic" className="text-black bg-white">Arabic</option>
+                    <option value="French" className="text-black bg-white">French</option>
+                    <option value="Spanish" className="text-black bg-white">Spanish</option>
                   </select>
                   <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
               <div className="col-span-3">
-                <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-[0.12em] mb-2.5">
+                <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Time Zone
                 </label>
                 <div className="relative w-full">
@@ -401,18 +401,18 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setAgentInfo((p) => ({ ...p, timezone: e.target.value }))
                     }
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
+                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium text-black focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
                   >
-                    <option value="(GMT+4) Dubai, UAE">
+                    <option value="(GMT+4) Dubai, UAE" className="text-black bg-white">
                       (GMT+4) Dubai, UAE
                     </option>
-                    <option value="(GMT+5:30) Mumbai, New Delhi">
+                    <option value="(GMT+5:30) Mumbai, New Delhi" className="text-black bg-white">
                       (GMT+5:30) Mumbai, New Delhi
                     </option>
-                    <option value="(GMT+0) London, UK">
+                    <option value="(GMT+0) London, UK" className="text-black bg-white">
                       (GMT+0) London, UK
                     </option>
-                    <option value="(GMT-5) New York, USA">
+                    <option value="(GMT-5) New York, USA" className="text-black bg-white">
                       (GMT-5) New York, USA
                     </option>
                   </select>
@@ -422,7 +422,7 @@ const SettingsTab = ({
             </div>
 
             <div>
-              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5 ">
+              <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5 ">
                 Agent Description
               </label>
               <div className="relative">
@@ -432,7 +432,7 @@ const SettingsTab = ({
                     setAgentInfo((p) => ({ ...p, bio: e.target.value }))
                   }
                   maxLength={1000}
-                  className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none transition-all"
+                  className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-5 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm resize-none transition-all"
                   rows="5"
                   placeholder="Tell clients about your expertise in luxury assets..."
                 ></textarea>
@@ -443,7 +443,7 @@ const SettingsTab = ({
             </div>
 
             <div>
-              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-4">
+              <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-4">
                 Social Profiles{" "}
                 <span className="text-gray-400 font-medium normal-case ml-1">
                   (Connect with more clients)
@@ -468,7 +468,7 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="instagram.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
@@ -489,7 +489,7 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="linkedin.com/in/username"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
@@ -510,7 +510,7 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="x.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
@@ -531,7 +531,7 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="facebook.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
@@ -651,7 +651,7 @@ const SettingsTab = ({
               <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-6">
                 {/* Row 1 left: Company Name */}
                 <div>
-                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                  <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                     Company / Dealership Name
                   </label>
                   <input
@@ -661,13 +661,13 @@ const SettingsTab = ({
                       setCompanyInfo((p) => ({ ...p, name: e.target.value }))
                     }
                     placeholder="Enter company name"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
 
                 {/* Row 1 right: Website */}
                 <div>
-                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                  <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                     Website
                   </label>
                   <div className="relative">
@@ -682,21 +682,21 @@ const SettingsTab = ({
                         }))
                       }
                       placeholder="https://yourwebsite.com"
-                      className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                      className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                     />
                   </div>
                 </div>
 
                 {/* Row 2 left: Languages Known */}
                 <div className="relative" ref={langDropdownRef}>
-                  <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                  <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                     Languages Known
                   </label>
                   <div
                     onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
                     className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 flex items-center justify-between cursor-pointer hover:border-[#D48D2A] transition-all shadow-sm"
                   >
-                    <span className="text-gray-400 font-medium text-[14px]">
+                    <span className={`font-medium text-[14px] ${companyInfo.languagesKnown?.length > 0 ? "text-black font-semibold" : "text-gray-400"}`}>
                       {companyInfo.languagesKnown?.length > 0
                         ? `${companyInfo.languagesKnown.length} languages selected`
                         : "Select languages..."}
@@ -724,7 +724,7 @@ const SettingsTab = ({
                             )}
                           </div>
                           <span
-                            className={`text-xs font-bold ${companyInfo.languagesKnown?.includes(lang) ? "text-[#D48D2A]" : "text-gray-600"}`}
+                            className={`text-xs font-bold ${companyInfo.languagesKnown?.includes(lang) ? "text-[#D48D2A]" : "text-black"}`}
                           >
                             {lang}
                           </span>
@@ -736,7 +736,7 @@ const SettingsTab = ({
 
                 {/* Row 2 right: Active Selection */}
                 <div className="flex flex-col">
-                  <label className="block text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">
+                  <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                     Active Selection
                   </label>
                   <div className="flex flex-wrap gap-2 items-center min-h-[48px]">
@@ -746,7 +746,7 @@ const SettingsTab = ({
                           key={lang}
                           className="bg-[#D48D2A]/5 border border-[#D48D2A]/20 px-4 py-2 rounded-xl flex items-center gap-3 group animate-in zoom-in-95 duration-200"
                         >
-                          <span className="text-[13px] font-bold text-gray-800">
+                          <span className="text-[13px] font-bold text-black">
                             {lang}
                           </span>
                           <button
@@ -771,7 +771,7 @@ const SettingsTab = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
               <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                   Company Email
                 </label>
                 <div className="relative">
@@ -782,12 +782,12 @@ const SettingsTab = ({
                     onChange={(e) =>
                       setCompanyInfo((p) => ({ ...p, email: e.target.value }))
                     }
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                   Business Type
                 </label>
                 <div className="relative w-full">
@@ -799,16 +799,16 @@ const SettingsTab = ({
                         businessType: e.target.value,
                       }))
                     }
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
+                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3.5 text-[14px] font-medium text-black focus:border-[#D48D2A] outline-none shadow-sm cursor-pointer transition-all"
                   >
-                    <option value="Luxury Cars & Supercars Dealer">
+                    <option value="Luxury Cars & Supercars Dealer" className="text-black bg-white">
                       Luxury Cars & Supercars Dealer
                     </option>
-                    <option value="Real Estate Agency">
+                    <option value="Real Estate Agency" className="text-black bg-white">
                       Real Estate Agency
                     </option>
-                    <option value="Yacht Brokerage">Yacht Brokerage</option>
-                    <option value="Multi-Asset Dealership">
+                    <option value="Yacht Brokerage" className="text-black bg-white">Yacht Brokerage</option>
+                    <option value="Multi-Asset Dealership" className="text-black bg-white">
                       Multi-Asset Dealership
                     </option>
                   </select>
@@ -816,7 +816,7 @@ const SettingsTab = ({
                 </div>
               </div>
               <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                   Established Year
                 </label>
                 <div className="relative w-full">
@@ -831,12 +831,12 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="e.g. 2010"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                   Office Address
                 </label>
                 <div className="relative">
@@ -848,24 +848,24 @@ const SettingsTab = ({
                       setCompanyInfo((p) => ({ ...p, address: e.target.value }))
                     }
                     placeholder="City, Country"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+                <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                   Phone Number
                 </label>
                 <div className="flex border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm focus-within:border-[#D48D2A] focus-within:ring-4 focus-within:ring-[#D48D2A]/5 transition-all">
                   <div className="flex items-center px-4 py-3.5 bg-gray-50 border-r border-gray-200 text-[14px] shrink-0 relative">
-                    <div className="pointer-events-none flex items-center gap-2 font-bold text-gray-700">
+                    <div className="pointer-events-none flex items-center gap-2 font-bold text-black">
                       <img
                         src={`https://flagcdn.com/w20/${countryCodes.find((c) => c.code === companyInfo.phoneCode)?.iso || "ae"}.png`}
                         srcSet={`https://flagcdn.com/w40/${countryCodes.find((c) => c.code === companyInfo.phoneCode)?.iso || "ae"}.png 2x`}
                         alt="flag"
                         className="w-5 h-auto rounded-sm shadow-sm"
                       />
-                      <span>{companyInfo.phoneCode}</span>
+                      <span className="text-black">{companyInfo.phoneCode}</span>
                     </div>
                     <FiChevronDown className="ml-3 text-[12px] text-gray-500 pointer-events-none" />
                     <select
@@ -878,10 +878,10 @@ const SettingsTab = ({
                           phone: formatPhoneWithCode(p.phone, newCode),
                         }));
                       }}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 text-black bg-white"
                     >
                       {countryCodes.map((c) => (
-                        <option key={c.code} value={c.code}>
+                        <option key={c.code} value={c.code} className="text-black bg-white">
                           {c.flag} {c.name} ({c.code})
                         </option>
                       ))}
@@ -896,7 +896,7 @@ const SettingsTab = ({
                         phone: formatPhoneWithCode(e.target.value, p.phoneCode),
                       }))
                     }
-                    className="w-full bg-transparent px-4 py-3.5 text-[14px] font-medium focus:outline-none min-w-0"
+                    className="w-full bg-transparent px-4 py-3.5 text-[14px] font-medium text-black placeholder:text-gray-400 focus:outline-none min-w-0"
                     placeholder="Enter phone number"
                   />
                 </div>
@@ -904,7 +904,7 @@ const SettingsTab = ({
             </div>
 
             <div>
-              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+              <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                 Dealer / Agent Description
               </label>
               <div className="relative">
@@ -917,7 +917,7 @@ const SettingsTab = ({
                     }))
                   }
                   maxLength={1000}
-                  className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-5 text-[14px] font-medium focus:border-[#D48D2A] outline-none shadow-sm resize-none transition-all"
+                  className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-5 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm resize-none transition-all"
                   rows="5"
                   placeholder="Describe your dealership and the luxury assets you specialize in..."
                 ></textarea>
@@ -928,7 +928,7 @@ const SettingsTab = ({
             </div>
 
             <div>
-              <label className="block text-[12px] font-bold text-gray-700 uppercase tracking-wider mb-4">
+              <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-4">
                 Company Social Media{" "}
                 <span className="text-gray-400 font-medium normal-case ml-1">
                   (Showcase your presence)
@@ -953,7 +953,7 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="instagram.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
@@ -974,7 +974,7 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="linkedin.com/company/username"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
@@ -995,7 +995,7 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="facebook.com/username"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
                 <div className="relative w-full">
@@ -1016,7 +1016,7 @@ const SettingsTab = ({
                       }))
                     }
                     placeholder="youtube.com/@username"
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[13px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>
@@ -1123,7 +1123,7 @@ const SettingsTab = ({
                   Lead Categories
                 </span>
                 <div className="border border-gray-200 rounded-lg flex justify-between items-center px-2 py-1 hover:border-[#D48D2A] transition-all cursor-pointer">
-                  <span className="text-[11px] text-gray-600 font-medium">
+                  <span className="text-[11px] text-black font-semibold">
                     All Active
                   </span>
                   <FiChevronDown className="text-gray-400 text-[10px]" />

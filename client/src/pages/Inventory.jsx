@@ -27,7 +27,7 @@ import ImageCropModal from "../components/ImageCropModal";
 import inventoryHubSound from "../assets/sounds/inventory_hub.mp3";
 
 const Inventory = () => {
-  const { user, logout, updateUserLocal } = useAuth();
+  const { user, logout, updateUserLocal, refreshUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -155,20 +155,33 @@ const Inventory = () => {
     return `${selectedCode} ${cleanDigits}`;
   };
 
+  const extractPhoneCode = (fullPhone, savedCode) => {
+    if (savedCode) return savedCode;
+    if (!fullPhone) return "+971";
+    const match = fullPhone.match(/^(\+\d+)/);
+    return match ? match[1] : "+971";
+  };
+
+  useEffect(() => {
+    if (refreshUser) {
+      refreshUser();
+    }
+  }, []);
+
   useEffect(() => {
     if (user) {
-      const pCode = user.phoneCode || "+971";
-      const wCode = user.whatsappCode || "+971";
-      const cCode = user.company?.phoneCode || "+971";
+      const pCode = extractPhoneCode(user.phone, user.phoneCode);
+      const wCode = extractPhoneCode(user.whatsapp, user.whatsappCode);
+      const cCode = extractPhoneCode(user.company?.phone, user.company?.phoneCode);
 
       setAgentInfo({
         fullName: user.name || "",
         jobTitle: user.jobTitle || "",
         email: user.email || "",
         phoneCode: pCode,
-        phone: formatPhoneWithCode(user.phone || "", pCode),
+        phone: user.phone ? formatPhoneWithCode(user.phone, pCode) : "",
         whatsappCode: wCode,
-        whatsapp: formatPhoneWithCode(user.whatsapp || "", wCode),
+        whatsapp: user.whatsapp ? formatPhoneWithCode(user.whatsapp, wCode) : "",
         contactMethod: user.contactMethod || "WhatsApp",
         language: user.language || "English",
         timezone: user.timezone || "(GMT+4) Dubai, UAE",
@@ -178,24 +191,24 @@ const Inventory = () => {
         social: {
           instagram: user.social?.instagram || "",
           linkedin: user.social?.linkedin || "",
-          x: user.social?.twitter || "",
+          x: user.social?.twitter || user.social?.x || "",
           facebook: user.social?.facebook || "",
         },
       });
       setCompanyInfo({
-        name: user.company?.companyName || "",
+        name: user.company?.companyName || user.company?.name || "",
         website: user.company?.website || "",
-        email: user.company?.email || "",
+        email: user.company?.email || user.company?.companyEmail || user.email || "",
         businessType:
           user.company?.businessType || "Luxury Cars & Supercars Dealer",
         establishedYear: user.company?.establishedYear || "",
         address: user.company?.address || "",
         phoneCode: cCode,
-        phone: formatPhoneWithCode(user.company?.phone || "", cCode),
+        phone: user.company?.phone ? formatPhoneWithCode(user.company.phone, cCode) : "",
         description: user.company?.description || "",
-        logo: user.company?.companyLogo || "",
-        coverImage: user.company?.coverPhoto || "",
-        languagesKnown: user.company?.languagesKnown || [],
+        logo: user.company?.companyLogo || user.company?.logo || "",
+        coverImage: user.company?.coverPhoto || user.company?.coverImage || user.coverPhoto || "",
+        languagesKnown: user.company?.languagesKnown || user.languages || [],
         social: {
           instagram: user.company?.social?.instagram || "",
           linkedin: user.company?.social?.linkedin || "",
