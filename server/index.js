@@ -175,7 +175,7 @@ app.use((req, res) => {
       "Cache-Control",
       "no-store, no-cache, must-revalidate, proxy-revalidate",
     );
-    
+
     // Determine index.html location with fallbacks
     const candidatePaths = [
       path.join(__dirname, "../client/dist/index.html"),
@@ -183,15 +183,20 @@ app.use((req, res) => {
       path.join(process.cwd(), "dist/index.html"),
     ];
 
-    const indexPath = candidatePaths.find((p) => fs.existsSync(p)) || candidatePaths[0];
+    const indexPath =
+      candidatePaths.find((p) => fs.existsSync(p)) || candidatePaths[0];
 
     // Serve the React app index.html for client-side routing
     res.sendFile(indexPath, (err) => {
       if (err && !res.headersSent) {
-        console.error(`[SPA Error] Failed to serve index.html from ${indexPath}:`, err);
+        console.error(
+          `[SPA Error] Failed to serve index.html from ${indexPath}:`,
+          err,
+        );
         res.status(500).json({
           error: "INDEX_HTML_NOT_FOUND",
-          message: "Client build index.html not found. Please ensure 'npm run build' has been run.",
+          message:
+            "Client build index.html not found. Please ensure 'npm run build' has been run.",
         });
       }
     });
