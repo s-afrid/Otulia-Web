@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation, NavLink } from "react-router-dom";
+import { useParams, useNavigate, useLocation, NavLink, Link } from "react-router-dom";
 import { FaBolt, FaHome, FaTree, FaBed, FaBath, FaUsers, FaEye, FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
 import { LuTimerReset } from "react-icons/lu";
 import { MdOutlineSpeed } from "react-icons/md";
@@ -25,6 +25,8 @@ function RankingHome() {
   const [loading, setLoading] = useState(true);
   const [isVoting, setIsVoting] = useState(false);
   const [error, setError] = useState(null);
+
+  const currentCategoryType = (category || "cars").toLowerCase();
 
   // Fetch all active categories
   useEffect(() => {
@@ -69,8 +71,33 @@ function RankingHome() {
     activeSlug = filteredCategories[0].slug;
   }
   if (!activeSlug) {
-    activeSlug = "hypercars";
+    if (currentCategoryType.includes("estate") || currentCategoryType.includes("real")) {
+      activeSlug = "best-luxury-estates";
+    } else if (currentCategoryType.includes("creator")) {
+      activeSlug = "top-content-creators";
+    } else {
+      activeSlug = "hypercars";
+    }
   }
+
+  // Resolve static fallback helper
+  const getStaticFallback = (targetSlug) => {
+    if (staticRankings[targetSlug]) return staticRankings[targetSlug];
+    const s = (targetSlug || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (s.includes("estate") || s.includes("real") || s.includes("mansion") || s.includes("villa")) {
+      return staticRankings["best-luxury-estates"];
+    }
+    if (s.includes("creator") || s.includes("influencer") || s.includes("youtube")) {
+      return staticRankings["top-content-creators"];
+    }
+    if (s.includes("fastest")) {
+      return staticRankings["fastest-cars"];
+    }
+    if (s.includes("luxury")) {
+      return staticRankings["luxury-cars"];
+    }
+    return staticRankings["hypercars"];
+  };
 
   // Fetch detailed category details (nominees)
   const fetchCategoryDetails = async (targetSlug) => {
@@ -85,15 +112,22 @@ function RankingHome() {
       setActiveCategory(data);
     } catch (err) {
       console.warn("DB Category fetch failed, falling back to static mockup data:", err.message);
-      // Fallback to static data
-      const staticData = staticRankings[targetSlug] || staticRankings["hypercars"];
+      const staticData = getStaticFallback(targetSlug);
       if (staticData) {
-        // Find if this is a first-time initialization of static values
+        const catType = (currentCategoryType.includes("estate") || currentCategoryType.includes("real"))
+          ? "Real Estate"
+          : currentCategoryType.includes("creator")
+          ? "Content Creator"
+          : "Cars";
+
         setActiveCategory({
           _id: targetSlug,
           id: targetSlug,
           title: staticData.header.titleMain,
+          type: catType,
           slug: targetSlug,
+          bannerImage: staticData.header.bannerImage,
+          categoryImage: staticData.header.bannerImage,
           detailedDescription: staticData.header.description,
           votes: staticData.header.votes,
           nominees: staticData.cards.map((card, idx) => ({
@@ -117,20 +151,17 @@ function RankingHome() {
       setActiveCategory(null);
       setLoading(false);
     }
-  }, [slug]);
+  }, [slug, category]);
 
   // Scroll to nominee if hash exists in URL
   useEffect(() => {
     if (!loading && activeCategory && location.hash) {
       const targetId = location.hash.substring(1);
       if (targetId) {
-        // Wait a short moment to ensure cards are fully rendered
         const timer = setTimeout(() => {
           const element = document.getElementById(targetId);
           if (element) {
             element.scrollIntoView({ behavior: "smooth", block: "center" });
-            
-            // Add premium visual flash highlight effect to the target card
             element.classList.add("ring-2", "ring-[#D6A125]", "scale-[1.01]", "z-10");
             setTimeout(() => {
               element.classList.remove("ring-2", "ring-[#D6A125]", "scale-[1.01]", "z-10");
@@ -197,7 +228,6 @@ function RankingHome() {
       return;
     }
 
-    // Optimistic real-time vote counter update (no page reload, no unmounting)
     setActiveCategory((prevCat) => {
       if (!prevCat || !prevCat.nominees) return prevCat;
       const updatedNominees = prevCat.nominees.map((nominee) => {
@@ -269,7 +299,7 @@ function RankingHome() {
   const getMappedHeaderData = () => {
     if (!activeCategory) return null;
     return {
-      breadcrumbs: ["Home", "Rankings", activeCategory.type || "Cars", activeCategory.title],
+      breadcrumbs: ["Home", "Rankings", activeCategory.type || (currentCategoryType.includes("estate") ? "Real Estate" : currentCategoryType.includes("creator") ? "Content Creators" : "Cars"), activeCategory.title],
       titleMain: activeCategory.title,
       titleHighlight: "",
       description: activeCategory.detailedDescription || activeCategory.shortDescription || "",
@@ -279,7 +309,7 @@ function RankingHome() {
         ? new Date(activeCategory.updatedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
         : "May 2026",
       categoryImage: activeCategory.categoryImage || "",
-      bannerImage: activeCategory.bannerImage || "",
+      bannerImage: activeCategory.bannerImage || activeCategory.categoryImage || "",
       coverImage: activeCategory.bannerImage || activeCategory.categoryImage || "",
     };
   };
@@ -287,16 +317,17 @@ function RankingHome() {
   const getMappedCardsData = () => {
     if (!activeCategory || !activeCategory.nominees) return [];
     
-    // Sum up votes for progress calculation
-    const totalVotesVal = activeCategory.nominees.reduce((acc, curr) => acc + (curr.votes || 0), 0);
+    const totalVotesVal = activeCategory.nominees.reduce((acc, curr) => {
+      const v = typeof curr.votes === "number" ? curr.votes : parseInt((curr.votes || "0").toString().replace(/[^0-9]/g, "")) || 0;
+      return acc + v;
+    }, 0);
+
+    const isEstate = (activeCategory.type || "").toLowerCase().includes("estate") || (activeCategory.type || "").toLowerCase().includes("real") || currentCategoryType.includes("estate") || currentCategoryType.includes("real");
+    const isContentCreator = (activeCategory.type || "").toLowerCase().includes("creator") || currentCategoryType.includes("creator");
 
     return activeCategory.nominees.map((nominee) => {
-      // Map stats dynamically
       const stats = [];
       const keyDetails = nominee.keyDetails || {};
-      
-      const isEstate = activeCategory.type === "Real Estate" || activeCategory.type === "realestate";
-      const isContentCreator = activeCategory.type === "Content Creator" || activeCategory.type === "Content Creators" || activeCategory.type === "contentcreators";
       
       if (isEstate) {
         if (keyDetails.livingArea) stats.push({ icon: FaHome, value: keyDetails.livingArea, label: "Living Area" });
@@ -315,13 +346,12 @@ function RankingHome() {
         if (keyDetails.transmission) stats.push({ icon: LuTimerReset, value: keyDetails.transmission, label: "Transmission" });
       }
 
-      // Fallback rank color
       let rankColor = "#6B7280";
       if (nominee.rank === 1) rankColor = "#D6A125";
       else if (nominee.rank === 2) rankColor = "#C0C0C0";
       else if (nominee.rank === 3) rankColor = "#CD7F32";
 
-      const votesVal = nominee.votes || 0;
+      const votesVal = typeof nominee.votes === "number" ? nominee.votes : parseInt((nominee.votes || "0").toString().replace(/[^0-9]/g, "")) || 0;
       let formattedVotes = "0";
       if (votesVal >= 1000) {
         formattedVotes = (votesVal / 1000).toFixed(1) + "K";
@@ -329,7 +359,6 @@ function RankingHome() {
         formattedVotes = votesVal.toString();
       }
 
-      // Meta fields
       const meta = isEstate ? [
         { label: "Category", value: activeCategory.title },
         { label: "Property Type", value: keyDetails.propertyType || "Estate" },
@@ -358,62 +387,61 @@ function RankingHome() {
         rankColor,
         name: nominee.name,
         description: nominee.description || nominee.detail || "",
+        detail: nominee.detail || nominee.description || "",
         image: nominee.image || "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1200&auto=format&fit=crop",
         banner: nominee.banner || nominee.bannerImage || nominee.coverImage || nominee.image || "",
         bannerImage: nominee.banner || nominee.bannerImage || nominee.coverImage || nominee.image || "",
-        profilePic: nominee.profilePic || nominee.profilePicture || nominee.avatar || nominee.profileImage || (nominee.banner && nominee.image !== nominee.banner ? nominee.image : ""),
-        profilePicture: nominee.profilePic || nominee.profilePicture || nominee.avatar || nominee.profileImage || (nominee.banner && nominee.image !== nominee.banner ? nominee.image : ""),
-        avatar: nominee.avatar || nominee.profilePic || nominee.profilePicture || "",
+        profilePic: nominee.profilePic || nominee.profilePicture || nominee.avatar || nominee.profileImage || "",
         stats,
         meta,
         category: activeCategory.title,
-        brand: keyDetails.brand || nominee.brand || (nominee.name ? nominee.name.split(" ")[0] : "Bugatti"),
-        model: keyDetails.model || nominee.model || (nominee.name ? nominee.name.split(" ").slice(1).join(" ") : "Tourbillon"),
+        brand: keyDetails.brand || nominee.brand || (nominee.name ? nominee.name.split(" ")[0] : "Global"),
+        model: keyDetails.model || nominee.model || (nominee.name ? nominee.name.split(" ").slice(1).join(" ") : ""),
         year: keyDetails.year || nominee.year || "2026",
-        productionUnits: keyDetails.productionUnits || nominee.productionUnits || keyDetails.productionLimit || nominee.productionLimit || "250",
-        productionLimit: keyDetails.productionUnits || nominee.productionUnits || keyDetails.productionLimit || nominee.productionLimit || "250",
+        productionUnits: keyDetails.productionUnits || nominee.productionUnits || keyDetails.productionLimit || nominee.productionLimit || "Bespoke",
+        productionLimit: keyDetails.productionUnits || nominee.productionUnits || keyDetails.productionLimit || nominee.productionLimit || "Bespoke",
         country: keyDetails.country || nominee.country || keyDetails.origin || nominee.origin || nominee.brand || "Global",
         origin: keyDetails.country || nominee.country || keyDetails.origin || nominee.origin || nominee.brand || "Global",
         bodyType: nominee.model || "Coupe",
         price: isContentCreator 
           ? (keyDetails.subscribers ? `${keyDetails.subscribers} Subscribers` : "")
-          : (keyDetails.price || ""),
-        location: isContentCreator ? (keyDetails.location || nominee.brand || "") : (nominee.brand || ""),
+          : (keyDetails.price || nominee.price || ""),
+        location: isContentCreator ? (keyDetails.location || nominee.location || nominee.brand || "") : (nominee.location || nominee.brand || ""),
         showBadgeOnImage: nominee.rank === 1 && isEstate,
         badge: isEstate ? "NEW FOR 2026" : "",
         votes: formattedVotes,
         rawVotes: votesVal,
         sourcesCount: (nominee.sources || []).length.toString(),
+        sources: nominee.sources || [],
         showTagOnHeader: nominee.rank === 1,
         tag: nominee.rank === 1 ? (isEstate ? "New for 2026" : "TOP RATED") : "",
         showTopRatedBadge: nominee.rank === 1,
-        progress: `${Math.min(100, Math.max(5, (votesVal / Math.max(1, totalVotesVal)) * 100))}%`,
-        progressColor: nominee.rank === 1 ? "#D6A125" : "#1F2937",
-        status: nominee.rank === 1 ? "Leading" : "Strong Contender",
+        status: nominee.status || (nominee.rank === 1 ? "Leading" : "Strong Contender"),
         statusIcon: nominee.rank === 1 ? "trophy" : "star",
         statusColor: nominee.rank === 1 ? "#D6A125" : "#6B7280",
-        _id: nominee._id,
-        categoryId: activeCategory._id,
+        _id: nominee._id || nominee.id,
+        categoryId: activeCategory._id || activeCategory.id,
         socialLinks,
         isContentCreator,
         channelName: nominee.channelName || nominee.name,
-        joinDate: keyDetails.joinDate || "",
-        genre: keyDetails.category || "",
+        joinDate: keyDetails.joinDate || nominee.joinDate || "",
+        genre: keyDetails.category || keyDetails.genre || nominee.genre || "",
         views: keyDetails.views || "",
         subscribers: keyDetails.subscribers || "",
         isEstate,
         livingArea: keyDetails.livingArea || "",
         landSize: keyDetails.landSize || "",
-        bedrooms: keyDetails.bedroom || "",
-        bathrooms: keyDetails.bathroom || "",
+        bedrooms: keyDetails.bedroom || keyDetails.bedrooms || "",
+        bathrooms: keyDetails.bathroom || keyDetails.bathrooms || "",
         propertyType: keyDetails.propertyType || "Estate",
         availabilityStatus: keyDetails.availabilityStatus || "For Sale",
-        isCar: activeCategory.type === "Cars" || activeCategory.type === "cars" || activeCategory.type === "Automotive" || (!isEstate && !isContentCreator),
+        isCar: !isEstate && !isContentCreator,
         engine: keyDetails.engine || "",
         power: keyDetails.power || "",
         topSpeed: keyDetails.topSpeed || "",
         acceleration: keyDetails.acceleration || "",
         listingLink: nominee.listingLink || keyDetails.listingLink || "",
+        keyDetails,
       };
     });
   };
@@ -425,18 +453,18 @@ function RankingHome() {
     <RankingScaleWrapper>
       <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
-      <div className="min-h-screen bg-zinc-950 text-white lg:ml-[260px] w-full transition-all duration-300">
+      <div className="min-h-screen bg-zinc-950 text-white lg:ml-[240px] xl:ml-[260px] w-full transition-all duration-300 flex flex-col">
         <Navbar_Ranking hideSearch={true} />
 
-        <div className="px-4 md:px-8 pt-[88px] pb-12 bg-zinc-950">
-          {/* Mobile Category Switcher Pills */}
-          <div className="flex lg:hidden items-center gap-2 overflow-x-auto no-scrollbar pt-2 pb-4 mb-2">
+        <main className="px-3.5 sm:px-6 md:px-8 xl:px-10 pt-[84px] sm:pt-[92px] md:pt-[96px] pb-16 bg-zinc-950 flex-1 max-w-[1700px]">
+          {/* Mobile & Tablet Section Switcher Pills */}
+          <div className="flex lg:hidden items-center gap-2 overflow-x-auto no-scrollbar pt-2 pb-3 mb-2">
             <NavLink
               to="/ranking/cars"
               className={({ isActive }) =>
-                `px-4 py-2 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all border ${
+                `px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all border ${
                   isActive || (!category || category.toLowerCase() === "cars")
-                    ? "bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-white border-[#D6A125]"
+                    ? "bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-white border-[#D6A125] shadow-sm"
                     : "bg-[#141416] text-zinc-300 border-zinc-800 hover:border-zinc-700"
                 }`
               }
@@ -446,9 +474,9 @@ function RankingHome() {
             <NavLink
               to="/ranking/realestate"
               className={({ isActive }) =>
-                `px-4 py-2 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all border ${
+                `px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all border ${
                   isActive || (category && category.toLowerCase() === "realestate")
-                    ? "bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-white border-[#D6A125]"
+                    ? "bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-white border-[#D6A125] shadow-sm"
                     : "bg-[#141416] text-zinc-300 border-zinc-800 hover:border-zinc-700"
                 }`
               }
@@ -458,9 +486,9 @@ function RankingHome() {
             <NavLink
               to="/ranking/contentcreators"
               className={({ isActive }) =>
-                `px-4 py-2 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all border ${
+                `px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all border ${
                   isActive || (category && category.toLowerCase() === "contentcreators")
-                    ? "bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-white border-[#D6A125]"
+                    ? "bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-white border-[#D6A125] shadow-sm"
                     : "bg-[#141416] text-zinc-300 border-zinc-800 hover:border-zinc-700"
                 }`
               }
@@ -468,6 +496,39 @@ function RankingHome() {
               CONTENT CREATORS
             </NavLink>
           </div>
+
+          {/* Mobile Subcategories Scrollable Pill Row */}
+          {filteredCategories.length > 0 && (
+            <div className="flex lg:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pb-3 mb-3 border-b border-zinc-850">
+              <Link
+                to={`/ranking/${category || "cars"}`}
+                className={`px-3 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap transition ${
+                  !slug
+                    ? "bg-[#D6A125]/20 text-[#D6A125] border border-[#D6A125]/50 font-bold"
+                    : "text-zinc-400 hover:text-white bg-zinc-900/60 border border-zinc-800"
+                }`}
+              >
+                All Rankings
+              </Link>
+              {filteredCategories.map((cat) => {
+                const isActive = slug === cat.slug;
+                const catType = cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : (category || "cars");
+                return (
+                  <Link
+                    key={cat._id || cat.slug}
+                    to={`/ranking/${catType}/${cat.slug}`}
+                    className={`px-3 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap transition ${
+                      isActive
+                        ? "bg-[#D6A125]/20 text-[#D6A125] border border-[#D6A125]/50 font-bold"
+                        : "text-zinc-400 hover:text-white bg-zinc-900/60 border border-zinc-800"
+                    }`}
+                  >
+                    {cat.title}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
 
           {loading ? (
             <div className="flex justify-center py-40">
@@ -489,21 +550,25 @@ function RankingHome() {
               )}
             </>
           ) : !slug ? (
-            <div className="pt-4">
-              <div className="mb-10">
-                <h1 className="text-[42px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em] text-white">
-                  {category ? (category.toLowerCase() === "realestate" ? "Real Estate" : category.toLowerCase() === "contentcreators" ? "Content Creator" : "Automotive") : "Automotive"}{" "}
-                  <span className="text-[#C9920E]">Rankings</span>
+            <div className="pt-2 sm:pt-4">
+              <div className="mb-8 sm:mb-10">
+                <h1 className="text-[32px] sm:text-[42px] md:text-[52px] font-bold leading-[1.1] tracking-[-0.03em] text-white">
+                  {currentCategoryType.includes("realestate")
+                    ? "Real Estate"
+                    : currentCategoryType.includes("contentcreators")
+                    ? "Content Creator"
+                    : "Automotive"}{" "}
+                  <span className="text-[#D6A125]">Rankings</span>
                 </h1>
-                <p className="mt-5 max-w-[650px] text-[18px] leading-[1.65] text-[#A1A1AA]">
-                  Explore all our curated ranking categories. See what's leading the industry based on verified votes and user popularity.
+                <p className="mt-3 sm:mt-4 max-w-[650px] text-[15px] sm:text-[17px] leading-[1.6] text-zinc-400">
+                  Explore our curated luxury ranking categories. Discover world-class benchmarks verified by global audience voting.
                 </p>
               </div>
 
               {filteredCategories.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
                   {filteredCategories.map((cat) => {
-                    const nomineeCount = cat.nomineeLimit || (cat.assetNominees || []).length;
+                    const nomineeCount = cat.nomineeLimit || (cat.assetNominees || []).length || 10;
                     const catType = cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : (category || "cars");
                     const targetPath = `/ranking/${catType}/${cat.slug}`;
                     const fallbackImg = (cat.type || "").toLowerCase().includes("estate") || (cat.type || "").toLowerCase().includes("real")
@@ -514,33 +579,35 @@ function RankingHome() {
 
                     return (
                       <div 
-                        key={cat._id} 
+                        key={cat._id || cat.slug} 
                         onClick={() => navigate(targetPath)}
-                        className="overflow-hidden rounded-[12px] border border-zinc-800 bg-[#161618] flex flex-col shadow-sm hover:shadow-lg hover:border-zinc-700 transition duration-300 cursor-pointer group"
+                        className="overflow-hidden rounded-[14px] border border-zinc-800 bg-[#121214] flex flex-col shadow-sm hover:shadow-xl hover:border-zinc-700 transition duration-300 cursor-pointer group"
                       >
-                        <div className="h-[200px] w-full bg-zinc-950 relative overflow-hidden">
+                        <div className="h-[180px] sm:h-[200px] w-full bg-zinc-950 relative overflow-hidden">
                           <img 
                             src={cat.categoryImage || cat.bannerImage || fallbackImg} 
                             alt={cat.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
-                          <div className="absolute top-3 left-3 bg-black/60 text-white text-[11px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm backdrop-blur-sm">
+                          <div className="absolute top-3 left-3 bg-black/75 text-white text-[10.5px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-[4px] backdrop-blur-xs border border-white/10">
                             {cat.type}
                           </div>
                         </div>
                         
-                        <div className="p-5 flex-1 flex flex-col">
-                          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#D48D2A] transition duration-200">{cat.title}</h3>
-                          <p className="text-[14px] text-zinc-400 line-clamp-3 mb-6 flex-1">
-                            {cat.shortDescription || "No description available."}
-                          </p>
+                        <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+                          <div>
+                            <h3 className="text-lg sm:text-xl font-bold text-white mb-1.5 group-hover:text-[#D6A125] transition duration-200">{cat.title}</h3>
+                            <p className="text-[13px] sm:text-[13.5px] text-zinc-400 line-clamp-2 mb-4">
+                              {cat.shortDescription || "Explore verified rankings and nominees."}
+                            </p>
+                          </div>
                           
-                          <div className="flex items-center justify-between border-t border-zinc-850 pt-4 mt-auto">
-                            <div className="text-[13px] text-zinc-400">
+                          <div className="flex items-center justify-between border-t border-zinc-850 pt-3.5 mt-auto">
+                            <div className="text-[12px] sm:text-[13px] text-zinc-400">
                               <span className="font-bold text-white">{nomineeCount}</span> Nominees
                             </div>
                             <span 
-                              className="flex items-center gap-1.5 text-[14px] font-semibold text-[#D48D2A] group-hover:text-[#F3B344] transition duration-200"
+                              className="flex items-center gap-1 text-[13px] sm:text-[13.5px] font-semibold text-[#D6A125] group-hover:text-[#F3B344] transition duration-200"
                             >
                               Explore Rankings &rsaquo;
                             </span>
@@ -561,10 +628,11 @@ function RankingHome() {
               No active rankings found.
             </div>
           )}
-        </div>
+        </main>
       </div>
     </RankingScaleWrapper>
   );
 }
 
 export default RankingHome;
+

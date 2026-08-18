@@ -415,242 +415,216 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
   const carList = Array.isArray(cars) ? cars : (data ? [data] : []);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 sm:space-y-5">
       {carList.map((car) => {
+        // ----------------------------------------------------
+        // 1. REAL ESTATE CARD
+        // ----------------------------------------------------
         if (car.isEstate) {
           const formatLocation = (loc) => {
             if (!loc) return "";
             const parts = loc.split(",").map(p => p.trim());
             if (parts.length === 3) {
-              return `${parts[1]} , ${parts[2]}, ${parts[0]}`;
+              return `${parts[1]}, ${parts[2]}, ${parts[0]}`;
             }
             return loc;
           };
 
-          const displayLocation = formatLocation(car.location);
+          const displayLocation = formatLocation(car.location || car.brand);
           const displayPrice = car.price ? car.price.replace("$", "$ ") : "";
 
           return (
             <div
-              key={car._id}
-              id={car._id}
-              className="flex flex-col md:flex-row gap-3 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[300px]"
+              key={car._id || car.id || car.name}
+              id={car._id || car.id}
+              className="w-full rounded-xl sm:rounded-2xl border border-zinc-850 bg-[#0c0c0e] hover:border-zinc-700/80 transition-all duration-300 flex flex-col md:flex-row overflow-hidden shadow-lg group"
             >
-              {/* IMAGES */}
-              <div className="relative shrink-0 w-full md:w-[340px] lg:w-[440px] xl:w-[530px] h-[200px] md:h-[300px] bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              {/* Image Container */}
+              <div className="relative shrink-0 w-full md:w-[280px] lg:w-[340px] xl:w-[420px] 2xl:w-[460px] h-[210px] sm:h-[240px] md:h-auto min-h-[210px] md:min-h-[260px] bg-zinc-950 overflow-hidden">
                 <img
                   src={car.image}
                   alt={car.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 />
 
                 {/* Rank Ribbon */}
-                <div className="absolute left-4 top-0">
+                <div className="absolute left-3.5 sm:left-4 top-0 z-10">
                   <div
-                    className="flex w-[36px] flex-col items-center py-2 text-black rounded-b-[4px]"
+                    className="flex w-[32px] sm:w-[36px] flex-col items-center py-1.5 sm:py-2 text-black rounded-b-[4px] shadow-md"
                     style={{ backgroundColor: car.rankColor }}
                   >
                     <FaTrophy
-                      className="text-[12px]"
+                      className="text-[11px] sm:text-[12px]"
                       style={{ color: car.rank === 1 ? "#000" : "#fff" }}
                     />
                     <span
-                      className="mt-0.5 text-[15px] font-bold leading-none"
+                      className="mt-0.5 text-[13px] sm:text-[15px] font-bold leading-none"
                       style={{ color: car.rank === 1 ? "#000" : "#fff" }}
                     >
                       {car.rank}
                     </span>
                   </div>
                   <div
-                    className="mx-auto h-0 w-0 border-l-[18px] border-r-[18px] border-t-[8px] border-l-transparent border-r-transparent"
+                    className="mx-auto h-0 w-0 border-l-[16px] sm:border-l-[18px] border-r-[16px] sm:border-r-[18px] border-t-[7px] sm:border-t-[8px] border-l-transparent border-r-transparent"
                     style={{ borderTopColor: car.rankColor }}
                   />
                 </div>
 
                 {/* Bottom Image Tag */}
                 {car.showBadgeOnImage && car.badge && (
-                  <div className="absolute bottom-3 left-4">
-                    <span className="rounded-[4px] bg-black px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white border border-zinc-800">
+                  <div className="absolute bottom-3 left-3.5 sm:left-4 z-10">
+                    <span className="rounded-[4px] bg-black/85 px-2.5 py-1 text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wider text-white border border-zinc-800 backdrop-blur-xs">
                       {car.badge}
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* CONTENT BOX */}
-              <div className="flex flex-col md:flex-row flex-1 min-w-0 h-auto md:h-[300px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
-                {/* CONTENT (80% width ratio) */}
-                <div className="flex flex-[4] min-w-0 flex-col px-4 sm:px-5 lg:px-6 py-4 md:py-5 bg-black justify-between h-auto md:h-[300px]">
-                    <div className="min-w-0">
-                      {/* Header */}
-                      <div className="min-w-0">
-                        <h2 className="text-[20px] sm:text-[24px] md:text-[26px] lg:text-[28px] font-bold tracking-tight text-white leading-tight truncate">
-                          {car.name === "Beverly Hills Ultra Estate" ? "Beverly Hills Ultra Luxury" : car.name}
-                        </h2>
-                        <div className="text-[12px] sm:text-[13px] text-zinc-500 font-normal mt-0.5 truncate">
-                          {displayLocation}
-                        </div>
-                      </div>
+              {/* Content Column */}
+              <div className="flex-1 min-w-0 flex flex-col justify-between p-4 sm:p-4.5 md:p-5 lg:p-5.5 bg-black/60">
+                <div className="min-w-0">
+                  {/* Title & Location */}
+                  <h2 className="text-[18px] sm:text-[21px] md:text-[23px] lg:text-[25px] font-bold tracking-tight text-white leading-tight truncate">
+                    {car.name}
+                  </h2>
+                  {displayLocation && (
+                    <div className="text-[11.5px] sm:text-[12.5px] text-zinc-400 font-normal mt-0.5 truncate flex items-center gap-1.5">
+                      <FiMapPin className="text-[#D6A125] text-xs shrink-0" />
+                      <span>{displayLocation}</span>
+                    </div>
+                  )}
 
-                      {/* Price */}
-                      {displayPrice && (
-                        <div className="mt-1.5 sm:mt-2 text-[20px] sm:text-[24px] lg:text-[26px] font-bold text-white leading-none">
-                          {displayPrice}
+                  {/* Price */}
+                  {displayPrice && (
+                    <div className="mt-1.5 text-[17px] sm:text-[20px] md:text-[22px] font-bold text-[#D6A125] leading-none">
+                      {displayPrice}
+                    </div>
+                  )}
+
+                  {/* Description */}
+                  <p className="mt-1.5 text-[11.5px] sm:text-[12.5px] leading-relaxed text-zinc-400 font-normal line-clamp-2">
+                    {car.description}
+                  </p>
+
+                  {/* Estate Metrics Box */}
+                  <div className="border border-zinc-800/90 rounded-[10px] bg-zinc-950/90 p-2.5 sm:p-3 mt-2.5 w-full">
+                    {/* Living, Land, Beds, Baths */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 py-0.5">
+                      {car.livingArea && (
+                        <div className="flex items-center gap-2">
+                          <FaHome className="w-4 h-4 text-zinc-300 shrink-0" />
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[11.5px] sm:text-[12px] font-bold text-white leading-none truncate">{car.livingArea}</span>
+                            <span className="text-[9px] text-zinc-500 font-medium mt-0.5 leading-none">Living Area</span>
+                          </div>
                         </div>
                       )}
-
-                      {/* Description */}
-                      <p className="mt-1.5 sm:mt-2 text-[12px] sm:text-[13px] leading-relaxed text-zinc-400 font-normal line-clamp-2">
-                        {car.description}
-                      </p>
-                    </div>
-
-                    <div className="min-w-0">
-                      {/* Combined Stats and Meta Block */}
-                      <div className="border border-zinc-800/80 rounded-[8px] bg-zinc-950/80 px-3 sm:px-3.5 py-2 mt-2 w-fit max-w-full overflow-x-auto no-scrollbar">
-                        {/* Estate Metrics Counters */}
-                        <div className="flex items-center gap-2 sm:gap-3 py-0.5 min-w-max">
-                          {/* Living Area */}
-                          {car.livingArea && (
-                            <div className="flex items-center gap-2">
-                              <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                              </svg>
-                              <div className="flex flex-col">
-                                <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">{car.livingArea}</span>
-                                <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">Living Area</span>
-                              </div>
-                            </div>
-                          )}
-
-                          {car.livingArea && car.landSize && <div className="w-[1px] bg-zinc-800 self-stretch mx-1.5" />}
-
-                          {/* Land Size */}
-                          {car.landSize && (
-                            <div className="flex items-center gap-2">
-                              <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 2.25c-2.62 0-4.75 2.13-4.75 4.75 0 .97.3 1.88.8 2.64L6.5 12h3.5v6H14v-6h3.5l-1.55-2.61c.5-.76.8-1.67.8-2.64 0-2.62-2.13-4.75-4.75-4.75z" />
-                              </svg>
-                              <div className="flex flex-col">
-                                <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">{car.landSize}</span>
-                                <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">Land Size</span>
-                              </div>
-                            </div>
-                          )}
-
-                          {car.landSize && car.bedrooms && <div className="w-[1px] bg-zinc-800 self-stretch mx-1.5" />}
-
-                          {/* Bedrooms */}
-                          {car.bedrooms && (
-                            <div className="flex items-center gap-2">
-                              <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12h19.5M2.25 12v6.75A2.25 2.25 0 004.5 21h15a2.25 2.25 0 002.25-2.25V12M2.25 12V6.75A2.25 2.25 0 004.5 4.5h5.625c.621 0 1.125.504 1.125 1.125V12M21.75 12V6.75A2.25 2.25 0 0019.5 4.5h-5.625c-.621 0-1.125.504-1.125 1.125V12m0 0h1.5m-1.5 0h-1.5" />
-                              </svg>
-                              <div className="flex flex-col">
-                                <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">{car.bedrooms}</span>
-                                <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">Bedrooms</span>
-                              </div>
-                            </div>
-                          )}
-
-                          {car.bedrooms && car.bathrooms && <div className="w-[1px] bg-zinc-800 self-stretch mx-1.5" />}
-
-                          {/* Bathrooms */}
-                          {car.bathrooms && (
-                            <div className="flex items-center gap-2">
-                              <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V10M3 10H21M7 5H17M12 5V10" />
-                              </svg>
-                              <div className="flex flex-col">
-                                <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">{car.bathrooms}</span>
-                                <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">Bathrooms</span>
-                              </div>
-                            </div>
-                          )}
+                      {car.landSize && (
+                        <div className="flex items-center gap-2">
+                          <FaTree className="w-4 h-4 text-zinc-300 shrink-0" />
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[11.5px] sm:text-[12px] font-bold text-white leading-none truncate">{car.landSize}</span>
+                            <span className="text-[9px] text-zinc-500 font-medium mt-0.5 leading-none">Land Size</span>
+                          </div>
                         </div>
-
-                        {/* Divider */}
-                        <div className="border-t border-zinc-800/80 my-1.5" />
-
-                        {/* Meta information */}
-                        <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-2.5 gap-y-0.5 text-[10px] sm:text-[10.5px] text-zinc-400 font-medium">
-                          <span>
-                            Category: <span className="text-zinc-300 font-semibold">{car.category}</span>
-                          </span>
-                          <span>|</span>
-                          <span>
-                            Property Type: <span className="text-zinc-300 font-semibold">{car.propertyType}</span>
-                          </span>
-                          <span>|</span>
-                          <span className="inline-flex items-center gap-1">
-                            Status: <span className="text-zinc-300 font-semibold">{car.availabilityStatus}</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block ml-0.5" />
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* View all Links Button */}
-                      <div className="relative mt-2.5 sm:mt-3">
-                        <button
-                          type="button"
-                          onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
-                          className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[12.5px] sm:text-[13.5px] font-bold transition duration-200 w-fit select-none"
-                        >
-                          <span>View all Links</span>
-                          <FaArrowRight className="text-[12px] sm:text-[13.5px]" />
-                        </button>
-                        {openSnackbarId === car._id && renderLinksSnackbar(car)}
-                      </div>
-                    </div>
-                  </div>
-
-                {/* VERTICAL DIVIDER LINE */}
-                <div className="hidden md:block w-[1px] h-[240px] bg-zinc-800 my-auto shrink-0" />
-
-                {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[300px] flex-col items-center justify-center gap-4 md:gap-5 border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-5 bg-black select-none">
-                  <button
-                    onClick={(e) => handleVoteClick(e, car)}
-                    disabled={isVoting || isLimitReached}
-                    title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
-                    className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border text-[16px] md:text-[18px] font-bold transition duration-200 select-none ${
-                      isVoting || isLimitReached
-                        ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
-                        : "border-[#D6A125] bg-transparent text-[#D6A125] hover:bg-[#D6A125]/10 cursor-pointer"
-                    }`}
-                  >
-                    {isLimitReached ? "Limit Reached" : "Vote"}
-                  </button>
-
-                  <div className="text-center flex flex-col items-center justify-center py-0.5">
-                    <div className="text-[26px] md:text-[32px] tracking-tight font-extrabold text-white leading-none">
-                      {car.votes || "0"}
-                    </div>
-                    <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
-                      {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
-                    </div>
-                  </div>
-
-                  <div className="w-full max-w-[280px] md:max-w-none">
-                    {/* Gold solid line */}
-                    <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-2.5 md:mb-3" />
-
-                    <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
-                      {car.statusIcon === "trophy" || car.rank === 1 ? (
-                        <FaTrophy className="text-[#D6A125] text-[11px] md:text-[12px]" />
-                      ) : (
-                        <FaStar className="text-[#D6A125] text-[11px] md:text-[12px]" />
                       )}
-                      <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
-                        {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
+                      {car.bedrooms && (
+                        <div className="flex items-center gap-2">
+                          <FaBed className="w-4 h-4 text-zinc-300 shrink-0" />
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[11.5px] sm:text-[12px] font-bold text-white leading-none truncate">{car.bedrooms}</span>
+                            <span className="text-[9px] text-zinc-500 font-medium mt-0.5 leading-none">Bedrooms</span>
+                          </div>
+                        </div>
+                      )}
+                      {car.bathrooms && (
+                        <div className="flex items-center gap-2">
+                          <FaBath className="w-4 h-4 text-zinc-300 shrink-0" />
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[11.5px] sm:text-[12px] font-bold text-white leading-none truncate">{car.bathrooms}</span>
+                            <span className="text-[9px] text-zinc-500 font-medium mt-0.5 leading-none">Bathrooms</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Divider & Meta */}
+                    <div className="border-t border-zinc-850 pt-2 mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10.5px] sm:text-[11px] text-zinc-400 font-medium">
+                      <span>
+                        Category: <span className="text-zinc-200 font-semibold">{car.category || "Luxury Real Estate"}</span>
+                      </span>
+                      <span>|</span>
+                      <span>
+                        Type: <span className="text-zinc-200 font-semibold">{car.propertyType || "Estate"}</span>
+                      </span>
+                      <span>|</span>
+                      <span className="inline-flex items-center gap-1.5">
+                        Status: <span className="text-zinc-200 font-semibold">{car.availabilityStatus || "For Sale"}</span>
+                        <span className="w-2 h-2 rounded-full bg-[#10B981] inline-block animate-pulse" />
                       </span>
                     </div>
+                  </div>
+                </div>
+
+                {/* View Links Button */}
+                <div className="relative mt-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
+                    className="flex items-center gap-1.5 text-[#D6A125] hover:text-[#f3c250] text-[12px] sm:text-[12.5px] font-bold transition duration-200 w-fit select-none"
+                  >
+                    <span>View all Links</span>
+                    <FaArrowRight className="text-[10px]" />
+                  </button>
+                  {openSnackbarId === car._id && renderLinksSnackbar(car)}
+                </div>
+              </div>
+
+              {/* Vote Panel */}
+              <div className="w-full md:w-[150px] lg:w-[170px] xl:w-[190px] shrink-0 flex flex-col items-center justify-center p-4 sm:p-4.5 md:p-5 bg-black/85 border-t md:border-t-0 md:border-l border-zinc-850 gap-3 sm:gap-3.5 select-none">
+                <button
+                  onClick={(e) => handleVoteClick(e, car)}
+                  disabled={isVoting || isLimitReached}
+                  title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
+                  className={`h-[40px] md:h-[42px] w-full max-w-[260px] md:max-w-none rounded-[10px] border text-[15px] md:text-[16px] font-bold transition duration-200 select-none ${
+                    isVoting || isLimitReached
+                      ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
+                      : "border-[#D6A125] bg-[#D6A125]/10 text-[#D6A125] hover:bg-[#D6A125]/20 cursor-pointer shadow-sm active:scale-95"
+                  }`}
+                >
+                  {isLimitReached ? "Limit Reached" : "Vote"}
+                </button>
+
+                <div className="text-center flex flex-col items-center justify-center py-0.5">
+                  <div className="text-[26px] md:text-[30px] tracking-tight font-extrabold text-white leading-none">
+                    {car.votes || "0"}
+                  </div>
+                  <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
+                    {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
+                  </div>
+                </div>
+
+                <div className="w-full max-w-[260px] md:max-w-none">
+                  <div className="w-full bg-[#D6A125] h-[2.5px] rounded-full mb-2 sm:mb-2.5" />
+                  <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3 bg-zinc-900/90 border border-zinc-800 rounded">
+                    {car.statusIcon === "trophy" || car.rank === 1 ? (
+                      <FaTrophy className="text-[#D6A125] text-[11px]" />
+                    ) : (
+                      <FaStar className="text-[#D6A125] text-[11px]" />
+                    )}
+                    <span className="text-[11px] font-bold text-[#D6A125]">
+                      {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           );
         }
+
+        // ----------------------------------------------------
+        // 2. CONTENT CREATOR CARD
+        // ----------------------------------------------------
         if (car.isContentCreator) {
           const stats = getCreatorStats(car);
           const profilePicUrl = getCreatorProfilePic(car);
@@ -658,49 +632,48 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
 
           return (
             <div
-              key={car._id}
-              id={car._id}
-              className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[310px]"
+              key={car._id || car.id || car.name}
+              id={car._id || car.id}
+              className="w-full rounded-xl sm:rounded-2xl border border-zinc-850 bg-[#0c0c0e] hover:border-zinc-700/80 transition-all duration-300 flex flex-col md:flex-row overflow-hidden shadow-lg group"
             >
-              {/* IMAGES (Appears on the left) */}
-              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[220px] md:h-[310px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              {/* Banner Container */}
+              <div className="relative shrink-0 w-full md:w-[280px] lg:w-[340px] xl:w-[400px] 2xl:w-[440px] h-[200px] sm:h-[230px] md:h-auto min-h-[200px] md:min-h-[250px] bg-zinc-950 overflow-hidden">
                 <img
                   src={bannerImageUrl}
                   alt={car.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 />
 
                 {/* Rank Ribbon */}
-                <div className="absolute left-4 top-0">
+                <div className="absolute left-3.5 sm:left-4 top-0 z-10">
                   <div
-                    className="flex w-[36px] flex-col items-center py-2 text-black rounded-b-[4px]"
+                    className="flex w-[32px] sm:w-[36px] flex-col items-center py-1.5 sm:py-2 text-black rounded-b-[4px] shadow-md"
                     style={{ backgroundColor: car.rankColor }}
                   >
                     <FaTrophy
-                      className="text-[12px]"
+                      className="text-[11px] sm:text-[12px]"
                       style={{ color: car.rank === 1 ? "#000" : "#fff" }}
                     />
                     <span
-                      className="mt-0.5 text-[15px] font-bold leading-none"
+                      className="mt-0.5 text-[13px] sm:text-[15px] font-bold leading-none"
                       style={{ color: car.rank === 1 ? "#000" : "#fff" }}
                     >
                       {car.rank}
                     </span>
                   </div>
                   <div
-                    className="mx-auto h-0 w-0 border-l-[18px] border-r-[18px] border-t-[8px] border-l-transparent border-r-transparent"
+                    className="mx-auto h-0 w-0 border-l-[16px] sm:border-l-[18px] border-r-[16px] sm:border-r-[18px] border-t-[7px] sm:border-t-[8px] border-l-transparent border-r-transparent"
                     style={{ borderTopColor: car.rankColor }}
                   />
                 </div>
               </div>
 
-              {/* CONTENT BOX (Appears on the right) */}
-              <div className="flex flex-col md:flex-row flex-1 w-full max-w-full rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300 h-auto md:h-[310px]">
-                {/* CONTENT (80% width ratio) */}
-                <div className="flex flex-[4] w-full md:w-[75%] lg:w-[80%] flex-col px-4 sm:px-6 py-4 bg-black justify-between h-auto md:h-[310px]">
-                  {/* Header */}
-                  <div className="flex items-center gap-3 sm:gap-3.5">
-                    <div className="w-[68px] h-[66px] sm:w-[82px] sm:h-[79px] rounded-full border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-base sm:text-lg shrink-0 select-none overflow-hidden relative">
+              {/* Content Column */}
+              <div className="flex-1 min-w-0 flex flex-col justify-between p-4 sm:p-4.5 md:p-5 lg:p-5.5 bg-black/60">
+                <div className="min-w-0">
+                  {/* Creator Header with Avatar */}
+                  <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+                    <div className="w-[52px] h-[52px] sm:w-[60px] sm:h-[60px] md:w-[64px] md:h-[64px] rounded-full border-2 border-zinc-700 bg-zinc-900 flex items-center justify-center text-white font-bold text-base shrink-0 overflow-hidden relative shadow-md">
                       {profilePicUrl ? (
                         <img
                           src={profilePicUrl}
@@ -715,352 +688,121 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                         />
                       ) : null}
                       <div
-                        className="w-full h-full rounded-full items-center justify-center text-white font-bold text-base sm:text-lg select-none"
+                        className="w-full h-full rounded-full items-center justify-center text-white font-bold text-sm sm:text-base select-none"
                         style={{ display: profilePicUrl ? 'none' : 'flex' }}
                       >
                         {getInitials(car.name)}
                       </div>
                     </div>
-                    <div className="flex flex-col justify-center h-[66px] sm:h-[79px]">
-                      <h2 className="text-[26px] sm:text-[34px] lg:text-[42px] font-extrabold tracking-tight text-white leading-none">
+
+                    <div className="flex flex-col justify-center min-w-0">
+                      <h2 className="text-[20px] sm:text-[23px] md:text-[26px] lg:text-[28px] font-extrabold tracking-tight text-white leading-tight truncate">
                         {car.name}
                       </h2>
-                      <div className="text-[13px] sm:text-[15px] lg:text-[16px] text-zinc-400 font-medium mt-1 sm:mt-2 leading-none">
-                        Channel : <span className="text-zinc-300">{car.channelName || car.name}</span>
+                      <div className="text-[11.5px] sm:text-[13px] text-zinc-400 font-medium truncate mt-0.5">
+                        Channel: <span className="text-zinc-200">{car.channelName || car.name}</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Meta/Tags */}
-                  <div className="mt-2.5 flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1.5 text-[12px] sm:text-[13.5px]">
+                  {/* Meta Tags (Location, Joined, Genre) */}
+                  <div className="mt-2.5 flex flex-wrap items-center gap-x-3.5 sm:gap-x-4 gap-y-1 text-[11px] sm:text-[12px] text-zinc-300 font-medium">
                     {car.location && (
-                      <span className="flex items-center gap-1.5 sm:gap-2 text-white font-medium">
-                        <FiMapPin className="text-[#D6A125] text-xs sm:text-sm" />
-                        {car.location}
+                      <span className="flex items-center gap-1.5 text-zinc-300">
+                        <FiMapPin className="text-[#D6A125] text-xs shrink-0" />
+                        <span>{car.location}</span>
                       </span>
                     )}
                     {car.joinDate && (
-                      <span className="flex items-center gap-1.5 sm:gap-2 text-white font-medium">
-                        <FaCalendarAlt className="text-[#D6A125] text-xs sm:text-sm" />
-                        {car.joinDate}
+                      <span className="flex items-center gap-1.5 text-zinc-300">
+                        <FaCalendarAlt className="text-[#D6A125] text-xs shrink-0" />
+                        <span>Joined {car.joinDate}</span>
                       </span>
                     )}
                     {car.genre && (
-                      <span className="flex items-center gap-1.5 sm:gap-2 text-white font-medium">
-                        <FaTag className="text-[#D6A125] text-xs sm:text-sm" />
-                        {car.genre}
+                      <span className="flex items-center gap-1.5 text-zinc-300">
+                        <FaTag className="text-[#D6A125] text-xs shrink-0" />
+                        <span>{car.genre}</span>
                       </span>
                     )}
                   </div>
 
                   {/* Description */}
-                  <p className="mt-2 text-[12.5px] sm:text-[13.5px] leading-relaxed text-zinc-400 font-normal line-clamp-2 sm:line-clamp-3">
+                  <p className="mt-2 text-[11.5px] sm:text-[12.5px] leading-relaxed text-zinc-400 font-normal line-clamp-2">
                     {car.description}
                   </p>
 
-                  {/* Divider */}
-                  <div className="my-2 border-t border-zinc-800/80" />
-
-                  {/* Social Counters Bar Container */}
-                  <div className="bg-[#121214] border border-zinc-800/80 rounded-[6px] py-2 sm:py-2.5 grid grid-cols-2 sm:grid-cols-4 gap-y-2 sm:gap-y-0 divide-y sm:divide-y-0 sm:divide-x divide-zinc-800/80 items-center">
+                  {/* Social Counters Bar */}
+                  <div className="bg-[#121214] border border-zinc-800/90 rounded-[8px] p-2 sm:p-2.5 mt-2.5 grid grid-cols-2 sm:grid-cols-4 gap-2 divide-y sm:divide-y-0 sm:divide-x divide-zinc-800/80 items-center">
                     {/* Total Subscribers */}
-                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
-                      <FaUsers className="text-[#D6A125] text-[18px] sm:text-[24px] shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">Total Subscribers</span>
-                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.total}</span>
+                    <div className="flex items-center justify-center gap-2 sm:gap-2.5 px-1 py-1 sm:py-0">
+                      <FaUsers className="text-[#D6A125] text-[16px] sm:text-[20px] shrink-0" />
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[8.5px] sm:text-[9.5px] text-zinc-400 font-semibold leading-none truncate">Total Subs</span>
+                        <span className="text-[12px] sm:text-[13.5px] font-bold text-white mt-1 leading-none">{stats.total}</span>
                       </div>
                     </div>
 
                     {/* YouTube Subscribers */}
-                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
-                      <img src={youtubeIcon} alt="YouTube" className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">YouTube Subscribers</span>
-                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.youtube}</span>
+                    <div className="flex items-center justify-center gap-2 sm:gap-2.5 px-1 py-1 sm:py-0">
+                      <img src={youtubeIcon} alt="YouTube" className="w-4.5 h-4.5 sm:w-5 sm:h-5 object-contain shrink-0" />
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[8.5px] sm:text-[9.5px] text-zinc-400 font-semibold leading-none truncate">YouTube</span>
+                        <span className="text-[12px] sm:text-[13.5px] font-bold text-white mt-1 leading-none">{stats.youtube}</span>
                       </div>
                     </div>
 
                     {/* Instagram Followers */}
-                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
-                      <img src={instagramIcon} alt="Instagram" className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">Instagram Followers</span>
-                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.instagram}</span>
+                    <div className="flex items-center justify-center gap-2 sm:gap-2.5 px-1 py-1 sm:py-0">
+                      <img src={instagramIcon} alt="Instagram" className="w-4.5 h-4.5 sm:w-5 sm:h-5 object-contain shrink-0" />
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[8.5px] sm:text-[9.5px] text-zinc-400 font-semibold leading-none truncate">Instagram</span>
+                        <span className="text-[12px] sm:text-[13.5px] font-bold text-white mt-1 leading-none">{stats.instagram}</span>
                       </div>
                     </div>
 
                     {/* Twitter Followers */}
-                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
-                      <img src={xIcon} alt="Twitter" className="w-4.5 h-4.5 sm:w-[22px] sm:h-[22px] object-contain shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">Twitter Followers</span>
-                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.twitter}</span>
+                    <div className="flex items-center justify-center gap-2 sm:gap-2.5 px-1 py-1 sm:py-0">
+                      <img src={xIcon} alt="Twitter" className="w-4 h-4 sm:w-4.5 sm:h-4.5 object-contain shrink-0" />
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[8.5px] sm:text-[9.5px] text-zinc-400 font-semibold leading-none truncate">X / Twitter</span>
+                        <span className="text-[12px] sm:text-[13.5px] font-bold text-white mt-1 leading-none">{stats.twitter}</span>
                       </div>
                     </div>
                   </div>
-
-                  {/* View Links Button */}
-                  <div className="relative mt-2">
-                    <button
-                      type="button"
-                      onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
-                      className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[12.5px] sm:text-[13.5px] font-bold transition duration-200 w-fit select-none"
-                    >
-                      <span>View all Links</span>
-                      <FaArrowRight className="text-[12px] sm:text-[13px]" />
-                    </button>
-                    {openSnackbarId === car._id && renderLinksSnackbar(car)}
-                  </div>
                 </div>
 
-                {/* VERTICAL DIVIDER LINE */}
-                <div className="hidden md:block w-[1px] h-[250px] bg-zinc-800/80 my-auto shrink-0" />
-
-                {/* VOTE PANEL (20% width ratio) */}
-                <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[310px] flex-col items-center justify-center gap-4 md:gap-5 border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-5 bg-black select-none">
+                {/* View Links Button */}
+                <div className="relative mt-2.5">
                   <button
-                    onClick={(e) => handleVoteClick(e, car)}
-                    disabled={isVoting || isLimitReached}
-                    title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
-                    className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border text-[16px] md:text-[18px] font-bold transition duration-200 select-none ${
-                      isVoting || isLimitReached
-                        ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
-                        : "border-[#D6A125] bg-transparent text-[#D6A125] hover:bg-[#D6A125]/10 cursor-pointer"
-                    }`}
+                    type="button"
+                    onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
+                    className="flex items-center gap-1.5 text-[#D6A125] hover:text-[#f3c250] text-[12px] sm:text-[12.5px] font-bold transition duration-200 w-fit select-none"
                   >
-                    {isLimitReached ? "Limit Reached" : "Vote"}
+                    <span>View all Links</span>
+                    <FaArrowRight className="text-[10px]" />
                   </button>
-
-                  <div className="text-center flex flex-col items-center justify-center py-0.5">
-                    <div className="text-[26px] md:text-[32px] tracking-tight font-extrabold text-white leading-none">
-                      {car.votes || "0"}
-                    </div>
-                    <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
-                      {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
-                    </div>
-                  </div>
-
-                  <div className="w-full max-w-[280px] md:max-w-none">
-                    {/* Gold solid line */}
-                    <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-2.5 md:mb-3" />
-
-                    <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
-                      {car.statusIcon === "trophy" || car.rank === 1 ? (
-                        <FaTrophy className="text-[#D6A125] text-[11px] md:text-[12px]" />
-                      ) : (
-                        <FaStar className="text-[#D6A125] text-[11px] md:text-[12px]" />
-                      )}
-                      <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
-                        {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        }
-
-        // REDESIGNED AUTOMOTIVE/CARS NOMINEE CARD
-        const displayCarPrice = car.price ? car.price.replace("$", "$ ") : "";
-        const displayAcceleration = car.acceleration || car.transmission || "";
-        const accelerationLabel = (car.acceleration && car.acceleration.toLowerCase().includes("s")) ? "0-100 km/h" : "Transmission";
-
-        return (
-          <div
-            key={car._id}
-            id={car._id}
-            className="flex flex-col md:flex-row gap-3 md:gap-4 w-full max-w-[1592px] h-auto md:h-[210px] mx-auto"
-          >
-            {/* IMAGES */}
-            <div className="relative shrink-0 w-full md:w-[320px] lg:w-[380px] xl:w-[437px] h-[180px] md:h-[210px] bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
-              <img
-                src={car.image}
-                alt={car.name}
-                className="w-full h-full object-cover"
-              />
-
-              {/* Rank Ribbon */}
-              <div className="absolute left-4 top-0">
-                <div
-                  className="flex w-[36px] flex-col items-center py-2 text-black rounded-b-[4px]"
-                  style={{ backgroundColor: car.rankColor }}
-                >
-                  <FaTrophy
-                    className="text-[12px]"
-                    style={{ color: car.rank === 1 ? "#000" : "#fff" }}
-                  />
-                  <span
-                    className="mt-0.5 text-[15px] font-bold leading-none"
-                    style={{ color: car.rank === 1 ? "#000" : "#fff" }}
-                  >
-                    {car.rank}
-                  </span>
-                </div>
-                <div
-                  className="mx-auto h-0 w-0 border-l-[18px] border-r-[18px] border-t-[8px] border-l-transparent border-r-transparent"
-                  style={{ borderTopColor: car.rankColor }}
-                />
-              </div>
-
-              {/* Bottom Image Tag */}
-              {car.showBadgeOnImage && car.badge && (
-                <div className="absolute bottom-3 left-4">
-                  <span className="rounded-[4px] bg-black px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white border border-zinc-800">
-                    {car.badge}
-                  </span>
-                </div>
-              )}
-            </div>
-            {/* CONTENT BOX */}
-            <div className="flex flex-col md:flex-row flex-1 h-auto md:h-[210px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
-              {/* CONTENT (80% width ratio) */}
-              <div className="flex flex-col flex-[4] w-full md:w-[80%] px-3.5 sm:px-4 md:px-5 py-2.5 md:py-3 bg-black justify-between min-h-0 md:h-[210px]">
-                <div>
-                  {/* Header */}
-                  <div>
-                    <h2 className="text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] font-bold tracking-tight text-white leading-tight">
-                      {car.name}
-                    </h2>
-                    <p className="mt-1 text-[11px] sm:text-[11.5px] md:text-[12.5px] leading-snug text-zinc-400 font-normal line-clamp-2 md:line-clamp-3">
-                      {car.description}
-                    </p>
-                  </div>
-
-                  {/* Metrics Counters Row */}
-                  <div className="flex items-center gap-2.5 sm:gap-3.5 md:gap-4 lg:gap-5 py-1 mt-1.5 md:mt-2 mb-1 md:mb-1.5 overflow-x-auto no-scrollbar">
-                    {/* Power */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                      <FaBolt className="text-[#EAB308] text-[17px] sm:text-[19px] md:text-[22.5px] shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[11px] sm:text-[12px] md:text-[13px] font-bold text-white leading-none">
-                          {car.power || "1,800 HP"}
-                        </span>
-                        <span className="text-[8.5px] sm:text-[9px] md:text-[9.5px] text-zinc-500 font-medium mt-0.5 md:mt-1 leading-none">
-                          Power
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="w-[1px] bg-zinc-800 h-5 md:h-5.5 shrink-0" />
-
-                    {/* Acceleration / 0-60 MPH */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                      <LuTimerReset className="text-zinc-300 text-[17px] sm:text-[19px] md:text-[22.5px] shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[11px] sm:text-[12px] md:text-[13px] font-bold text-white leading-none">
-                          {car.acceleration || "2.0 Sec"}
-                        </span>
-                        <span className="text-[8.5px] sm:text-[9px] md:text-[9.5px] text-zinc-500 font-medium mt-0.5 md:mt-1 leading-none">
-                          0-60 MPH
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="w-[1px] bg-zinc-800 h-5 md:h-5.5 shrink-0" />
-
-                    {/* Top Speed */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                      <MdOutlineSpeed className="text-zinc-300 text-[17px] sm:text-[19px] md:text-[22.5px] shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[11px] sm:text-[12px] md:text-[13px] font-bold text-white leading-none">
-                          {car.topSpeed || "445 Kmph"}
-                        </span>
-                        <span className="text-[8.5px] sm:text-[9px] md:text-[9.5px] text-zinc-500 font-medium mt-0.5 md:mt-1 leading-none">
-                          Top Speed
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="w-[1px] bg-zinc-800 h-5 md:h-5.5 shrink-0" />
-
-                    {/* Engine */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                      <TbEngine className="text-zinc-300 text-[17px] sm:text-[19px] md:text-[22.5px] shrink-0" />
-                      <div className="flex flex-col">
-                        <span className="text-[11px] sm:text-[12px] md:text-[13px] font-bold text-white leading-none">
-                          {car.engine || "8.3 L W16"}
-                        </span>
-                        <span className="text-[8.5px] sm:text-[9px] md:text-[9.5px] text-zinc-500 font-medium mt-0.5 md:mt-1 leading-none">
-                          Engine
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Horizontal Divider Line */}
-                  <div className="border-t border-zinc-800/80 w-full my-1 md:my-1.5" />
-
-                  {/* Meta information */}
-                  <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-2.5 md:gap-x-3 gap-y-1 text-[10px] sm:text-[10.5px] md:text-[11px] text-zinc-500 font-normal">
-                    <span>
-                      Brand : <span className="text-white font-semibold">{car.brand || car.location || "Bugatti"}</span>
-                    </span>
-                    <span className="text-zinc-700">|</span>
-                    <span>
-                      Model : <span className="text-white font-semibold">{car.model || car.bodyType || "Tourbillon"}</span>
-                    </span>
-                    <span className="text-zinc-700">|</span>
-                    <span>
-                      Year : <span className="text-white font-semibold">{car.year || "2026"}</span>
-                    </span>
-                    <span className="text-zinc-700">|</span>
-                    <span>
-                      Production Limit : <span className="text-white font-semibold">{car.productionUnits || car.productionLimit || car.limit || "250"}</span>
-                    </span>
-                    <span className="text-zinc-700">|</span>
-                    <span>
-                      Origin :{" "}
-                      <span className="inline-flex items-center gap-1.5 text-white font-semibold align-middle">
-                        <img
-                          src={getCountryFlagInfo(car.country || car.origin, car.brand).flagUrl}
-                          srcSet={`${getCountryFlagInfo(car.country || car.origin, car.brand).flagUrl2x} 2x`}
-                          alt={getCountryFlagInfo(car.country || car.origin, car.brand).name}
-                          className="w-4 h-auto rounded-[2px] object-contain shadow-xs inline-block"
-                        />
-                        <span>
-                          {getCountryFlagInfo(car.country || car.origin, car.brand).name}
-                        </span>
-                      </span>
-                    </span>
-                  </div>
-
-                  {/* View all Links Button */}
-                  <div className="relative mt-1 md:mt-1.5">
-                    <button
-                      type="button"
-                      onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
-                      className="flex items-center gap-1.5 text-[#D6A125] hover:text-[#e5b338] text-[11px] md:text-[12px] font-bold transition duration-200 w-fit"
-                    >
-                      <span>View all Links</span>
-                      <FaArrowRight className="text-[10px]" />
-                    </button>
-                    {openSnackbarId === car._id && renderLinksSnackbar(car)}
-                  </div>
+                  {openSnackbarId === car._id && renderLinksSnackbar(car)}
                 </div>
               </div>
 
-              {/* VERTICAL DIVIDER LINE */}
-              <div className="hidden md:block w-[1px] h-[160px] bg-[#545454] my-auto shrink-0" />
-
-              {/* VOTE PANEL (20% width ratio) */}
-              <div className="flex flex-[1] w-full md:w-[20%] shrink-0 h-auto md:h-[210px] flex-col items-center justify-center gap-3.5 md:gap-4 border-t md:border-t-0 border-zinc-800 md:border-none px-4 sm:px-6 py-4 md:py-3.5 bg-black select-none">
+              {/* Vote Panel */}
+              <div className="w-full md:w-[150px] lg:w-[170px] xl:w-[190px] shrink-0 flex flex-col items-center justify-center p-4 sm:p-4.5 md:p-5 bg-black/85 border-t md:border-t-0 md:border-l border-zinc-850 gap-3 sm:gap-3.5 select-none">
                 <button
                   onClick={(e) => handleVoteClick(e, car)}
                   disabled={isVoting || isLimitReached}
                   title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
-                  className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border text-[16px] md:text-[18px] font-bold transition duration-200 select-none ${
+                  className={`h-[40px] md:h-[42px] w-full max-w-[260px] md:max-w-none rounded-[10px] border text-[15px] md:text-[16px] font-bold transition duration-200 select-none ${
                     isVoting || isLimitReached
                       ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
-                      : "border-[#D6A125] bg-transparent text-[#D6A125] hover:bg-[#D6A125]/10 cursor-pointer"
+                      : "border-[#D6A125] bg-[#D6A125]/10 text-[#D6A125] hover:bg-[#D6A125]/20 cursor-pointer shadow-sm active:scale-95"
                   }`}
                 >
                   {isLimitReached ? "Limit Reached" : "Vote"}
                 </button>
 
                 <div className="text-center flex flex-col items-center justify-center py-0.5">
-                  <div className="text-[26px] md:text-[32px] tracking-tight font-extrabold text-white leading-none">
+                  <div className="text-[26px] md:text-[30px] tracking-tight font-extrabold text-white leading-none">
                     {car.votes || "0"}
                   </div>
                   <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
@@ -1068,20 +810,234 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   </div>
                 </div>
 
-                <div className="w-full max-w-[280px] md:max-w-none">
-                  {/* Gold solid line */}
-                  <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-2.5 md:mb-3" />
-
-                  <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
+                <div className="w-full max-w-[260px] md:max-w-none">
+                  <div className="w-full bg-[#D6A125] h-[2.5px] rounded-full mb-2 sm:mb-2.5" />
+                  <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3 bg-zinc-900/90 border border-zinc-800 rounded">
                     {car.statusIcon === "trophy" || car.rank === 1 ? (
-                      <FaTrophy className="text-[#D6A125] text-[11px] md:text-[12px]" />
+                      <FaTrophy className="text-[#D6A125] text-[11px]" />
                     ) : (
-                      <FaStar className="text-[#D6A125] text-[11px] md:text-[12px]" />
+                      <FaStar className="text-[#D6A125] text-[11px]" />
                     )}
-                    <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
+                    <span className="text-[11px] font-bold text-[#D6A125]">
                       {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
                     </span>
                   </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // ----------------------------------------------------
+        // 3. CARS / AUTOMOTIVE NOMINEE CARD (DEFAULT)
+        // ----------------------------------------------------
+        const displayPower = car.power || car.keyDetails?.power || "1,184 HP";
+        const displayAcceleration = car.acceleration || car.keyDetails?.acceleration || car.keyDetails?.transmission || "2.0 Sec";
+        const displayTopSpeed = car.topSpeed || car.keyDetails?.topSpeed || "350 Km/h";
+        const displayEngine = car.engine || car.keyDetails?.engine || "V6 Hybrid";
+        const displayBrand = car.brand || car.keyDetails?.brand || (car.name ? car.name.split(" ")[0] : "Ferrari");
+        const displayModel = car.model || car.keyDetails?.model || (car.name ? car.name.split(" ").slice(1).join(" ") : "F80 Coupe");
+        const displayYear = car.year || car.keyDetails?.year || "2026";
+        const displayLimit = car.productionLimit || car.productionUnits || car.keyDetails?.productionLimit || car.keyDetails?.productionUnits || "799 Units";
+        const countryInfo = getCountryFlagInfo(car.country || car.origin || car.keyDetails?.country, displayBrand);
+
+        return (
+          <div
+            key={car._id || car.id || car.name}
+            id={car._id || car.id}
+            className="w-full rounded-xl sm:rounded-2xl border border-zinc-850 bg-[#0c0c0e] hover:border-zinc-700/80 transition-all duration-300 flex flex-col md:flex-row overflow-hidden shadow-lg group"
+          >
+            {/* Image Container */}
+            <div className="relative shrink-0 w-full md:w-[280px] lg:w-[340px] xl:w-[400px] 2xl:w-[440px] h-[190px] sm:h-[220px] md:h-auto min-h-[190px] md:min-h-[220px] bg-zinc-950 overflow-hidden">
+              <img
+                src={car.image}
+                alt={car.name}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+
+              {/* Rank Ribbon */}
+              <div className="absolute left-3.5 sm:left-4 top-0 z-10">
+                <div
+                  className="flex w-[32px] sm:w-[36px] flex-col items-center py-1.5 sm:py-2 text-black rounded-b-[4px] shadow-md"
+                  style={{ backgroundColor: car.rankColor }}
+                >
+                  <FaTrophy
+                    className="text-[11px] sm:text-[12px]"
+                    style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                  />
+                  <span
+                    className="mt-0.5 text-[13px] sm:text-[15px] font-bold leading-none"
+                    style={{ color: car.rank === 1 ? "#000" : "#fff" }}
+                  >
+                    {car.rank}
+                  </span>
+                </div>
+                <div
+                  className="mx-auto h-0 w-0 border-l-[16px] sm:border-l-[18px] border-r-[16px] sm:border-r-[18px] border-t-[7px] sm:border-t-[8px] border-l-transparent border-r-transparent"
+                  style={{ borderTopColor: car.rankColor }}
+                />
+              </div>
+
+              {/* Bottom Image Tag */}
+              {car.showBadgeOnImage && car.badge && (
+                <div className="absolute bottom-3 left-3.5 sm:left-4 z-10">
+                  <span className="rounded-[4px] bg-black/85 px-2.5 py-1 text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wider text-white border border-zinc-800 backdrop-blur-xs">
+                    {car.badge}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Content Column */}
+            <div className="flex-1 min-w-0 flex flex-col justify-between p-3.5 sm:p-4 md:p-4.5 lg:p-5 bg-black/60">
+              <div className="min-w-0">
+                {/* Header (Title & Subtitle) */}
+                <div>
+                  <h2 className="text-[18px] sm:text-[20px] md:text-[22px] lg:text-[24px] font-bold tracking-tight text-white leading-tight truncate">
+                    {car.name}
+                  </h2>
+                  <p className="mt-0.5 text-[11.5px] sm:text-[12px] text-zinc-400 font-normal line-clamp-1">
+                    {car.detail || car.description}
+                  </p>
+                </div>
+
+                {/* 4 Performance Metrics Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 py-1.5 my-2 w-full border-y border-zinc-850/80">
+                  {/* Power */}
+                  <div className="flex items-center gap-2">
+                    <FaBolt className="text-[#D6A125] text-[17px] sm:text-[19px] shrink-0" />
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[11.5px] sm:text-[12.5px] font-bold text-white leading-none truncate">
+                        {displayPower}
+                      </span>
+                      <span className="text-[8.5px] sm:text-[9px] text-zinc-500 font-medium mt-0.5 leading-none">
+                        Power
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 0-60 MPH / Acceleration */}
+                  <div className="flex items-center gap-2">
+                    <LuTimerReset className="text-zinc-300 text-[17px] sm:text-[19px] shrink-0" />
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[11.5px] sm:text-[12.5px] font-bold text-white leading-none truncate">
+                        {displayAcceleration}
+                      </span>
+                      <span className="text-[8.5px] sm:text-[9px] text-zinc-500 font-medium mt-0.5 leading-none">
+                        0-60 MPH
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Top Speed */}
+                  <div className="flex items-center gap-2">
+                    <MdOutlineSpeed className="text-zinc-300 text-[17px] sm:text-[19px] shrink-0" />
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[11.5px] sm:text-[12.5px] font-bold text-white leading-none truncate">
+                        {displayTopSpeed}
+                      </span>
+                      <span className="text-[8.5px] sm:text-[9px] text-zinc-500 font-medium mt-0.5 leading-none">
+                        Top Speed
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Engine */}
+                  <div className="flex items-center gap-2">
+                    <TbEngine className="text-zinc-300 text-[17px] sm:text-[19px] shrink-0" />
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[11.5px] sm:text-[12.5px] font-bold text-white leading-none truncate">
+                        {displayEngine}
+                      </span>
+                      <span className="text-[8.5px] sm:text-[9px] text-zinc-500 font-medium mt-0.5 leading-none">
+                        Engine
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Meta Information Row */}
+                <div className="flex flex-wrap items-center gap-x-2.5 sm:gap-x-3 gap-y-1 text-[10.5px] sm:text-[11px] text-zinc-400 font-normal">
+                  <span>
+                    Brand : <span className="text-zinc-200 font-semibold">{displayBrand}</span>
+                  </span>
+                  <span className="text-zinc-700">|</span>
+                  <span>
+                    Model : <span className="text-zinc-200 font-semibold">{displayModel}</span>
+                  </span>
+                  <span className="text-zinc-700">|</span>
+                  <span>
+                    Year : <span className="text-zinc-200 font-semibold">{displayYear}</span>
+                  </span>
+                  <span className="text-zinc-700">|</span>
+                  <span>
+                    Production Limit : <span className="text-zinc-200 font-semibold">{displayLimit}</span>
+                  </span>
+                  <span className="text-zinc-700">|</span>
+                  <span>
+                    Origin :{" "}
+                    <span className="inline-flex items-center gap-1.5 text-zinc-200 font-semibold align-middle">
+                      <img
+                        src={countryInfo.flagUrl}
+                        srcSet={`${countryInfo.flagUrl2x} 2x`}
+                        alt={countryInfo.name}
+                        className="w-3.5 h-auto rounded-[2px] object-contain shadow-xs inline-block"
+                      />
+                      <span>{countryInfo.name}</span>
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              {/* View all Links Button */}
+              <div className="relative mt-2">
+                <button
+                  type="button"
+                  onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
+                  className="flex items-center gap-1.5 text-[#D6A125] hover:text-[#f3c250] text-[11.5px] sm:text-[12px] font-bold transition duration-200 w-fit select-none"
+                >
+                  <span>View all Links</span>
+                  <FaArrowRight className="text-[10px]" />
+                </button>
+                {openSnackbarId === car._id && renderLinksSnackbar(car)}
+              </div>
+            </div>
+
+            {/* Vote Panel */}
+            <div className="w-full md:w-[150px] lg:w-[170px] xl:w-[190px] shrink-0 flex flex-col items-center justify-center p-3.5 sm:p-4 md:p-4.5 bg-black/85 border-t md:border-t-0 md:border-l border-zinc-850 gap-2.5 sm:gap-3.5 select-none">
+              <button
+                onClick={(e) => handleVoteClick(e, car)}
+                disabled={isVoting || isLimitReached}
+                title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
+                className={`h-[38px] md:h-[42px] w-full max-w-[260px] md:max-w-none rounded-[10px] border text-[15px] md:text-[16px] font-bold transition duration-200 select-none ${
+                  isVoting || isLimitReached
+                    ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
+                    : "border-[#D6A125] bg-[#D6A125]/10 text-[#D6A125] hover:bg-[#D6A125]/20 cursor-pointer shadow-sm active:scale-95"
+                }`}
+              >
+                {isLimitReached ? "Limit Reached" : "Vote"}
+              </button>
+
+              <div className="text-center flex flex-col items-center justify-center py-0.5">
+                <div className="text-[26px] md:text-[30px] tracking-tight font-extrabold text-white leading-none">
+                  {car.votes || "0"}
+                </div>
+                <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
+                  {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
+                </div>
+              </div>
+
+              <div className="w-full max-w-[260px] md:max-w-none">
+                <div className="w-full bg-[#D6A125] h-[2.5px] rounded-full mb-2 sm:mb-2.5" />
+                <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3 bg-zinc-900/90 border border-zinc-800 rounded">
+                  {car.statusIcon === "trophy" || car.rank === 1 ? (
+                    <FaTrophy className="text-[#D6A125] text-[11px]" />
+                  ) : (
+                    <FaStar className="text-[#D6A125] text-[11px]" />
+                  )}
+                  <span className="text-[11px] font-bold text-[#D6A125]">
+                    {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1143,3 +1099,4 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
 }
 
 export default RankingCard;
+
