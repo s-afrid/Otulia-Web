@@ -399,166 +399,175 @@ router.get("/all/yachts", async (req, res) => {
   }
 });
 
+// Helper to create asset slug with '-' instead of spaces/special chars
+const createAssetSlug = (title, id) => {
+  if (title) {
+    const slug = title
+      .toString()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    if (slug) return slug;
+  }
+  return id || '';
+};
+
+// Helper to fetch and populate asset by ID, Title, or Slug
+const findAndPopulateAsset = async (Model, param) => {
+  if (!param) return null;
+  const decoded = decodeURIComponent(param).trim();
+
+  let asset = null;
+
+  // 1. Try finding by _id if it's a valid ObjectId
+  if (mongoose.Types.ObjectId.isValid(decoded)) {
+    asset = await Model.findByIdAndUpdate(decoded, { $inc: { views: 1 } }, { new: true });
+  }
+
+  // 2. Try exact title match
+  if (!asset) {
+    asset = await Model.findOneAndUpdate(
+      { title: decoded },
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+  }
+
+  // 3. Try case-insensitive exact title match
+  if (!asset) {
+    const escaped = decoded.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    asset = await Model.findOneAndUpdate(
+      { title: { $regex: new RegExp(`^\\s*${escaped}\\s*$`, 'i') } },
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+  }
+
+  // 4. Try slug-based matching (matching tokens separated by hyphens/spaces/punctuation)
+  if (!asset) {
+    const tokens = decoded
+      .split(/[-_\s]+/)
+      .map(t => t.trim())
+      .filter(Boolean)
+      .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+
+    if (tokens.length > 0) {
+      const slugRegexPattern = `^[\\s\\W_]*` + tokens.join(`[\\s\\W_]+`) + `[\\s\\W_]*$`;
+      asset = await Model.findOneAndUpdate(
+        {
+          $or: [
+            { title: { $regex: new RegExp(slugRegexPattern, 'i') } },
+            { propertyName: { $regex: new RegExp(slugRegexPattern, 'i') } },
+            { yachtName: { $regex: new RegExp(slugRegexPattern, 'i') } }
+          ]
+        },
+        { $inc: { views: 1 } },
+        { new: true }
+      );
+    }
+  }
+
+  // 5. Try propertyName / yachtName directly
+  if (!asset) {
+    const escaped = decoded.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    asset = await Model.findOneAndUpdate(
+      {
+        $or: [
+          { propertyName: decoded },
+          { yachtName: decoded },
+          { propertyName: { $regex: new RegExp(`^\\s*${escaped}\\s*$`, 'i') } },
+          { yachtName: { $regex: new RegExp(`^\\s*${escaped}\\s*$`, 'i') } }
+        ]
+      },
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+  }
+
+  // 6. If still not found, search in Listing model
+  if (!asset && Model !== Listing) {
+    asset = await findAndPopulateAsset(Listing, param);
+    if (asset) return asset;
+  }
+
+  if (!asset) return null;
+
+  const assetObj = asset.toObject ? asset.toObject() : asset;
+  if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+    const agentUser = await User.findById(assetObj.agent.id);
+    if (agentUser) {
+      assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+      assetObj.agent.email = agentUser.email || assetObj.agent.email;
+      assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
+      assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+      if (agentUser.company) {
+        assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+        assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+        assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
+      }
+    }
+  }
+
+  return assetObj;
+};
+
 /**
- * FETCH SINGLE CAR ASSET BY ID
+ * FETCH SINGLE CAR ASSET BY ID OR TITLE
  * /api/assets/car/:id
  */
 router.get("/car/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid car asset ID" });
-    }
-
-    const asset = await CarAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
-
-    if (!asset) {
-      return res.status(404).json({ message: "Car asset not found" });
-    }
-
-    const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
-      const agentUser = await User.findById(assetObj.agent.id);
-      if (agentUser) {
-        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
-        assetObj.agent.email = agentUser.email || assetObj.agent.email;
-        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
-        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
-        if (agentUser.company) {
-          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
-          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
-          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
-        }
-      }
-    }
-
+    const assetObj = await findAndPopulateAsset(CarAsset, req.params.id);
+    if (!assetObj) return res.status(404).json({ message: "Car asset not found" });
     res.json(assetObj);
   } catch (error) {
-    console.error("Error fetching car asset by ID:", error);
+    console.error("Error fetching car asset by ID/title:", error);
     res.status(500).json({ message: "Failed to fetch car asset" });
   }
 });
 
 /**
- * FETCH SINGLE ESTATE ASSET BY ID
+ * FETCH SINGLE ESTATE ASSET BY ID OR TITLE
  * /api/assets/estate/:id
  */
 router.get("/estate/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid estate asset ID" });
-    }
-
-    const asset = await EstateAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
-
-    if (!asset) {
-      return res.status(404).json({ message: "Estate asset not found" });
-    }
-
-    const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
-      const agentUser = await User.findById(assetObj.agent.id);
-      if (agentUser) {
-        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
-        assetObj.agent.email = agentUser.email || assetObj.agent.email;
-        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
-        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
-        if (agentUser.company) {
-          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
-          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
-          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
-        }
-      }
-    }
-
+    const assetObj = await findAndPopulateAsset(EstateAsset, req.params.id);
+    if (!assetObj) return res.status(404).json({ message: "Estate asset not found" });
     res.json(assetObj);
   } catch (error) {
-    console.error("Error fetching estate asset by ID:", error);
+    console.error("Error fetching estate asset by ID/title:", error);
     res.status(500).json({ message: "Failed to fetch estate asset" });
   }
 });
 
 /**
- * FETCH SINGLE BIKE ASSET BY ID
+ * FETCH SINGLE BIKE ASSET BY ID OR TITLE
  * /api/assets/bike/:id
  */
 router.get("/bike/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid bike asset ID" });
-    }
-
-    const asset = await BikeAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
-
-    if (!asset) {
-      return res.status(404).json({ message: "Bike asset not found" });
-    }
-
-    const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
-      const agentUser = await User.findById(assetObj.agent.id);
-      if (agentUser) {
-        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
-        assetObj.agent.email = agentUser.email || assetObj.agent.email;
-        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
-        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
-        if (agentUser.company) {
-          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
-          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
-          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
-        }
-      }
-    }
-
+    const assetObj = await findAndPopulateAsset(BikeAsset, req.params.id);
+    if (!assetObj) return res.status(404).json({ message: "Bike asset not found" });
     res.json(assetObj);
   } catch (error) {
-    console.error("Error fetching bike asset by ID:", error);
+    console.error("Error fetching bike asset by ID/title:", error);
     res.status(500).json({ message: "Failed to fetch bike asset" });
   }
 });
 
 /**
- * FETCH SINGLE YACHT ASSET BY ID
+ * FETCH SINGLE YACHT ASSET BY ID OR TITLE
  * /api/assets/yacht/:id
  */
 router.get("/yacht/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid yacht asset ID" });
-    }
-
-    const asset = await YachtAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
-
-    if (!asset) {
-      return res.status(404).json({ message: "Yacht asset not found" });
-    }
-
-    const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
-      const agentUser = await User.findById(assetObj.agent.id);
-      if (agentUser) {
-        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
-        assetObj.agent.email = agentUser.email || assetObj.agent.email;
-        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
-        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
-        if (agentUser.company) {
-          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
-          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
-          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
-        }
-      }
-    }
-
+    const assetObj = await findAndPopulateAsset(YachtAsset, req.params.id);
+    if (!assetObj) return res.status(404).json({ message: "Yacht asset not found" });
     res.json(assetObj);
   } catch (error) {
-    console.error("Error fetching yacht asset by ID:", error);
+    console.error("Error fetching yacht asset by ID/title:", error);
     res.status(500).json({ message: "Failed to fetch yacht asset" });
   }
 });
@@ -571,37 +580,15 @@ router.get("/:type/:id", async (req, res) => {
   try {
     const { type, id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid asset ID" });
-    }
-
     let Model;
+    if (type === "cars" || type === "car") Model = CarAsset;
+    else if (type === "estates" || type === "estate") Model = EstateAsset;
+    else if (type === "bikes" || type === "bike") Model = BikeAsset;
+    else if (type === "yachts" || type === "yacht") Model = YachtAsset;
+    else Model = Listing;
 
-    if (type === "cars") Model = CarAsset;
-    else if (type === "estates") Model = EstateAsset;
-    else if (type === "bikes") Model = BikeAsset;
-    else if (type === "yachts") Model = YachtAsset;
-    else return res.status(400).json({ message: "Invalid asset type" });
-
-    const asset = await Model.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
-
-    if (!asset) return res.status(404).json({ message: "Asset not found" });
-
-    const assetObj = asset.toObject();
-    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
-      const agentUser = await User.findById(assetObj.agent.id);
-      if (agentUser) {
-        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
-        assetObj.agent.email = agentUser.email || assetObj.agent.email;
-        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
-        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
-        if (agentUser.company) {
-          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
-          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
-          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
-        }
-      }
-    }
+    const assetObj = await findAndPopulateAsset(Model, id);
+    if (!assetObj) return res.status(404).json({ message: "Asset not found" });
 
     res.json(assetObj);
   } catch (error) {
@@ -1262,11 +1249,11 @@ router.get("/search/id/:id", async (req, res) => {
       Listing.findOne({ listingReference: cleanId })
     ]);
 
-    if (car) return res.json({ redirect: `/asset/car/${car._id}`, found: true });
-    if (bike) return res.json({ redirect: `/asset/bike/${bike._id}`, found: true });
-    if (yacht) return res.json({ redirect: `/asset/yacht/${yacht._id}`, found: true });
-    if (estate) return res.json({ redirect: `/asset/estate/${estate._id}`, found: true });
-    if (generic) return res.json({ redirect: `/asset/listing/${generic._id}`, found: true });
+    if (car) return res.json({ redirect: `/asset/car/${createAssetSlug(car.title, car._id)}`, found: true });
+    if (bike) return res.json({ redirect: `/asset/bike/${createAssetSlug(bike.title, bike._id)}`, found: true });
+    if (yacht) return res.json({ redirect: `/asset/yacht/${createAssetSlug(yacht.title, yacht._id)}`, found: true });
+    if (estate) return res.json({ redirect: `/asset/estate/${createAssetSlug(estate.title, estate._id)}`, found: true });
+    if (generic) return res.json({ redirect: `/asset/listing/${createAssetSlug(generic.title, generic._id)}`, found: true });
 
     res.json({ found: false, message: "No asset found with this reference ID" });
   } catch (err) {

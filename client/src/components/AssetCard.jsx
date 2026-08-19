@@ -4,6 +4,7 @@ import numberWithCommas from "../modules/numberwithcomma";
 import { useAuth } from "../contexts/AuthContext";
 import { FiHeart, FiMapPin, FiPlay, FiTrash2 } from "react-icons/fi";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
+import { createAssetSlug } from "../utils/slugUtils";
 
 const AssetCard = ({ item }) => {
   const navigate = useNavigate();
@@ -156,7 +157,10 @@ const AssetCard = ({ item }) => {
 
   return (
     <div
-      onClick={() => navigate(`/asset/${category}/${item._id}`)}
+      onClick={() => {
+        const slug = createAssetSlug(item.title, item._id);
+        navigate(`/asset/${category}/${slug}`);
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative bg-white flex flex-col"

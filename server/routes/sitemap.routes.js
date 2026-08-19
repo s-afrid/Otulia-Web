@@ -74,17 +74,30 @@ router.get('/sitemap.xml', async (req, res) => {
 
         // Dynamic Asset Routes
         const [cars, estates, bikes, yachts] = await Promise.all([
-            CarAsset.find({ status: 'Active' }, '_id updatedAt').lean(),
-            EstateAsset.find({ status: 'Active' }, '_id updatedAt').lean(),
-            BikeAsset.find({ status: 'Active' }, '_id updatedAt').lean(),
-            YachtAsset.find({ status: 'Active' }, '_id updatedAt').lean()
+            CarAsset.find({ status: 'Active' }, 'title _id updatedAt').lean(),
+            EstateAsset.find({ status: 'Active' }, 'title _id updatedAt').lean(),
+            BikeAsset.find({ status: 'Active' }, 'title _id updatedAt').lean(),
+            YachtAsset.find({ status: 'Active' }, 'title _id updatedAt').lean()
         ]);
+
+        const createAssetSlug = (title, id) => {
+            if (title) {
+                const slug = title
+                    .toString()
+                    .trim()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/[\s_-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                if (slug) return slug;
+            }
+            return id || '';
+        };
 
         const addAssets = (assets, category) => {
             assets.forEach(asset => {
                 xml += `
     <url>
-        <loc>${BASE_URL}/asset/${category}/${asset._id}</loc>
+        <loc>${BASE_URL}/asset/${category}/${createAssetSlug(asset.title, asset._id)}</loc>
         <lastmod>${(asset.updatedAt || new Date()).toISOString().split('T')[0]}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

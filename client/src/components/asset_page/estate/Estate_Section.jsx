@@ -21,7 +21,7 @@ const Estate_Section = () => {
 
   const infoFetch = async () => {
     if (!id) return;
-    const url = `/api/assets/estate/${id}`;
+    const url = `/api/assets/estate/${encodeURIComponent(id)}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {

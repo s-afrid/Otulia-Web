@@ -21,7 +21,7 @@ const Yacht_Section = () => {
 
   const infoFetch = async () => {
     if (!id) return;
-    const url = `/api/assets/yacht/${id}`;
+    const url = `/api/assets/yacht/${encodeURIComponent(id)}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {

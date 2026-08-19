@@ -25,7 +25,7 @@ const Car_Section = () => {
     // Safety check
     if (!id) return;
 
-    const url = `/api/assets/car/${id}`;
+    const url = `/api/assets/car/${encodeURIComponent(id)}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import SEO from '../../components/SEO';
 import { FiChevronRight } from 'react-icons/fi';
+import { createAssetSlug } from '../../utils/slugUtils';
 
 const ListingTemplate = ({ 
   pageTitle, 
@@ -106,7 +107,7 @@ const ListingTemplate = ({
                         ${listing.price?.toLocaleString()}
                       </span>
                       <a 
-                        href={`/asset/${listing.category}/${listing._id}`}
+                        href={`/asset/${listing.category}/${createAssetSlug(listing.title, listing._id)}`}
                         className="bg-[#D48D2A] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#b8731f] transition-colors"
                       >
                         View Details

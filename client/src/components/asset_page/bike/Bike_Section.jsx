@@ -21,7 +21,7 @@ const Bike_Section = () => {
 
     const infoFetch = async () => {
         if (!id) return;
-        const url = `/api/assets/bike/${id}`;
+        const url = `/api/assets/bike/${encodeURIComponent(id)}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
