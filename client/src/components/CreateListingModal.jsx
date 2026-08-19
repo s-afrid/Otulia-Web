@@ -2,6 +2,25 @@ import React, { useState } from 'react';
 import { FiX, FiUploadCloud, FiCheckCircle, FiChevronDown, FiInfo } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 
+const parseAreaAndUnit = (val, defaultUnit = 'Sqft') => {
+    if (!val) return { value: '', unit: defaultUnit };
+    const str = val.toString().trim();
+    const numMatch = str.match(/[\d,.]+/);
+    const num = numMatch ? numMatch[0] : '';
+    const lower = str.toLowerCase();
+    let unit = defaultUnit;
+    if (lower.includes('acre')) unit = 'Acres';
+    else if (lower.includes('hect') || lower.includes('ha')) unit = 'hectres';
+    else if (lower.includes('sq') || lower.includes('ft')) unit = 'Sqft';
+    return { value: num, unit };
+};
+
+const parseNumber = (val) => {
+    if (!val) return '';
+    const match = val.toString().match(/[\d.]+/);
+    return match ? match[0] : '';
+};
+
 const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     const { token } = useAuth();
     const [loading, setLoading] = useState(false);
@@ -15,6 +34,9 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         if (cat.includes('estate')) return 'Estate';
         return 'Car';
     };
+
+    const initialBua = parseAreaAndUnit(editData?.specification?.builtUpArea || editData?.keySpecifications?.builtUpArea, 'Sqft');
+    const initialLa = parseAreaAndUnit(editData?.specification?.landArea || editData?.keySpecifications?.landArea, 'Sqft');
 
     const [formData, setFormData] = useState({
         title: editData?.title || '',
@@ -89,10 +111,10 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         propertyName: editData?.title || editData?.propertyName || '',
         propertyType: editData?.keySpecifications?.propertyType || editData?.specification?.propertyType || '',
         architectureStyle: editData?.specification?.architectureStyle || '',
-        builtUpArea: editData?.specification?.builtUpArea || '',
-        builtUpAreaUnit: 'Sqft',
-        landArea: editData?.specification?.landArea || '',
-        landAreaUnit: 'Sqft',
+        builtUpArea: initialBua.value,
+        builtUpAreaUnit: initialBua.unit,
+        landArea: initialLa.value,
+        landAreaUnit: initialLa.unit,
         bedrooms: editData?.specification?.bedrooms || '',
         bathrooms: editData?.specification?.bathrooms || '',
         floors: editData?.specification?.floors || '',
@@ -120,8 +142,8 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         // Key Highlights
         highlight_hp: '', highlight_km: '', highlight_cc: '',
         highlight_length: '', highlight_baths: '', highlight_beds: '',
-        highlight_area: '', highlight_kml: '', highlight_fuel: '',
-        highlight_garage: '', highlight_built_area: '', highlight_floors: '',
+        highlight_area: initialLa.value, highlight_kml: '', highlight_fuel: '',
+        highlight_garage: '', highlight_built_area: initialBua.value, highlight_floors: '',
         highlight_engine_hp: '', highlight_speed: '', highlight_engine_type: '',
     });
 
@@ -208,39 +230,53 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 currentCarLocation: spec.carLocation || '',
 
                 brand: editData.brand || spec.brand || '',
-                engineCapacity: spec.engineCapacityCC || spec.engineCapacity || '',
+                engineCapacity: parseNumber(spec.engineCapacityCC || spec.engineCapacity || keySpec.engineCapacity),
                 maxPower: spec.maxPower || '',
                 maxTorque: spec.maxTorque || '',
                 abs: spec.abs || '',
                 tractionControl: spec.tractionControl || '',
                 color: spec.color || '',
-                ownershipCount: spec.ownershipCount || '1',
+                ownershipCount: parseNumber(spec.ownershipCount || '1'),
 
                 yachtName: editData.title || '',
                 builder: editData.builder || spec.builder || spec.brandBuilder || '',
-                yachtLength: spec.length || '',
-                yachtBeam: spec.beam || '',
-                yachtDraft: spec.draft || '',
-                yachtCruisingSpeed: spec.cruisingSpeed || '',
-                yachtTopSpeed: spec.topSpeed || '',
+                yachtLength: parseNumber(spec.length || keySpec.length),
+                yachtBeam: parseNumber(spec.beam),
+                yachtDraft: parseNumber(spec.draft),
+                yachtCruisingSpeed: parseNumber(spec.cruisingSpeed),
+                yachtTopSpeed: parseNumber(spec.topSpeed || keySpec.topSpeed),
                 yachtUsageHours: spec.usageHours || '',
                 yachtFuelConsumption: spec.fuelConsumption || '',
-                yachtGuestCapacity: spec.guestCapacity || '',
-                yachtCrewCapacity: spec.crewCapacity || '',
+                yachtGuestCapacity: parseNumber(spec.guestCapacity),
+                yachtCrewCapacity: parseNumber(spec.crewCapacity),
                 yachtEngineType: spec.engineType || '',
                 yachtHullMaterial: spec.hullMaterial || '',
                 yachtExteriorColor: spec.exteriorColor || '',
-                yachtNumberOfOwners: spec.numberOfOwners || '',
+                yachtNumberOfOwners: parseNumber(spec.numberOfOwners),
 
                 propertyName: editData.title || editData.propertyName || '',
                 propertyType: keySpec.propertyType || spec.propertyType || '',
                 architectureStyle: spec.architectureStyle || '',
-                builtUpArea: spec.builtUpArea || '',
-                landArea: spec.landArea || '',
-                bedrooms: spec.bedrooms || '',
-                bathrooms: spec.bathrooms || '',
-                floors: spec.floors || '',
-                garageCapacity: spec.garageCapacity || '',
+                builtUpArea: (() => {
+                    const bua = parseAreaAndUnit(spec.builtUpArea || keySpec.builtUpArea, 'Sqft');
+                    return bua.value;
+                })(),
+                builtUpAreaUnit: (() => {
+                    const bua = parseAreaAndUnit(spec.builtUpArea || keySpec.builtUpArea, 'Sqft');
+                    return bua.unit;
+                })(),
+                landArea: (() => {
+                    const la = parseAreaAndUnit(spec.landArea || keySpec.landArea, 'Sqft');
+                    return la.value;
+                })(),
+                landAreaUnit: (() => {
+                    const la = parseAreaAndUnit(spec.landArea || keySpec.landArea, 'Sqft');
+                    return la.unit;
+                })(),
+                bedrooms: parseNumber(spec.bedrooms || keySpec.bedrooms),
+                bathrooms: parseNumber(spec.bathrooms || keySpec.bathrooms),
+                floors: parseNumber(spec.floors || keySpec.floors),
+                garageCapacity: parseNumber(spec.garageCapacity || keySpec.garageCapacity),
                 furnishingStatus: spec.furnishingStatus || '',
                 configuration: spec.configuration || '',
                 interiorColorTheme: spec.interiorColorTheme || '',
@@ -262,85 +298,26 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                 idealBuyer: spec.idealBuyer || '',
 
                 // Fixed Highlights
-                highlight_hp: (() => {
-                    const val = keySpec.power || spec.power || spec.horsepower || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
-                highlight_km: (() => {
-                    const val = keySpec.mileage || spec.mileage || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
-                highlight_cc: (() => {
-                    const val = keySpec.cylinderCapacity || spec.cylinderCapacity || spec.engineCapacity || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
-                highlight_length: (() => {
-                    const val = keySpec.length || spec.length || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
-                highlight_baths: (() => {
-                    const val = keySpec.bathrooms || spec.bathrooms || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
-                highlight_beds: (() => {
-                    const val = keySpec.bedrooms || spec.bedrooms || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
+                highlight_hp: parseNumber(keySpec.power || spec.power || spec.horsepower || ''),
+                highlight_km: parseNumber(keySpec.mileage || spec.mileage || ''),
+                highlight_cc: parseNumber(keySpec.cylinderCapacity || spec.cylinderCapacity || spec.engineCapacity || ''),
+                highlight_length: parseNumber(keySpec.length || spec.length || ''),
+                highlight_baths: parseNumber(keySpec.bathrooms || spec.bathrooms || ''),
+                highlight_beds: parseNumber(keySpec.bedrooms || spec.bedrooms || ''),
                 highlight_area: (() => {
-                    const val = keySpec.landArea || spec.landArea || keySpec.builtUpArea || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
+                    const la = parseAreaAndUnit(spec.landArea || keySpec.landArea || spec.builtUpArea || keySpec.builtUpArea, 'Sqft');
+                    return la.value;
                 })(),
-                highlight_fuel: (() => {
-                    const val = keySpec.fuelCapacity || spec.fuelCapacity || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
-                highlight_garage: (() => {
-                    const val = keySpec.garageCapacity || spec.garageCapacity || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
+                highlight_fuel: parseNumber(keySpec.fuelCapacity || spec.fuelCapacity || ''),
+                highlight_garage: parseNumber(keySpec.garageCapacity || spec.garageCapacity || ''),
                 highlight_built_area: (() => {
-                    const val = keySpec.builtUpArea || spec.builtUpArea || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
+                    const bua = parseAreaAndUnit(spec.builtUpArea || keySpec.builtUpArea, 'Sqft');
+                    return bua.value;
                 })(),
-                highlight_floors: (() => {
-                    const val = keySpec.floors || spec.floors || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
-                highlight_speed: (() => {
-                    const val = keySpec.topSpeed || spec.topSpeed || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
+                highlight_floors: parseNumber(keySpec.floors || spec.floors || ''),
+                highlight_speed: parseNumber(keySpec.topSpeed || spec.topSpeed || ''),
                 highlight_engine_type: keySpec.engineType || spec.engineType || '',
-                highlight_engine_hp: (() => {
-                    const val = keySpec.engineType || spec.engineType || '';
-                    if (!val) return '';
-                    const match = val.toString().match(/[\d.]+/);
-                    return match ? match[0] : val;
-                })(),
+                highlight_engine_hp: parseNumber(keySpec.engineType || spec.engineType || ''),
             });
         } else {
             setFormData({
@@ -497,9 +474,11 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
             } else if (key === 'isPublic' && draftOverride !== null) {
                 data.append(key, !draftOverride);
             } else if (key === 'builtUpArea') {
-                data.append(key, formData.builtUpArea ? `${formData.builtUpArea} ${formData.builtUpAreaUnit}` : '');
+                const num = parseNumber(formData.builtUpArea);
+                data.append(key, num ? `${num} ${formData.builtUpAreaUnit}` : '');
             } else if (key === 'landArea') {
-                data.append(key, formData.landArea ? `${formData.landArea} ${formData.landAreaUnit}` : '');
+                const num = parseNumber(formData.landArea);
+                data.append(key, num ? `${num} ${formData.landAreaUnit}` : '');
             } else if (['builtUpAreaUnit', 'landAreaUnit'].includes(key)) {
                 return; // Skip separate unit keys
             } else {
@@ -512,31 +491,33 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
         if (formData.category === 'Car') {
             constructedHighlights = [
                 formData.highlight_engine_type ? `${formData.highlight_engine_type}` : '',
-                formData.highlight_hp ? `${formData.highlight_hp} hp` : ''
+                formData.highlight_hp ? `${parseNumber(formData.highlight_hp)} hp` : ''
             ].filter(Boolean);
         } else if (formData.category === 'Yacht') {
             constructedHighlights = [
-                formData.highlight_length ? `${formData.highlight_length} M length` : '',
-                formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
-                formData.highlight_fuel ? `${formData.highlight_fuel} L fuel capacity` : '',
-                formData.highlight_engine_hp ? `${formData.highlight_engine_hp} HP total` : '',
-                formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
-                formData.highlight_speed ? `TopSpeed: ${formData.highlight_speed} knots` : ''
+                formData.highlight_length ? `${parseNumber(formData.highlight_length)} M length` : '',
+                formData.highlight_baths ? `Bathrooms: ${parseNumber(formData.highlight_baths)}` : '',
+                formData.highlight_fuel ? `${parseNumber(formData.highlight_fuel)} L fuel capacity` : '',
+                formData.highlight_engine_hp ? `${parseNumber(formData.highlight_engine_hp)} HP total` : '',
+                formData.highlight_beds ? `Bedrooms: ${parseNumber(formData.highlight_beds)}` : '',
+                formData.highlight_speed ? `TopSpeed: ${parseNumber(formData.highlight_speed)} knots` : ''
             ].filter(Boolean);
         } else if (formData.category === 'Estate') {
+            const cleanArea = parseNumber(formData.highlight_area);
+            const cleanBuiltArea = parseNumber(formData.highlight_built_area);
             constructedHighlights = [
-                formData.highlight_area ? `Land Area: ${formData.highlight_area} ${formData.landAreaUnit}` : '',
-                formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
-                formData.highlight_garage ? `Garage: ${formData.highlight_garage} Cars` : '',
-                formData.highlight_built_area ? `Built Area: ${formData.highlight_built_area} ${formData.builtUpAreaUnit}` : '',
-                formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
-                formData.highlight_floors ? `Floors: ${formData.highlight_floors}` : ''
+                cleanArea ? `Land Area: ${cleanArea} ${formData.landAreaUnit}` : '',
+                formData.highlight_baths ? `Bathrooms: ${parseNumber(formData.highlight_baths)}` : '',
+                formData.highlight_garage ? `Garage: ${parseNumber(formData.highlight_garage)} Cars` : '',
+                cleanBuiltArea ? `Built Area: ${cleanBuiltArea} ${formData.builtUpAreaUnit}` : '',
+                formData.highlight_beds ? `Bedrooms: ${parseNumber(formData.highlight_beds)}` : '',
+                formData.highlight_floors ? `Floors: ${parseNumber(formData.highlight_floors)}` : ''
             ].filter(Boolean);
         } else if (formData.category === 'Bike') {
             constructedHighlights = [
-                formData.highlight_cc ? `${formData.highlight_cc} cc` : '',
-                formData.highlight_speed ? `${formData.highlight_speed} km/h` : '',
-                formData.highlight_fuel ? `${formData.highlight_fuel} liters` : ''
+                formData.highlight_cc ? `${parseNumber(formData.highlight_cc)} cc` : '',
+                formData.highlight_speed ? `${parseNumber(formData.highlight_speed)} km/h` : '',
+                formData.highlight_fuel ? `${parseNumber(formData.highlight_fuel)} liters` : ''
             ].filter(Boolean);
         }
 

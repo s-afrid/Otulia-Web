@@ -72,7 +72,7 @@ const AssetCard = ({ item }) => {
       ].filter(Boolean);
     } else if (category === "estate") {
       let area = specs.builtUpArea || specs.landArea;
-      if (area && !area.toString().toLowerCase().includes("sq")) {
+      if (area && !/[a-zA-Z]/.test(area.toString())) {
         area = `${area} Sqft`;
       }
       specs_list = [

@@ -201,12 +201,28 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 }
             }
 
+            const parseAreaAndUnit = (val, defaultUnit = 'Sqft') => {
+                if (!val) return { value: '', unit: defaultUnit };
+                const str = val.toString().trim();
+                const numMatch = str.match(/[\d,.]+/);
+                const num = numMatch ? numMatch[0] : '';
+                const lower = str.toLowerCase();
+                let unit = defaultUnit;
+                if (lower.includes('acre')) unit = 'Acres';
+                else if (lower.includes('hect') || lower.includes('ha')) unit = 'hectres';
+                else if (lower.includes('sq') || lower.includes('ft')) unit = 'Sqft';
+                return { value: num, unit };
+            };
+
             // Extract existing highlights if available to populate fields (best effort)
             const parseNumber = (val) => {
                 if (!val) return '';
                 const match = val.toString().match(/[\d.]+/);
-                return match ? match[0] : val;
+                return match ? match[0] : '';
             };
+
+            const buaParsed = parseAreaAndUnit(spec.builtUpArea || keySpec.builtUpArea, 'Sqft');
+            const laParsed = parseAreaAndUnit(spec.landArea || keySpec.landArea, 'Sqft');
 
             setFormData({
                 ...initialFormState,
@@ -227,10 +243,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 highlight_length: parseNumber(keySpec.length || spec.length || ''),
                 highlight_baths: parseNumber(keySpec.bathrooms || spec.bathrooms || ''),
                 highlight_beds: parseNumber(keySpec.bedrooms || spec.bedrooms || ''),
-                highlight_area: parseNumber(keySpec.landArea || spec.landArea || keySpec.builtUpArea || ''),
+                highlight_area: laParsed.value || parseNumber(keySpec.landArea || spec.landArea || keySpec.builtUpArea || ''),
                 highlight_fuel: parseNumber(keySpec.fuelCapacity || spec.fuelCapacity || ''),
                 highlight_garage: parseNumber(keySpec.garageCapacity || spec.garageCapacity || ''),
-                highlight_built_area: parseNumber(keySpec.builtUpArea || spec.builtUpArea || ''),
+                highlight_built_area: buaParsed.value || parseNumber(keySpec.builtUpArea || spec.builtUpArea || ''),
                 highlight_floors: parseNumber(keySpec.floors || spec.floors || ''),
                 highlight_speed: parseNumber(keySpec.topSpeed || spec.topSpeed || ''),
                 highlight_engine_type: keySpec.engineType || spec.engineType || '',
@@ -264,7 +280,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 matchingNumbers: spec.matchingNumbers || '',
                 accidentFree: spec.accidentFree || '',
                 countryOfFirstDelivery: spec.countryOfFirstDelivery || '',
-                ownershipCount: spec.numberOfOwners || spec.ownershipCount || '1',
+                ownershipCount: parseNumber(spec.numberOfOwners || spec.ownershipCount || '1'),
                 latitude: spec.latitude || '',
                 longitude: spec.longitude || '',
                 soulOfTheCar: spec.soulOfTheCar || '',
@@ -273,26 +289,28 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 // Yacht Specific
                 yachtName: editData.yachtName || (type === 'Yacht' ? editData.title : '') || '',
                 builder: editData.builder || spec.brandBuilder || spec.builder || '',
-                length: spec.length || '',
-                beam: spec.beam || '',
-                draft: spec.draft || '',
-                cruisingSpeed: spec.cruisingSpeed || '',
+                length: parseNumber(spec.length || keySpec.length),
+                beam: parseNumber(spec.beam),
+                draft: parseNumber(spec.draft),
+                cruisingSpeed: parseNumber(spec.cruisingSpeed),
                 usageHours: spec.usageHours || '',
                 fuelConsumption: spec.fuelConsumption || '',
-                guestCapacity: spec.guestCapacity || '',
-                crewCapacity: spec.crewCapacity || '',
+                guestCapacity: parseNumber(spec.guestCapacity),
+                crewCapacity: parseNumber(spec.crewCapacity),
                 engineType: spec.engineType || '',
                 hullMaterial: spec.hullMaterial || '',
 
                 // Estate Specific
                 propertyName: editData.propertyName || (type === 'Estate' ? editData.title : '') || '',
                 propertyType: spec.propertyType || keySpec.propertyType || '',
-                builtUpArea: spec.builtUpArea || '',
-                landArea: spec.landArea || '',
-                bedrooms: spec.bedrooms || '',
-                bathrooms: spec.bathrooms || '',
-                floors: spec.floors || '',
-                garageCapacity: spec.garageCapacity || '',
+                builtUpArea: buaParsed.value,
+                builtUpAreaUnit: buaParsed.unit,
+                landArea: laParsed.value,
+                landAreaUnit: laParsed.unit,
+                bedrooms: parseNumber(spec.bedrooms || keySpec.bedrooms),
+                bathrooms: parseNumber(spec.bathrooms || keySpec.bathrooms),
+                floors: parseNumber(spec.floors || keySpec.floors),
+                garageCapacity: parseNumber(spec.garageCapacity || keySpec.garageCapacity),
                 furnishingStatus: spec.furnishingStatus || '',
                 architectureStyle: spec.architectureStyle || '',
                 configuration: spec.configuration || '',
@@ -309,7 +327,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 viewTypes: editData.viewTypes || [],
 
                 // Bike Specific
-                engineCapacity: spec.engineCapacityCC || spec.engineCapacity || '',
+                engineCapacity: parseNumber(spec.engineCapacityCC || spec.engineCapacity || keySpec.engineCapacity),
                 maxPower: spec.maxPower || '',
                 maxTorque: spec.maxTorque || '',
                 abs: spec.abs || '',
@@ -479,33 +497,35 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         let constructedHighlights = [];
         if (assetType === 'Car') {
             constructedHighlights = [
-                formData.highlight_speed ? `${formData.highlight_speed} mph` : '',
+                formData.highlight_speed ? `${parseNumber(formData.highlight_speed)} mph` : '',
                 formData.highlight_engine_type ? `${formData.highlight_engine_type}` : '',
-                formData.highlight_hp ? `${formData.highlight_hp} hp` : ''
+                formData.highlight_hp ? `${parseNumber(formData.highlight_hp)} hp` : ''
             ].filter(Boolean);
         } else if (assetType === 'Yacht') {
             constructedHighlights = [
-                formData.highlight_length ? `${formData.highlight_length} M length` : '',
-                formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
-                formData.highlight_fuel ? `${formData.highlight_fuel} L fuel capacity` : '',
-                formData.highlight_engine_hp ? `${formData.highlight_engine_hp} HP total` : '',
-                formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
-                formData.highlight_speed ? `TopSpeed: ${formData.highlight_speed} knots` : ''
+                formData.highlight_length ? `${parseNumber(formData.highlight_length)} M length` : '',
+                formData.highlight_baths ? `Bathrooms: ${parseNumber(formData.highlight_baths)}` : '',
+                formData.highlight_fuel ? `${parseNumber(formData.highlight_fuel)} L fuel capacity` : '',
+                formData.highlight_engine_hp ? `${parseNumber(formData.highlight_engine_hp)} HP total` : '',
+                formData.highlight_beds ? `Bedrooms: ${parseNumber(formData.highlight_beds)}` : '',
+                formData.highlight_speed ? `TopSpeed: ${parseNumber(formData.highlight_speed)} knots` : ''
             ].filter(Boolean);
         } else if (assetType === 'Estate') {
+            const cleanArea = parseNumber(formData.highlight_area);
+            const cleanBuiltArea = parseNumber(formData.highlight_built_area);
             constructedHighlights = [
-                formData.highlight_area ? `Land Area: ${formData.highlight_area} ${formData.landAreaUnit}` : '',
-                formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
-                formData.highlight_garage ? `Garage: ${formData.highlight_garage} Cars` : '',
-                formData.highlight_built_area ? `Built Area: ${formData.highlight_built_area} ${formData.builtUpAreaUnit}` : '',
-                formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
-                formData.highlight_floors ? `Floors: ${formData.highlight_floors}` : ''
+                cleanArea ? `Land Area: ${cleanArea} ${formData.landAreaUnit}` : '',
+                formData.highlight_baths ? `Bathrooms: ${parseNumber(formData.highlight_baths)}` : '',
+                formData.highlight_garage ? `Garage: ${parseNumber(formData.highlight_garage)} Cars` : '',
+                cleanBuiltArea ? `Built Area: ${cleanBuiltArea} ${formData.builtUpAreaUnit}` : '',
+                formData.highlight_beds ? `Bedrooms: ${parseNumber(formData.highlight_beds)}` : '',
+                formData.highlight_floors ? `Floors: ${parseNumber(formData.highlight_floors)}` : ''
             ].filter(Boolean);
         } else if (assetType === 'Bike') {
             constructedHighlights = [
-                formData.highlight_cc ? `${formData.highlight_cc} cc` : '',
-                formData.highlight_speed ? `${formData.highlight_speed} km/h` : '',
-                formData.highlight_fuel ? `${formData.highlight_fuel} liters` : ''
+                formData.highlight_cc ? `${parseNumber(formData.highlight_cc)} cc` : '',
+                formData.highlight_speed ? `${parseNumber(formData.highlight_speed)} km/h` : '',
+                formData.highlight_fuel ? `${parseNumber(formData.highlight_fuel)} liters` : ''
             ].filter(Boolean);
         }
 
@@ -516,9 +536,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             if (key === 'isPublic' && draftOverride !== null) {
                 data.append(key, !draftOverride);
             } else if (key === 'builtUpArea') {
-                data.append(key, formData.builtUpArea ? `${formData.builtUpArea} ${formData.builtUpAreaUnit}` : '');
+                const num = parseNumber(formData.builtUpArea);
+                data.append(key, num ? `${num} ${formData.builtUpAreaUnit}` : '');
             } else if (key === 'landArea') {
-                data.append(key, formData.landArea ? `${formData.landArea} ${formData.landAreaUnit}` : '');
+                const num = parseNumber(formData.landArea);
+                data.append(key, num ? `${num} ${formData.landAreaUnit}` : '');
             } else if (['builtUpAreaUnit', 'landAreaUnit'].includes(key)) {
                 return; // Skip separate unit keys
             } else {

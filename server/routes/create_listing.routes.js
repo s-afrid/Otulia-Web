@@ -74,6 +74,52 @@ const generateUniqueListingReference = async (Model) => {
     return reference;
 };
 
+// Robust formatting helpers to prevent duplicated or malformed units
+const cleanEstateArea = (val, defaultUnit = 'Sqft') => {
+    if (!val) return val;
+    const str = val.toString().trim();
+    const numMatch = str.match(/[\d,.]+/);
+    if (!numMatch) return str;
+    const num = numMatch[0];
+    const lower = str.toLowerCase();
+    let unit = defaultUnit;
+    if (lower.includes('acre')) unit = 'Acres';
+    else if (lower.includes('hect') || lower.includes('ha')) unit = 'hectres';
+    else if (lower.includes('sq') || lower.includes('ft')) unit = 'Sqft';
+    return `${num} ${unit}`;
+};
+
+const addUnit = (val, unit) => {
+    if (!val) return val;
+    const strVal = val.toString().trim();
+    const numMatch = strVal.match(/^([\d,.]+)/);
+    if (numMatch) {
+        const num = numMatch[1];
+        if (strVal.toLowerCase().includes(unit.toLowerCase())) {
+            return `${num} ${unit}`;
+        }
+    }
+    if (strVal.toLowerCase().includes(unit.toLowerCase())) return strVal;
+    return `${strVal} ${unit}`;
+};
+
+const cleanHighlights = (highlights) => {
+    if (!Array.isArray(highlights)) return highlights;
+    return highlights.map(h => {
+        if (typeof h !== 'string') return h;
+        return h
+            .replace(/(Sqft\s*)+Sqft/gi, 'Sqft')
+            .replace(/(Acres\s*)+Acres/gi, 'Acres')
+            .replace(/Acres\s+Sqft/gi, 'Acres')
+            .replace(/(hectres\s*)+hectres/gi, 'hectres')
+            .replace(/hectres\s+Sqft/gi, 'hectres')
+            .replace(/(hp\s*)+hp/gi, 'hp')
+            .replace(/(knots\s*)+knots/gi, 'knots')
+            .replace(/(km\/h\s*)+km\/h/gi, 'km/h')
+            .replace(/(mph\s*)+mph/gi, 'mph');
+    });
+};
+
 // Setup storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -389,14 +435,6 @@ router.post('/create', authMiddleware, upload.fields([
             title: title
         };
 
-        // --- Formatting Helpers ---
-        const addUnit = (val, unit) => {
-            if (!val) return val;
-            const strVal = val.toString().toLowerCase();
-            if (strVal.includes(unit.toLowerCase())) return val;
-            return `${val} ${unit}`;
-        };
-
         if (category === 'Car') {
             updateData.brand = req.body.make || req.body.brand;
 
@@ -556,21 +594,14 @@ router.post('/create', authMiddleware, upload.fields([
             };
         } else if (category === 'Estate') {
             updateData.propertyName = req.body.propertyName;
-            updateData.highlights = req.body.highlights ? JSON.parse(req.body.highlights) : [];
+            updateData.highlights = req.body.highlights ? cleanHighlights(JSON.parse(req.body.highlights)) : [];
             updateData.videoUrl = req.body.videoUrl;
             updateData.amenities = req.body.amenities ? JSON.parse(req.body.amenities) : [];
             updateData.smartHomeSystems = req.body.smartHomeSystems ? JSON.parse(req.body.smartHomeSystems) : [];
             updateData.viewTypes = req.body.viewTypes ? JSON.parse(req.body.viewTypes) : [];
             
-            // Check if units are already provided in the string (Sqft, Acres, hectres)
-            const hasUnit = (val) => {
-                if (!val) return false;
-                const v = val.toString().toLowerCase();
-                return v.includes('sqft') || v.includes('acres') || v.includes('hectres') || v.includes('sq ft');
-            };
-
-            const bua = hasUnit(req.body.builtUpArea) ? req.body.builtUpArea : addUnit(req.body.builtUpArea, 'sq ft');
-            const la = hasUnit(req.body.landArea) ? req.body.landArea : addUnit(req.body.landArea, 'sq ft');
+            const bua = cleanEstateArea(req.body.builtUpArea, 'Sqft');
+            const la = cleanEstateArea(req.body.landArea, 'Sqft');
 
             updateData.keySpecifications = {
                 bedrooms: req.body.bedrooms,
@@ -791,19 +822,11 @@ router.put('/:id', authMiddleware, upload.fields([
             listing.markModified('priceHistoryOptions');
         }
 
-        // --- Formatting Helper ---
-        const addUnit = (val, unit) => {
-            if (!val) return val;
-            const strVal = val.toString().toLowerCase();
-            if (strVal.includes(unit.toLowerCase())) return val;
-            return `${val} ${unit}`;
-        };
-
         if (req.body.highlights) {
             try {
-                listing.highlights = JSON.parse(req.body.highlights);
+                listing.highlights = cleanHighlights(JSON.parse(req.body.highlights));
             } catch (e) {
-                if (Array.isArray(req.body.highlights)) listing.highlights = req.body.highlights;
+                if (Array.isArray(req.body.highlights)) listing.highlights = cleanHighlights(req.body.highlights);
             }
         }
 
@@ -1025,22 +1048,15 @@ router.put('/:id', authMiddleware, upload.fields([
             const spec = listing.specification || {};
             const keySpec = listing.keySpecifications || {};
 
-            // Check if units are already provided in the string (Sqft, Acres, hectres)
-            const hasUnit = (val) => {
-                if (!val) return false;
-                const v = val.toString().toLowerCase();
-                return v.includes('sqft') || v.includes('acres') || v.includes('hectres') || v.includes('sq ft');
-            };
-
             if (req.body.year) spec.yearOfConstruction = req.body.year;
             if (req.body.propertyType) { spec.propertyType = req.body.propertyType; keySpec.propertyType = req.body.propertyType; }
             if (req.body.builtUpArea) {
-                const bua = hasUnit(req.body.builtUpArea) ? req.body.builtUpArea : addUnit(req.body.builtUpArea, 'sq ft');
+                const bua = cleanEstateArea(req.body.builtUpArea, 'Sqft');
                 spec.builtUpArea = bua;
                 keySpec.builtUpArea = bua;
             }
             if (req.body.landArea) {
-                const la = hasUnit(req.body.landArea) ? req.body.landArea : addUnit(req.body.landArea, 'sq ft');
+                const la = cleanEstateArea(req.body.landArea, 'Sqft');
                 spec.landArea = la;
                 keySpec.landArea = la;
             }
