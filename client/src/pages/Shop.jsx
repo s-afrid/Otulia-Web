@@ -10,8 +10,10 @@ import bikeFilterOptions from '../json/bike_filter_options.json';
 import yachtFilterOptions from '../json/yacht_filter_options.json';
 import Pagination from '../components/Pagination';
 import SEO from '../components/SEO';
+import { useSnackbar } from '../contexts/SnackbarContext';
 
 const Shop = () => {
+  const { showSnackbar } = useSnackbar();
   const [activeCategory, setActiveCategory] = useState('All');
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,6 +42,13 @@ const Shop = () => {
     }
     return 'Unknown';
   };
+
+  useEffect(() => {
+    if (activeCategory === 'Bikes' || activeCategory === 'Yachts') {
+      showSnackbar("COMING SOON");
+      setActiveCategory('All');
+    }
+  }, [activeCategory]);
 
   useEffect(() => {
     fetchData(page);
@@ -160,7 +169,13 @@ const Shop = () => {
         {categories.map((cat) => (
           <button
             key={cat.name}
-            onClick={() => setActiveCategory(cat.name)}
+            onClick={() => {
+              if (cat.name === 'Bikes' || cat.name === 'Yachts') {
+                showSnackbar("COMING SOON");
+                return;
+              }
+              setActiveCategory(cat.name);
+            }}
             className={`px-8 py-2.5 rounded-full text-[13px] font-medium transition-all duration-300 ${
               activeCategory === cat.name
               ? 'bg-black text-white shadow-xl scale-105'

@@ -9,8 +9,10 @@ import bikeFilterOptions from '../json/bike_filter_options.json';
 import yachtFilterOptions from '../json/yacht_filter_options.json';
 import Pagination from '../components/Pagination';
 import SEO from '../components/SEO';
+import { useSnackbar } from '../contexts/SnackbarContext';
 
 const Rent = () => {
+  const { showSnackbar } = useSnackbar();
   const [activeCategory, setActiveCategory] = useState('All');
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +27,13 @@ const Rent = () => {
     { name: 'Bikes', endpoint: 'bikes' },
     { name: 'Yachts', endpoint: 'yachts' },
   ];
+
+  useEffect(() => {
+    if (activeCategory === 'Bikes' || activeCategory === 'Yachts') {
+      showSnackbar("COMING SOON");
+      setActiveCategory('All');
+    }
+  }, [activeCategory]);
 
   useEffect(() => {
     fetchListings(page);
@@ -147,7 +156,13 @@ const Rent = () => {
         {categories.map((cat) => (
           <button
             key={cat.name}
-            onClick={() => setActiveCategory(cat.name)}
+            onClick={() => {
+              if (cat.name === 'Bikes' || cat.name === 'Yachts') {
+                showSnackbar("COMING SOON");
+                return;
+              }
+              setActiveCategory(cat.name);
+            }}
             className={`px-6 py-2 rounded-full border transition-all whitespace-nowrap font-medium ${activeCategory === cat.name
               ? 'bg-black text-white border-black'
               : 'bg-white text-black border-gray-200 hover:border-black'
