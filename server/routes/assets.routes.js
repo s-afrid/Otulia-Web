@@ -665,7 +665,7 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
  */
 router.get("/combined", async (req, res) => {
   try {
-    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition, brand, model, category, propertyType, bedrooms, bathrooms, amenities, architecture, sort } = req.query;
+    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition, brand, model, category, propertyType, bedrooms, bathrooms, amenities, architecture, sort, excludeCategories } = req.query;
 
     const andClauses = [{ status: 'Active' }];
 
@@ -750,6 +750,10 @@ router.get("/combined", async (req, res) => {
 
     const query = { $and: andClauses };
 
+    const excludeList = (excludeCategories || '').toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
+    const excludeBikes = excludeList.includes('bikes') || excludeList.includes('bike');
+    const excludeYachts = excludeList.includes('yachts') || excludeList.includes('yacht');
+
     let sortOptions = { createdAt: -1 };
     if (sort === 'Low to High') sortOptions = { price: 1 };
     if (sort === 'High to Low') sortOptions = { price: -1 };
@@ -757,25 +761,53 @@ router.get("/combined", async (req, res) => {
     if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
     const fetchResults = async (q) => {
-        const [car, estate, bike, yacht, other] = await Promise.all([
+        const promises = [
             CarAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
             EstateAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
-            BikeAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
-            YachtAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
-            Listing.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
-        ]);
-        return [...car, ...estate, ...bike, ...yacht, ...other];
+        ];
+        if (!excludeBikes && (!category || /bike/i.test(category))) {
+            promises.push(BikeAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)));
+        }
+        if (!excludeYachts && (!category || /yacht/i.test(category))) {
+            promises.push(YachtAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)));
+        }
+        
+        let listingQ = q;
+        if (excludeBikes || excludeYachts) {
+            const ninCats = [];
+            if (excludeBikes) ninCats.push(/bike/i);
+            if (excludeYachts) ninCats.push(/yacht/i);
+            listingQ = { ...q, category: { $nin: ninCats } };
+        }
+        promises.push(Listing.find(listingQ).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)));
+
+        const results = await Promise.all(promises);
+        return results.flat();
     };
 
     const countResults = async (q) => {
-        const [car, estate, bike, yacht, other] = await Promise.all([
+        const promises = [
             CarAsset.countDocuments(q),
             EstateAsset.countDocuments(q),
-            BikeAsset.countDocuments(q),
-            YachtAsset.countDocuments(q),
-            Listing.countDocuments(q),
-        ]);
-        return car + estate + bike + yacht + other;
+        ];
+        if (!excludeBikes && (!category || /bike/i.test(category))) {
+            promises.push(BikeAsset.countDocuments(q));
+        }
+        if (!excludeYachts && (!category || /yacht/i.test(category))) {
+            promises.push(YachtAsset.countDocuments(q));
+        }
+        
+        let listingQ = q;
+        if (excludeBikes || excludeYachts) {
+            const ninCats = [];
+            if (excludeBikes) ninCats.push(/bike/i);
+            if (excludeYachts) ninCats.push(/yacht/i);
+            listingQ = { ...q, category: { $nin: ninCats } };
+        }
+        promises.push(Listing.countDocuments(listingQ));
+
+        const counts = await Promise.all(promises);
+        return counts.reduce((sum, c) => sum + c, 0);
     };
 
     let total = await countResults(query);

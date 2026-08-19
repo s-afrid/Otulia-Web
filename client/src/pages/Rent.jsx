@@ -53,6 +53,9 @@ const Rent = () => {
       params.append('acquisition', 'rent');
       params.append('page', pageNum);
       params.append('limit', 9);
+      if (endpoint === 'combined') {
+        params.append('excludeCategories', 'bikes,yachts');
+      }
       
       // Basic common filters
       if (filters.location) params.append('location', filters.location);
@@ -102,9 +105,16 @@ const Rent = () => {
       if (!response.ok) throw new Error('Network response was not ok');
       const result = await response.json();
       
-      const data = result.data || result;
+      let data = result.data || result;
       const pagination = result.pagination || { totalPages: 1 };
       
+      if (activeCategory === 'All') {
+        data = data.filter(item => {
+          const cat = (item.category || item.itemModel || '').toLowerCase();
+          return !cat.includes('bike') && !cat.includes('yacht');
+        });
+      }
+
       setListings(data);
       setTotalPages(pagination.totalPages);
     } catch (error) {

@@ -101,6 +101,10 @@ const Shop = () => {
         params.append('q', query);
       }
 
+      if (endpoint === 'combined') {
+        params.append('excludeCategories', 'bikes,yachts');
+      }
+
       const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
       if (!response.ok) throw new Error('Failed to fetch');
       const result = await response.json();
@@ -112,6 +116,11 @@ const Shop = () => {
       if (query && activeCategory !== 'All') {
         const targetCategory = categories.find(c => c.name === activeCategory)?.clientName;
         data = data.filter(item => getCategoryFromItem(item) === targetCategory);
+      } else if (activeCategory === 'All') {
+        data = data.filter(item => {
+          const cat = (item.category || item.itemModel || '').toLowerCase();
+          return !cat.includes('bike') && !cat.includes('yacht');
+        });
       }
 
       setListings(data);
