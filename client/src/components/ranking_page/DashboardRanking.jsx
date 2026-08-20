@@ -23,23 +23,37 @@ function Sidebar({ categories = [], activeSlug }) {
   const catParam = (category || "cars").toLowerCase();
   const isEstate = catParam.includes("estate") || catParam.includes("real");
   const isCreator = catParam.includes("creator");
+  const isYacht = catParam.includes("yacht");
+  const isBike = catParam.includes("bike");
 
   const promptText = isEstate
     ? "Know an extraordinary luxury estate that deserves to be on the list?"
     : isCreator
     ? "Know an exceptional content creator who deserves to be on the list?"
+    : isYacht
+    ? "Know an extraordinary luxury yacht that deserves to be on the list?"
+    : isBike
+    ? "Know an exceptional superbike that deserves to be on the list?"
     : "Know an extraordinary hypercar that deserves to be on the list?";
 
   const modalTitle = isEstate
     ? "Nominate a Luxury Estate"
     : isCreator
     ? "Nominate a Content Creator"
+    : isYacht
+    ? "Nominate a Luxury Yacht"
+    : isBike
+    ? "Nominate a Superbike"
     : "Nominate a Hypercar";
 
   const placeholderText = isEstate
     ? "e.g. Bel Air Luxury Compound, Dubai Penthouse"
     : isCreator
     ? "e.g. Marques Brownlee, Supercar Blondie"
+    : isYacht
+    ? "e.g. Lürssen Ahpo, Benetti Oasis"
+    : isBike
+    ? "e.g. Ducati Superleggera V4, Kawasaki Ninja H2R"
     : "e.g. Bugatti Tourbillon, McLaren W1";
 
   const navItems = [

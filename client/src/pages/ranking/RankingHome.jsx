@@ -28,6 +28,35 @@ function RankingHome() {
 
   const currentCategoryType = (category || "cars").toLowerCase();
 
+  const getCategoryDisplayName = (catParam, allCategories = []) => {
+    if (!catParam) return "Automotive";
+    const p = catParam.toLowerCase().replace(/[-_]/g, " ").trim();
+
+    // Check if any active category in the list matches
+    const matched = allCategories.find((c) => {
+      if (!c || !c.type) return false;
+      const t = c.type.toLowerCase().replace(/\s+/g, "").replace(/s$/, "");
+      const paramClean = p.replace(/\s+/g, "").replace(/s$/, "");
+      return t === paramClean;
+    });
+
+    if (matched && matched.type) {
+      if (matched.type.toLowerCase() === "cars") return "Automotive";
+      return matched.type;
+    }
+
+    if (p === "cars" || p === "car" || p === "automotive") return "Automotive";
+    if (p.includes("real") || p.includes("estate")) return "Real Estate";
+    if (p.includes("creator") || p.includes("influencer")) return "Content Creator";
+    if (p.includes("yacht")) return "Yachts";
+    if (p.includes("bike")) return "Bikes";
+
+    return p
+      .split(/\s+/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   // Fetch all active categories
   useEffect(() => {
     const fetchCategories = async () => {
@@ -53,6 +82,20 @@ function RankingHome() {
     };
     fetchCategories();
   }, [slug]);
+
+  // Dynamic document.title update for ranking pages
+  useEffect(() => {
+    if (activeCategory && activeCategory.title) {
+      document.title = `${activeCategory.title} | Otulia Rankings`;
+    } else {
+      const catDisplayName = getCategoryDisplayName(category, categories);
+      document.title = `${catDisplayName} Rankings | Otulia`;
+    }
+
+    return () => {
+      document.title = "Otulia - Buy & Sell Luxury Assets Worldwide";
+    };
+  }, [activeCategory, category, categories]);
 
   const isTypeMatching = (type, param) => {
     if (!type || !param) return false;
@@ -114,11 +157,7 @@ function RankingHome() {
       console.warn("DB Category fetch failed, falling back to static mockup data:", err.message);
       const staticData = getStaticFallback(targetSlug);
       if (staticData) {
-        const catType = (currentCategoryType.includes("estate") || currentCategoryType.includes("real"))
-          ? "Real Estate"
-          : currentCategoryType.includes("creator")
-          ? "Content Creator"
-          : "Cars";
+        const catType = getCategoryDisplayName(category, categories);
 
         setActiveCategory({
           _id: targetSlug,
@@ -298,8 +337,9 @@ function RankingHome() {
   // Map database details to Sidebar, Header, and Cards shape
   const getMappedHeaderData = () => {
     if (!activeCategory) return null;
+    const catDisplayName = activeCategory.type || getCategoryDisplayName(category, categories);
     return {
-      breadcrumbs: ["Home", "Rankings", activeCategory.type || (currentCategoryType.includes("estate") ? "Real Estate" : currentCategoryType.includes("creator") ? "Content Creators" : "Cars"), activeCategory.title],
+      breadcrumbs: ["Home", "Rankings", catDisplayName, activeCategory.title],
       titleMain: activeCategory.title,
       titleHighlight: "",
       description: activeCategory.detailedDescription || activeCategory.shortDescription || "",
@@ -553,15 +593,11 @@ function RankingHome() {
             <div className="pt-2 sm:pt-4">
               <div className="mb-8 sm:mb-10">
                 <h1 className="text-[32px] sm:text-[42px] md:text-[52px] font-bold leading-[1.1] tracking-[-0.03em] text-white">
-                  {currentCategoryType.includes("realestate")
-                    ? "Real Estate"
-                    : currentCategoryType.includes("contentcreators")
-                    ? "Content Creator"
-                    : "Automotive"}{" "}
+                  {getCategoryDisplayName(category, categories)}{" "}
                   <span className="text-[#D6A125]">Rankings</span>
                 </h1>
                 <p className="mt-3 sm:mt-4 max-w-[650px] text-[15px] sm:text-[17px] leading-[1.6] text-zinc-400">
-                  Explore our curated luxury ranking categories. Discover world-class benchmarks verified by global audience voting.
+                  Explore our curated luxury {getCategoryDisplayName(category, categories).toLowerCase()} ranking categories. Discover world-class benchmarks verified by global audience voting.
                 </p>
               </div>
 
