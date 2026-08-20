@@ -21,9 +21,61 @@ const Categorty = () => {
     }
   }, [location.pathname]);
 
+  const getSeoData = () => {
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const categoryIndex = pathSegments.indexOf('category');
+    const categorySegment = categoryIndex !== -1 && pathSegments[categoryIndex + 1] 
+      ? pathSegments[categoryIndex + 1].toLowerCase() 
+      : '';
+
+    const categoryNames = {
+      cars: 'Cars',
+      estates: 'Estates',
+      yachts: 'Yachts',
+      bikes: 'Bikes',
+    };
+
+    const categoryName = categoryNames[categorySegment] || (categorySegment ? categorySegment.charAt(0).toUpperCase() + categorySegment.slice(1) : '');
+
+    const searchParams = new URLSearchParams(location.search);
+    const brand = searchParams.get('brand');
+    const loc = searchParams.get('location');
+    const type = searchParams.get('type');
+    const acquisition = searchParams.get('acquisition');
+
+    if (!categoryName) {
+      return {
+        title: 'Explore Luxury Collections',
+        description: "Discover the world's most exclusive cars, yachts, estates, and bikes.",
+      };
+    }
+
+    const isRent = acquisition && acquisition.toLowerCase() === 'rent';
+    const actionPrefix = isRent ? 'Rent ' : '';
+
+    let title = `${actionPrefix}Luxury ${categoryName}`;
+
+    if (brand && loc) {
+      title = `${actionPrefix}${brand} in ${loc} - Luxury ${categoryName}`;
+    } else if (brand) {
+      title = `${actionPrefix}${brand} - Luxury ${categoryName}`;
+    } else if (loc) {
+      title = `${actionPrefix}Luxury ${categoryName} in ${loc}`;
+    } else if (type) {
+      title = `${actionPrefix}${type} - Luxury ${categoryName}`;
+    }
+
+    return {
+      title,
+      description: `Discover exclusive luxury ${categoryName.toLowerCase()} on Otulia.`,
+    };
+  };
+
+  const { title: seoTitle, description: seoDescription } = getSeoData();
+
   return (
     <div className='relative w-full overflow-x-hidden'>
-      <SEO title="Explore Luxury Collections" description="Discover the world's most exclusive cars, yachts, estates, and bikes." />
+      <SEO title={seoTitle} description={seoDescription} />
       <Category_Navbar />
 
       <Routes>
