@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { FaBolt, FaHome, FaTree, FaBed, FaBath, FaUsers, FaEye, FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
+import { useParams, useNavigate, useLocation, Link, NavLink } from "react-router-dom";
+import { FaBolt, FaHome, FaTree, FaBed, FaBath, FaUsers, FaEye, FaMapMarkerAlt, FaCalendarAlt, FaTrophy, FaArrowRight, FaTimes } from "react-icons/fa";
 import { LuTimerReset } from "react-icons/lu";
 import { MdOutlineSpeed } from "react-icons/md";
 import { TbEngine } from "react-icons/tb";
@@ -25,6 +25,12 @@ function RankingHome() {
   const [loading, setLoading] = useState(true);
   const [isVoting, setIsVoting] = useState(false);
   const [error, setError] = useState(null);
+
+  // Nominate Modal State (Mobile)
+  const [showNominateModal, setShowNominateModal] = useState(false);
+  const [nomineeName, setNomineeName] = useState("");
+  const [nomineeReason, setNomineeReason] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   const getCategoryDisplayName = (catParam, allCategories = []) => {
     if (!catParam) return "Automotive";
@@ -444,20 +450,112 @@ function RankingHome() {
   const headerData = getMappedHeaderData();
   const cardsData = getMappedCardsData();
 
+  const handleNominateSubmit = (e) => {
+    e.preventDefault();
+    if (!nomineeName.trim()) return;
+    setSubmitted(true);
+    setTimeout(() => {
+      setShowNominateModal(false);
+      setSubmitted(false);
+      setNomineeName("");
+      setNomineeReason("");
+    }, 2000);
+  };
+
+  const catParam = (category || "cars").toLowerCase();
+  const isEstate = catParam.includes("estate") || catParam.includes("real");
+  const isCreator = catParam.includes("creator");
+
   return (
     <RankingScaleWrapper>
       <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
-      <div style={{ marginLeft: "260px" }} className="min-h-screen bg-zinc-950 text-white flex-1 flex flex-col">
+      <div className="min-h-screen bg-zinc-950 text-white flex-1 flex flex-col lg:ml-[260px] transition-all duration-300">
         <Navbar_Ranking hideSearch={true} />
 
-        <div className="flex-1 px-8 pt-[88px] pb-12 bg-zinc-950">
+        <div className="flex-1 px-3.5 sm:px-6 lg:px-8 pt-[74px] sm:pt-[82px] lg:pt-[88px] pb-12 bg-zinc-950">
+          {/* MOBILE CATEGORY PILLS BAR (< 1024px) */}
+          <div className="flex lg:hidden flex-col gap-2.5 pb-4 mb-3 border-b border-zinc-850">
+            {/* Primary Category Selector */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+              <NavLink
+                to="/ranking/cars"
+                className={({ isActive }) =>
+                  `px-3.5 py-1.5 rounded-full text-xs tracking-wider uppercase font-semibold whitespace-nowrap transition ${
+                    isActive
+                      ? "bg-[#D6A125] text-black font-bold shadow-md shadow-[#D6A125]/20"
+                      : "bg-zinc-900 text-zinc-300 border border-zinc-800 hover:text-white"
+                  }`
+                }
+              >
+                Automotive
+              </NavLink>
+              <NavLink
+                to="/ranking/realestate"
+                className={({ isActive }) =>
+                  `px-3.5 py-1.5 rounded-full text-xs tracking-wider uppercase font-semibold whitespace-nowrap transition ${
+                    isActive
+                      ? "bg-[#D6A125] text-black font-bold shadow-md shadow-[#D6A125]/20"
+                      : "bg-zinc-900 text-zinc-300 border border-zinc-800 hover:text-white"
+                  }`
+                }
+              >
+                Real Estate
+              </NavLink>
+              <NavLink
+                to="/ranking/contentcreators"
+                className={({ isActive }) =>
+                  `px-3.5 py-1.5 rounded-full text-xs tracking-wider uppercase font-semibold whitespace-nowrap transition ${
+                    isActive
+                      ? "bg-[#D6A125] text-black font-bold shadow-md shadow-[#D6A125]/20"
+                      : "bg-zinc-900 text-zinc-300 border border-zinc-800 hover:text-white"
+                  }`
+                }
+              >
+                Creators
+              </NavLink>
+            </div>
+
+            {/* Subcategory Scrollable Chips */}
+            {filteredCategories.length > 0 && (
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                <Link
+                  to={`/ranking/${category || "cars"}`}
+                  className={`px-3 py-1 rounded-lg text-[11.5px] font-medium whitespace-nowrap transition ${
+                    !slug
+                      ? "bg-[#D6A125]/20 text-[#D6A125] border border-[#D6A125]/60 font-bold"
+                      : "text-zinc-400 hover:text-white bg-zinc-900/70 border border-zinc-800/80"
+                  }`}
+                >
+                  All Rankings
+                </Link>
+                {filteredCategories.map((cat) => {
+                  const isActive = slug === cat.slug;
+                  const catType = cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : (category || "cars");
+                  return (
+                    <Link
+                      key={cat._id || cat.slug}
+                      to={`/ranking/${catType}/${cat.slug}`}
+                      className={`px-3 py-1 rounded-lg text-[11.5px] font-medium whitespace-nowrap transition ${
+                        isActive
+                          ? "bg-[#D6A125]/20 text-[#D6A125] border border-[#D6A125]/60 font-bold"
+                          : "text-zinc-400 hover:text-white bg-zinc-900/70 border border-zinc-800/80"
+                      }`}
+                    >
+                      {cat.title}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           {loading ? (
-            <div className="flex justify-center py-40">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D6A125]"></div>
+            <div className="flex justify-center py-32 sm:py-40">
+              <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-t-2 border-b-2 border-[#D6A125]"></div>
             </div>
           ) : error ? (
-            <div className="text-center py-40 text-red-500">
+            <div className="text-center py-32 sm:py-40 text-red-500 font-medium">
               {error}
             </div>
           ) : activeCategory ? (
@@ -466,25 +564,25 @@ function RankingHome() {
               {cardsData.length > 0 ? (
                 <RankingCard cars={cardsData} onVote={handleVote} isVoting={isVoting} votesRemaining={votesRemaining} />
               ) : (
-                <div className="text-center py-20 text-zinc-400 font-medium">
+                <div className="text-center py-20 text-zinc-400 font-medium border border-dashed border-zinc-800 rounded-xl">
                   No nominees found in this category.
                 </div>
               )}
             </>
           ) : !slug ? (
-            <div className="pt-4">
-              <div className="mb-10">
-                <h1 className="text-[42px] md:text-[56px] font-bold leading-[1.05] tracking-[-0.03em] text-white">
+            <div className="pt-1 sm:pt-4">
+              <div className="mb-6 sm:mb-10">
+                <h1 className="text-[28px] sm:text-[38px] md:text-[56px] font-bold leading-[1.1] tracking-[-0.03em] text-white">
                   {getCategoryDisplayName(category, categories)}{" "}
                   <span className="text-[#C9920E]">Rankings</span>
                 </h1>
-                <p className="mt-5 max-w-[650px] text-[18px] leading-[1.65] text-[#A1A1AA]">
+                <p className="mt-2.5 sm:mt-4 max-w-[650px] text-[13.5px] sm:text-[16px] md:text-[18px] leading-[1.6] text-[#A1A1AA]">
                   Explore all our curated ranking categories. See what's leading the industry based on verified votes and user popularity.
                 </p>
               </div>
 
               {filteredCategories.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {filteredCategories.map((cat) => {
                     const nomineeCount = cat.nomineeLimit || (cat.assetNominees || []).length;
                     const catType = cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : (category || "cars");
@@ -499,31 +597,31 @@ function RankingHome() {
                       <div 
                         key={cat._id || cat.slug} 
                         onClick={() => navigate(targetPath)}
-                        className="overflow-hidden rounded-[12px] border border-zinc-800 bg-[#161618] flex flex-col shadow-sm hover:shadow-lg hover:border-zinc-700 transition duration-300 cursor-pointer group"
+                        className="overflow-hidden rounded-[14px] border border-zinc-800 bg-[#161618] flex flex-col shadow-sm hover:shadow-lg hover:border-zinc-700 transition duration-300 cursor-pointer group"
                       >
-                        <div className="h-[200px] w-full bg-zinc-950 relative overflow-hidden">
+                        <div className="h-[180px] sm:h-[200px] w-full bg-zinc-950 relative overflow-hidden">
                           <img 
                             src={cat.categoryImage || cat.bannerImage || fallbackImg} 
                             alt={cat.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
-                          <div className="absolute top-3 left-3 bg-black/60 text-white text-[11px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm backdrop-blur-sm">
+                          <div className="absolute top-3 left-3 bg-black/70 text-white text-[10.5px] sm:text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded backdrop-blur-sm border border-white/10">
                             {cat.type}
                           </div>
                         </div>
                         
-                        <div className="p-5 flex-1 flex flex-col">
-                          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#D48D2A] transition duration-200">{cat.title}</h3>
-                          <p className="text-[14px] text-zinc-400 line-clamp-3 mb-6 flex-1">
+                        <div className="p-4 sm:p-5 flex-1 flex flex-col">
+                          <h3 className="text-lg sm:text-xl font-bold text-white mb-1.5 sm:mb-2 group-hover:text-[#D48D2A] transition duration-200">{cat.title}</h3>
+                          <p className="text-[13px] sm:text-[14px] text-zinc-400 line-clamp-3 mb-4 sm:mb-6 flex-1 leading-relaxed">
                             {cat.shortDescription || "No description available."}
                           </p>
                           
-                          <div className="flex items-center justify-between border-t border-zinc-850 pt-4 mt-auto">
-                            <div className="text-[13px] text-zinc-400">
+                          <div className="flex items-center justify-between border-t border-zinc-850 pt-3.5 sm:pt-4 mt-auto">
+                            <div className="text-[12px] sm:text-[13px] text-zinc-400 font-medium">
                               <span className="font-bold text-white">{nomineeCount}</span> Nominees
                             </div>
                             <span 
-                              className="flex items-center gap-1.5 text-[14px] font-semibold text-[#D48D2A] group-hover:text-[#F3B344] transition duration-200"
+                              className="flex items-center gap-1.5 text-[13px] sm:text-[14px] font-semibold text-[#D48D2A] group-hover:text-[#F3B344] transition duration-200"
                             >
                               Explore Rankings &rsaquo;
                             </span>
@@ -540,12 +638,111 @@ function RankingHome() {
               )}
             </div>
           ) : (
-            <div className="text-center py-40 text-zinc-400">
+            <div className="text-center py-32 sm:py-40 text-zinc-400 font-medium">
               No active rankings found.
             </div>
           )}
+
+          {/* MOBILE NOMINATE BANNER (< 1024px) */}
+          <div className="mt-8 sm:mt-12 lg:hidden rounded-2xl border border-zinc-800 bg-[#0F0F12] p-5 text-center shadow-lg relative overflow-hidden">
+            <div className="w-10 h-10 rounded-full bg-[#18181B] border border-zinc-800 flex items-center justify-center mx-auto mb-3 text-[#D6A125]">
+              <FaTrophy className="text-lg text-[#D6A125]" />
+            </div>
+            <h4 className="text-base font-bold text-white mb-1">
+              Know an exceptional nominee?
+            </h4>
+            <p className="text-xs text-zinc-400 mb-4 max-w-md mx-auto">
+              Submit your recommendation to our global luxury ranking editorial board.
+            </p>
+            <button
+              onClick={() => setShowNominateModal(true)}
+              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#B8812D] via-[#A37025] to-[#8C5E1D] text-white font-bold text-xs tracking-wider uppercase transition shadow active:scale-95 flex items-center justify-center gap-2 mx-auto"
+            >
+              <span>Nominate Now</span>
+              <FaArrowRight className="text-[10px]" />
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* MOBILE NOMINATE MODAL */}
+      {showNominateModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#121214] border border-zinc-800 rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-2xl relative">
+            <button
+              onClick={() => setShowNominateModal(false)}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white p-1 transition"
+            >
+              <FaTimes className="text-lg" />
+            </button>
+
+            {submitted ? (
+              <div className="py-8 text-center">
+                <div className="w-12 h-12 rounded-full bg-[#D6A125]/20 border border-[#D6A125] text-[#D6A125] flex items-center justify-center mx-auto mb-4">
+                  <FaTrophy className="text-2xl" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Nomination Submitted!</h3>
+                <p className="text-xs text-zinc-400">
+                  Thank you! Our editorial team will review your submission.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleNominateSubmit} className="space-y-3.5">
+                <div className="flex items-center gap-2">
+                  <FaTrophy className="text-[#D6A125] text-lg" />
+                  <h3 className="text-base font-bold text-white">Nominate a Candidate</h3>
+                </div>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Submit an exceptional nominee to be evaluated by our global luxury ranking board.
+                </p>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    Nominee Name / Model *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Enter candidate name..."
+                    value={nomineeName}
+                    onChange={(e) => setNomineeName(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#D6A125]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                    Why should it be ranked?
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Briefly state why this candidate stands out..."
+                    value={nomineeReason}
+                    onChange={(e) => setNomineeReason(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#D6A125]"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setShowNominateModal(false)}
+                    className="px-4 py-2 rounded-lg border border-zinc-800 text-xs font-semibold text-zinc-300 hover:text-white hover:bg-zinc-900"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#B8812D] to-[#8C5E1D] text-xs font-bold text-white hover:opacity-90"
+                  >
+                    Submit Nomination
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </RankingScaleWrapper>
   );
 }

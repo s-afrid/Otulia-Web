@@ -82,7 +82,7 @@ function Sidebar({ categories = [], activeSlug }) {
 
   return (
     <>
-      <aside className="fixed left-0 top-0 bottom-0 w-[260px] h-full bg-black z-40 flex flex-col border-r border-zinc-900 shadow-2xl select-none font-gilda">
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[260px] h-full bg-black z-40 flex-col border-r border-zinc-900 shadow-2xl select-none font-gilda">
         {/* Header Logo */}
         <div className="h-[88px] flex items-center px-6 border-b border-zinc-900/80 shrink-0">
           <Link to="/">

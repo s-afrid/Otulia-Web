@@ -191,7 +191,7 @@ const Navbar = ({
           </svg>
         </button>
         <div className="pt-20">
-          <NavbarMobile />
+          <NavbarMobile onClose={() => setpanelFlag(false)} />
         </div>
       </div>
     </nav>

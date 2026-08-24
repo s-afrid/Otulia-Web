@@ -2,15 +2,10 @@ import React, { useState, useEffect } from "react";
 
 /**
  * RankingScaleWrapper
- * Dynamically scales the entire Ranking module proportionally based on monitor resolution
- * relative to the 1920x1080 baseline design.
- * 
- * Supports:
- * - 4K/2K displays (3840px, 2560px)
- * - Standard desktop (1920px)
- * - Laptops (1600px, 1536px, 1440px, 1366px, 1280px)
- * - Tablets (1024px, 834px, 820px, 768px)
- * - Mobile screens (< 768px)
+ * - On desktop and laptop screens (>= 1024px), dynamically scales the entire Ranking module
+ *   proportionally based on monitor resolution relative to the 1920x1080 baseline design.
+ * - On mobile and small tablet screens (< 1024px), provides 100% native mobile responsiveness
+ *   with touch-optimized layout across all mobile resolutions (320px to 768px+).
  */
 export default function RankingScaleWrapper({ children }) {
   const [scale, setScale] = useState(1);
@@ -28,11 +23,12 @@ export default function RankingScaleWrapper({ children }) {
 
     const calculateScale = () => {
       const width = window.innerWidth;
-      // Scale proportionally relative to 1920px design baseline
-      if (width > 0) {
+      // Proportional scale on desktop / laptop screens (1024px and up)
+      if (width >= 1024) {
         const s = width / 1920;
         setScale(s);
       } else {
+        // Native 1.0 mobile layout for all mobile/tablet viewports (< 1024px)
         setScale(1);
       }
     };

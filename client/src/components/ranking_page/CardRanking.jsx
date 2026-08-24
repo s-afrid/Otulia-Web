@@ -206,7 +206,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
     const links = getCarLinks(car);
     return (
       <div
-        className="absolute bottom-full mb-2 left-0 z-50 w-72 md:w-80 rounded-xl border border-[#D6A125]/80 bg-zinc-900/95 backdrop-blur-md p-3.5 shadow-2xl text-white animate-in fade-in zoom-in-95 duration-150"
+        className="fixed inset-x-4 bottom-20 sm:absolute sm:bottom-full sm:mb-2 sm:left-0 sm:inset-x-auto z-50 w-auto sm:w-72 md:w-80 rounded-xl border border-[#D6A125]/80 bg-zinc-900/95 backdrop-blur-md p-3.5 shadow-2xl text-white animate-in fade-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-zinc-800 pb-2 mb-2">
@@ -1085,7 +1085,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
 
       {/* FLOATING BOTTOM GOLDEN SNACKBAR / TOAST */}
       {toast.show && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex flex-col overflow-hidden rounded-xl border border-[#D6A125]/80 bg-zinc-950/95 text-white shadow-[0_10px_35px_rgba(214,161,37,0.35)] backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in max-w-[95vw] sm:max-w-xl w-auto min-w-[320px] select-none">
+        <div className="fixed bottom-4 sm:bottom-6 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 z-[9999] flex flex-col overflow-hidden rounded-xl border border-[#D6A125]/80 bg-zinc-950/95 text-white shadow-[0_10px_35px_rgba(214,161,37,0.35)] backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom-5 fade-in max-w-full sm:max-w-xl select-none">
           <div className="flex items-center gap-3.5 px-5 py-3.5">
             <div className="w-9 h-9 rounded-full bg-[#D6A125]/20 border border-[#D6A125]/50 flex items-center justify-center shrink-0">
               <FaTrophy className="text-[#D6A125] text-base animate-pulse" />

@@ -7,7 +7,7 @@ import LoginButton from "../navbar/LoginButton";
 import ProfileDropdown from "../navbar/Profile_dropdown";
 import NavbarMobile from "../Navbar_mobile";
 import { useAuth } from "../../contexts/AuthContext";
-import { FaTrophy } from "react-icons/fa";
+import { FaTrophy, FaTimes } from "react-icons/fa";
 
 const Navbar = ({
   hideSearch = false,
@@ -19,11 +19,8 @@ const Navbar = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [panelFlag, setpanelFlag] = useState(false);
 
-  // 1. Get Loading State
   const { isAuthenticated, loading } = useAuth();
-
   const location = useLocation();
-  const isHeroPage = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,47 +30,45 @@ const Navbar = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setpanelFlag(false);
+  }, [location.pathname]);
+
   const isDarkText = false;
-
-  const sidebarWidth = "260px";
-
-  const navClasses = `
-fixed
-top-0
-right-0
-h-[88px]
-z-50
-bg-zinc-950
-border-b
-border-zinc-800
-flex
-items-center
-justify-between
-px-10
-`;
-
-  const navStyle = {
-    left: "260px",
-    right: 0,
-  };
-
   const logoSrc = "/logos/logo.png";
 
   return (
-    <nav className={navClasses} style={navStyle}>
+    <nav className="fixed top-0 left-0 lg:left-[260px] right-0 h-[64px] sm:h-[72px] lg:h-[88px] z-50 bg-zinc-950/95 backdrop-blur-md border-b border-zinc-850 flex items-center justify-between px-4 sm:px-6 lg:px-10 transition-all duration-300">
       <div className="w-full flex items-center justify-between relative">
-        {/* Left side: Search Bar */}
-        <div className="hidden md:block w-[240px] lg:w-[320px] z-10">
-          <RankingSearch />
+        {/* Left side: Mobile Logo & Desktop Search */}
+        <div className="flex items-center gap-3 z-10">
+          <Link to="/" className="lg:hidden shrink-0 flex items-center">
+            <img
+              src={logoSrc}
+              alt="Otulia Logo"
+              className="w-[105px] sm:w-[125px] h-auto object-contain"
+            />
+          </Link>
+
+          <div className="hidden md:block w-[220px] lg:w-[320px]">
+            <RankingSearch />
+          </div>
         </div>
 
-        {/* 2. DESKTOP MENU - Center Column (Absolute centered) */}
+        {/* Desktop Navigation - Center Column */}
         <ul className="hidden lg:flex items-center justify-center gap-[clamp(16px,3vw,48px)] absolute left-1/2 -translate-x-1/2 w-auto">
           <li>
             <NavLink
               to="/ranking/cars"
               className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${
+                  isActive
+                    ? "text-[#D48D2A] font-bold"
+                    : isDarkText
+                    ? "text-black hover:text-black/70"
+                    : "text-white hover:text-white/70"
+                }`
               }
             >
               CARS
@@ -83,7 +78,13 @@ px-10
             <NavLink
               to="/ranking/realestate"
               className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${
+                  isActive
+                    ? "text-[#D48D2A] font-bold"
+                    : isDarkText
+                    ? "text-black hover:text-black/70"
+                    : "text-white hover:text-white/70"
+                }`
               }
             >
               REAL ESTATE
@@ -93,51 +94,33 @@ px-10
             <NavLink
               to="/ranking/contentcreators"
               className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${
+                  isActive
+                    ? "text-[#D48D2A] font-bold"
+                    : isDarkText
+                    ? "text-black hover:text-black/70"
+                    : "text-white hover:text-white/70"
+                }`
               }
             >
               CONTENT CREATORS
             </NavLink>
           </li>
-          {/* <li>
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
-              }
-            >
-              MAGAZINE
-            </NavLink>
-          </li> */}
-          {/* <li>
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
-              }
-            >
-              ABOUT US
-            </NavLink>
-          </li> */}
         </ul>
 
-        {/* 3. RIGHT ACTIONS - Right Column */}
-        <div className="flex-1 flex items-center justify-end gap-[clamp(8px,1vw,24px)]">
+        {/* Right Actions */}
+        <div className="flex items-center justify-end gap-2.5 sm:gap-4">
           <NavLink
             to="/"
-            className={`hidden lg:block px-[clamp(12px,1.5vw,24px)] py-[clamp(6px,1vh,12px)] rounded border text-[clamp(9px,1.1vh,13px)] tracking-[0.2em] font-medium montserrat transition-all duration-500 whitespace-nowrap backdrop-blur-md shadow-lg active:scale-95 ${
-              isDarkText
-                ? "border-black/10 bg-black/5 text-black hover:bg-black hover:text-white hover:border-black hover:shadow-black/10"
-                : "border-white/20 bg-white/10 text-white hover:bg-white hover:text-black hover:border-white hover:shadow-white/20"
-            }`}
+            className="hidden lg:block px-4 py-2 rounded border border-white/20 bg-white/10 text-white hover:bg-white hover:text-black hover:border-white text-[12px] tracking-[0.18em] font-medium montserrat transition-all duration-300 whitespace-nowrap backdrop-blur-md shadow-md active:scale-95"
           >
             Submit a Nominee
           </NavLink>
 
           {loading ? (
-            <div className="w-8 h-8 bg-gray-200/20 rounded-full animate-pulse"></div>
+            <div className="w-8 h-8 bg-zinc-800 rounded-full animate-pulse" />
           ) : (
-            <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
+            <div className="flex items-center gap-2 sm:gap-3">
               {!isAuthenticated && !hideLogin && (
                 <LoginButton isDark={isDarkText} />
               )}
@@ -152,19 +135,19 @@ px-10
             </div>
           )}
 
-          {/* 4. HAMBURGER (Visible on mobile and tablet) */}
+          {/* Hamburger (Mobile & Tablet) */}
           <button
             aria-label="Open menu"
-            className={`lg:hidden focus:outline-none z-50 transition-colors ${isDarkText ? "text-black" : "text-white"}`}
+            className="lg:hidden text-white hover:text-[#D48D2A] p-1.5 focus:outline-none transition-colors"
             onClick={() => setpanelFlag(true)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={1.5}
+              strokeWidth={1.75}
               stroke="currentColor"
-              className="w-7 h-7 md:w-8 md:h-8"
+              className="w-6 h-6 sm:w-7 sm:h-7"
             >
               <path
                 strokeLinecap="round"
@@ -176,32 +159,103 @@ px-10
         </div>
       </div>
 
-      {/* MOBILE PANEL */}
-      <div
-        className={`fixed top-0 right-0 h-screen w-[80vw] bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-in-out ${panelFlag ? "translate-x-0" : "translate-x-full"}`}
-      >
-        <button
-          aria-label="Close menu"
+      {/* MOBILE DRAWER */}
+      {panelFlag && (
+        <div
+          className="fixed inset-0 bg-black/75 backdrop-blur-xs z-[60] lg:hidden animate-in fade-in duration-200"
           onClick={() => setpanelFlag(false)}
-          className="absolute top-6 right-6 text-[#2C2C2C] focus:outline-none"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-8 h-8"
+        />
+      )}
+
+      <div
+        className={`fixed top-0 right-0 h-screen w-[85vw] max-w-[340px] bg-[#0E0E11] border-l border-zinc-800 text-white shadow-2xl z-[70] transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col ${
+          panelFlag ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        {/* Drawer Header */}
+        <div className="flex items-center justify-between px-5 h-[64px] border-b border-zinc-800 shrink-0">
+          <Link to="/" onClick={() => setpanelFlag(false)}>
+            <img src={logoSrc} alt="Otulia" className="w-[110px] h-auto object-contain" />
+          </Link>
+          <button
+            aria-label="Close menu"
+            onClick={() => setpanelFlag(false)}
+            className="text-zinc-400 hover:text-white p-2 rounded-lg hover:bg-zinc-900 transition"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-        <div className="pt-20">
-          <NavbarMobile />
+            <FaTimes className="text-lg" />
+          </button>
+        </div>
+
+        {/* Mobile Search */}
+        <div className="p-4 border-b border-zinc-800/80">
+          <RankingSearch />
+        </div>
+
+        {/* Drawer Navigation Links */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-1">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 px-3 py-2">
+            Ranking Categories
+          </div>
+          <NavLink
+            to="/ranking/cars"
+            onClick={() => setpanelFlag(false)}
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-xl text-sm font-semibold tracking-wide transition ${
+                isActive
+                  ? "bg-[#D6A125]/15 text-[#D6A125] border border-[#D6A125]/30 font-bold"
+                  : "text-zinc-300 hover:text-white hover:bg-zinc-900"
+              }`
+            }
+          >
+            Automotive Rankings
+          </NavLink>
+          <NavLink
+            to="/ranking/realestate"
+            onClick={() => setpanelFlag(false)}
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-xl text-sm font-semibold tracking-wide transition ${
+                isActive
+                  ? "bg-[#D6A125]/15 text-[#D6A125] border border-[#D6A125]/30 font-bold"
+                  : "text-zinc-300 hover:text-white hover:bg-zinc-900"
+              }`
+            }
+          >
+            Real Estate Rankings
+          </NavLink>
+          <NavLink
+            to="/ranking/contentcreators"
+            onClick={() => setpanelFlag(false)}
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-xl text-sm font-semibold tracking-wide transition ${
+                isActive
+                  ? "bg-[#D6A125]/15 text-[#D6A125] border border-[#D6A125]/30 font-bold"
+                  : "text-zinc-300 hover:text-white hover:bg-zinc-900"
+              }`
+            }
+          >
+            Content Creators Rankings
+          </NavLink>
+        </div>
+
+        {/* Bottom Drawer Actions */}
+        <div className="p-4 border-t border-zinc-850 bg-black/50 space-y-2.5">
+          <Link
+            to="/"
+            onClick={() => setpanelFlag(false)}
+            className="w-full py-2.5 px-4 rounded-xl bg-[#D6A125] hover:bg-[#c4921f] text-black font-bold text-xs tracking-wider uppercase text-center block transition shadow"
+          >
+            Submit a Nominee
+          </Link>
+
+          {!isAuthenticated ? (
+            <div className="pt-1 flex justify-center">
+              <LoginButton isDark={false} />
+            </div>
+          ) : (
+            <div className="pt-1">
+              <ProfileDropdown isDark={false} />
+            </div>
+          )}
         </div>
       </div>
     </nav>
