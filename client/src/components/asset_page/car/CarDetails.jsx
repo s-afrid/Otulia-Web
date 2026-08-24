@@ -636,7 +636,7 @@ Reference ID: #${refId}
               </button>
             </div>
 
-            <div className="mt-2">
+            {/* <div className="mt-2">
               <h4 className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4">
                 QUICK ACTIONS
               </h4>
@@ -684,7 +684,7 @@ Reference ID: #${refId}
                   </div>
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
