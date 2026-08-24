@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaTrophy, FaArrowRight, FaTimes } from "react-icons/fa";
 
@@ -12,13 +12,6 @@ function Sidebar({ categories = [], activeSlug }) {
   const [nomineeName, setNomineeName] = useState("");
   const [nomineeReason, setNomineeReason] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
-  // Listen to open nominate modal event from Navbar or elsewhere
-  useEffect(() => {
-    const handleOpenModal = () => setShowNominateModal(true);
-    window.addEventListener("otulia:open-nominate-modal", handleOpenModal);
-    return () => window.removeEventListener("otulia:open-nominate-modal", handleOpenModal);
-  }, []);
 
   const catParam = (category || "cars").toLowerCase();
   const isEstate = catParam.includes("estate") || catParam.includes("real");
@@ -89,13 +82,12 @@ function Sidebar({ categories = [], activeSlug }) {
 
   return (
     <>
-      {/* Sidebar Aside Panel (Desktop) */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[240px] xl:w-[260px] h-full bg-black z-40 flex-col border-r border-zinc-900 shadow-2xl select-none font-gilda">
+      <aside className="fixed left-0 top-0 bottom-0 w-[260px] h-full bg-black z-40 flex flex-col border-r border-zinc-900 shadow-2xl select-none font-gilda">
         {/* Header Logo */}
-        <div className="h-[76px] sm:h-[84px] md:h-[88px] flex items-center px-6 border-b border-zinc-900/80 shrink-0">
+        <div className="h-[88px] flex items-center px-6 border-b border-zinc-900/80 shrink-0">
           <Link to="/">
             <img
-              className="w-[130px] xl:w-[140px] h-auto object-contain transition-opacity hover:opacity-90"
+              className="w-[140px] h-auto object-contain transition-opacity hover:opacity-90"
               alt="Otulia Logo"
               src={logoSrc}
               title="Otulia"
@@ -104,7 +96,7 @@ function Sidebar({ categories = [], activeSlug }) {
         </div>
 
         {/* Menu Navigation Items */}
-        <nav className="flex-1 px-3 xl:px-4 py-5 overflow-y-auto space-y-2 custom-scrollbar">
+        <nav className="flex-1 px-4 py-6 overflow-y-auto space-y-2.5 custom-scrollbar">
           {navItems.map((item) => {
             const isActive = !slug
               ? item.slug === undefined
@@ -117,12 +109,11 @@ function Sidebar({ categories = [], activeSlug }) {
                 className={`
                   block
                   w-full
-                  px-3.5
+                  px-4
                   py-2.5
                   rounded-lg
                   font-gilda
-                  text-[14px]
-                  xl:text-[15px]
+                  text-[15px]
                   leading-snug
                   transition-all
                   duration-200
@@ -140,18 +131,18 @@ function Sidebar({ categories = [], activeSlug }) {
         </nav>
 
         {/* Bottom CTA Card: Nominate Now */}
-        <div className="p-3.5 xl:p-4 border-t border-zinc-900 bg-black shrink-0 font-sans inter mt-auto">
-          <div className="rounded-xl border border-zinc-850 bg-[#0B0B0D] p-3.5 xl:p-4 text-center flex flex-col items-center shadow-lg relative overflow-hidden group">
+        <div className="p-4 border-t border-zinc-900 bg-black shrink-0 font-sans inter mt-auto">
+          <div className="rounded-xl border border-zinc-850 bg-[#0B0B0D] p-4 text-center flex flex-col items-center shadow-lg relative overflow-hidden group">
             {/* Background Glow Effect */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#D6A125]/5 to-transparent pointer-events-none" />
 
             {/* Trophy Icon */}
-            <div className="w-9 h-9 xl:w-10 xl:h-10 rounded-full bg-[#18181B] border border-zinc-800 flex items-center justify-center mb-2.5 xl:mb-3 text-[#D6A125] shadow-inner group-hover:scale-110 transition duration-300">
-              <FaTrophy className="text-lg xl:text-xl text-[#D6A125]" />
+            <div className="w-10 h-10 rounded-full bg-[#18181B] border border-zinc-800 flex items-center justify-center mb-3 text-[#D6A125] shadow-inner group-hover:scale-110 transition duration-300">
+              <FaTrophy className="text-xl text-[#D6A125]" />
             </div>
 
             {/* Description Text */}
-            <p className="text-[11.5px] xl:text-[12px] text-zinc-300 font-sans inter leading-relaxed mb-3 px-1 font-normal">
+            <p className="text-[12px] text-zinc-300 font-sans inter leading-relaxed mb-3.5 px-1 font-normal">
               {promptText}
             </p>
 
@@ -169,13 +160,13 @@ function Sidebar({ categories = [], activeSlug }) {
 
       {/* NOMINATE MODAL */}
       {showNominateModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-[#121214] border border-zinc-800 rounded-2xl p-6 w-full max-w-md shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-[#121214] border border-zinc-800 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
             <button
               onClick={() => setShowNominateModal(false)}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-white transition w-7 h-7 rounded-lg flex items-center justify-center hover:bg-zinc-800"
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white transition"
             >
-              <FaTimes className="text-base" />
+              <FaTimes className="text-lg" />
             </button>
 
             {submitted ? (
@@ -218,7 +209,7 @@ function Sidebar({ categories = [], activeSlug }) {
                   </label>
                   <textarea
                     rows={3}
-                    placeholder="Briefly state key performance metrics, architecture, or creative achievements..."
+                    placeholder="Briefly state key performance metrics or design achievements..."
                     value={nomineeReason}
                     onChange={(e) => setNomineeReason(e.target.value)}
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#D6A125]"
@@ -250,4 +241,3 @@ function Sidebar({ categories = [], activeSlug }) {
 }
 
 export default Sidebar;
-

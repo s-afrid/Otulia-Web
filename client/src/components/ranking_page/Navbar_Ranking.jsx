@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, NavLink } from "react-router-dom";
 import Cart from "../navbar/Cart";
+import Search from "../navbar/Search";
 import RankingSearch from "./RankingSearch";
 import LoginButton from "../navbar/LoginButton";
 import ProfileDropdown from "../navbar/Profile_dropdown";
 import NavbarMobile from "../Navbar_mobile";
 import { useAuth } from "../../contexts/AuthContext";
+import { FaTrophy } from "react-icons/fa";
 
 const Navbar = ({
   hideSearch = false,
@@ -17,8 +19,11 @@ const Navbar = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [panelFlag, setpanelFlag] = useState(false);
 
+  // 1. Get Loading State
   const { isAuthenticated, loading } = useAuth();
+
   const location = useLocation();
+  const isHeroPage = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,68 +33,47 @@ const Navbar = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleOpenNominate = (e) => {
-    e.preventDefault();
-    window.dispatchEvent(new CustomEvent("otulia:open-nominate-modal"));
-  };
+  const isDarkText = false;
+
+  const sidebarWidth = "260px";
 
   const navClasses = `
-    fixed
-    top-0
-    right-0
-    lg:left-[240px]
-    xl:left-[260px]
-    left-0
-    h-[76px]
-    sm:h-[84px]
-    md:h-[88px]
-    z-50
-    bg-zinc-950/95
-    backdrop-blur-md
-    border-b
-    border-zinc-850
-    flex
-    items-center
-    justify-between
-    px-4
-    sm:px-6
-    md:px-8
-    xl:px-10
-    transition-all
-    duration-200
-  `;
+fixed
+top-0
+right-0
+h-[88px]
+z-50
+bg-zinc-950
+border-b
+border-zinc-800
+flex
+items-center
+justify-between
+px-10
+`;
+
+  const navStyle = {
+    left: "260px",
+    right: 0,
+  };
 
   const logoSrc = "/logos/logo.png";
 
   return (
-    <nav className={navClasses}>
-      <div className="w-full flex items-center justify-between gap-3 sm:gap-4 relative">
-        {/* 1. Left side: Logo on mobile/tablet, Search Bar on desktop */}
-        <div className="flex items-center gap-3 shrink-0">
-          <Link to="/" className="lg:hidden shrink-0 flex items-center">
-            <img
-              className="w-[110px] sm:w-[125px] h-auto object-contain transition-opacity hover:opacity-90"
-              alt="Otulia Logo"
-              src={logoSrc}
-              title="Otulia"
-            />
-          </Link>
-          <div className="hidden md:block w-[180px] lg:w-[220px] xl:w-[280px] 2xl:w-[320px]">
-            <RankingSearch />
-          </div>
+    <nav className={navClasses} style={navStyle}>
+      <div className="w-full flex items-center justify-between relative">
+        {/* Left side: Search Bar */}
+        <div className="hidden md:block w-[240px] lg:w-[320px] z-10">
+          <RankingSearch />
         </div>
 
-        {/* 2. Center Column: Category Links */}
-        <ul className="hidden lg:flex items-center justify-center gap-4 lg:gap-6 xl:gap-8 2xl:gap-10 mx-auto">
+        {/* 2. DESKTOP MENU - Center Column (Absolute centered) */}
+        <ul className="hidden lg:flex items-center justify-center gap-[clamp(16px,3vw,48px)] absolute left-1/2 -translate-x-1/2 w-auto">
           <li>
             <NavLink
               to="/ranking/cars"
               className={({ isActive }) =>
-                `text-[11.5px] xl:text-[13px] tracking-[0.2em] font-medium font-sans uppercase transition-all duration-200 whitespace-nowrap ${
-                  isActive || (!location.pathname.includes("realestate") && !location.pathname.includes("contentcreators") && location.pathname.includes("ranking"))
-                    ? "text-[#D6A125] font-bold"
-                    : "text-zinc-300 hover:text-white"
-                }`
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
               }
             >
               CARS
@@ -99,11 +83,7 @@ const Navbar = ({
             <NavLink
               to="/ranking/realestate"
               className={({ isActive }) =>
-                `text-[11.5px] xl:text-[13px] tracking-[0.2em] font-medium font-sans uppercase transition-all duration-200 whitespace-nowrap ${
-                  isActive
-                    ? "text-[#D6A125] font-bold"
-                    : "text-zinc-300 hover:text-white"
-                }`
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
               }
             >
               REAL ESTATE
@@ -113,50 +93,69 @@ const Navbar = ({
             <NavLink
               to="/ranking/contentcreators"
               className={({ isActive }) =>
-                `text-[11.5px] xl:text-[13px] tracking-[0.2em] font-medium font-sans uppercase transition-all duration-200 whitespace-nowrap ${
-                  isActive
-                    ? "text-[#D6A125] font-bold"
-                    : "text-zinc-300 hover:text-white"
-                }`
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
               }
             >
               CONTENT CREATORS
             </NavLink>
           </li>
+          {/* <li>
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+              }
+            >
+              MAGAZINE
+            </NavLink>
+          </li> */}
+          {/* <li>
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${isActive ? "text-[#D48D2A]" : isDarkText ? "text-black hover:text-black/70" : "text-white hover:text-white/70"}`
+              }
+            >
+              ABOUT US
+            </NavLink>
+          </li> */}
         </ul>
 
-        {/* 3. Right Actions: Submit a Nominee & User Account */}
-        <div className="flex items-center justify-end gap-2.5 sm:gap-3.5 xl:gap-4 shrink-0">
-          <button
-            type="button"
-            onClick={handleOpenNominate}
-            className="hidden sm:inline-flex px-3.5 xl:px-4 py-2 rounded-lg border border-zinc-800 bg-zinc-900/80 hover:bg-[#D6A125]/15 hover:border-[#D6A125]/60 text-[11px] xl:text-[12px] tracking-[0.12em] font-semibold text-zinc-200 hover:text-[#D6A125] uppercase transition-all duration-200 whitespace-nowrap shadow-sm active:scale-95 cursor-pointer"
+        {/* 3. RIGHT ACTIONS - Right Column */}
+        <div className="flex-1 flex items-center justify-end gap-[clamp(8px,1vw,24px)]">
+          <NavLink
+            to="/"
+            className={`hidden lg:block px-[clamp(12px,1.5vw,24px)] py-[clamp(6px,1vh,12px)] rounded border text-[clamp(9px,1.1vh,13px)] tracking-[0.2em] font-medium montserrat transition-all duration-500 whitespace-nowrap backdrop-blur-md shadow-lg active:scale-95 ${
+              isDarkText
+                ? "border-black/10 bg-black/5 text-black hover:bg-black hover:text-white hover:border-black hover:shadow-black/10"
+                : "border-white/20 bg-white/10 text-white hover:bg-white hover:text-black hover:border-white hover:shadow-white/20"
+            }`}
           >
             Submit a Nominee
-          </button>
+          </NavLink>
 
           {loading ? (
-            <div className="w-8 h-8 bg-zinc-800 rounded-full animate-pulse"></div>
+            <div className="w-8 h-8 bg-gray-200/20 rounded-full animate-pulse"></div>
           ) : (
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 md:gap-3 lg:gap-4">
               {!isAuthenticated && !hideLogin && (
-                <LoginButton isDark={false} />
+                <LoginButton isDark={isDarkText} />
               )}
               {isAuthenticated && (
                 <>
                   <div className="hidden lg:block">
-                    <ProfileDropdown isDark={false} />
+                    <ProfileDropdown isDark={isDarkText} />
                   </div>
-                  <Cart isDark={false} />
+                  <Cart isDark={isDarkText} />
                 </>
               )}
             </div>
           )}
 
-          {/* Mobile hamburger button */}
+          {/* 4. HAMBURGER (Visible on mobile and tablet) */}
           <button
             aria-label="Open menu"
-            className="lg:hidden focus:outline-none text-white p-1 hover:text-[#D6A125] transition-colors"
+            className={`lg:hidden focus:outline-none z-50 transition-colors ${isDarkText ? "text-black" : "text-white"}`}
             onClick={() => setpanelFlag(true)}
           >
             <svg
@@ -165,7 +164,7 @@ const Navbar = ({
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6 sm:w-7 sm:h-7"
+              className="w-7 h-7 md:w-8 md:h-8"
             >
               <path
                 strokeLinecap="round"
@@ -179,14 +178,12 @@ const Navbar = ({
 
       {/* MOBILE PANEL */}
       <div
-        className={`fixed top-0 right-0 h-screen w-[80vw] sm:w-[360px] bg-zinc-950 border-l border-zinc-800 shadow-2xl z-[60] transform transition-transform duration-300 ease-in-out ${
-          panelFlag ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-screen w-[80vw] bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-in-out ${panelFlag ? "translate-x-0" : "translate-x-full"}`}
       >
         <button
           aria-label="Close menu"
           onClick={() => setpanelFlag(false)}
-          className="absolute top-6 right-6 text-zinc-400 hover:text-white focus:outline-none p-1"
+          className="absolute top-6 right-6 text-[#2C2C2C] focus:outline-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +191,7 @@ const Navbar = ({
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-7 h-7"
+            className="w-8 h-8"
           >
             <path
               strokeLinecap="round"
@@ -203,7 +200,7 @@ const Navbar = ({
             />
           </svg>
         </button>
-        <div className="pt-20 px-4">
+        <div className="pt-20">
           <NavbarMobile />
         </div>
       </div>
@@ -212,4 +209,3 @@ const Navbar = ({
 };
 
 export default Navbar;
-

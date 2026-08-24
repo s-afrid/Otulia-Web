@@ -22,58 +22,12 @@ const NavbarMobile = () => {
       <div className="flex flex-col gap-3 text-[#2C2C2C]">
         <SearchBar />
 
-        {/* Navigation Links */}
-        <div className="flex flex-col gap-1 py-2 border-t border-gray-200 mt-2">
-          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-1">
-            Rankings
-          </span>
-          <Link
-            to="/ranking/cars"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition text-[#2C2C2C]"
-          >
-            Cars
-          </Link>
-          <Link
-            to="/ranking/realestate"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition text-[#2C2C2C]"
-          >
-            Real Estate
-          </Link>
-          <Link
-            to="/ranking/contentcreators"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition text-[#2C2C2C]"
-          >
-            Content Creators
-          </Link>
-        </div>
-
-        <div className="flex flex-col gap-1 py-2 border-t border-gray-200">
-          <Link
-            to="/rent"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition text-[#2C2C2C]"
-          >
-            Rent
-          </Link>
-          <Link
-            to="/pricing"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition text-[#2C2C2C]"
-          >
-            Plan & Price
-          </Link>
-          <Link
-            to="/sellwithus"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition text-[#2C2C2C]"
-          >
-            Sell With Us
-          </Link>
-        </div>
-
         {loading ? (
           <div className="w-full h-10 bg-gray-100 rounded-md animate-pulse"></div>
         ) : (
           <>
             {isAuthenticated && user ? (
-              <div className="flex flex-col gap-4 mt-2">
+              <div className="flex flex-col gap-4 mt-4">
                 {/* Profile Info */}
                 <Link to="/profile" className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100">
                   <img
@@ -109,7 +63,7 @@ const NavbarMobile = () => {
                 </div>
               </div>
             ) : (
-              <div className="mt-2 border-t border-gray-200 pt-3">
+              <div className="mt-2">
                 <LoginButton isDark={true} />
               </div>
             )}
