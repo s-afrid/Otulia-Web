@@ -152,27 +152,40 @@ const upload = multer({
 });
 
 // Cloudinary Helpers
-const getPublicId = (url) => {
-    if (!url || !url.includes('cloudinary')) return null;
-    const parts = url.split('/');
-    const uploadIndex = parts.indexOf('upload');
-    if (uploadIndex === -1) return null;
-
-    let publicIdWithExtension;
-    // Check if the part after 'upload' is a version (starts with 'v' followed by numbers)
-    if (parts[uploadIndex + 1].startsWith('v') && !isNaN(parts[uploadIndex + 1].substring(1))) {
-        publicIdWithExtension = parts.slice(uploadIndex + 2).join('/');
-    } else {
-        publicIdWithExtension = parts.slice(uploadIndex + 1).join('/');
+const getPublicIdFromUrl = (url) => {
+    if (!url || typeof url !== 'string' || !url.includes('cloudinary')) return null;
+    try {
+        const uploadSplit = url.split('/upload/');
+        if (uploadSplit.length < 2) return null;
+        
+        const afterUpload = uploadSplit[1];
+        const parts = afterUpload.split('/');
+        
+        const relevantParts = parts.filter(part => {
+            if (/^v\d+$/.test(part)) return false; // skip version string e.g. v1721812345
+            if (part.includes(',')) return false;  // skip transformation segment e.g. c_fill,w_300
+            if (/^(c|w|h|q|f|e|b|r|a|g|fl|pg|dn|so|eo|o|x|y|bo|co|l|u|t)_[a-zA-Z0-9_-]+/.test(part)) return false;
+            return true;
+        });
+        
+        let fullPublicId = relevantParts.join('/');
+        const dotIndex = fullPublicId.lastIndexOf('.');
+        if (dotIndex !== -1) {
+            fullPublicId = fullPublicId.substring(0, dotIndex);
+        }
+        return fullPublicId || null;
+    } catch (err) {
+        console.error("Error parsing Cloudinary URL in getPublicIdFromUrl:", err);
+        return null;
     }
-    return publicIdWithExtension.split('.')[0];
 };
 
 const deleteFromCloudinary = async (url) => {
-    const publicId = getPublicId(url);
+    const publicId = getPublicIdFromUrl(url);
     if (publicId) {
         try {
-            await cloudinary.uploader.destroy(publicId);
+            const res = await cloudinary.uploader.destroy(publicId);
+            console.log(`[Cloudinary] Deleted image ${publicId}:`, res);
         } catch (err) {
             console.error(`Failed to delete ${publicId} from Cloudinary:`, err);
         }
@@ -729,16 +742,48 @@ router.put('/:id', authMiddleware, upload.fields([
         const folderPath = getAssetFolderPath(categoryName, id);
 
         try {
-            if (req.files['images']) {
-                console.log(`[Update Listing] Replacing images for ID: ${id}`);
-                // Delete old images from Cloudinary
-                if (listing.images && listing.images.length > 0) {
-                    for (const oldUrl of listing.images) {
-                        await deleteFromCloudinary(oldUrl);
-                    }
+            // 1. Process Retained Images from Request Body
+            let retainedImages = [];
+            if (req.body.retainedImages !== undefined) {
+                try {
+                    retainedImages = typeof req.body.retainedImages === 'string'
+                        ? JSON.parse(req.body.retainedImages)
+                        : req.body.retainedImages;
+                } catch (e) {
+                    console.error("[Update Listing] Error parsing retainedImages:", e);
+                    retainedImages = [];
                 }
+            } else if (req.body.existingImages !== undefined) {
+                try {
+                    retainedImages = typeof req.body.existingImages === 'string'
+                        ? JSON.parse(req.body.existingImages)
+                        : req.body.existingImages;
+                } catch (e) {
+                    retainedImages = [];
+                }
+            } else if (!req.files || !req.files['images']) {
+                // If neither retained list nor new image files are supplied, preserve existing DB images
+                retainedImages = listing.images || [];
+            }
 
-                const newImageUrls = [];
+            if (!Array.isArray(retainedImages)) {
+                retainedImages = [];
+            }
+
+            // 2. Delete any old Cloudinary image that is no longer in retainedImages
+            const currentDbImages = Array.isArray(listing.images) ? listing.images : [];
+            const retainedSet = new Set(retainedImages);
+            for (const oldUrl of currentDbImages) {
+                if (!retainedSet.has(oldUrl)) {
+                    console.log(`[Update Listing] Deleting removed image from Cloudinary: ${oldUrl}`);
+                    await deleteFromCloudinary(oldUrl);
+                }
+            }
+
+            // 3. Upload any newly added image files
+            const newImageUrls = [];
+            if (req.files && req.files['images']) {
+                console.log(`[Update Listing] Uploading ${req.files['images'].length} new images to folder: ${folderPath}`);
                 for (const file of req.files['images']) {
                     try {
                         const result = await cloudinary.uploader.upload(file.path, { folder: folderPath });
@@ -749,16 +794,37 @@ router.put('/:id', authMiddleware, upload.fields([
                         if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
                     }
                 }
-                listing.images = newImageUrls.slice(0, 15);
+            }
+
+            // 4. Combine retained images and newly uploaded images
+            const isCoverNew = req.body.isCoverNew === 'true' || req.body.isCoverNew === true;
+            if (isCoverNew && newImageUrls.length > 0) {
+                const [newCover, ...restNew] = newImageUrls;
+                listing.images = [newCover, ...retainedImages, ...restNew].slice(0, 50);
+            } else {
+                listing.images = [...retainedImages, ...newImageUrls].slice(0, 50);
+            }
+            listing.markModified('images');
+
+            // 5. Documents Handling
+            let retainedDocs = [];
+            if (req.body.retainedDocs !== undefined) {
+                try {
+                    retainedDocs = typeof req.body.retainedDocs === 'string'
+                        ? JSON.parse(req.body.retainedDocs)
+                        : req.body.retainedDocs;
+                } catch (e) {
+                    retainedDocs = [];
+                }
+            } else {
+                retainedDocs = listing.documents || [];
             }
 
             const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
+            const newDocUrls = [];
             for (const field of docFields) {
-                if (req.files[field]) {
+                if (req.files && req.files[field]) {
                     console.log(`[Update Listing] Updating document field: ${field}`);
-                    // Delete old documents if needed (Logic depends on whether you want to replace or append)
-                    // For now, replacing to match image logic
-                    const newDocUrls = [];
                     for (const file of req.files[field]) {
                         try {
                             const result = await cloudinary.uploader.upload(file.path, { folder: folderPath, resource_type: 'auto' });
@@ -769,8 +835,11 @@ router.put('/:id', authMiddleware, upload.fields([
                             if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
                         }
                     }
-                    listing.documents = newDocUrls.slice(0, 10);
                 }
+            }
+            if (newDocUrls.length > 0 || req.body.retainedDocs !== undefined) {
+                listing.documents = [...retainedDocs, ...newDocUrls].slice(0, 10);
+                listing.markModified('documents');
             }
         } catch (uploadError) {
             console.error("[Update Listing] Cloudinary Error:", uploadError.message);

@@ -11,18 +11,16 @@ import {
 } from 'recharts';
 import { getAmenityIcon } from '../../utils/assetIcons';
 import { useAuth } from '../../contexts/AuthContext';
-import carIcon from '../../assets/icons/car_icon.png'
-import estateIcon from '../../assets/icons/estate_icon.png'
-import bikeIcon from '../../assets/icons/bike_icon.png'
-import yachtIcon from '../../assets/icons/yacht_icon.png'
-import otherassetIcon from '../../assets/icons/other_asset_icon.png'
+import carIcon from '../../assets/icons/car_icon.png';
+import estateIcon from '../../assets/icons/estate_icon.png';
+import bikeIcon from '../../assets/icons/bike_icon.png';
+import yachtIcon from '../../assets/icons/yacht_icon.png';
+import otherassetIcon from '../../assets/icons/other_asset_icon.png';
 
 const ESTATE_LIFESTYLE_AMENITIES = ["Swimming Pool", "Infinity Pool", "Gym / Fitness Center", "Spa & Wellness Center", "Sauna / Steam Room", "Jacuzzi", "Clubhouse", "Private Theater", "Game Room", "Bar / Lounge", "BBQ Area", "Outdoor Dining Area", "Kids Play Area", "Pet Friendly", "Jogging Track", "Garden / Lawn", "Landscaped Gardens", "Elevator", "Private Parking", "EV Charging", "Laundry Room", "Storage Room", "Servant Quarters", "Smart Entry", "High-Speed WiFi"];
 const ESTATE_VIEWS_OUTDOOR = ["Sea View", "Oceanfront", "Lake View", "River View", "Mountain View", "Forest View", "Garden View", "Park View", "City Skyline View", "Panoramic View", "Sunset View", "Sunrise View", "Pool View", "Golf Course View", "Marina View", "Private Beach Access", "Waterfront Property", "Rooftop Terrace", "Balcony with View", "Outdoor Lounge", "Fire Pit Area", "Outdoor Entertainment Area"];
 const ESTATE_SMART_SECURITY = ["Smart Door Lock", "Video Doorbell", "Face Recognition Entry", "Motion Sensors", "Smart Surveillance", "24/7 Security", "Gated Community Access", "Voice Control", "Smart Lighting", "Automated Curtains", "Smart Thermostat", "Climate Control", "Central Control Panel", "Mobile App Control", "Smart Switches", "AI Assistant Integration", "High-Speed Internet Ready", "Fiber Connection", "Smart Intercom"];
 const ESTATE_ULTRA_LUXURY = ["Private Island", "Private Beach Access", "Waterfront Estate", "Gated Estate", "Helipad", "Private Dock / Yacht Berth", "Vineyard / Orchard", "Equestrian Facilities", "Multi-Car Garage (10+)", "Car Showroom Garage", "Underground Garage", "Car Lift System", "Private Car Gallery", "EV Fleet Charging", "Private Cinema", "Bowling Alley", "Casino Room", "Wine Cellar", "Cigar Lounge", "Private Bar", "Ballroom / Event Hall", "Private Library", "Private Spa Suite", "Ice Bath", "Indoor Lap Pool", "Meditation Room", "Yoga Pavilion", "Massage Room", "Double-Height Ceilings", "Grand Staircase", "Floating Staircase", "Floor-to-Ceiling Glass", "Sky Bridge", "Smart Glass"];
-
-
 
 const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const { token, user } = useAuth();
@@ -72,11 +70,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         matchingNumbers: '', accidentFree: '', numberOfOwners: '1',
         countryOfFirstDelivery: '', currentCarLocation: '',
         soulOfTheCar: '', idealBuyer: '',
+        latitude: '', longitude: '',
 
         // Yacht Specific
         yachtName: '', builder: '', length: '', beam: '', draft: '',
         cruisingSpeed: '', usageHours: '', fuelConsumption: '',
         guestCapacity: '', crewCapacity: '', hullMaterial: '',
+        bathrooms: '', bedrooms: '', fuelCapacity: '',
 
         // Real Estate Specific
         propertyName: '', propertyType: '', country: '', city: '', address: '',
@@ -85,7 +85,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         furnishingStatus: '', architectureStyle: '', configuration: '',
         interiorColorTheme: '', exteriorFinish: '',
         climateControl: '', usageStatus: '',
-        areaNeighborhood: '', latitude: '', longitude: '',
+        areaNeighborhood: '',
         amenities: [], smartHomeSystems: [], viewTypes: [],
 
         // Bike Specific
@@ -115,14 +115,23 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     };
 
     const saveAsDraft = async () => {
-        // We call handleSubmit but with a draft status forced
         await handleSubmit(null, false);
     };
 
     const handleRemoveFile = (index, type) => {
-        if (type === 'cover') setCoverImage(null);
-        else if (type === 'gallery') setGalleryImages(galleryImages.filter((_, i) => i !== index));
-        else if (type === 'document') setDocuments(documents.filter((_, i) => i !== index));
+        if (type === 'cover') {
+            if (galleryImages.length > 0) {
+                // Promote the first gallery image to cover image
+                setCoverImage(galleryImages[0]);
+                setGalleryImages(prev => prev.slice(1));
+            } else {
+                setCoverImage(null);
+            }
+        } else if (type === 'gallery') {
+            setGalleryImages(prev => prev.filter((_, i) => i !== index));
+        } else if (type === 'document') {
+            setDocuments(prev => prev.filter((_, i) => i !== index));
+        }
     };
 
     const handleFileUpload = (e, type) => {
@@ -148,12 +157,12 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
         if (type === 'cover') {
             setCoverImage(files[0]);
-            // If we're uploading a new cover, we treat it as starting fresh for images
-            // But we keep the gallery if it was already there or being uploaded
+        } else if (type === 'gallery') {
+            setGalleryImages(prev => [...prev, ...files].slice(0, 49));
+        } else if (type === 'document') {
+            setDocuments(prev => [...prev, ...files].slice(0, 5));
         }
-        // else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 14));
-        else if (type === 'gallery') setGalleryImages(prev => [...prev, ...files].slice(0, 49));
-        else if (type === 'document') setDocuments(prev => [...prev, ...files].slice(0, 5));
+        e.target.value = '';
     };
 
     useEffect(() => {
@@ -168,44 +177,48 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         } else if (editData) {
             setStep(1);
 
-            // Map model or category string to assetType
+            // 1. Map model or category string to assetType accurately
             let type = 'Car';
             const model = editData.itemModel || '';
-            const cat = editData.category || '';
+            const cat = (editData.category || '').toLowerCase();
             const spec = editData.specification || {};
             const keySpec = editData.keySpecifications || {};
 
-            // 1. Check for exact category match (Most reliable)
-            if (cat === 'CarAsset' || model === 'CarAsset' || cat === 'vehicles') type = 'Car';
-            else if (cat === 'YachtAsset' || model === 'YachtAsset' || cat === 'yachts') type = 'Yacht';
-            else if (cat === 'EstateAsset' || model === 'EstateAsset' || cat === 'estates') type = 'Estate';
-            else if (cat === 'BikeAsset' || model === 'BikeAsset' || cat === 'bikes') type = 'Bike';
-            // 2. Structural checks (fallback if category/model is generic or missing)
+            if (cat === 'carasset' || model === 'CarAsset' || cat === 'vehicles' || cat === 'car' || cat === 'cars') type = 'Car';
+            else if (cat === 'yachtasset' || model === 'YachtAsset' || cat === 'yachts' || cat === 'yacht') type = 'Yacht';
+            else if (cat === 'estateasset' || model === 'EstateAsset' || cat === 'estates' || cat === 'estate' || cat === 'real estate') type = 'Estate';
+            else if (cat === 'bikeasset' || model === 'BikeAsset' || cat === 'bikes' || cat === 'bike') type = 'Bike';
             else if (editData.propertyName || spec.propertyType || keySpec.propertyType) type = 'Estate';
             else if (editData.yachtName || spec.yachtName || spec.brandBuilder || editData.builder) type = 'Yacht';
             else if (spec.engineCapacityCC || spec.maxPower || spec.maxTorque || spec.mileageKM) type = 'Bike';
             else if (editData.brand || spec.brand || spec.model || spec.horsepower) type = 'Car';
-            // 3. Fallback to string contains check for backwards compatibility
-            else if (model.toLowerCase().includes('car') || cat.toLowerCase().includes('car')) type = 'Car';
-            else if (model.toLowerCase().includes('bike') || cat.toLowerCase().includes('bike')) type = 'Bike';
-            else if (model.toLowerCase().includes('yacht') || cat.toLowerCase().includes('yacht')) type = 'Yacht';
-            else if (model.toLowerCase().includes('estate') || cat.toLowerCase().includes('estate')) type = 'Estate';
+            else if (model.toLowerCase().includes('car') || cat.includes('car')) type = 'Car';
+            else if (model.toLowerCase().includes('bike') || cat.includes('bike')) type = 'Bike';
+            else if (model.toLowerCase().includes('yacht') || cat.includes('yacht')) type = 'Yacht';
+            else if (model.toLowerCase().includes('estate') || cat.includes('estate')) type = 'Estate';
 
             setAssetType(type);
-            const images = editData.images || [];
+
+            // Populate images
+            const images = Array.isArray(editData.images) ? editData.images : [];
             setExistingImages(images);
             if (images.length > 0) {
                 setCoverImage(images[0]);
                 if (images.length > 1) {
                     setGalleryImages(images.slice(1));
+                } else {
+                    setGalleryImages([]);
                 }
+            } else {
+                setCoverImage(null);
+                setGalleryImages([]);
             }
 
             const parseAreaAndUnit = (val, defaultUnit = 'Sqft') => {
                 if (!val) return { value: '', unit: defaultUnit };
                 const str = val.toString().trim();
                 const numMatch = str.match(/[\d,.]+/);
-                const num = numMatch ? numMatch[0] : '';
+                const num = numMatch ? numMatch[0].replace(/,/g, '') : '';
                 const lower = str.toLowerCase();
                 let unit = defaultUnit;
                 if (lower.includes('acre')) unit = 'Acres';
@@ -214,9 +227,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 return { value: num, unit };
             };
 
-            // Extract existing highlights if available to populate fields (best effort)
             const parseNumber = (val) => {
-                if (!val) return '';
+                if (val === null || val === undefined) return '';
                 const match = val.toString().match(/[\d.]+/);
                 return match ? match[0] : '';
             };
@@ -224,71 +236,74 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             const buaParsed = parseAreaAndUnit(spec.builtUpArea || keySpec.builtUpArea, 'Sqft');
             const laParsed = parseAreaAndUnit(spec.landArea || keySpec.landArea, 'Sqft');
 
+            // Populate Form State
             setFormData({
                 ...initialFormState,
                 // Common
-                price: editData.price || '',
-                isPriceOnRequest: editData.isPriceOnRequest || false,
+                price: editData.price !== undefined ? editData.price : '',
+                isPriceOnRequest: Boolean(editData.isPriceOnRequest),
                 type: editData.type || 'Sale',
-                location: editData.location || '',
+                location: editData.location || spec.carLocation || spec.yachtLocation || spec.city || spec.address || '',
                 description: editData.description || '',
                 videoUrl: editData.videoUrl || '',
-                isPublic: editData.status === 'Active',
+                isPublic: editData.status === 'Active' || editData.status === 'Live',
                 listingReference: editData.listingReference || '',
 
-                // Fixed Highlights
+                // Fixed Highlights Keys
                 highlight_hp: parseNumber(keySpec.power || spec.power || spec.horsepower || ''),
-                highlight_km: parseNumber(keySpec.mileage || spec.mileage || ''),
-                highlight_cc: parseNumber(keySpec.cylinderCapacity || spec.cylinderCapacity || spec.engineCapacity || ''),
+                highlight_km: parseNumber(keySpec.mileage || spec.mileage || spec.mileageKM || ''),
+                highlight_cc: parseNumber(keySpec.cylinderCapacity || spec.cylinderCapacity || spec.engineCapacityCC || spec.engineCapacity || ''),
                 highlight_length: parseNumber(keySpec.length || spec.length || ''),
                 highlight_baths: parseNumber(keySpec.bathrooms || spec.bathrooms || ''),
                 highlight_beds: parseNumber(keySpec.bedrooms || spec.bedrooms || ''),
-                highlight_area: laParsed.value || parseNumber(keySpec.landArea || spec.landArea || keySpec.builtUpArea || ''),
+                highlight_area: laParsed.value || parseNumber(keySpec.landArea || spec.landArea || ''),
                 highlight_fuel: parseNumber(keySpec.fuelCapacity || spec.fuelCapacity || ''),
                 highlight_garage: parseNumber(keySpec.garageCapacity || spec.garageCapacity || ''),
                 highlight_built_area: buaParsed.value || parseNumber(keySpec.builtUpArea || spec.builtUpArea || ''),
                 highlight_floors: parseNumber(keySpec.floors || spec.floors || ''),
                 highlight_speed: parseNumber(keySpec.topSpeed || spec.topSpeed || ''),
                 highlight_engine_type: keySpec.engineType || spec.engineType || '',
-                highlight_engine_hp: parseNumber(keySpec.engineType || spec.engineType || ''),
+                highlight_engine_hp: parseNumber(spec.enginePower || keySpec.engineType || spec.engineType || ''),
 
-                // Specifics mapping
-                make: editData.brand || spec.brand || '',
+                // Brand / Maker details
+                make: editData.brand || spec.brand || spec.brandBuilder || editData.builder || editData.make || '',
                 brand: editData.brand || spec.brand || '',
-                model: spec.model || '',
-                variant: spec.variant || '',
-                year: spec.yearOfConstruction || spec.year || '',
-                mileage: spec.mileage || spec.mileageKM || '',
-                fuelType: spec.fuel || spec.fuelType || '',
+                builder: editData.builder || spec.brandBuilder || spec.builder || '',
+                model: spec.model || editData.model || '',
+                variant: spec.variant || editData.variant || '',
+                year: spec.yearOfConstruction || spec.year || editData.year || new Date().getFullYear(),
+
+                // Car Specifics
+                mileage: parseNumber(spec.mileage || ''),
+                fuelType: spec.fuel || spec.fuelType || keySpec.fuelType || '',
                 transmission: spec.transmission || '',
+                engine: spec.engine || '',
                 exteriorColor: spec.exteriorColor || '',
                 interiorColor: spec.interiorColor || '',
                 condition: spec.condition || '',
+                ownershipCount: parseNumber(spec.numberOfOwners || spec.ownershipCount || '1'),
                 accidentHistory: spec.accidentHistory || '',
-
-                // Car Specific
-                horsepower: spec.power || spec.horsepower || '',
-                cylinderCapacity: spec.cylinderCapacity || '',
-                topSpeed: spec.topSpeed || '',
-                steering: spec.steering || '',
-                driveType: spec.drive || spec.driveType || '',
-                bodyType: spec.body || '',
+                accidentFree: spec.accidentFree || '',
+                horsepower: parseNumber(spec.power || keySpec.power || spec.horsepower || ''),
+                topSpeed: parseNumber(spec.topSpeed || keySpec.topSpeed || ''),
+                engineType: spec.engineType || keySpec.engineType || '',
+                bodyType: spec.body || spec.bodyType || '',
                 series: spec.series || '',
-                engine: spec.engine || '',
+                cylinderCapacity: parseNumber(spec.cylinderCapacity || ''),
+                driveType: spec.drive || spec.driveType || '',
+                steering: spec.steering || '',
                 interiorMaterial: spec.interiorMaterial || '',
                 manufacturerColorCode: spec.manufacturerColorCode || '',
                 matchingNumbers: spec.matchingNumbers || '',
-                accidentFree: spec.accidentFree || '',
                 countryOfFirstDelivery: spec.countryOfFirstDelivery || '',
-                ownershipCount: parseNumber(spec.numberOfOwners || spec.ownershipCount || '1'),
+                currentCarLocation: spec.carLocation || editData.location || '',
                 latitude: spec.latitude || '',
                 longitude: spec.longitude || '',
                 soulOfTheCar: spec.soulOfTheCar || '',
                 idealBuyer: spec.idealBuyer || '',
 
-                // Yacht Specific
+                // Yacht Specifics
                 yachtName: editData.yachtName || (type === 'Yacht' ? editData.title : '') || '',
-                builder: editData.builder || spec.brandBuilder || spec.builder || '',
                 length: parseNumber(spec.length || keySpec.length),
                 beam: parseNumber(spec.beam),
                 draft: parseNumber(spec.draft),
@@ -297,18 +312,18 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 fuelConsumption: spec.fuelConsumption || '',
                 guestCapacity: parseNumber(spec.guestCapacity),
                 crewCapacity: parseNumber(spec.crewCapacity),
-                engineType: spec.engineType || '',
                 hullMaterial: spec.hullMaterial || '',
+                bathrooms: parseNumber(keySpec.bathrooms || spec.bathrooms),
+                bedrooms: parseNumber(keySpec.bedrooms || spec.bedrooms),
+                fuelCapacity: parseNumber(keySpec.fuelCapacity || spec.fuelCapacity),
 
-                // Estate Specific
+                // Real Estate Specifics
                 propertyName: editData.propertyName || (type === 'Estate' ? editData.title : '') || '',
                 propertyType: spec.propertyType || keySpec.propertyType || '',
                 builtUpArea: buaParsed.value,
                 builtUpAreaUnit: buaParsed.unit,
                 landArea: laParsed.value,
                 landAreaUnit: laParsed.unit,
-                bedrooms: parseNumber(spec.bedrooms || keySpec.bedrooms),
-                bathrooms: parseNumber(spec.bathrooms || keySpec.bathrooms),
                 floors: parseNumber(spec.floors || keySpec.floors),
                 garageCapacity: parseNumber(spec.garageCapacity || keySpec.garageCapacity),
                 furnishingStatus: spec.furnishingStatus || '',
@@ -322,11 +337,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 city: spec.city || '',
                 address: spec.address || '',
                 areaNeighborhood: spec.areaNeighborhood || '',
-                amenities: editData.amenities || [],
-                smartHomeSystems: editData.smartHomeSystems || [],
-                viewTypes: editData.viewTypes || [],
+                amenities: Array.isArray(editData.amenities) ? editData.amenities : [],
+                smartHomeSystems: Array.isArray(editData.smartHomeSystems) ? editData.smartHomeSystems : [],
+                viewTypes: Array.isArray(editData.viewTypes) ? editData.viewTypes : [],
 
-                // Bike Specific
+                // Bike Specifics
                 engineCapacity: parseNumber(spec.engineCapacityCC || spec.engineCapacity || keySpec.engineCapacity),
                 maxPower: spec.maxPower || '',
                 maxTorque: spec.maxTorque || '',
@@ -395,21 +410,22 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         });
     };
 
+    const parseNumber = (val) => {
+        if (val === null || val === undefined) return '';
+        const match = val.toString().match(/[\d.]+/);
+        return match ? match[0] : '';
+    };
+
     const handleSubmit = async (e, draftOverride = null) => {
-        console.log("[AddAssetModal] handleSubmit called");
-        
         const isDraft = draftOverride !== null ? draftOverride : !formData.isPublic;
 
-        // Skip most validations for drafts except for basic identity fields
+        // Validation for non-draft submissions
         if (!isDraft) {
-            // Comprehensive Validation
-            // Mandatory: NJM IDS, Photos, Key Highlights, Location, Title (for real estate), brand/model (for cars), Lat/Long, Price, Description
             const requiredCommon = ['location', 'description', 'listingReference', 'latitude', 'longitude'];
             
             if (assetType === 'Estate') {
                 requiredCommon.push('propertyName');
             }
-
             if (assetType === 'Car') {
                 requiredCommon.push('make', 'model');
             }
@@ -447,12 +463,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 }
             }
 
-            if (!editData && !coverImage && galleryImages.length === 0) {
+            if (!coverImage && galleryImages.length === 0) {
                 alert("Please upload at least one image (Cover or Gallery).");
                 return;
             }
         } else {
-            // For drafts, we still need a few things to avoid backend crashes or bad UX
             if (!formData.model && !editData && assetType === 'Car') {
                 formData.model = 'Draft Asset';
             }
@@ -465,7 +480,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         }
 
         setLoading(true);
-        console.log(`[AddAssetModal] Starting ${editData ? 'update' : 'creation'} process for ${assetType} (Draft: ${isDraft})...`);
         
         const data = new FormData();
 
@@ -542,9 +556,9 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 const num = parseNumber(formData.landArea);
                 data.append(key, num ? `${num} ${formData.landAreaUnit}` : '');
             } else if (['builtUpAreaUnit', 'landAreaUnit'].includes(key)) {
-                return; // Skip separate unit keys
+                return;
             } else {
-                data.append(key, formData[key]);
+                data.append(key, formData[key] !== null && formData[key] !== undefined ? formData[key] : '');
             }
         });
 
@@ -557,9 +571,39 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         if (formData.viewTypes) data.append('viewTypes', JSON.stringify(formData.viewTypes));
 
         data.append('category', assetType);
-        if (coverImage) data.append('images', coverImage);
-        galleryImages.forEach(img => data.append('images', img));
-        documents.forEach(doc => data.append('documents', doc));
+
+        // Retained Existing Image URLs & New File Uploads
+        const retainedImages = [];
+        if (typeof coverImage === 'string' && coverImage) {
+            retainedImages.push(coverImage);
+        }
+        galleryImages.forEach(img => {
+            if (typeof img === 'string' && img) {
+                retainedImages.push(img);
+            }
+        });
+
+        data.append('retainedImages', JSON.stringify(retainedImages));
+
+        // Append new cover image file if selected
+        if (coverImage instanceof File) {
+            data.append('images', coverImage);
+            data.append('isCoverNew', 'true');
+        }
+
+        // Append new gallery image files
+        galleryImages.forEach(img => {
+            if (img instanceof File) {
+                data.append('images', img);
+            }
+        });
+
+        // Documents
+        documents.forEach(doc => {
+            if (doc instanceof File) {
+                data.append('documents', doc);
+            }
+        });
 
         try {
             const url = editData
@@ -610,29 +654,29 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                         <FiCheckCircle />
                     </div>
                     <h2 className="text-3xl font-bold canela text-gray-900 mb-2">Success!</h2>
-                    <p className="text-gray-500">Your luxury listing has been {editData ? 'updated' : 'created'} successfully.</p>
+                    <p className="text-gray-500 font-medium">Your luxury listing has been {editData ? 'updated' : 'created'} successfully.</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="fixed inset-0 z-[100] bg-gray-900/40 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="asset-modal fixed inset-0 z-[100] bg-gray-900/40 backdrop-blur-md flex items-center justify-center p-4">
             <div className="bg-white rounded-[2.5rem] w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl animate-in zoom-in-95 duration-300">
 
                 {/* Header */}
-                <div className="px-10 py-6 border-b border-gray-50 flex justify-between items-center bg-white sticky top-0 z-10">
+                <div className="px-10 py-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
                     <div className="flex items-center gap-4">
-                        {step === 1 && (
-                            <button onClick={() => setStep(0)} className="p-2 hover:bg-gray-50 rounded-full text-gray-400 transition-colors">
+                        {step === 1 && !editData && (
+                            <button onClick={() => setStep(0)} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors">
                                 <FiArrowLeft className="text-xl" />
                             </button>
                         )}
-                        <h2 className="text-2xl font-bold canela text-gray-900">
-                            {step === 0 ? 'Select Asset Type' : `${assetType} Details`}
+                        <h2 className="text-2xl font-bold canela text-black">
+                            {step === 0 ? 'Select Asset Type' : `${editData ? 'Edit' : 'Add'} ${assetType} Details`}
                         </h2>
                     </div>
-                    <button onClick={handleCloseAttempt} className="p-2 hover:bg-gray-50 rounded-full text-gray-400 transition-colors">
+                    <button onClick={handleCloseAttempt} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors">
                         <FiX className="text-xl" />
                     </button>
                 </div>
@@ -654,7 +698,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     <div className="flex-1 w-full flex justify-center items-center grayscale group-hover:grayscale-0 transition-all transform group-hover:scale-110 duration-500">
                                         <img className="max-w-[140px] max-h-[100px] object-contain" src={type.icon} alt="icon" title={type.label} />
                                     </div>
-                                    <span className="text-xl font-bold text-gray-900 canela mt-6">{type.label}</span>
+                                    <span className="text-xl font-bold text-black canela mt-6">{type.label}</span>
                                 </button>
                             ))}
                         </div>
@@ -665,23 +709,25 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                         <div className="space-y-16 animate-in slide-in-from-bottom-5 duration-500">
 
                             {/* Section Header */}
-                            <div className="flex justify-between items-center pb-8 border-b border-gray-50">
+                            <div className="flex justify-between items-center pb-8 border-b border-gray-100">
                                 <div className="flex items-center gap-5">
                                     <div className="w-16 h-16 bg-[#FDF8F0] border border-[#F2E8DB] rounded-2xl flex items-center justify-center text-3xl shadow-sm p-1">
                                         <img className='w-fit object-contain' src={assetType === 'Car' ? carIcon : assetType === 'Yacht' ? yachtIcon : assetType === 'Estate' ? estateIcon : assetType === 'Bike' ? bikeIcon : otherassetIcon} alt={assetType} />
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-gray-900 canela">{assetType} Details</h3>
-                                        <p className="text-sm text-gray-400">Fill in the details for your luxury listing</p>
+                                        <h3 className="text-2xl font-bold text-black canela">{assetType} Details</h3>
+                                        <p className="text-sm text-gray-500 font-medium">{editData ? 'Update the details and images of this listing' : 'Fill in the details for your luxury listing'}</p>
                                     </div>
                                 </div>
-                                <button onClick={() => setStep(0)} className="px-6 py-2.5 bg-gray-50 text-gray-400 text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-gray-100 border border-gray-100 transition-all">
-                                    Change Type
-                                </button>
+                                {!editData && (
+                                    <button onClick={() => setStep(0)} className="px-6 py-2.5 bg-gray-50 text-gray-700 text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-gray-100 border border-gray-200 transition-all">
+                                        Change Type
+                                    </button>
+                                )}
                             </div>
 
                             {/* Common Details for all types */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8 pb-8 border-b border-gray-50">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8 pb-8 border-b border-gray-100">
                                 <InputField
                                     label={assetType === 'Estate' ? "Property Name *" : (assetType === 'Yacht' ? "Yacht Name *" : "Make / Brand *")}
                                     name={assetType === 'Estate' ? "propertyName" : (assetType === 'Yacht' ? "yachtName" : "make")}
@@ -689,7 +735,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     placeholder={assetType === 'Estate' ? "e.g., Monaco Penthouse" : "e.g., Ferrari / Azimut"}
                                     onChange={handleInputChange}
                                     required={assetType === 'Car'} 
-
                                 />
                                 {assetType === 'Yacht' && (
                                     <InputField 
@@ -699,7 +744,6 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         placeholder="e.g., Azimut / Sunseeker" 
                                         onChange={handleInputChange} 
                                         required={false} 
-
                                     />
                                 )}
                                 {assetType !== 'Estate' && (
@@ -711,14 +755,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             placeholder="e.g., SF90 / Grande 32" 
                                             onChange={handleInputChange} 
                                             required={assetType === 'Car'} 
-
                                         />
                                         <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} required={false} />
                                         <InputField label="Year *" name="year" type="number" value={formData.year} onChange={handleInputChange} required={false} />
                                     </>
                                 )}
                                 <div className="flex flex-col gap-3">
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Price ($)</label>
+                                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">Price ($)</label>
                                     <input
                                         type="number"
                                         name="price"
@@ -726,20 +769,20 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         disabled={formData.isPriceOnRequest}
                                         required={false}
                                         placeholder={formData.isPriceOnRequest ? "Price on Request" : "0.00"}
-                                        className="w-full p-3.5 bg-gray-50/50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all disabled:opacity-50 font-medium"
+                                        className="w-full p-3.5 bg-gray-50/50 rounded-xl border border-gray-200 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all disabled:opacity-50 font-medium text-black placeholder:text-gray-400"
                                         onChange={handleInputChange}
                                     />
                                     <div className="relative">
                                         <select
                                             name="isPriceOnRequest"
                                             value={formData.isPriceOnRequest}
-                                            className="w-full p-3 bg-gray-50/50 rounded-xl border border-gray-100 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all appearance-none cursor-pointer pr-10 text-[10px] font-bold uppercase tracking-widest text-gray-500"
+                                            className="w-full p-3 bg-gray-50/50 rounded-xl border border-gray-200 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all appearance-none cursor-pointer pr-10 text-[10px] font-bold uppercase tracking-widest text-black"
                                             onChange={(e) => setFormData({ ...formData, isPriceOnRequest: e.target.value === 'true' })}
                                         >
-                                            <option value="false">Show Fixed Price</option>
-                                            <option value="true">Price On Request</option>
+                                            <option value="false" className="text-black bg-white">Show Fixed Price</option>
+                                            <option value="true" className="text-black bg-white">Price On Request</option>
                                         </select>
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
                                             <FiChevronDown />
                                         </div>
                                     </div>
@@ -747,9 +790,9 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} required />
                                 
                                 {/* Listing Reference ID Field */}
-                                <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-[#FAFBFB] p-8 rounded-[2rem] border border-gray-100 flex flex-col gap-6 mt-2">
+                                <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-[#FAFBFB] p-8 rounded-[2rem] border border-gray-200 flex flex-col gap-6 mt-2">
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Asset ID (Listing Reference)</label>
+                                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">Asset ID (Listing Reference)</label>
                                         <div className="flex items-center gap-6">
                                             <label className="flex items-center gap-2 cursor-pointer group">
                                                 <input 
@@ -759,7 +802,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     onChange={() => setFormData(prev => ({ ...prev, autoGenerateId: false }))}
                                                     className="w-4 h-4 border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A] cursor-pointer" 
                                                 />
-                                                <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider group-hover:text-black transition-colors">I have an ID</span>
+                                                <span className="text-[11px] font-bold text-black uppercase tracking-wider group-hover:text-[#D48D2A] transition-colors">I have an ID</span>
                                             </label>
                                             <label className="flex items-center gap-2 cursor-pointer group">
                                                 <input 
@@ -772,7 +815,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     }}
                                                     className="w-4 h-4 border-gray-300 text-[#D48D2A] focus:ring-[#D48D2A] cursor-pointer" 
                                                 />
-                                                <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wider group-hover:text-black transition-colors">Generate ID</span>
+                                                <span className="text-[11px] font-bold text-black uppercase tracking-wider group-hover:text-[#D48D2A] transition-colors">Generate ID</span>
                                             </label>
                                         </div>
                                     </div>
@@ -784,7 +827,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                 name="listingReference" 
                                                 value={formData.listingReference} 
                                                 placeholder="e.g. #NJM8314201"
-                                                className="w-full bg-white border border-gray-200 rounded-xl px-6 py-4 text-sm font-mono focus:outline-none focus:border-[#D48D2A] transition-all shadow-sm"
+                                                className="w-full bg-white border border-gray-200 rounded-xl px-6 py-4 text-sm font-mono text-black focus:outline-none focus:border-[#D48D2A] transition-all shadow-sm"
                                                 onChange={handleInputChange} 
                                                 readOnly={formData.autoGenerateId}
                                             />
@@ -811,7 +854,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                 onChange={handleInputChange}
                                                 placeholder="e.g. A celebration of 60 years of the 911..."
                                                 rows="4"
-                                                className="w-full p-6 bg-white border border-[#D48D2A]/20 rounded-[1.5rem] focus:outline-none focus:border-[#D48D2A] transition-all text-sm leading-relaxed text-gray-700 shadow-sm"
+                                                className="w-full p-6 bg-white border border-[#D48D2A]/20 rounded-[1.5rem] focus:outline-none focus:border-[#D48D2A] transition-all text-sm leading-relaxed text-black shadow-sm placeholder:text-gray-400"
                                             />
                                         </div>
                                         <div className="flex flex-col">
@@ -822,7 +865,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                 onChange={handleInputChange}
                                                 placeholder="e.g. Made for Porsche lovers who enjoy pure driving..."
                                                 rows="4"
-                                                className="w-full p-6 bg-white border border-[#D48D2A]/20 rounded-[1.5rem] focus:outline-none focus:border-[#D48D2A] transition-all text-sm leading-relaxed text-gray-700 shadow-sm"
+                                                className="w-full p-6 bg-white border border-[#D48D2A]/20 rounded-[1.5rem] focus:outline-none focus:border-[#D48D2A] transition-all text-sm leading-relaxed text-black shadow-sm placeholder:text-gray-400"
                                             />
                                         </div>
                                     </div>
@@ -937,12 +980,12 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 )}
                             </div>
 
-                            {/* Section for Estate Amenities Layout Update */}
+                            {/* Section for Estate Amenities */}
                             {assetType === 'Estate' && (
                                 <div className="space-y-6">
-                                    <div className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-100">
-                                        <h4 className="text-xl font-bold text-gray-900 canela mb-2">Amenities & Details</h4>
-                                        <p className="text-sm text-gray-400 mb-8">Select all luxurious additions found within the property</p>
+                                    <div className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-200">
+                                        <h4 className="text-xl font-bold text-black canela mb-2">Amenities & Details</h4>
+                                        <p className="text-sm text-gray-500 mb-8 font-medium">Select all luxurious additions found within the property</p>
                                         
                                         {[
                                             { title: "Lifestyle & Amenities", desc: "Select all amenities that apply to this property.", items: ESTATE_LIFESTYLE_AMENITIES, num: 1 },
@@ -950,20 +993,20 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             { title: "Smart, Security & Technology", desc: "Select all smart, security and technology features that apply to this property.", items: ESTATE_SMART_SECURITY, num: 3 },
                                             { title: "Ultra Luxury Features", desc: "Select all ultra luxury features that apply to this property.", items: ESTATE_ULTRA_LUXURY, num: 4 }
                                         ].map((section) => (
-                                            <div key={section.num} className="bg-white p-8 rounded-3xl mb-8 border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                                            <div key={section.num} className="bg-white p-8 rounded-3xl mb-8 border border-gray-200 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                                                 <div className="flex items-center gap-2 mb-2">
                                                     <span className="text-lg font-bold font-serif text-[#D48D2A]">{section.num}.</span>
-                                                    <h3 className="text-lg font-bold text-gray-900">{section.title}</h3>
+                                                    <h3 className="text-lg font-bold text-black">{section.title}</h3>
                                                     {section.num === 4 && <span className="ml-2 bg-[#fef3c7] text-[#d97706] px-2 py-0.5 rounded text-[10px] uppercase tracking-wider font-bold">Premium</span>}
                                                 </div>
-                                                <p className="text-xs text-gray-500 mb-6">{section.desc}</p>
+                                                <p className="text-xs text-gray-500 mb-6 font-medium">{section.desc}</p>
                                                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                                                     {section.items.map(amenity => (
                                                         <button
                                                             key={amenity}
                                                             type="button"
                                                             onClick={() => handleCheckboxToggle('amenities', amenity)}
-                                                            className={`flex items-center justify-start gap-3 px-4 py-3 rounded-xl border text-[11px] md:text-xs font-medium transition-all ${formData.amenities.includes(amenity) ? 'bg-[#fef9f3] border-[#D48D2A] text-[#D48D2A]' : 'bg-white border-gray-100 text-gray-600 hover:border-gray-300'}`}
+                                                            className={`flex items-center justify-start gap-3 px-4 py-3 rounded-xl border text-[11px] md:text-xs font-semibold transition-all ${formData.amenities.includes(amenity) ? 'bg-[#fef9f3] border-[#D48D2A] text-[#D48D2A]' : 'bg-white border-gray-200 text-black hover:border-gray-400'}`}
                                                         >
                                                             <div className={`w-4 h-4 rounded-[4px] border ${formData.amenities.includes(amenity) ? 'bg-[#D48D2A] border-[#D48D2A]' : 'bg-white border-gray-300'} flex items-center justify-center shrink-0`}>
                                                                 {formData.amenities.includes(amenity) && <FiCheck className="w-3 h-3 text-white" />}
@@ -971,7 +1014,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                             <div className={`flex items-center justify-center transition-colors ${formData.amenities.includes(amenity) ? 'text-[#D48D2A]' : 'text-[#D48D2A] opacity-80 group-hover:opacity-100'}`}>
                                                                 {getAmenityIcon(amenity)}
                                                             </div>
-                                                            <span className="text-left leading-tight whitespace-break-spaces">{amenity}</span>
+                                                            <span className="text-left leading-tight whitespace-break-spaces text-black">{amenity}</span>
                                                         </button>
                                                     ))}
                                                 </div>
@@ -981,44 +1024,41 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 </div>
                             )}
 
-                            {/* Key Highlights Section - Fixed Fields Only */}
-                            <section className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-100">
+                            {/* Key Highlights Section - Fixed Fields */}
+                            <section className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-200">
                                 <div className="max-w-4xl mx-auto space-y-10">
                                     <div>
-                                        <h4 className="text-xl font-bold text-gray-900 canela mb-2">Description</h4>
-                                        <p className="text-sm text-gray-400 mb-6">Main asset description for the listing page</p>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Description *</label>
+                                        <h4 className="text-xl font-bold text-black canela mb-2">Description</h4>
+                                        <p className="text-sm text-gray-500 font-medium mb-6">Main asset description for the listing page</p>
+                                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Description *</label>
                                         <textarea
                                             name="description"
                                             value={formData.description}
                                             onChange={handleInputChange}
-                                            className="w-full bg-white border border-gray-200 rounded-[1.5rem] p-8 text-sm focus:outline-none focus:border-[#D48D2A] transition-all min-h-[200px] shadow-sm"
+                                            className="w-full bg-white border border-gray-200 rounded-[1.5rem] p-8 text-sm text-black focus:outline-none focus:border-[#D48D2A] transition-all min-h-[200px] shadow-sm placeholder:text-gray-400 font-medium leading-relaxed"
                                             placeholder="Provide a detailed description of your asset..."
                                             required={false} 
-
                                         ></textarea>
                                         <div className="flex justify-between mt-3 px-2">
-                                            <p className="text-[10px] text-gray-400 font-bold">Minimum 150 characters</p>
-                                            <p className="text-[10px] text-gray-400 font-bold uppercase">{formData.description.length}/2000</p>
+                                            <p className="text-[10px] text-gray-500 font-bold">Minimum 150 characters</p>
+                                            <p className="text-[10px] text-gray-500 font-bold uppercase">{formData.description.length}/2000</p>
                                         </div>
                                     </div>
 
                                     <div>
                                         <div className="flex items-center gap-2 mb-6">
-
                                             <div>
-                                                <h4 className="text-lg font-bold text-gray-900 canela">Key Highlights</h4>
-                                                <p className="text-xs text-gray-400 italic">These specific details will be highlighted on your listing</p>
+                                                <h4 className="text-lg font-bold text-black canela">Key Highlights</h4>
+                                                <p className="text-xs text-gray-500 font-medium italic">These specific details will be highlighted on your listing</p>
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                            {/* Render Fixed Highlights based on Asset Type */}
                                             {assetType === 'Car' && (
                                                 <>
-                                                    <InputField label="Top Speed (mph)" name="highlight_speed" value={formData.highlight_speed || ''} placeholder="e.g. 211 mph" onChange={handleInputChange} required={false} />
+                                                    <InputField label="Top Speed (mph)" name="highlight_speed" value={formData.highlight_speed || ''} placeholder="e.g. 211" onChange={handleInputChange} required={false} />
                                                     <InputField label="Engine Type *" name="highlight_engine_type" value={formData.highlight_engine_type || ''} placeholder="e.g. V12 Quad Turbo" onChange={handleInputChange} required />
-                                                    <InputField label="Horsepower (hp) *" name="highlight_hp" value={formData.highlight_hp || ''} placeholder="e.g. 789 hp" onChange={handleInputChange} required />
+                                                    <InputField label="Horsepower (hp) *" name="highlight_hp" value={formData.highlight_hp || ''} placeholder="e.g. 789" onChange={handleInputChange} required />
                                                 </>
                                             )}
                                             {assetType === 'Yacht' && (
@@ -1065,46 +1105,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         </div>
                                     </div>
 
-                                    {/* Bike Specific Sections */}
-                                    {assetType === 'Bike' && (
-                                        <div className="space-y-12">
-                                            <div className="pt-10 border-t border-gray-100">
-                                                <h4 className="text-lg font-bold text-gray-900 canela mb-8">Specifications</h4>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                                    <InputField label="Engine Capacity (cc)" name="engineCapacity" type="number" value={formData.engineCapacity} placeholder="e.g., 1000" onChange={handleInputChange} required />
-                                                    <InputField label="Mileage (km)" name="mileage" type="number" value={formData.mileage} placeholder="e.g., 5000" onChange={handleInputChange} required />
-                                                    <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Petrol', 'Electric', 'Hybrid']} onChange={handleInputChange} required />
-                                                    <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Manual', 'Automatic', 'Semi-Automatic']} onChange={handleInputChange} required />
-                                                    <InputField label="Color" name="color" value={formData.color} placeholder="e.g., Midnight Black" onChange={handleInputChange} required />
-                                                </div>
-                                            </div>
-
-                                            <div className="pt-10 border-t border-gray-100">
-                                                <h4 className="text-lg font-bold text-gray-900 canela mb-8">Condition</h4>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                                    <SelectField label="New / Used" name="condition" value={formData.condition} options={['New', 'Used', 'Pre-Owned', 'Classic']} onChange={handleInputChange} required />
-                                                    <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} placeholder="e.g., 1" onChange={handleInputChange} required />
-                                                    <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} required />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Yacht Specific Sections */}
-                                    {assetType === 'Yacht' && (
-                                        <div className="space-y-12">
-                                            {/* (Already implemented in previous steps, just making sure it stays inside description section as per current flow) */}
-                                        </div>
-                                    )}
-
-                                    {/* Real Estate Specific Sections */}
+                                    {/* Real Estate Specific Additions */}
                                     {assetType === 'Estate' && (
                                         <div className="space-y-12">
-                                            {/* (Already implemented in previous steps) */}
-                                            <div className="pt-10 border-t border-gray-100">
+                                            <div className="pt-10 border-t border-gray-200">
                                                 <div className="flex items-center gap-2 mb-8">
                                                     <FiInfo className="text-[#D48D2A] text-xl" />
-                                                    <h4 className="text-lg font-bold text-gray-900 canela">Property Specifications</h4>
+                                                    <h4 className="text-lg font-bold text-black canela">Property Specifications</h4>
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                                     <InputField label="Year of Construction" name="year" type="number" value={formData.year} placeholder="e.g., 2020" onChange={handleInputChange} required />
@@ -1114,13 +1121,14 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     <SelectField label="Usage Status" name="usageStatus" value={formData.usageStatus} options={['Vacant', 'Owner Occupied', 'Tenanted', 'Short-term Rental']} onChange={handleInputChange} required />
                                                 </div>
                                                 <div className="mt-8">
-                                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">View Type</label>
+                                                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">View Type</label>
                                                     <div className="flex flex-wrap gap-3">
                                                         {['Sea', 'City', 'Marina', 'Mountain', 'Golf', 'Park', 'River'].map(view => (
                                                             <button
                                                                 key={view}
+                                                                type="button"
                                                                 onClick={() => handleCheckboxToggle('viewTypes', view)}
-                                                                className={`px-5 py-2.5 rounded-xl border text-xs font-bold transition-all ${formData.viewTypes.includes(view) ? 'bg-gray-900 border-gray-900 text-white' : 'bg-gray-50 border-gray-100 text-gray-400 hover:border-gray-900 hover:text-gray-900'}`}
+                                                                className={`px-5 py-2.5 rounded-xl border text-xs font-bold transition-all ${formData.viewTypes.includes(view) ? 'bg-gray-900 border-gray-900 text-white' : 'bg-gray-50 border-gray-200 text-black hover:border-gray-900'}`}
                                                             >
                                                                 {view}
                                                             </button>
@@ -1129,10 +1137,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                 </div>
                                             </div>
 
-                                            <div className="pt-10 border-t border-gray-100">
+                                            <div className="pt-10 border-t border-gray-200">
                                                 <div className="flex items-center gap-2 mb-8">
                                                     <FiCheckCircle className="text-[#D48D2A] text-xl" />
-                                                    <h4 className="text-lg font-bold text-gray-900 canela">Materials & Finish</h4>
+                                                    <h4 className="text-lg font-bold text-black canela">Materials & Finish</h4>
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                                     <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} placeholder="e.g., Italian Marble, Hardwood" onChange={handleInputChange} required />
@@ -1141,21 +1149,22 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                 </div>
                                             </div>
 
-                                            <div className="pt-10 border-t border-gray-100">
+                                            <div className="pt-10 border-t border-gray-200">
                                                 <div className="flex items-center gap-2 mb-8">
                                                     <FiVideo className="text-[#D48D2A] text-xl" />
-                                                    <h4 className="text-lg font-bold text-gray-900 canela">Comfort & Tech</h4>
+                                                    <h4 className="text-lg font-bold text-black canela">Comfort & Tech</h4>
                                                 </div>
                                                 <div className="grid grid-cols-1 gap-8">
                                                     <InputField label="Climate Control" name="climateControl" value={formData.climateControl} placeholder="e.g., Central AC with Zoned Control" onChange={handleInputChange} required />
                                                     <div>
-                                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Smart Home Systems</label>
+                                                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Smart Home Systems</label>
                                                         <div className="flex flex-wrap gap-3">
                                                             {['Lighting Control', 'Climate Control', 'Security System', 'Entertainment', 'Voice Assistant', 'Automated Blinds'].map(system => (
                                                                 <button
                                                                     key={system}
+                                                                    type="button"
                                                                     onClick={() => handleCheckboxToggle('smartHomeSystems', system)}
-                                                                    className={`px-5 py-2.5 rounded-xl border text-xs font-bold transition-all ${formData.smartHomeSystems.includes(system) ? 'bg-gray-100 border-gray-200 text-gray-900' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-white'}`}
+                                                                    className={`px-5 py-2.5 rounded-xl border text-xs font-bold transition-all ${formData.smartHomeSystems.includes(system) ? 'bg-gray-900 border-gray-900 text-white' : 'bg-gray-50 border-gray-200 text-black hover:border-gray-900'}`}
                                                                 >
                                                                     {system}
                                                                 </button>
@@ -1164,37 +1173,35 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                         </div>
                                     )}
                                 </div>
                             </section>
 
                             {/* Price History Timeline Section */}
-                            <section className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-100">
+                            <section className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-200">
                                 <div className="max-w-5xl mx-auto">
                                     <div className="flex items-center gap-4 mb-6">
                                         <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900">Price History Timeline</h3>
-                                            <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Add previous market prices to generate historical value graphs for buyers.</p>
+                                            <h3 className="text-sm font-bold uppercase tracking-widest text-black">Price History Timeline</h3>
+                                            <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Add previous market prices to generate historical value graphs for buyers.</p>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+                                    <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden">
                                         <div className="flex flex-col lg:flex-row min-h-[400px]">
                                             {/* Left Column: Data Entry */}
-                                            <div className="flex-1 p-8 border-b lg:border-b-0 lg:border-r border-gray-100">
+                                            <div className="flex-1 p-8 border-b lg:border-b-0 lg:border-r border-gray-200">
                                                 <div className="flex bg-gray-100 p-1 rounded-xl w-fit mb-8">
                                                     {['5 Years', '10 Years', '15 Years'].map(range => (
                                                         <button
                                                             key={range}
                                                             type="button"
                                                             onClick={() => setFormData(prev => ({ ...prev, priceHistoryRange: range }))}
-                                                            className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${formData.priceHistoryRange === range ? 'bg-white text-[#D48D2A] shadow-sm' : 'text-gray-500 hover:text-black'}`}
+                                                            className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${formData.priceHistoryRange === range ? 'bg-white text-[#D48D2A] shadow-sm' : 'text-gray-600 hover:text-black'}`}
                                                         >
                                                             {range}
                                                         </button>
@@ -1202,11 +1209,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                 </div>
 
                                                 <div className="space-y-4">
-                                                    <div className="grid grid-cols-2 gap-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2">
+                                                    <div className="grid grid-cols-2 gap-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest px-2">
                                                         <span>Year</span>
                                                         <div className="flex items-center gap-1">
                                                             <span>Estimated Market Price</span>
-                                                            <FiInfo className="text-gray-300" />
+                                                            <FiInfo className="text-gray-400" />
                                                         </div>
                                                     </div>
 
@@ -1221,13 +1228,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                                             newHistory[idx].year = parseInt(e.target.value);
                                                                             setFormData(prev => ({ ...prev, priceHistory: newHistory }));
                                                                         }}
-                                                                        className="w-full pl-4 pr-8 py-3 bg-gray-50/50 border border-gray-100 rounded-xl text-xs font-bold text-gray-700 appearance-none focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all"
+                                                                        className="w-full pl-4 pr-8 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-xs font-bold text-black appearance-none focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all"
                                                                     >
                                                                         {Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                                                                            <option key={year} value={year}>{year}</option>
+                                                                            <option key={year} value={year} className="text-black bg-white">{year}</option>
                                                                         ))}
                                                                     </select>
-                                                                    <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                                    <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                                                                 </div>
                                                                 
                                                                 <div className="flex-1 flex items-center gap-3">
@@ -1239,25 +1246,25 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                                                 newHistory[idx].currency = e.target.value;
                                                                                 setFormData(prev => ({ ...prev, priceHistory: newHistory }));
                                                                             }}
-                                                                            className="w-full pl-4 pr-8 py-3 bg-gray-50/50 border border-gray-100 rounded-xl text-xs font-bold text-gray-700 appearance-none focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all"
+                                                                            className="w-full pl-4 pr-8 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-xs font-bold text-black appearance-none focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all"
                                                                         >
-                                                                            <option>USD $</option>
-                                                                            <option>EUR €</option>
-                                                                            <option>GBP £</option>
-                                                                            <option>AED د.إ</option>
+                                                                            <option className="text-black bg-white">USD $</option>
+                                                                            <option className="text-black bg-white">EUR €</option>
+                                                                            <option className="text-black bg-white">GBP £</option>
+                                                                            <option className="text-black bg-white">AED د.إ</option>
                                                                         </select>
-                                                                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                                                                     </div>
                                                                     <input 
                                                                         type="number"
                                                                         value={item.price}
-                                                                        placeholder="Enter estimated price"
+                                                                        placeholder="Enter price"
                                                                         onChange={(e) => {
                                                                             const newHistory = [...formData.priceHistory];
                                                                             newHistory[idx].price = e.target.value;
                                                                             setFormData(prev => ({ ...prev, priceHistory: newHistory }));
                                                                         }}
-                                                                        className="flex-1 px-4 py-3 bg-white border border-gray-100 rounded-xl text-xs font-medium focus:outline-none focus:border-[#D48D2A] transition-all placeholder:text-gray-300 shadow-sm"
+                                                                        className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs font-medium text-black focus:outline-none focus:border-[#D48D2A] transition-all placeholder:text-gray-400 shadow-sm"
                                                                     />
                                                                 </div>
                                                             </div>
@@ -1271,43 +1278,43 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                 <div className="space-y-4">
                                                     <div className="space-y-2">
                                                         <div className="flex items-center gap-1">
-                                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Graph Type</label>
-                                                            <FiInfo className="text-gray-300 text-[10px]" />
+                                                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">Graph Type</label>
+                                                            <FiInfo className="text-gray-400 text-[10px]" />
                                                         </div>
                                                         <div className="relative">
-                                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
                                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="M7 16V12"/><path d="M11 16V8"/><path d="M15 16V10"/><path d="M19 16V14"/></svg>
                                                             </div>
                                                             <select 
                                                                 value={formData.priceHistoryOptions.graphType}
                                                                 onChange={(e) => setFormData(prev => ({ ...prev, priceHistoryOptions: { ...prev.priceHistoryOptions, graphType: e.target.value } }))}
-                                                                className="w-full pl-10 pr-10 py-3.5 bg-white border border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-[#D48D2A] appearance-none shadow-sm"
+                                                                className="w-full pl-10 pr-10 py-3.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-black focus:outline-none focus:border-[#D48D2A] appearance-none shadow-sm"
                                                             >
-                                                                <option>Bar Graph</option>
-                                                                <option>Line Graph</option>
-                                                                <option>Area Graph</option>
+                                                                <option className="text-black bg-white">Bar Graph</option>
+                                                                <option className="text-black bg-white">Line Graph</option>
+                                                                <option className="text-black bg-white">Area Graph</option>
                                                             </select>
-                                                            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                                                         </div>
                                                     </div>
 
                                                     <div className="space-y-2">
-                                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Currency</label>
+                                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">Currency</label>
                                                         <div className="relative">
-                                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
                                                                 <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center text-[10px] font-bold">$</div>
                                                             </div>
                                                             <select 
                                                                 value={formData.priceHistoryOptions.currency}
                                                                 onChange={(e) => setFormData(prev => ({ ...prev, priceHistoryOptions: { ...prev.priceHistoryOptions, currency: e.target.value } }))}
-                                                                className="w-full pl-10 pr-10 py-3.5 bg-white border border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-[#D48D2A] appearance-none shadow-sm"
+                                                                className="w-full pl-10 pr-10 py-3.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-black focus:outline-none focus:border-[#D48D2A] appearance-none shadow-sm"
                                                             >
-                                                                <option>USD $</option>
-                                                                <option>EUR €</option>
-                                                                <option>GBP £</option>
-                                                                <option>AED د.إ</option>
+                                                                <option className="text-black bg-white">USD $</option>
+                                                                <option className="text-black bg-white">EUR €</option>
+                                                                <option className="text-black bg-white">GBP £</option>
+                                                                <option className="text-black bg-white">AED د.إ</option>
                                                             </select>
-                                                            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                            <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1323,7 +1330,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             </div>
                                         </div>
 
-                                        <div className="p-4 bg-[#F2F8FF] border-t border-gray-100 flex items-center gap-3">
+                                        <div className="p-4 bg-[#F2F8FF] border-t border-gray-200 flex items-center gap-3">
                                             <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-[#3B82F6] shrink-0 border border-blue-100 shadow-sm">
                                                 <FiInfo className="text-xs" />
                                             </div>
@@ -1335,153 +1342,149 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 </div>
                             </section>
 
-                            {/* Media Section - Common to all */}
-                                        <div className="pt-10 border-t border-gray-100 space-y-10">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-8 canela">Media</h3>
+                            {/* Media Section */}
+                            <div className="pt-10 border-t border-gray-200 space-y-10">
+                                <div>
+                                    <h3 className="text-xl font-bold text-black mb-2 canela">Media & Images</h3>
+                                    <p className="text-xs text-gray-500 font-medium">Manage existing photos or add new ones. Removed photos will be cleaned up from storage automatically.</p>
+                                </div>
 
-                                        {/* Show existing images if editing */}
-                                        {editData && existingImages.length > 0 && (
-                                            <div className="bg-amber-50/50 p-8 rounded-[2rem] border border-amber-100">
-                                                <label className="block text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-4">Current Asset Images</label>
-                                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                                                    {existingImages.map((img, idx) => (
-                                                        <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-amber-200 group shadow-sm">
-                                                            <img src={img} alt="" className="w-full h-full object-cover" />
-                                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                                <span className="text-[10px] text-white font-bold uppercase tracking-wider">Existing</span>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                <p className="text-[10px] text-amber-700 mt-4 font-bold uppercase tracking-widest flex items-center gap-2">
-                                                    <FiInfo className="text-sm" />
-                                                    Uploading any new photo (Cover or Gallery) will replace all existing images.
-                                                </p>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                                    {/* Cover Image */}
+                                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-200">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-[#D48D2A]">
+                                                <FiImage />
                                             </div>
-                                        )}
+                                            <div>
+                                                <h4 className="text-sm font-bold text-black">Cover Image *</h4>
+                                                <p className="text-xs text-gray-500">Primary display image for this listing</p>
+                                            </div>
+                                        </div>
 
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                                            {/* Cover Image */}
-                                            <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
-                                                <div className="flex items-center gap-3 mb-6">
-                                                    <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-[#D48D2A]">
-                                                        <FiImage />
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="text-sm font-bold text-gray-900">Cover Image</h4>
-                                                        <p className="text-xs text-gray-400">Primary display image for this asset</p>
-                                                    </div>
-                                                </div>
-
-                                                <label className="block">
-                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'cover')} required={!editData || existingImages.length === 0} />
-                                                    <div className={`border-2 border-dashed rounded-2xl p-8 cursor-pointer transition-all text-center ${coverImage ? 'border-emerald-200 bg-white' : 'border-gray-200 bg-white hover:border-[#D48D2A]'}`}>
-                                                        {coverImage ? (
-                                                            <div className="relative group">
-                                                                <img src={typeof coverImage === 'string' ? coverImage : URL.createObjectURL(coverImage)} className="w-full h-40 object-cover rounded-xl" />
-                                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
-                                                                    <p className="text-white text-xs font-bold uppercase tracking-widest">Click to Replace</p>
-                                                                </div>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="flex flex-col items-center gap-2 text-gray-400">
-                                                                <FiUploadCloud className="text-3xl" />
-                                                                <p className="text-xs font-bold uppercase tracking-widest">Select Cover Photo</p>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </label>
-
-                                                {coverImage && (
-                                                    <div className="mt-4 flex items-center gap-3 bg-white p-3 rounded-xl border border-emerald-100">
-                                                        <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0">
-                                                            <FiCheck />
+                                        <label className="block">
+                                            <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'cover')} />
+                                            <div className={`border-2 border-dashed rounded-2xl p-6 cursor-pointer transition-all text-center ${coverImage ? 'border-[#D48D2A] bg-white' : 'border-gray-300 bg-white hover:border-[#D48D2A]'}`}>
+                                                {coverImage ? (
+                                                    <div className="relative group">
+                                                        <img 
+                                                            src={typeof coverImage === 'string' ? coverImage : URL.createObjectURL(coverImage)} 
+                                                            alt="Cover"
+                                                            className="w-full h-44 object-cover rounded-xl shadow-sm" 
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+                                                            <p className="text-white text-xs font-bold uppercase tracking-widest">Click to Change Cover</p>
                                                         </div>
-                                                        <p className="text-xs font-bold text-gray-700 truncate flex-1">{coverImage.name || 'Cover Image'}</p>
-                                                        <button type="button" onClick={() => handleRemoveFile(null, 'cover')} className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all">
-                                                            <FiTrash2 />
-                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex flex-col items-center gap-2 py-8 text-gray-500">
+                                                        <FiUploadCloud className="text-3xl text-gray-400" />
+                                                        <p className="text-xs font-bold uppercase tracking-widest text-black">Select Cover Photo</p>
+                                                        <p className="text-[10px] text-gray-400">JPG, PNG, WEBP up to 5MB</p>
                                                     </div>
                                                 )}
                                             </div>
+                                        </label>
 
-                                            {/* Gallery Images */}
-                                            <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
-                                                <div className="flex items-center gap-3 mb-6">
-                                                    <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-[#D48D2A]">
-                                                        <FiPlus />
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="text-sm font-bold text-gray-900">Gallery</h4>
-                                                        {/* <p className="text-xs text-gray-400">Additional interior and detail shots (Max 14)</p> */}
-                                                        <p className="text-xs text-gray-400">Additional interior and detail shots (Max 49)</p>
-                                                    </div>
+                                        {coverImage && (
+                                            <div className="mt-4 flex items-center gap-3 bg-white p-3 rounded-xl border border-gray-200">
+                                                <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                                                    <FiCheck />
                                                 </div>
+                                                <p className="text-xs font-bold text-black truncate flex-1">
+                                                    {typeof coverImage === 'string' ? 'Current Cover Image' : (coverImage.name || 'New Cover Image')}
+                                                </p>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => handleRemoveFile(null, 'cover')} 
+                                                    className="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-all"
+                                                    title="Remove Cover Image"
+                                                >
+                                                    <FiTrash2 className="text-sm" />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
 
-                                                <label className="block">
-                                                    <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'gallery')} />
-                                                    <div className="border-2 border-dashed border-gray-200 bg-white rounded-2xl p-8 cursor-pointer transition-all hover:border-[#D48D2A] text-center">
-                                                        <div className="flex flex-col items-center gap-2 text-gray-400">
-                                                            <FiUploadCloud className="text-3xl" />
-                                                            <p className="text-xs font-bold uppercase tracking-widest">Add Gallery Photos</p>
-                                                        </div>
-                                                    </div>
-                                                </label>
-
-                                                <div className="mt-6 grid grid-cols-2 gap-4">
-                                                    {galleryImages.map((file, idx) => (
-                                                        <div key={idx} className="relative group aspect-video rounded-xl overflow-hidden border border-emerald-100 shadow-sm">
-                                                            <img 
-                                                                src={typeof file === 'string' ? file : URL.createObjectURL(file)} 
-                                                                alt={file.name || 'Gallery image'} 
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 text-center">
-                                                                <p className="text-[8px] text-white font-bold truncate w-full mb-1">{file.name || 'Gallery image'}</p>
-                                                                <button 
-                                                                    type="button" 
-                                                                    onClick={() => handleRemoveFile(idx, 'gallery')}
-                                                                    className="bg-white/20 hover:bg-red-500 text-white p-1.5 rounded-lg transition-all"
-                                                                >
-                                                                    <FiTrash2 className="text-sm" />
-                                                                </button>
-                                                            </div>
-                                                            <div className="absolute top-2 right-2 w-5 h-5 rounded-md bg-emerald-500 flex items-center justify-center text-white shadow-sm">
-                                                                <FiCheck className="text-[10px]" />
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
+                                    {/* Gallery Images */}
+                                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-200">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-[#D48D2A]">
+                                                <FiPlus />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-sm font-bold text-black">Gallery Photos ({galleryImages.length})</h4>
+                                                <p className="text-xs text-gray-500">Additional interior, exterior and detail shots (Max 49)</p>
                                             </div>
                                         </div>
 
-                                        <div className="mt-10">
-                                            <InputField label="Video URL (YouTube/Vimeo)" name="videoUrl" value={formData.videoUrl} placeholder="https://youtube.com/watch?v=..." onChange={handleInputChange} />
-                                        </div>
-                                    </div>
+                                        <label className="block">
+                                            <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFileUpload(e, 'gallery')} />
+                                            <div className="border-2 border-dashed border-gray-300 bg-white rounded-2xl p-6 cursor-pointer transition-all hover:border-[#D48D2A] text-center">
+                                                <div className="flex flex-col items-center gap-2 py-4 text-gray-500">
+                                                    <FiUploadCloud className="text-3xl text-gray-400" />
+                                                    <p className="text-xs font-bold uppercase tracking-widest text-black">+ Add Gallery Photos</p>
+                                                    <p className="text-[10px] text-gray-400">Select one or multiple photos</p>
+                                                </div>
+                                            </div>
+                                        </label>
 
-                            {/* Footer / Visibility - Common to all */}
-                            <div className="pt-10 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-6">
+                                        {galleryImages.length > 0 && (
+                                            <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-60 overflow-y-auto custom-scrollbar pr-1">
+                                                {galleryImages.map((file, idx) => (
+                                                    <div key={idx} className="relative group aspect-video rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-white">
+                                                        <img 
+                                                            src={typeof file === 'string' ? file : URL.createObjectURL(file)} 
+                                                            alt={`Gallery ${idx + 1}`} 
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 text-center">
+                                                            <button 
+                                                                type="button" 
+                                                                onClick={() => handleRemoveFile(idx, 'gallery')}
+                                                                className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-all shadow-md"
+                                                                title="Delete photo"
+                                                            >
+                                                                <FiTrash2 className="text-sm" />
+                                                            </button>
+                                                        </div>
+                                                        <div className="absolute bottom-1 left-1 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                                                            #{idx + 1}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="mt-8">
+                                    <InputField label="Video URL (YouTube/Vimeo)" name="videoUrl" value={formData.videoUrl} placeholder="https://youtube.com/watch?v=..." onChange={handleInputChange} />
+                                </div>
+                            </div>
+
+                            {/* Footer / Visibility */}
+                            <div className="pt-10 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-6">
                                 <div className="flex items-center gap-4">
                                     <div
                                         onClick={() => setFormData(prev => ({ ...prev, isPublic: !prev.isPublic }))}
-                                        className={`w-14 h-7 rounded-full relative cursor-pointer transition-all duration-300 ${formData.isPublic ? 'bg-[#D48D2A]' : 'bg-gray-200'}`}
+                                        className={`w-14 h-7 rounded-full relative cursor-pointer transition-all duration-300 ${formData.isPublic ? 'bg-[#D48D2A]' : 'bg-gray-300'}`}
                                     >
                                         <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all duration-300 ${formData.isPublic ? 'left-8' : 'left-1'}`}></div>
                                     </div>
                                     <div>
-                                        <p className="text-sm font-bold text-gray-900">Public Visibility</p>
-                                        <p className="text-[11px] text-gray-400 font-medium">Make this listing visible on the public marketplace</p>
+                                        <p className="text-sm font-bold text-black">Public Visibility</p>
+                                        <p className="text-[11px] text-gray-500 font-medium">Make this listing visible on the public marketplace</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 w-full md:w-auto">
-                                    <button onClick={handleCloseAttempt} className="px-8 py-4 bg-gray-50 text-gray-500 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gray-100 transition-all flex-1 md:flex-none">Cancel</button>
+                                    <button onClick={handleCloseAttempt} className="px-8 py-4 bg-gray-100 text-black font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-gray-200 transition-all flex-1 md:flex-none">Cancel</button>
                                     <button
                                         disabled={loading}
                                         onClick={handleSubmit}
                                         className="px-10 py-4 bg-[#D48D2A] text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-[#B5751C] shadow-lg shadow-[#D48D2A]/30 transition-all flex-1 md:flex-none disabled:opacity-50"
                                     >
-                                        {loading ? 'Saving...' : 'Save Asset'}
+                                        {loading ? 'Saving...' : (editData ? 'Update Asset' : 'Save Asset')}
                                     </button>
                                 </div>
                             </div>
@@ -1507,8 +1510,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                         <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mb-6 text-2xl">
                             <FiInfo />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Save as Draft?</h3>
-                        <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+                        <h3 className="text-xl font-bold text-black mb-2">Save as Draft?</h3>
+                        <p className="text-gray-600 text-sm mb-8 leading-relaxed font-medium">
                             You have unsaved changes. Would you like to save this asset as a draft so you can finish it later?
                         </p>
                         <div className="flex flex-col gap-3">
@@ -1521,13 +1524,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                             </button>
                             <button 
                                 onClick={onClose}
-                                className="w-full py-4 bg-gray-50 text-red-500 font-bold uppercase text-xs tracking-widest rounded-xl hover:bg-red-50 transition-all border border-gray-100"
+                                className="w-full py-4 bg-gray-50 text-red-500 font-bold uppercase text-xs tracking-widest rounded-xl hover:bg-red-50 transition-all border border-gray-200"
                             >
                                 Discard Changes
                             </button>
                             <button 
                                 onClick={() => setShowDraftConfirm(false)}
-                                className="w-full py-4 bg-white text-gray-400 font-bold uppercase text-xs tracking-widest rounded-xl hover:text-gray-600 transition-all"
+                                className="w-full py-4 bg-white text-gray-500 font-bold uppercase text-xs tracking-widest rounded-xl hover:text-black transition-all"
                             >
                                 Keep Editing
                             </button>
@@ -1541,6 +1544,24 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 20px; }
+                
+                .asset-modal input,
+                .asset-modal select,
+                .asset-modal textarea,
+                .asset-modal option {
+                    color: #000000 !important;
+                    -webkit-text-fill-color: #000000 !important;
+                }
+                .asset-modal select option {
+                    color: #000000 !important;
+                    background-color: #FFFFFF !important;
+                }
+                .asset-modal input::placeholder,
+                .asset-modal textarea::placeholder {
+                    color: #9CA3AF !important;
+                    -webkit-text-fill-color: #9CA3AF !important;
+                    opacity: 1 !important;
+                }
             `}} />
         </div>
     );
@@ -1548,34 +1569,36 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
 const InputField = ({ label, name, value, type = "text", placeholder, onChange, required = false }) => (
     <div>
-        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">{label}</label>
+        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">{label}</label>
         <input
             type={type}
             name={name}
-            value={value}
+            value={value !== null && value !== undefined ? value : ''}
             onChange={onChange}
             placeholder={placeholder}
             required={required}
-            className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-5 py-3.5 text-sm font-medium focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all placeholder:text-gray-300"
+            className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-5 py-3.5 text-sm font-medium text-black focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all placeholder:text-gray-400"
         />
     </div>
 );
 
 const SelectField = ({ label, name, value, options, onChange, required = false }) => (
     <div>
-        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">{label}</label>
+        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">{label}</label>
         <div className="relative">
             <select
                 name={name}
-                value={value}
+                value={value !== null && value !== undefined ? value : ''}
                 onChange={onChange}
                 required={required}
-                className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-5 py-3.5 text-sm font-medium focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all appearance-none cursor-pointer pr-10"
+                className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-5 py-3.5 text-sm font-medium text-black focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all appearance-none cursor-pointer pr-10"
             >
-                <option value="">Select {label.toLowerCase()}</option>
-                {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                <option value="" className="text-black bg-white">Select {label.toLowerCase()}</option>
+                {options.map(opt => (
+                    <option key={opt} value={opt} className="text-black bg-white font-medium">{opt}</option>
+                ))}
             </select>
-            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
                 <FiChevronDown />
             </div>
         </div>
@@ -1617,11 +1640,11 @@ const LocationInputField = ({ label, name, value, placeholder, onChange, require
 
     return (
         <div className="relative" ref={locationRef}>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">{label}</label>
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">{label}</label>
             <input
                 type="text"
                 name={name}
-                value={value}
+                value={value !== null && value !== undefined ? value : ''}
                 onChange={(e) => {
                     onChange(e);
                     setShowSuggestions(true);
@@ -1629,17 +1652,17 @@ const LocationInputField = ({ label, name, value, placeholder, onChange, require
                 onFocus={() => setShowSuggestions(true)}
                 placeholder={placeholder}
                 required={required}
-                className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-5 py-3.5 text-sm font-medium focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all placeholder:text-gray-300"
+                className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-5 py-3.5 text-sm font-medium text-black focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all placeholder:text-gray-400"
                 autoComplete="off"
             />
             {showSuggestions && suggestions.length > 0 && (
-                <ul className="absolute z-[110] w-full bg-white border border-gray-100 rounded-xl mt-2 shadow-2xl left-0 p-2 overflow-hidden max-h-64 overflow-y-auto">
+                <ul className="absolute z-[110] w-full bg-white border border-gray-200 rounded-xl mt-2 shadow-2xl left-0 p-2 overflow-hidden max-h-64 overflow-y-auto">
                     {suggestions.map((s, idx) => {
                         const labelText = typeof s === 'string' ? s : s.value;
                         return (
                             <li
                                 key={idx}
-                                className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-600 text-sm font-medium transition-colors"
+                                className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer text-black text-sm font-medium transition-colors"
                                 onClick={() => {
                                     onChange({ target: { name, value: labelText, type: 'text' } });
                                     setShowSuggestions(false);
@@ -1658,7 +1681,6 @@ const LocationInputField = ({ label, name, value, placeholder, onChange, require
 const MarketGraphPopup = ({ isOpen, onClose, data, options, assetName }) => {
     if (!isOpen) return null;
 
-    // Filter and sort data for Recharts
     const chartData = data
         .filter(item => item.price && item.year)
         .map(item => ({
@@ -1673,7 +1695,7 @@ const MarketGraphPopup = ({ isOpen, onClose, data, options, assetName }) => {
             return (
                 <div className="flex flex-col items-center justify-center h-64 text-gray-400">
                     <FiBarChart2 className="text-4xl mb-4 opacity-20" />
-                    <p className="text-sm font-medium">Add some prices to generate a graph</p>
+                    <p className="text-sm font-medium text-gray-500">Add some prices to generate a graph</p>
                 </div>
             );
         }
@@ -1690,13 +1712,13 @@ const MarketGraphPopup = ({ isOpen, onClose, data, options, assetName }) => {
                     dataKey="year" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fontWeight: 600, fill: '#9CA3AF' }}
+                    tick={{ fontSize: 10, fontWeight: 600, fill: '#6B7280' }}
                     dy={10}
                 />
                 <YAxis 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fontSize: 10, fontWeight: 600, fill: '#9CA3AF' }}
+                    tick={{ fontSize: 10, fontWeight: 600, fill: '#6B7280' }}
                     tickFormatter={(val) => `${options.currency.split(' ')[1] || '$'}${val >= 1000 ? (val/1000).toFixed(0) + 'k' : val}`}
                 />
                 <Tooltip 
@@ -1707,7 +1729,7 @@ const MarketGraphPopup = ({ isOpen, onClose, data, options, assetName }) => {
                         padding: '12px'
                     }}
                     itemStyle={{ fontSize: '12px', fontWeight: '700', color: '#D48D2A' }}
-                    labelStyle={{ fontSize: '10px', fontWeight: '600', color: '#9CA3AF', marginBottom: '4px' }}
+                    labelStyle={{ fontSize: '10px', fontWeight: '600', color: '#111827', marginBottom: '4px' }}
                     formatter={(value) => [`${options.currency.split(' ')[0]} ${new Intl.NumberFormat().format(value)}`, 'Market Value']}
                 />
             </>
@@ -1751,7 +1773,6 @@ const MarketGraphPopup = ({ isOpen, onClose, data, options, assetName }) => {
             );
         }
 
-        // Default to Bar Graph
         return (
             <BarChart {...chartProps}>
                 {commonAxis}
@@ -1768,17 +1789,17 @@ const MarketGraphPopup = ({ isOpen, onClose, data, options, assetName }) => {
     return (
         <div className="fixed inset-0 z-[120] bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white rounded-[2.5rem] w-full max-w-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
-                <div className="px-8 py-6 border-b border-gray-50 flex justify-between items-center">
+                <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
                             <FiBarChart2 className="text-xl" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-gray-900 canela">Market Value Analysis</h3>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{assetName} Price Trend</p>
+                            <h3 className="text-lg font-bold text-black canela">Market Value Analysis</h3>
+                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{assetName} Price Trend</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-50 rounded-full text-gray-400 transition-colors">
+                    <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition-colors">
                         <FiX className="text-xl" />
                     </button>
                 </div>
@@ -1791,26 +1812,26 @@ const MarketGraphPopup = ({ isOpen, onClose, data, options, assetName }) => {
                     </div>
 
                     <div className="mt-10 grid grid-cols-3 gap-6">
-                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Peak Value</p>
-                            <p className="text-lg font-bold text-gray-900">
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200">
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Peak Value</p>
+                            <p className="text-lg font-bold text-black">
                                 {chartData.length > 0 
                                     ? `${options.currency.split(' ')[0]} ${new Intl.NumberFormat().format(Math.max(...chartData.map(d => d.price)))}`
                                     : '—'}
                             </p>
                         </div>
-                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Analysis Period</p>
-                            <p className="text-lg font-bold text-gray-900">{chartData.length} Years</p>
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200">
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Analysis Period</p>
+                            <p className="text-lg font-bold text-black">{chartData.length} Years</p>
                         </div>
-                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Currency</p>
-                            <p className="text-lg font-bold text-gray-900">{options.currency}</p>
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200">
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Currency</p>
+                            <p className="text-lg font-bold text-black">{options.currency}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="px-8 py-6 bg-gray-50/50 border-t border-gray-50 flex justify-end">
+                <div className="px-8 py-6 bg-gray-50/50 border-t border-gray-100 flex justify-end">
                     <button 
                         onClick={onClose}
                         className="px-8 py-3 bg-gray-900 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-black transition-all"
