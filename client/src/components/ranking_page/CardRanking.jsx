@@ -635,16 +635,14 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                     {/* Gold solid line */}
                     <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-2.5 md:mb-3" />
 
-                    <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
-                      {car.statusIcon === "trophy" || car.rank === 1 ? (
+                    {(car.rank === 1 || car.status === "Leading") && (
+                      <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
                         <FaTrophy className="text-[#D6A125] text-[11px] md:text-[12px]" />
-                      ) : (
-                        <FaStar className="text-[#D6A125] text-[11px] md:text-[12px]" />
-                      )}
-                      <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
-                        {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
-                      </span>
-                    </div>
+                        <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
+                          {car.status || "Leading"}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -845,16 +843,14 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                     {/* Gold solid line */}
                     <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-2.5 md:mb-3" />
 
-                    <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
-                      {car.statusIcon === "trophy" || car.rank === 1 ? (
+                    {(car.rank === 1 || car.status === "Leading") && (
+                      <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
                         <FaTrophy className="text-[#D6A125] text-[11px] md:text-[12px]" />
-                      ) : (
-                        <FaStar className="text-[#D6A125] text-[11px] md:text-[12px]" />
-                      )}
-                      <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
-                        {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
-                      </span>
-                    </div>
+                        <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
+                          {car.status || "Leading"}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1072,16 +1068,14 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   {/* Gold solid line */}
                   <div className="w-full bg-[#D6A125] h-[3px] rounded-full mb-2.5 md:mb-3" />
 
-                  <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
-                    {car.statusIcon === "trophy" || car.rank === 1 ? (
+                  {(car.rank === 1 || car.status === "Leading") && (
+                    <div className="w-fit mx-auto flex items-center justify-center gap-1.5 py-1 px-3.5 bg-zinc-950/80 border border-zinc-800 rounded">
                       <FaTrophy className="text-[#D6A125] text-[11px] md:text-[12px]" />
-                    ) : (
-                      <FaStar className="text-[#D6A125] text-[11px] md:text-[12px]" />
-                    )}
-                    <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
-                      {car.status || (car.rank === 1 ? "Leading" : "Strong Contender")}
-                    </span>
-                  </div>
+                      <span className="text-[11px] md:text-[12px] font-bold text-[#D6A125]">
+                        {car.status || "Leading"}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

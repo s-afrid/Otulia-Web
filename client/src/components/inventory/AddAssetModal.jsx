@@ -76,7 +76,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         yachtName: '', builder: '', length: '', beam: '', draft: '',
         cruisingSpeed: '', usageHours: '', fuelConsumption: '',
         guestCapacity: '', crewCapacity: '', hullMaterial: '',
-        bathrooms: '', bedrooms: '', fuelCapacity: '',
+        fuelCapacity: '',
 
         // Real Estate Specific
         propertyName: '', propertyType: '', country: '', city: '', address: '',
