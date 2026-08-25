@@ -38,10 +38,10 @@ export default function RankingScaleWrapper({ children }) {
     return () => window.removeEventListener("resize", calculateScale);
   }, []);
 
-  // Ensure body background is #09090b while on ranking pages so no white gaps appear on any viewport/zoom
+  // Ensure body background is #000000 while on ranking pages so no white gaps appear on any viewport/zoom
   useEffect(() => {
     const prevBg = document.body.style.backgroundColor;
-    document.body.style.backgroundColor = "#09090b";
+    document.body.style.backgroundColor = "#000000";
     return () => {
       document.body.style.backgroundColor = prevBg;
     };
@@ -50,8 +50,8 @@ export default function RankingScaleWrapper({ children }) {
   if (scale === 1) {
     return (
       <div 
-        className="ranking-scale-container w-full min-h-screen bg-zinc-950 text-white flex flex-col"
-        style={{ minHeight: "100vh", backgroundColor: "#09090b" }}
+        className="ranking-scale-container w-full min-h-screen bg-black text-white flex flex-col"
+        style={{ minHeight: "100vh", backgroundColor: "#000000" }}
       >
         {children}
       </div>
@@ -61,12 +61,12 @@ export default function RankingScaleWrapper({ children }) {
   if (useZoom) {
     return (
       <div
-        className="ranking-scale-container bg-zinc-950 text-white flex flex-col"
+        className="ranking-scale-container bg-black text-white flex flex-col"
         style={{
           zoom: scale,
           width: "100%",
           minHeight: `calc(100vh / ${scale})`,
-          backgroundColor: "#09090b",
+          backgroundColor: "#000000",
         }}
       >
         {children}
@@ -79,18 +79,18 @@ export default function RankingScaleWrapper({ children }) {
       style={{
         width: "100vw",
         minHeight: "100vh",
-        backgroundColor: "#09090b",
+        backgroundColor: "#000000",
         overflowX: "hidden",
       }}
     >
       <div
-        className="ranking-scale-container bg-zinc-950 text-white flex flex-col"
+        className="ranking-scale-container bg-black text-white flex flex-col"
         style={{
           transform: `scale(${scale})`,
           transformOrigin: "top left",
           width: `${(100 / scale).toFixed(4)}%`,
           minHeight: `${(100 / scale).toFixed(4)}vh`,
-          backgroundColor: "#09090b",
+          backgroundColor: "#000000",
         }}
       >
         {children}

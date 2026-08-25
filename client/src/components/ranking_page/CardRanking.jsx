@@ -437,7 +437,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
               className="flex flex-col md:flex-row gap-0 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[300px] rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
             >
               {/* IMAGES */}
-              <div className="relative shrink-0 w-full md:w-[340px] lg:w-[440px] xl:w-[530px] h-[200px] md:h-[300px] bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
+              <div className="relative shrink-0 w-full md:w-[340px] lg:w-[440px] xl:w-[530px] h-[220px] md:h-[300px] bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
                 <img
                   src={car.image}
                   alt={car.name}
@@ -661,7 +661,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
               className="flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[310px] rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
             >
               {/* IMAGES (Appears on the left) */}
-              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[220px] md:h-[310px] my-auto bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
+              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[242px] md:h-[310px] my-auto bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
                 <img
                   src={bannerImageUrl}
                   alt={car.name}
@@ -870,7 +870,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
             className="flex flex-col md:flex-row gap-0 md:gap-4 w-full max-w-[1592px] h-auto md:h-[210px] mx-auto rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
           >
             {/* IMAGES */}
-            <div className="relative shrink-0 w-full md:w-[320px] lg:w-[380px] xl:w-[437px] h-[180px] md:h-[210px] bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
+            <div className="relative shrink-0 w-full md:w-[320px] lg:w-[380px] xl:w-[437px] h-[198px] md:h-[210px] bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
               <img
                 src={car.image}
                 alt={car.name}
@@ -919,13 +919,13 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                     <h2 className="text-[16px] sm:text-[18px] md:text-[20px] lg:text-[22px] font-bold tracking-tight text-white leading-tight">
                       {car.name}
                     </h2>
-                    <p className="mt-1 text-[11px] sm:text-[11.5px] md:text-[12.5px] leading-snug text-zinc-400 font-normal line-clamp-2 md:line-clamp-3">
+                    <p className="mt-1.5 md:mt-1 text-[11px] sm:text-[11.5px] md:text-[12.5px] leading-snug text-zinc-400 font-normal line-clamp-2 md:line-clamp-3">
                       {car.description}
                     </p>
                   </div>
 
                   {/* Metrics Counters Row */}
-                  <div className="flex items-center gap-2.5 sm:gap-3.5 md:gap-4 lg:gap-5 py-1 mt-1.5 md:mt-2 mb-1 md:mb-1.5 overflow-x-auto no-scrollbar">
+                  <div className="flex items-center gap-2.5 sm:gap-3.5 md:gap-4 lg:gap-5 py-1 mt-2 md:mt-2 mb-1 md:mb-1.5 overflow-x-auto no-scrollbar">
                     {/* Power */}
                     <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                       <FaBolt className="text-[#EAB308] text-[17px] sm:text-[19px] md:text-[22.5px] shrink-0" />
@@ -990,18 +990,18 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
 
                   {/* Meta information */}
                   <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-2.5 md:gap-x-3 gap-y-1 text-[10px] sm:text-[10.5px] md:text-[11px] text-zinc-500 font-normal">
-                    <span>
+                    <span className="hidden md:inline">
                       Brand : <span className="text-white font-semibold">{car.brand || car.location || "Bugatti"}</span>
                     </span>
-                    <span className="text-zinc-700">|</span>
-                    <span>
+                    <span className="text-zinc-700 hidden md:inline">|</span>
+                    <span className="hidden md:inline">
                       Model : <span className="text-white font-semibold">{car.model || car.bodyType || "Tourbillon"}</span>
                     </span>
-                    <span className="text-zinc-700">|</span>
-                    <span>
+                    <span className="text-zinc-700 hidden md:inline">|</span>
+                    <span className="hidden md:inline">
                       Year : <span className="text-white font-semibold">{car.year || "2026"}</span>
                     </span>
-                    <span className="text-zinc-700">|</span>
+                    <span className="text-zinc-700 hidden md:inline">|</span>
                     <span>
                       Production Limit : <span className="text-white font-semibold">{car.productionUnits || car.productionLimit || car.limit || "250"}</span>
                     </span>
@@ -1023,7 +1023,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   </div>
 
                   {/* View all Links Button */}
-                  <div className="relative mt-1 md:mt-1.5">
+                  <div className="relative mt-1 md:mt-1.5 hidden md:block">
                     <button
                       type="button"
                       onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}

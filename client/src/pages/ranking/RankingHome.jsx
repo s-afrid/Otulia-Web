@@ -470,12 +470,12 @@ function RankingHome() {
     <RankingScaleWrapper>
       <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
-      <div className="min-h-screen bg-zinc-950 text-white flex-1 flex flex-col lg:ml-[260px] transition-all duration-300">
+      <div className="min-h-screen bg-black text-white flex-1 flex flex-col lg:ml-[260px] transition-all duration-300">
         <Navbar_Ranking hideSearch={true} />
 
-        <div className="flex-1 px-3.5 sm:px-6 lg:px-8 pt-[74px] sm:pt-[82px] lg:pt-[88px] pb-12 bg-zinc-950">
+        <div className="flex-1 px-3.5 sm:px-6 lg:px-8 pt-[74px] sm:pt-[82px] lg:pt-[88px] pb-12 bg-black">
           {/* MOBILE CATEGORY PILLS BAR (< 1024px) */}
-          <div className="flex lg:hidden flex-col gap-2.5 pb-4 mb-3 border-b border-zinc-850">
+          <div className="flex lg:hidden flex-col gap-2.5 pb-4 mb-3 border-b border-black">
             {/* Primary Category Selector */}
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
               <NavLink

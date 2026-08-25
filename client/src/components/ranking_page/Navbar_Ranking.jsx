@@ -39,7 +39,7 @@ const Navbar = ({
   const logoSrc = "/logos/logo.png";
 
   return (
-    <nav className="fixed top-0 left-0 lg:left-[260px] right-0 h-[64px] sm:h-[72px] lg:h-[88px] z-50 bg-zinc-950/95 backdrop-blur-md border-b border-zinc-850 flex items-center justify-between px-4 sm:px-6 lg:px-10 transition-all duration-300">
+    <nav className="fixed top-0 left-0 lg:left-[260px] right-0 h-[64px] sm:h-[72px] lg:h-[88px] z-50 bg-black/95 backdrop-blur-md border-b border-zinc-900 flex items-center justify-between px-4 sm:px-6 lg:px-10 transition-all duration-300">
       <div className="w-full flex items-center justify-between relative">
         {/* Left side: Mobile Logo & Desktop Search */}
         <div className="flex items-center gap-3 z-10">
