@@ -434,10 +434,10 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
             <div
               key={car._id}
               id={car._id}
-              className="flex flex-col md:flex-row gap-3 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[300px]"
+              className="flex flex-col md:flex-row gap-0 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[300px] rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
             >
               {/* IMAGES */}
-              <div className="relative shrink-0 w-full md:w-[340px] lg:w-[440px] xl:w-[530px] h-[200px] md:h-[300px] bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              <div className="relative shrink-0 w-full md:w-[340px] lg:w-[440px] xl:w-[530px] h-[200px] md:h-[300px] bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
                 <img
                   src={car.image}
                   alt={car.name}
@@ -478,7 +478,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
               </div>
 
               {/* CONTENT BOX */}
-              <div className="flex flex-col md:flex-row flex-1 min-w-0 h-auto md:h-[300px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              <div className="flex flex-col md:flex-row flex-1 min-w-0 h-auto md:h-[300px] rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 bg-black text-white overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
                 {/* CONTENT (80% width ratio) */}
                 <div className="flex flex-[4] min-w-0 flex-col px-4 sm:px-5 lg:px-6 py-4 md:py-5 bg-black justify-between h-auto md:h-[300px]">
                     <div className="min-w-0">
@@ -658,10 +658,10 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
             <div
               key={car._id}
               id={car._id}
-              className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[310px]"
+              className="flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[310px] rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
             >
               {/* IMAGES (Appears on the left) */}
-              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[220px] md:h-[310px] my-auto bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[220px] md:h-[310px] my-auto bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
                 <img
                   src={bannerImageUrl}
                   alt={car.name}
@@ -693,7 +693,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
               </div>
 
               {/* CONTENT BOX (Appears on the right) */}
-              <div className="flex flex-col md:flex-row flex-1 w-full max-w-full rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300 h-auto md:h-[310px]">
+              <div className="flex flex-col md:flex-row flex-1 w-full max-w-full rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 bg-black text-white overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300 h-auto md:h-[310px]">
                 {/* CONTENT (80% width ratio) */}
                 <div className="flex flex-[4] w-full md:w-[75%] lg:w-[80%] flex-col px-4 sm:px-6 py-4 bg-black justify-between h-auto md:h-[310px]">
                   {/* Header */}
@@ -867,10 +867,10 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
           <div
             key={car._id}
             id={car._id}
-            className="flex flex-col md:flex-row gap-3 md:gap-4 w-full max-w-[1592px] h-auto md:h-[210px] mx-auto"
+            className="flex flex-col md:flex-row gap-0 md:gap-4 w-full max-w-[1592px] h-auto md:h-[210px] mx-auto rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
           >
             {/* IMAGES */}
-            <div className="relative shrink-0 w-full md:w-[320px] lg:w-[380px] xl:w-[437px] h-[180px] md:h-[210px] bg-zinc-950 rounded-[12px] border border-zinc-800 overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+            <div className="relative shrink-0 w-full md:w-[320px] lg:w-[380px] xl:w-[437px] h-[180px] md:h-[210px] bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
               <img
                 src={car.image}
                 alt={car.name}
@@ -910,7 +910,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
               )}
             </div>
             {/* CONTENT BOX */}
-            <div className="flex flex-col md:flex-row flex-1 h-auto md:h-[210px] rounded-[12px] border border-zinc-800 bg-black text-white overflow-hidden shadow-sm hover:shadow-md transition duration-300">
+            <div className="flex flex-col md:flex-row flex-1 h-auto md:h-[210px] rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 bg-black text-white overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
               {/* CONTENT (80% width ratio) */}
               <div className="flex flex-col flex-[4] w-full md:w-[80%] px-3.5 sm:px-4 md:px-5 py-2.5 md:py-3 bg-black justify-between min-h-0 md:h-[210px]">
                 <div>
