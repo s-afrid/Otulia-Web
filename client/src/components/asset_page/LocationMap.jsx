@@ -51,22 +51,109 @@ const RecenterMap = ({ lat, lng }) => {
   return null;
 };
 
+// Helper: Check if coordinates are valid and non-zero
+const hasValidCoords = (latitude, longitude) => {
+  if (latitude === undefined || latitude === null || longitude === undefined || longitude === null) return false;
+  if (typeof latitude === 'string' && latitude.trim() === '') return false;
+  if (typeof longitude === 'string' && longitude.trim() === '') return false;
+  const numLat = parseFloat(latitude);
+  const numLng = parseFloat(longitude);
+  if (isNaN(numLat) || isNaN(numLng)) return false;
+  if (numLat === 0 && numLng === 0) return false;
+  return true;
+};
+
+// Geocode location string using Nominatim with Photon fallback
+const geocodeLocationName = async (locationStr, signal) => {
+  if (!locationStr || typeof locationStr !== 'string' || !locationStr.trim()) return null;
+  const trimmed = locationStr.trim();
+  
+  // Try Nominatim first
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmed)}&limit=1`, {
+      signal,
+      headers: { 'Accept-Language': 'en' }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        const pLat = parseFloat(data[0].lat);
+        const pLng = parseFloat(data[0].lon);
+        if (!isNaN(pLat) && !isNaN(pLng)) {
+          return { lat: pLat, lng: pLng };
+        }
+      }
+    }
+  } catch (err) {
+    if (err.name === 'AbortError') return null;
+  }
+
+  // Fallback to Photon
+  try {
+    const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(trimmed)}&limit=1`, { signal });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.features?.length > 0) {
+        const coords = data.features[0].geometry?.coordinates;
+        if (Array.isArray(coords) && coords.length >= 2) {
+          const pLng = parseFloat(coords[0]);
+          const pLat = parseFloat(coords[1]);
+          if (!isNaN(pLat) && !isNaN(pLng)) {
+            return { lat: pLat, lng: pLng };
+          }
+        }
+      }
+    }
+  } catch (err) {
+    if (err.name === 'AbortError') return null;
+  }
+
+  return null;
+};
+
 const LocationMap = ({ locationName, lat, lng }) => {
   const [coordinates, setCoordinates] = useState(null);
   const [mapType, setMapType] = useState('street');
 
   useEffect(() => {
-    if (lat && lng) {
+    let isCancelled = false;
+    const controller = new AbortController();
+
+    // If valid coordinates are provided, use them directly
+    if (hasValidCoords(lat, lng)) {
       setCoordinates({ lat: parseFloat(lat), lng: parseFloat(lng) });
+      return;
+    }
+
+    // Only for missing, invalid, or 0.0,0.0 coordinates: resolve from locationName in DB
+    if (locationName && typeof locationName === 'string' && locationName.trim()) {
+      geocodeLocationName(locationName, controller.signal).then((geoCoords) => {
+        if (!isCancelled) {
+          if (geoCoords) {
+            setCoordinates(geoCoords);
+          } else {
+            setCoordinates({ lat: 25.2048, lng: 55.2708 });
+          }
+        }
+      });
     } else {
       setCoordinates({ lat: 25.2048, lng: 55.2708 });
     }
-  }, [lat, lng]);
+
+    return () => {
+      isCancelled = true;
+      controller.abort();
+    };
+  }, [lat, lng, locationName]);
 
   const handleOpenMap = () => {
-    if (!coordinates) return;
-    const url = `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`;
-    window.open(url, '_blank');
+    if (coordinates) {
+      const url = `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`;
+      window.open(url, '_blank');
+    } else if (locationName) {
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationName)}`;
+      window.open(url, '_blank');
+    }
   };
 
   return (
