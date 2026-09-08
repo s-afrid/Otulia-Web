@@ -1,6 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation, Link, NavLink } from "react-router-dom";
-import { FaBolt, FaHome, FaTree, FaBed, FaBath, FaUsers, FaEye, FaMapMarkerAlt, FaCalendarAlt, FaTrophy, FaArrowRight, FaTimes } from "react-icons/fa";
+import {
+  useParams,
+  useNavigate,
+  useLocation,
+  Link,
+  NavLink,
+} from "react-router-dom";
+import {
+  FaBolt,
+  FaHome,
+  FaTree,
+  FaBed,
+  FaBath,
+  FaUsers,
+  FaEye,
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaTrophy,
+  FaArrowRight,
+  FaTimes,
+} from "react-icons/fa";
 import { LuTimerReset } from "react-icons/lu";
 import { MdOutlineSpeed } from "react-icons/md";
 import { TbEngine } from "react-icons/tb";
@@ -50,7 +69,8 @@ function RankingHome() {
 
     if (p === "cars" || p === "car" || p === "automotive") return "Automotive";
     if (p.includes("real") || p.includes("estate")) return "Real Estate";
-    if (p.includes("creator") || p.includes("influencer")) return "Content Creator";
+    if (p.includes("creator") || p.includes("influencer"))
+      return "Content Creator";
     if (p.includes("yacht")) return "Yachts";
     if (p.includes("bike")) return "Bikes";
 
@@ -109,8 +129,8 @@ function RankingHome() {
     return t === p || t.includes(p) || p.includes(t);
   };
 
-  const filteredCategories = categories.filter(cat => 
-    isTypeMatching(cat.type, category || "cars")
+  const filteredCategories = categories.filter((cat) =>
+    isTypeMatching(cat.type, category || "cars"),
   );
 
   // Determine active slug
@@ -134,9 +154,13 @@ function RankingHome() {
       const data = await res.json();
       setActiveCategory(data);
     } catch (err) {
-      console.warn("DB Category fetch failed, falling back to static mockup data:", err.message);
+      console.warn(
+        "DB Category fetch failed, falling back to static mockup data:",
+        err.message,
+      );
       // Fallback to static data
-      const staticData = staticRankings[targetSlug] || staticRankings["hypercars"];
+      const staticData =
+        staticRankings[targetSlug] || staticRankings["hypercars"];
       if (staticData) {
         setActiveCategory({
           _id: targetSlug,
@@ -177,9 +201,19 @@ function RankingHome() {
           const element = document.getElementById(targetId);
           if (element) {
             element.scrollIntoView({ behavior: "smooth", block: "center" });
-            element.classList.add("ring-2", "ring-[#D6A125]", "scale-[1.01]", "z-10");
+            element.classList.add(
+              "ring-2",
+              "ring-[#D6A125]",
+              "scale-[1.01]",
+              "z-10",
+            );
             setTimeout(() => {
-              element.classList.remove("ring-2", "ring-[#D6A125]", "scale-[1.01]", "z-10");
+              element.classList.remove(
+                "ring-2",
+                "ring-[#D6A125]",
+                "scale-[1.01]",
+                "z-10",
+              );
             }, 2500);
           }
         }, 400);
@@ -193,18 +227,23 @@ function RankingHome() {
 
   const saveLocalDailyVotes = (count) => {
     try {
-      const todayStr = new Date().toISOString().split('T')[0];
-      localStorage.setItem('otulia_daily_votes', JSON.stringify({ date: todayStr, votesToday: count }));
+      const todayStr = new Date().toISOString().split("T")[0];
+      localStorage.setItem(
+        "otulia_daily_votes",
+        JSON.stringify({ date: todayStr, votesToday: count }),
+      );
     } catch (e) {
       console.error("localStorage error:", e);
     }
   };
 
   const fetchVotesToday = async () => {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = new Date().toISOString().split("T")[0];
     let localVotesToday = 0;
     try {
-      const saved = JSON.parse(localStorage.getItem('otulia_daily_votes') || '{}');
+      const saved = JSON.parse(
+        localStorage.getItem("otulia_daily_votes") || "{}",
+      );
       if (saved.date === todayStr) {
         localVotesToday = Number(saved.votesToday) || 0;
       }
@@ -212,13 +251,16 @@ function RankingHome() {
 
     if (token) {
       try {
-        const res = await fetch('/api/rankings/votes-today', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const res = await fetch("/api/rankings/votes-today", {
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
           const data = await res.json();
-          const rem = data.votesRemaining !== undefined ? data.votesRemaining : Math.max(0, 3 - (data.votesToday || 0));
-          const tod = data.votesToday !== undefined ? data.votesToday : (3 - rem);
+          const rem =
+            data.votesRemaining !== undefined
+              ? data.votesRemaining
+              : Math.max(0, 3 - (data.votesToday || 0));
+          const tod = data.votesToday !== undefined ? data.votesToday : 3 - rem;
           setVotesRemaining(rem);
           setVotesToday(tod);
           saveLocalDailyVotes(tod);
@@ -249,10 +291,11 @@ function RankingHome() {
       const updatedNominees = prevCat.nominees.map((nominee) => {
         if (nominee._id === nomineeId || nominee.id === nomineeId) {
           const currentVotes = nominee.votes || 0;
-          const numericVotes = typeof currentVotes === "number"
-            ? currentVotes
-            : parseInt(currentVotes.toString().replace(/[^0-9]/g, "")) || 0;
-          
+          const numericVotes =
+            typeof currentVotes === "number"
+              ? currentVotes
+              : parseInt(currentVotes.toString().replace(/[^0-9]/g, "")) || 0;
+
           const newVotes = numericVotes + 1;
           return {
             ...nominee,
@@ -284,7 +327,7 @@ function RankingHome() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ categoryId: catId, nomineeId }),
       });
@@ -293,8 +336,8 @@ function RankingHome() {
       if (res.ok) {
         if (data.votesRemaining !== undefined) {
           setVotesRemaining(data.votesRemaining);
-          setVotesToday(data.votesToday || (3 - data.votesRemaining));
-          saveLocalDailyVotes(data.votesToday || (3 - data.votesRemaining));
+          setVotesToday(data.votesToday || 3 - data.votesRemaining);
+          saveLocalDailyVotes(data.votesToday || 3 - data.votesRemaining);
         }
       } else {
         console.warn("Vote API warning:", data.error);
@@ -314,107 +357,250 @@ function RankingHome() {
   // Map database details to Sidebar, Header, and Cards shape
   const getMappedHeaderData = () => {
     if (!activeCategory) return null;
-    const catDisplayName = activeCategory.type || getCategoryDisplayName(category, categories);
+    const catDisplayName =
+      activeCategory.type || getCategoryDisplayName(category, categories);
     return {
       breadcrumbs: ["Home", "Rankings", catDisplayName, activeCategory.title],
       titleMain: activeCategory.title,
       titleHighlight: "",
-      description: activeCategory.detailedDescription || activeCategory.shortDescription || "",
-      nominees: activeCategory.nominees ? activeCategory.nominees.length.toString() : "0",
+      description:
+        activeCategory.detailedDescription ||
+        activeCategory.shortDescription ||
+        "",
+      nominees: activeCategory.nominees
+        ? activeCategory.nominees.length.toString()
+        : "0",
       votes: activeCategory.votes || "0",
-      updated: activeCategory.updatedAt 
-        ? new Date(activeCategory.updatedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+      updated: activeCategory.updatedAt
+        ? new Date(activeCategory.updatedAt).toLocaleDateString("en-US", {
+            month: "short",
+            year: "numeric",
+          })
         : "May 2026",
       categoryImage: activeCategory.categoryImage || "",
       bannerImage: activeCategory.bannerImage || "",
-      coverImage: activeCategory.bannerImage || activeCategory.categoryImage || "",
+      coverImage:
+        activeCategory.bannerImage || activeCategory.categoryImage || "",
     };
   };
 
   const getMappedCardsData = () => {
     if (!activeCategory || !activeCategory.nominees) return [];
-    
+
     // Sum up votes for progress calculation
-    const totalVotesVal = activeCategory.nominees.reduce((acc, curr) => acc + (curr.votes || 0), 0);
+    const totalVotesVal = activeCategory.nominees.reduce(
+      (acc, curr) => acc + (curr.votes || 0),
+      0,
+    );
 
     return activeCategory.nominees.map((nominee) => {
       // Map stats dynamically
       const stats = [];
       const keyDetails = nominee.keyDetails || {};
-      
-      const isEstate = activeCategory.type === "Real Estate" || activeCategory.type === "realestate";
-      const isContentCreator = activeCategory.type === "Content Creator" || activeCategory.type === "Content Creators" || activeCategory.type === "contentcreators";
-      
+
+      const isEstate =
+        activeCategory.type === "Real Estate" ||
+        activeCategory.type === "realestate";
+      const isContentCreator =
+        activeCategory.type === "Content Creator" ||
+        activeCategory.type === "Content Creators" ||
+        activeCategory.type === "contentcreators";
+
       if (isEstate) {
-        if (keyDetails.livingArea) stats.push({ icon: FaHome, value: keyDetails.livingArea, label: "Living Area" });
-        if (keyDetails.landSize) stats.push({ icon: FaTree, value: keyDetails.landSize, label: "Land Size" });
-        if (keyDetails.bedroom) stats.push({ icon: FaBed, value: keyDetails.bedroom, label: "Bedrooms" });
-        if (keyDetails.bathroom) stats.push({ icon: FaBath, value: keyDetails.bathroom, label: "Bathrooms" });
+        if (keyDetails.livingArea)
+          stats.push({
+            icon: FaHome,
+            value: keyDetails.livingArea,
+            label: "Living Area",
+          });
+        if (keyDetails.landSize)
+          stats.push({
+            icon: FaTree,
+            value: keyDetails.landSize,
+            label: "Land Size",
+          });
+        if (keyDetails.bedroom)
+          stats.push({
+            icon: FaBed,
+            value: keyDetails.bedroom,
+            label: "Bedrooms",
+          });
+        if (keyDetails.bathroom)
+          stats.push({
+            icon: FaBath,
+            value: keyDetails.bathroom,
+            label: "Bathrooms",
+          });
       } else if (isContentCreator) {
-        if (keyDetails.subscribers) stats.push({ icon: FaUsers, value: keyDetails.subscribers, label: "Subscribers" });
-        if (keyDetails.views) stats.push({ icon: FaEye, value: keyDetails.views, label: "Total Views" });
-        if (keyDetails.location) stats.push({ icon: FaMapMarkerAlt, value: keyDetails.location, label: "Location" });
-        if (keyDetails.joinDate) stats.push({ icon: FaCalendarAlt, value: keyDetails.joinDate, label: "Joined" });
+        if (keyDetails.subscribers)
+          stats.push({
+            icon: FaUsers,
+            value: keyDetails.subscribers,
+            label: "Subscribers",
+          });
+        if (keyDetails.views)
+          stats.push({
+            icon: FaEye,
+            value: keyDetails.views,
+            label: "Total Views",
+          });
+        if (keyDetails.location)
+          stats.push({
+            icon: FaMapMarkerAlt,
+            value: keyDetails.location,
+            label: "Location",
+          });
+        if (keyDetails.joinDate)
+          stats.push({
+            icon: FaCalendarAlt,
+            value: keyDetails.joinDate,
+            label: "Joined",
+          });
       } else {
-        if (keyDetails.power) stats.push({ icon: FaBolt, value: keyDetails.power, label: "Power" });
-        if (keyDetails.acceleration) stats.push({ icon: LuTimerReset, value: keyDetails.acceleration, label: "0-100 km/h" });
-        if (keyDetails.topSpeed) stats.push({ icon: MdOutlineSpeed, value: keyDetails.topSpeed, label: "Top Speed" });
-        if (keyDetails.engine) stats.push({ icon: TbEngine, value: keyDetails.engine, label: "Engine" });
+        if (keyDetails.power)
+          stats.push({ icon: FaBolt, value: keyDetails.power, label: "Power" });
+        if (keyDetails.acceleration)
+          stats.push({
+            icon: LuTimerReset,
+            value: keyDetails.acceleration,
+            label: "0-100 km/h",
+          });
+        if (keyDetails.topSpeed)
+          stats.push({
+            icon: MdOutlineSpeed,
+            value: keyDetails.topSpeed,
+            label: "Top Speed",
+          });
+        if (keyDetails.engine)
+          stats.push({
+            icon: TbEngine,
+            value: keyDetails.engine,
+            label: "Engine",
+          });
       }
 
       // Format votes with clean comma formatting
-      const votesVal = typeof nominee.votes === "number" 
-        ? nominee.votes 
-        : parseInt(nominee.votes?.toString().replace(/[^0-9]/g, "") || "0");
-      const formattedVotes = votesVal >= 1000 ? `${(votesVal / 1000).toFixed(1)}K` : votesVal.toString();
+      const votesVal =
+        typeof nominee.votes === "number"
+          ? nominee.votes
+          : parseInt(nominee.votes?.toString().replace(/[^0-9]/g, "") || "0");
+      const formattedVotes =
+        votesVal >= 1000
+          ? `${(votesVal / 1000).toFixed(1)}K`
+          : votesVal.toString();
 
       // Collect active social links
       const socialLinks = {};
-      if (nominee.instagram || keyDetails.instagram) socialLinks.instagram = nominee.instagram || keyDetails.instagram;
-      if (nominee.youtube || keyDetails.youtube) socialLinks.youtube = nominee.youtube || keyDetails.youtube;
-      if (nominee.tiktok || keyDetails.tiktok) socialLinks.tiktok = nominee.tiktok || keyDetails.tiktok;
-      if (nominee.twitter || keyDetails.twitter || nominee.x) socialLinks.twitter = nominee.twitter || keyDetails.twitter || nominee.x;
-      if (nominee.facebook || keyDetails.facebook) socialLinks.facebook = nominee.facebook || keyDetails.facebook;
+      if (nominee.instagram || keyDetails.instagram)
+        socialLinks.instagram = nominee.instagram || keyDetails.instagram;
+      if (nominee.youtube || keyDetails.youtube)
+        socialLinks.youtube = nominee.youtube || keyDetails.youtube;
+      if (nominee.tiktok || keyDetails.tiktok)
+        socialLinks.tiktok = nominee.tiktok || keyDetails.tiktok;
+      if (nominee.twitter || keyDetails.twitter || nominee.x)
+        socialLinks.twitter =
+          nominee.twitter || keyDetails.twitter || nominee.x;
+      if (nominee.facebook || keyDetails.facebook)
+        socialLinks.facebook = nominee.facebook || keyDetails.facebook;
 
       // Extract metadata tag chips
       const meta = [];
       if (keyDetails.genre) meta.push(keyDetails.genre);
-      if (keyDetails.category && !meta.includes(keyDetails.category)) meta.push(keyDetails.category);
+      if (keyDetails.category && !meta.includes(keyDetails.category))
+        meta.push(keyDetails.category);
       if (keyDetails.platform) meta.push(keyDetails.platform);
       if (keyDetails.propertyType) meta.push(keyDetails.propertyType);
-      if (keyDetails.availabilityStatus) meta.push(keyDetails.availabilityStatus);
+      if (keyDetails.availabilityStatus)
+        meta.push(keyDetails.availabilityStatus);
       if (keyDetails.country) meta.push(keyDetails.country);
 
       return {
         rank: nominee.rank || 1,
-        rankColor: nominee.rank === 1 ? "#D6A125" : nominee.rank === 2 ? "#C0C0C0" : "#CD7F32",
+        rankColor:
+          nominee.rank === 1
+            ? "#D6A125"
+            : nominee.rank === 2
+              ? "#C0C0C0"
+              : "#CD7F32",
         name: nominee.name || nominee.model || "Unnamed Nominee",
-        detail: nominee.detail || (isEstate ? keyDetails.propertyType : isContentCreator ? keyDetails.category : nominee.engine) || "",
-        description: nominee.description || (isEstate ? "An ultra-luxurious premier real estate asset representing exceptional architecture and privacy." : isContentCreator ? "A globally acclaimed digital creator pushing creative frontiers with dedicated audiences." : "A masterwork of automotive engineering, combining sheer track performance with bespoke luxury."),
-        image: nominee.image || nominee.mainImage || "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1200&auto=format&fit=crop",
-        avatar: nominee.avatar || nominee.profilePic || nominee.profilePicture || "",
+        detail:
+          nominee.detail ||
+          (isEstate
+            ? keyDetails.propertyType
+            : isContentCreator
+              ? keyDetails.category
+              : nominee.engine) ||
+          "",
+        description:
+          nominee.description ||
+          (isEstate
+            ? "An ultra-luxurious premier real estate asset representing exceptional architecture and privacy."
+            : isContentCreator
+              ? "A globally acclaimed digital creator pushing creative frontiers with dedicated audiences."
+              : "A masterwork of automotive engineering, combining sheer track performance with bespoke luxury."),
+        image:
+          nominee.image ||
+          nominee.mainImage ||
+          "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1200&auto=format&fit=crop",
+        avatar:
+          nominee.avatar || nominee.profilePic || nominee.profilePicture || "",
         stats,
         meta,
         category: activeCategory.title,
-        brand: keyDetails.brand || nominee.brand || (nominee.name ? nominee.name.split(" ")[0] : "Bugatti"),
-        model: keyDetails.model || nominee.model || (nominee.name ? nominee.name.split(" ").slice(1).join(" ") : "Tourbillon"),
+        brand:
+          keyDetails.brand ||
+          nominee.brand ||
+          (nominee.name ? nominee.name.split(" ")[0] : "Bugatti"),
+        model:
+          keyDetails.model ||
+          nominee.model ||
+          (nominee.name
+            ? nominee.name.split(" ").slice(1).join(" ")
+            : "Tourbillon"),
         year: keyDetails.year || nominee.year || "2026",
-        productionUnits: keyDetails.productionUnits || nominee.productionUnits || keyDetails.productionLimit || nominee.productionLimit || "250",
-        productionLimit: keyDetails.productionUnits || nominee.productionUnits || keyDetails.productionLimit || nominee.productionLimit || "250",
-        country: keyDetails.country || nominee.country || keyDetails.origin || nominee.origin || nominee.brand || "Global",
-        origin: keyDetails.country || nominee.country || keyDetails.origin || nominee.origin || nominee.brand || "Global",
+        productionUnits:
+          keyDetails.productionUnits ||
+          nominee.productionUnits ||
+          keyDetails.productionLimit ||
+          nominee.productionLimit ||
+          "250",
+        productionLimit:
+          keyDetails.productionUnits ||
+          nominee.productionUnits ||
+          keyDetails.productionLimit ||
+          nominee.productionLimit ||
+          "250",
+        country:
+          keyDetails.country ||
+          nominee.country ||
+          keyDetails.origin ||
+          nominee.origin ||
+          nominee.brand ||
+          "Global",
+        origin:
+          keyDetails.country ||
+          nominee.country ||
+          keyDetails.origin ||
+          nominee.origin ||
+          nominee.brand ||
+          "Global",
         bodyType: nominee.model || "Coupe",
-        price: isContentCreator 
-          ? (keyDetails.subscribers ? `${keyDetails.subscribers} Subscribers` : "")
-          : (keyDetails.price || ""),
-        location: isContentCreator ? (keyDetails.location || nominee.brand || "") : (nominee.brand || ""),
+        price: isContentCreator
+          ? keyDetails.subscribers
+            ? `${keyDetails.subscribers} Subscribers`
+            : ""
+          : keyDetails.price || "",
+        location: isContentCreator
+          ? keyDetails.location || nominee.brand || ""
+          : nominee.brand || "",
         showBadgeOnImage: nominee.rank === 1 && isEstate,
         badge: isEstate ? "NEW FOR 2026" : "",
         votes: formattedVotes,
         rawVotes: votesVal,
         sourcesCount: (nominee.sources || []).length.toString(),
         showTagOnHeader: nominee.rank === 1,
-        tag: nominee.rank === 1 ? (isEstate ? "New for 2026" : "TOP RATED") : "",
+        tag:
+          nominee.rank === 1 ? (isEstate ? "New for 2026" : "TOP RATED") : "",
         showTopRatedBadge: nominee.rank === 1,
         progress: `${Math.min(100, Math.max(5, (votesVal / Math.max(1, totalVotesVal)) * 100))}%`,
         progressColor: nominee.rank === 1 ? "#D6A125" : "#1F2937",
@@ -437,7 +623,11 @@ function RankingHome() {
         bathrooms: keyDetails.bathroom || "",
         propertyType: keyDetails.propertyType || "Estate",
         availabilityStatus: keyDetails.availabilityStatus || "For Sale",
-        isCar: activeCategory.type === "Cars" || activeCategory.type === "cars" || activeCategory.type === "Automotive" || (!isEstate && !isContentCreator),
+        isCar:
+          activeCategory.type === "Cars" ||
+          activeCategory.type === "cars" ||
+          activeCategory.type === "Automotive" ||
+          (!isEstate && !isContentCreator),
         engine: keyDetails.engine || "",
         power: keyDetails.power || "",
         topSpeed: keyDetails.topSpeed || "",
@@ -531,7 +721,9 @@ function RankingHome() {
                 </Link>
                 {filteredCategories.map((cat) => {
                   const isActive = slug === cat.slug;
-                  const catType = cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : (category || "cars");
+                  const catType = cat.type
+                    ? cat.type.toLowerCase().replace(/\s+/g, "")
+                    : category || "cars";
                   return (
                     <Link
                       key={cat._id || cat.slug}
@@ -562,7 +754,12 @@ function RankingHome() {
             <>
               <HeaderRanking data={headerData} />
               {cardsData.length > 0 ? (
-                <RankingCard cars={cardsData} onVote={handleVote} isVoting={isVoting} votesRemaining={votesRemaining} />
+                <RankingCard
+                  cars={cardsData}
+                  onVote={handleVote}
+                  isVoting={isVoting}
+                  votesRemaining={votesRemaining}
+                />
               ) : (
                 <div className="text-center py-20 text-zinc-400 font-medium border border-dashed border-zinc-800 rounded-xl">
                   No nominees found in this category.
@@ -577,31 +774,41 @@ function RankingHome() {
                   <span className="text-[#C9920E]">Rankings</span>
                 </h1>
                 <p className="mt-2.5 sm:mt-4 max-w-[650px] text-[13.5px] sm:text-[16px] md:text-[18px] leading-[1.6] text-[#A1A1AA]">
-                  Explore all our curated ranking categories. See what's leading the industry based on verified votes and user popularity.
+                  Explore all our curated ranking categories. See what's leading
+                  the industry based on verified votes and user popularity.
                 </p>
               </div>
 
               {filteredCategories.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {filteredCategories.map((cat) => {
-                    const nomineeCount = cat.nomineeLimit || (cat.assetNominees || []).length;
-                    const catType = cat.type ? cat.type.toLowerCase().replace(/\s+/g, "") : (category || "cars");
+                    const nomineeCount =
+                      cat.nomineeLimit || (cat.assetNominees || []).length;
+                    const catType = cat.type
+                      ? cat.type.toLowerCase().replace(/\s+/g, "")
+                      : category || "cars";
                     const targetPath = `/ranking/${catType}/${cat.slug}`;
-                    const fallbackImg = (cat.type || "").toLowerCase().includes("estate") || (cat.type || "").toLowerCase().includes("real")
-                      ? "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop"
-                      : (cat.type || "").toLowerCase().includes("creator")
-                      ? "https://images.unsplash.com/photo-1598550476439-6847785fcea6?q=80&w=1200&auto=format&fit=crop"
-                      : "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1200&auto=format&fit=crop";
+                    const fallbackImg =
+                      (cat.type || "").toLowerCase().includes("estate") ||
+                      (cat.type || "").toLowerCase().includes("real")
+                        ? "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop"
+                        : (cat.type || "").toLowerCase().includes("creator")
+                          ? "https://images.unsplash.com/photo-1598550476439-6847785fcea6?q=80&w=1200&auto=format&fit=crop"
+                          : "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1200&auto=format&fit=crop";
 
                     return (
-                      <div 
-                        key={cat._id || cat.slug} 
+                      <div
+                        key={cat._id || cat.slug}
                         onClick={() => navigate(targetPath)}
                         className="overflow-hidden rounded-[14px] border border-zinc-800 bg-[#161618] flex flex-col shadow-sm hover:shadow-lg hover:border-zinc-700 transition duration-300 cursor-pointer group"
                       >
-                        <div className="h-[180px] sm:h-[200px] w-full bg-zinc-950 relative overflow-hidden">
-                          <img 
-                            src={cat.categoryImage || cat.bannerImage || fallbackImg} 
+                        <div className="h-[180px] sm:h-[300px] w-full bg-zinc-950 relative overflow-hidden">
+                          <img
+                            src={
+                              cat.categoryImage ||
+                              cat.bannerImage ||
+                              fallbackImg
+                            }
                             alt={cat.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
@@ -609,20 +816,24 @@ function RankingHome() {
                             {cat.type}
                           </div>
                         </div>
-                        
+
                         <div className="p-4 sm:p-5 flex-1 flex flex-col">
-                          <h3 className="text-lg sm:text-xl font-bold text-white mb-1.5 sm:mb-2 group-hover:text-[#D48D2A] transition duration-200">{cat.title}</h3>
+                          <h3 className="text-lg sm:text-xl font-bold text-white mb-1.5 sm:mb-2 group-hover:text-[#D48D2A] transition duration-200">
+                            {cat.title}
+                          </h3>
                           <p className="text-[13px] sm:text-[14px] text-zinc-400 line-clamp-3 mb-4 sm:mb-6 flex-1 leading-relaxed">
-                            {cat.shortDescription || "No description available."}
+                            {cat.shortDescription ||
+                              "No description available."}
                           </p>
-                          
+
                           <div className="flex items-center justify-between border-t border-zinc-850 pt-3.5 sm:pt-4 mt-auto">
                             <div className="text-[12px] sm:text-[13px] text-zinc-400 font-medium">
-                              <span className="font-bold text-white">{nomineeCount}</span> Nominees
+                              <span className="font-bold text-white">
+                                {nomineeCount}
+                              </span>{" "}
+                              Nominees
                             </div>
-                            <span 
-                              className="flex items-center gap-1.5 text-[13px] sm:text-[14px] font-semibold text-[#D48D2A] group-hover:text-[#F3B344] transition duration-200"
-                            >
+                            <span className="flex items-center gap-1.5 text-[13px] sm:text-[14px] font-semibold text-[#D48D2A] group-hover:text-[#F3B344] transition duration-200">
                               Explore Rankings &rsaquo;
                             </span>
                           </div>
@@ -652,7 +863,8 @@ function RankingHome() {
               Know an exceptional nominee?
             </h4>
             <p className="text-xs text-zinc-400 mb-4 max-w-md mx-auto">
-              Submit your recommendation to our global luxury ranking editorial board.
+              Submit your recommendation to our global luxury ranking editorial
+              board.
             </p>
             <button
               onClick={() => setShowNominateModal(true)}
@@ -681,7 +893,9 @@ function RankingHome() {
                 <div className="w-12 h-12 rounded-full bg-[#D6A125]/20 border border-[#D6A125] text-[#D6A125] flex items-center justify-center mx-auto mb-4">
                   <FaTrophy className="text-2xl" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Nomination Submitted!</h3>
+                <h3 className="text-lg font-bold text-white mb-2">
+                  Nomination Submitted!
+                </h3>
                 <p className="text-xs text-zinc-400">
                   Thank you! Our editorial team will review your submission.
                 </p>
@@ -690,10 +904,13 @@ function RankingHome() {
               <form onSubmit={handleNominateSubmit} className="space-y-3.5">
                 <div className="flex items-center gap-2">
                   <FaTrophy className="text-[#D6A125] text-lg" />
-                  <h3 className="text-base font-bold text-white">Nominate a Candidate</h3>
+                  <h3 className="text-base font-bold text-white">
+                    Nominate a Candidate
+                  </h3>
                 </div>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  Submit an exceptional nominee to be evaluated by our global luxury ranking board.
+                  Submit an exceptional nominee to be evaluated by our global
+                  luxury ranking board.
                 </p>
 
                 <div>

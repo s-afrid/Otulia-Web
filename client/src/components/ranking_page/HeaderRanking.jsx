@@ -1,10 +1,18 @@
 import React from "react";
-import { FaTrophy, FaUsers, FaRegCalendarAlt, FaChevronRight } from "react-icons/fa";
+import {
+  FaTrophy,
+  FaUsers,
+  FaRegCalendarAlt,
+  FaChevronRight,
+} from "react-icons/fa";
 
 function RankingHeader({ data }) {
   if (!data) return null;
 
-  const { tag, main, sub } = (function getTitleParts(title = "", highlight = "") {
+  const { tag, main, sub } = (function getTitleParts(
+    title = "",
+    highlight = "",
+  ) {
     let main = title.trim();
     let sub = highlight ? highlight.trim() : "";
     let tag = "TOP";
@@ -32,8 +40,10 @@ function RankingHeader({ data }) {
     };
   })(data.titleMain || "Hypercars", data.titleHighlight);
 
-  const fallbackBanner = "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1600&auto=format&fit=crop";
-  const coverImg = data.bannerImage || data.coverImage || data.categoryImage || fallbackBanner;
+  const fallbackBanner =
+    "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1600&auto=format&fit=crop";
+  const coverImg =
+    data.bannerImage || data.coverImage || data.categoryImage || fallbackBanner;
 
   return (
     <section className="bg-transparent pt-2 pb-6 font-sans">
@@ -42,7 +52,9 @@ function RankingHeader({ data }) {
         <div className="flex flex-wrap items-center gap-2 text-[13px] text-zinc-400 mb-3 font-sans">
           {data.breadcrumbs.map((item, index) => (
             <React.Fragment key={index}>
-              <span className="hover:text-white transition cursor-pointer">{item}</span>
+              <span className="hover:text-white transition cursor-pointer">
+                {item}
+              </span>
               {index !== data.breadcrumbs.length - 1 && (
                 <FaChevronRight className="text-[10px] text-zinc-600" />
               )}

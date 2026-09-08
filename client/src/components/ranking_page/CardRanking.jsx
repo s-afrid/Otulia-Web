@@ -32,7 +32,12 @@ import estateIcon from "../../assets/icons/estate_icon.png";
 
 function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
   const [openSnackbarId, setOpenSnackbarId] = useState(null);
-  const [toast, setToast] = useState({ show: false, nomineeName: "", votesLeft: 3, limitReached: false });
+  const [toast, setToast] = useState({
+    show: false,
+    nomineeName: "",
+    votesLeft: 3,
+    limitReached: false,
+  });
 
   const isLimitReached = votesRemaining <= 0;
 
@@ -132,7 +137,10 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
         } else if (src && typeof src === "object") {
           const linkUrl = src.url || src.link || src.href;
           if (linkUrl) {
-            const formatted = linkUrl.startsWith("http") || linkUrl.startsWith("/") ? linkUrl : `https://${linkUrl}`;
+            const formatted =
+              linkUrl.startsWith("http") || linkUrl.startsWith("/")
+                ? linkUrl
+                : `https://${linkUrl}`;
             list.push({
               title: src.title || src.name || `Source ${idx + 1}`,
               url: formatted,
@@ -143,9 +151,10 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
     }
 
     if (car.listingLink && car.listingLink !== "#") {
-      const formatted = car.listingLink.startsWith("http") || car.listingLink.startsWith("/")
-        ? car.listingLink
-        : `https://${car.listingLink}`;
+      const formatted =
+        car.listingLink.startsWith("http") || car.listingLink.startsWith("/")
+          ? car.listingLink
+          : `https://${car.listingLink}`;
       if (!list.some((item) => item.url === formatted)) {
         list.push({
           title: car.name ? `${car.name} Official Listing` : "Official Listing",
@@ -157,7 +166,9 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
     if (Array.isArray(car.socialLinks) && car.socialLinks.length > 0) {
       car.socialLinks.forEach((s) => {
         if (s && s.url) {
-          const formatted = s.url.startsWith("http") ? s.url : `https://${s.url}`;
+          const formatted = s.url.startsWith("http")
+            ? s.url
+            : `https://${s.url}`;
           if (!list.some((item) => item.url === formatted)) {
             const platformName = s.platform
               ? s.platform.charAt(0).toUpperCase() + s.platform.slice(1)
@@ -195,7 +206,10 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
       const brandOrName = car.name || car.brand || "Nominee";
       list.push({
         title: `${brandOrName} Official Web Page`,
-        url: car.listingLink && car.listingLink !== "#" ? car.listingLink : `https://www.google.com/search?q=${encodeURIComponent(brandOrName)}`,
+        url:
+          car.listingLink && car.listingLink !== "#"
+            ? car.listingLink
+            : `https://www.google.com/search?q=${encodeURIComponent(brandOrName)}`,
       });
     }
 
@@ -233,7 +247,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
             <a
               key={idx}
               href={item.url}
-              target="_blank" 
+              target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-black/60 border border-zinc-800 hover:border-[#D6A125]/60 hover:bg-[#D6A125]/10 transition duration-150"
             >
@@ -242,7 +256,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   {item.title}
                 </span>
                 <span className="text-[10px] text-zinc-400 font-mono truncate mt-0.5">
-                  {item.url.replace(/^https?:\/\//, '')}
+                  {item.url.replace(/^https?:\/\//, "")}
                 </span>
               </div>
               <FaExternalLinkAlt className="text-[10px] text-zinc-400 group-hover:text-[#D6A125] shrink-0" />
@@ -255,7 +269,13 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
 
   const getCountryFlagInfo = (countryStr, brandStr) => {
     const raw = (countryStr || brandStr || "").trim();
-    if (!raw) return { iso: "un", flagUrl: "https://flagcdn.com/w20/un.png", flagUrl2x: "https://flagcdn.com/w40/un.png", name: "Global" };
+    if (!raw)
+      return {
+        iso: "un",
+        flagUrl: "https://flagcdn.com/w20/un.png",
+        flagUrl2x: "https://flagcdn.com/w40/un.png",
+        name: "Global",
+      };
 
     const lower = raw.toLowerCase();
     const brandLower = (brandStr || "").toLowerCase();
@@ -264,32 +284,132 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
     let iso = "un";
     let name = raw;
 
-    if (lower.includes("italy") || lower.includes("italian")) { iso = "it"; name = "Italy"; }
-    else if (lower.includes("france") || lower.includes("french")) { iso = "fr"; name = "France"; }
-    else if (lower.includes("germany") || lower.includes("german")) { iso = "de"; name = "Germany"; }
-    else if (lower.includes("united kingdom") || lower.includes("uk") || lower.includes("britain") || lower.includes("british") || lower.includes("england")) { iso = "gb"; name = "United Kingdom"; }
-    else if (lower.includes("united states") || lower.includes("usa") || lower.includes("us") || lower.includes("american")) { iso = "us"; name = "United States"; }
-    else if (lower.includes("japan") || lower.includes("japanese")) { iso = "jp"; name = "Japan"; }
-    else if (lower.includes("sweden") || lower.includes("swedish")) { iso = "se"; name = "Sweden"; }
-    else if (lower.includes("croatia") || lower.includes("croatian")) { iso = "hr"; name = "Croatia"; }
-    else if (lower.includes("austria") || lower.includes("austrian")) { iso = "at"; name = "Austria"; }
-    else if (lower.includes("switzerland") || lower.includes("swiss")) { iso = "ch"; name = "Switzerland"; }
-    else if (lower.includes("canada") || lower.includes("canadian")) { iso = "ca"; name = "Canada"; }
-    else if (lower.includes("australia") || lower.includes("australian")) { iso = "au"; name = "Australia"; }
-    else if (lower.includes("india") || lower.includes("indian")) { iso = "in"; name = "India"; }
-    else if (lower.includes("greece") || lower.includes("greek")) { iso = "gr"; name = "Greece"; }
-    else if (lower.includes("monaco")) { iso = "mc"; name = "Monaco"; }
-    else if (lower.includes("spain") || lower.includes("spanish")) { iso = "es"; name = "Spain"; }
-    else if (lower.includes("netherlands") || lower.includes("dutch")) { iso = "nl"; name = "Netherlands"; }
-    else if (lower.includes("united arab emirates") || lower.includes("uae") || lower.includes("dubai")) { iso = "ae"; name = "UAE"; }
-    else if (combined.includes("ferrari") || combined.includes("lamborghini") || combined.includes("pagani") || combined.includes("maserati") || combined.includes("alfa romeo") || combined.includes("fiat")) { iso = "it"; }
-    else if (combined.includes("bugatti") || combined.includes("alpine") || combined.includes("peugeot") || combined.includes("renault")) { iso = "fr"; }
-    else if (combined.includes("porsche") || combined.includes("bmw") || combined.includes("mercedes") || combined.includes("audi") || combined.includes("volkswagen") || combined.includes("maybach") || combined.includes("ruf")) { iso = "de"; }
-    else if (combined.includes("roll") || combined.includes("bentley") || combined.includes("aston") || combined.includes("mclaren") || combined.includes("lotus") || combined.includes("jaguar")) { iso = "gb"; }
-    else if (combined.includes("ford") || combined.includes("chevrolet") || combined.includes("corvette") || combined.includes("dodge") || combined.includes("shelby") || combined.includes("hennessey") || combined.includes("tesla")) { iso = "us"; }
-    else if (combined.includes("koenigsegg") || combined.includes("volvo")) { iso = "se"; }
-    else if (combined.includes("rimac")) { iso = "hr"; }
-    else if (combined.includes("toyota") || combined.includes("lexus") || combined.includes("nissan") || combined.includes("honda")) { iso = "jp"; }
+    if (lower.includes("italy") || lower.includes("italian")) {
+      iso = "it";
+      name = "Italy";
+    } else if (lower.includes("france") || lower.includes("french")) {
+      iso = "fr";
+      name = "France";
+    } else if (lower.includes("germany") || lower.includes("german")) {
+      iso = "de";
+      name = "Germany";
+    } else if (
+      lower.includes("united kingdom") ||
+      lower.includes("uk") ||
+      lower.includes("britain") ||
+      lower.includes("british") ||
+      lower.includes("england")
+    ) {
+      iso = "gb";
+      name = "United Kingdom";
+    } else if (
+      lower.includes("united states") ||
+      lower.includes("usa") ||
+      lower.includes("us") ||
+      lower.includes("american")
+    ) {
+      iso = "us";
+      name = "United States";
+    } else if (lower.includes("japan") || lower.includes("japanese")) {
+      iso = "jp";
+      name = "Japan";
+    } else if (lower.includes("sweden") || lower.includes("swedish")) {
+      iso = "se";
+      name = "Sweden";
+    } else if (lower.includes("croatia") || lower.includes("croatian")) {
+      iso = "hr";
+      name = "Croatia";
+    } else if (lower.includes("austria") || lower.includes("austrian")) {
+      iso = "at";
+      name = "Austria";
+    } else if (lower.includes("switzerland") || lower.includes("swiss")) {
+      iso = "ch";
+      name = "Switzerland";
+    } else if (lower.includes("canada") || lower.includes("canadian")) {
+      iso = "ca";
+      name = "Canada";
+    } else if (lower.includes("australia") || lower.includes("australian")) {
+      iso = "au";
+      name = "Australia";
+    } else if (lower.includes("india") || lower.includes("indian")) {
+      iso = "in";
+      name = "India";
+    } else if (lower.includes("greece") || lower.includes("greek")) {
+      iso = "gr";
+      name = "Greece";
+    } else if (lower.includes("monaco")) {
+      iso = "mc";
+      name = "Monaco";
+    } else if (lower.includes("spain") || lower.includes("spanish")) {
+      iso = "es";
+      name = "Spain";
+    } else if (lower.includes("netherlands") || lower.includes("dutch")) {
+      iso = "nl";
+      name = "Netherlands";
+    } else if (
+      lower.includes("united arab emirates") ||
+      lower.includes("uae") ||
+      lower.includes("dubai")
+    ) {
+      iso = "ae";
+      name = "UAE";
+    } else if (
+      combined.includes("ferrari") ||
+      combined.includes("lamborghini") ||
+      combined.includes("pagani") ||
+      combined.includes("maserati") ||
+      combined.includes("alfa romeo") ||
+      combined.includes("fiat")
+    ) {
+      iso = "it";
+    } else if (
+      combined.includes("bugatti") ||
+      combined.includes("alpine") ||
+      combined.includes("peugeot") ||
+      combined.includes("renault")
+    ) {
+      iso = "fr";
+    } else if (
+      combined.includes("porsche") ||
+      combined.includes("bmw") ||
+      combined.includes("mercedes") ||
+      combined.includes("audi") ||
+      combined.includes("volkswagen") ||
+      combined.includes("maybach") ||
+      combined.includes("ruf")
+    ) {
+      iso = "de";
+    } else if (
+      combined.includes("roll") ||
+      combined.includes("bentley") ||
+      combined.includes("aston") ||
+      combined.includes("mclaren") ||
+      combined.includes("lotus") ||
+      combined.includes("jaguar")
+    ) {
+      iso = "gb";
+    } else if (
+      combined.includes("ford") ||
+      combined.includes("chevrolet") ||
+      combined.includes("corvette") ||
+      combined.includes("dodge") ||
+      combined.includes("shelby") ||
+      combined.includes("hennessey") ||
+      combined.includes("tesla")
+    ) {
+      iso = "us";
+    } else if (combined.includes("koenigsegg") || combined.includes("volvo")) {
+      iso = "se";
+    } else if (combined.includes("rimac")) {
+      iso = "hr";
+    } else if (
+      combined.includes("toyota") ||
+      combined.includes("lexus") ||
+      combined.includes("nissan") ||
+      combined.includes("honda")
+    ) {
+      iso = "jp";
+    }
 
     return {
       iso,
@@ -318,7 +438,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
     if (car.profileImage) return car.profileImage;
     if (car.keyDetails?.profilePic) return car.keyDetails.profilePic;
     if (car.keyDetails?.profilePicture) return car.keyDetails.profilePicture;
-    
+
     if (car.image && car.banner && car.image !== car.banner) {
       return car.image;
     }
@@ -332,55 +452,58 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
     if (car.name && car.name.includes("Andrew Tate")) {
       return "https://unavatar.io/twitter/Cobratate";
     }
-    
+
     if (car.youtube) {
-      const parts = car.youtube.trim().split('/');
+      const parts = car.youtube.trim().split("/");
       const handle = parts[parts.length - 1] || parts[parts.length - 2];
-      if (handle) return `https://unavatar.io/youtube/${handle.replace('@', '')}`;
+      if (handle)
+        return `https://unavatar.io/youtube/${handle.replace("@", "")}`;
     }
     if (car.twitter || car.x) {
-      const handle = (car.twitter || car.x).trim().split('/').pop();
+      const handle = (car.twitter || car.x).trim().split("/").pop();
       if (handle) return `https://unavatar.io/twitter/${handle}`;
     }
-    
+
     return car.image || null;
   };
 
-
   const getCreatorStats = (car) => {
     const total = car.subscribers || "0";
-    
+
     if (car.name === "MrBeast") {
       return {
         total: "300M+",
         youtube: "270M+",
         instagram: "45M+",
-        twitter: "25M+"
+        twitter: "25M+",
       };
     }
-    
+
     if (car.name === "PewDiePie") {
       return {
         total: "111M+",
         youtube: "111M+",
         instagram: "22M+",
-        twitter: "19M+"
+        twitter: "19M+",
       };
     }
 
-    if (car.name.includes("Andrew Tate") || (car.channelName && car.channelName.includes("Tate Car Reviews"))) {
+    if (
+      car.name.includes("Andrew Tate") ||
+      (car.channelName && car.channelName.includes("Tate Car Reviews"))
+    ) {
       return {
         total: "2.52M+",
         youtube: "2.30M+",
         instagram: "180K+",
-        twitter: "40K+"
+        twitter: "40K+",
       };
     }
-    
+
     const cleanSubscribers = (sub) => {
       if (!sub) return { num: 0, suffix: "" };
       const num = parseFloat(sub);
-      const suffix = sub.replace(/[0-9.]/g, '') || "";
+      const suffix = sub.replace(/[0-9.]/g, "") || "";
       return { num, suffix };
     };
 
@@ -390,7 +513,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
         total: total || "0",
         youtube: total || "0",
         instagram: "10K+",
-        twitter: "5K+"
+        twitter: "5K+",
       };
     }
 
@@ -400,19 +523,19 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
 
     const format = (val) => {
       const cleanVal = parseFloat(val).toString();
-      const cleanSuffix = suffix.includes('+') ? suffix : suffix + '+';
+      const cleanSuffix = suffix.includes("+") ? suffix : suffix + "+";
       return cleanVal + cleanSuffix;
     };
 
     return {
-      total: total.includes('+') ? total : total + '+',
+      total: total.includes("+") ? total : total + "+",
       youtube: format(yt),
       instagram: format(ig),
-      twitter: format(tw)
+      twitter: format(tw),
     };
   };
 
-  const carList = Array.isArray(cars) ? cars : (data ? [data] : []);
+  const carList = Array.isArray(cars) ? cars : data ? [data] : [];
 
   return (
     <div className="space-y-4">
@@ -420,7 +543,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
         if (car.isEstate) {
           const formatLocation = (loc) => {
             if (!loc) return "";
-            const parts = loc.split(",").map(p => p.trim());
+            const parts = loc.split(",").map((p) => p.trim());
             if (parts.length === 3) {
               return `${parts[1]} , ${parts[2]}, ${parts[0]}`;
             }
@@ -481,128 +604,205 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
               <div className="flex flex-col md:flex-row flex-1 min-w-0 h-auto md:h-[300px] rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 bg-black text-white overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
                 {/* CONTENT (80% width ratio) */}
                 <div className="flex flex-[4] min-w-0 flex-col px-4 sm:px-5 lg:px-6 py-4 md:py-5 bg-black justify-between h-auto md:h-[300px]">
+                  <div className="min-w-0">
+                    {/* Header */}
                     <div className="min-w-0">
-                      {/* Header */}
-                      <div className="min-w-0">
-                        <h2 className="text-[20px] sm:text-[24px] md:text-[26px] lg:text-[28px] font-bold tracking-tight text-white leading-tight truncate">
-                          {car.name === "Beverly Hills Ultra Estate" ? "Beverly Hills Ultra Luxury" : car.name}
-                        </h2>
-                        <div className="text-[12px] sm:text-[13px] text-zinc-500 font-normal mt-0.5 truncate">
-                          {displayLocation}
-                        </div>
+                      <h2 className="text-[20px] sm:text-[24px] md:text-[26px] lg:text-[28px] font-bold tracking-tight text-white leading-tight truncate">
+                        {car.name === "Beverly Hills Ultra Estate"
+                          ? "Beverly Hills Ultra Luxury"
+                          : car.name}
+                      </h2>
+                      <div className="text-[12px] sm:text-[13px] text-zinc-500 font-normal mt-0.5 truncate">
+                        {displayLocation}
                       </div>
-
-                      {/* Price */}
-                      {displayPrice && (
-                        <div className="mt-1.5 sm:mt-2 text-[20px] sm:text-[24px] lg:text-[26px] font-bold text-white leading-none">
-                          {displayPrice}
-                        </div>
-                      )}
-
-                      {/* Description */}
-                      <p className="mt-1.5 sm:mt-2 text-[12px] sm:text-[13px] leading-relaxed text-zinc-400 font-normal line-clamp-2">
-                        {car.description}
-                      </p>
                     </div>
 
-                    <div className="min-w-0">
-                      {/* Combined Stats and Meta Block */}
-                      <div className="border border-zinc-800/80 rounded-[8px] bg-zinc-950/80 px-3 sm:px-3.5 py-2 mt-2 w-fit max-w-full overflow-x-auto no-scrollbar">
-                        {/* Estate Metrics Counters */}
-                        <div className="flex items-center gap-2 sm:gap-3 py-0.5 min-w-max">
-                          {/* Living Area */}
-                          {car.livingArea && (
-                            <div className="flex items-center gap-2">
-                              <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                              </svg>
-                              <div className="flex flex-col">
-                                <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">{car.livingArea}</span>
-                                <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">Living Area</span>
-                              </div>
+                    {/* Price */}
+                    {displayPrice && (
+                      <div className="mt-1.5 sm:mt-2 text-[20px] sm:text-[24px] lg:text-[26px] font-bold text-white leading-none">
+                        {displayPrice}
+                      </div>
+                    )}
+
+                    {/* Description */}
+                    <p className="mt-1.5 sm:mt-2 text-[12px] sm:text-[13px] leading-relaxed text-zinc-400 font-normal line-clamp-2">
+                      {car.description}
+                    </p>
+                  </div>
+
+                  <div className="min-w-0">
+                    {/* Combined Stats and Meta Block */}
+                    <div className="border border-zinc-800/80 rounded-[8px] bg-zinc-950/80 px-3 sm:px-3.5 py-2 mt-2 w-fit max-w-full overflow-x-auto no-scrollbar">
+                      {/* Estate Metrics Counters */}
+                      <div className="flex items-center gap-2 sm:gap-3 py-0.5 min-w-max">
+                        {/* Living Area */}
+                        {car.livingArea && (
+                          <div className="flex items-center gap-2">
+                            <svg
+                              className="w-4 h-4 text-white shrink-0"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                              />
+                            </svg>
+                            <div className="flex flex-col">
+                              <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">
+                                {car.livingArea}
+                              </span>
+                              <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">
+                                Living Area
+                              </span>
                             </div>
-                          )}
+                          </div>
+                        )}
 
-                          {car.livingArea && car.landSize && <div className="w-[1px] bg-zinc-800 self-stretch mx-1.5" />}
+                        {car.livingArea && car.landSize && (
+                          <div className="w-[1px] bg-zinc-800 self-stretch mx-1.5" />
+                        )}
 
-                          {/* Land Size */}
-                          {car.landSize && (
-                            <div className="flex items-center gap-2">
-                              <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 2.25c-2.62 0-4.75 2.13-4.75 4.75 0 .97.3 1.88.8 2.64L6.5 12h3.5v6H14v-6h3.5l-1.55-2.61c.5-.76.8-1.67.8-2.64 0-2.62-2.13-4.75-4.75-4.75z" />
-                              </svg>
-                              <div className="flex flex-col">
-                                <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">{car.landSize}</span>
-                                <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">Land Size</span>
-                              </div>
+                        {/* Land Size */}
+                        {car.landSize && (
+                          <div className="flex items-center gap-2">
+                            <svg
+                              className="w-4 h-4 text-white shrink-0"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 2.25c-2.62 0-4.75 2.13-4.75 4.75 0 .97.3 1.88.8 2.64L6.5 12h3.5v6H14v-6h3.5l-1.55-2.61c.5-.76.8-1.67.8-2.64 0-2.62-2.13-4.75-4.75-4.75z"
+                              />
+                            </svg>
+                            <div className="flex flex-col">
+                              <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">
+                                {car.landSize}
+                              </span>
+                              <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">
+                                Land Size
+                              </span>
                             </div>
-                          )}
+                          </div>
+                        )}
 
-                          {car.landSize && car.bedrooms && <div className="w-[1px] bg-zinc-800 self-stretch mx-1.5" />}
+                        {car.landSize && car.bedrooms && (
+                          <div className="w-[1px] bg-zinc-800 self-stretch mx-1.5" />
+                        )}
 
-                          {/* Bedrooms */}
-                          {car.bedrooms && (
-                            <div className="flex items-center gap-2">
-                              <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12h19.5M2.25 12v6.75A2.25 2.25 0 004.5 21h15a2.25 2.25 0 002.25-2.25V12M2.25 12V6.75A2.25 2.25 0 004.5 4.5h5.625c.621 0 1.125.504 1.125 1.125V12M21.75 12V6.75A2.25 2.25 0 0019.5 4.5h-5.625c-.621 0-1.125.504-1.125 1.125V12m0 0h1.5m-1.5 0h-1.5" />
-                              </svg>
-                              <div className="flex flex-col">
-                                <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">{car.bedrooms}</span>
-                                <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">Bedrooms</span>
-                              </div>
+                        {/* Bedrooms */}
+                        {car.bedrooms && (
+                          <div className="flex items-center gap-2">
+                            <svg
+                              className="w-4 h-4 text-white shrink-0"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.25 12h19.5M2.25 12v6.75A2.25 2.25 0 004.5 21h15a2.25 2.25 0 002.25-2.25V12M2.25 12V6.75A2.25 2.25 0 004.5 4.5h5.625c.621 0 1.125.504 1.125 1.125V12M21.75 12V6.75A2.25 2.25 0 0019.5 4.5h-5.625c-.621 0-1.125.504-1.125 1.125V12m0 0h1.5m-1.5 0h-1.5"
+                              />
+                            </svg>
+                            <div className="flex flex-col">
+                              <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">
+                                {car.bedrooms}
+                              </span>
+                              <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">
+                                Bedrooms
+                              </span>
                             </div>
-                          )}
+                          </div>
+                        )}
 
-                          {car.bedrooms && car.bathrooms && <div className="w-[1px] bg-zinc-800 self-stretch mx-1.5" />}
+                        {car.bedrooms && car.bathrooms && (
+                          <div className="w-[1px] bg-zinc-800 self-stretch mx-1.5" />
+                        )}
 
-                          {/* Bathrooms */}
-                          {car.bathrooms && (
-                            <div className="flex items-center gap-2">
-                              <svg className="w-4 h-4 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V10M3 10H21M7 5H17M12 5V10" />
-                              </svg>
-                              <div className="flex flex-col">
-                                <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">{car.bathrooms}</span>
-                                <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">Bathrooms</span>
-                              </div>
+                        {/* Bathrooms */}
+                        {car.bathrooms && (
+                          <div className="flex items-center gap-2">
+                            <svg
+                              className="w-4 h-4 text-white shrink-0"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3 10V18C3 19.1 3.9 20 5 20H19C20.1 20 21 19.1 21 18V10M3 10H21M7 5H17M12 5V10"
+                              />
+                            </svg>
+                            <div className="flex flex-col">
+                              <span className="text-[12px] sm:text-[12.5px] font-bold text-white leading-none">
+                                {car.bathrooms}
+                              </span>
+                              <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-medium mt-0.5 leading-none">
+                                Bathrooms
+                              </span>
                             </div>
-                          )}
-                        </div>
-
-                        {/* Divider */}
-                        <div className="border-t border-zinc-800/80 my-1.5" />
-
-                        {/* Meta information */}
-                        <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-2.5 gap-y-0.5 text-[10px] sm:text-[10.5px] text-zinc-400 font-medium">
-                          <span>
-                            Category: <span className="text-zinc-300 font-semibold">{car.category}</span>
-                          </span>
-                          <span>|</span>
-                          <span>
-                            Property Type: <span className="text-zinc-300 font-semibold">{car.propertyType}</span>
-                          </span>
-                          <span>|</span>
-                          <span className="inline-flex items-center gap-1">
-                            Status: <span className="text-zinc-300 font-semibold">{car.availabilityStatus}</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block ml-0.5" />
-                          </span>
-                        </div>
+                          </div>
+                        )}
                       </div>
 
-                      {/* View all Links Button */}
-                      <div className="relative mt-2.5 sm:mt-3">
-                        <button
-                          type="button"
-                          onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
-                          className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[12.5px] sm:text-[13.5px] font-bold transition duration-200 w-fit select-none"
-                        >
-                          <span>View all Links</span>
-                          <FaArrowRight className="text-[12px] sm:text-[13.5px]" />
-                        </button>
-                        {openSnackbarId === car._id && renderLinksSnackbar(car)}
+                      {/* Divider */}
+                      <div className="border-t border-zinc-800/80 my-1.5" />
+
+                      {/* Meta information */}
+                      <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-2.5 gap-y-0.5 text-[10px] sm:text-[10.5px] text-zinc-400 font-medium">
+                        <span>
+                          Category:{" "}
+                          <span className="text-zinc-300 font-semibold">
+                            {car.category}
+                          </span>
+                        </span>
+                        <span>|</span>
+                        <span>
+                          Property Type:{" "}
+                          <span className="text-zinc-300 font-semibold">
+                            {car.propertyType}
+                          </span>
+                        </span>
+                        <span>|</span>
+                        <span className="inline-flex items-center gap-1">
+                          Status:{" "}
+                          <span className="text-zinc-300 font-semibold">
+                            {car.availabilityStatus}
+                          </span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] inline-block ml-0.5" />
+                        </span>
                       </div>
+                    </div>
+
+                    {/* View all Links Button */}
+                    <div className="relative mt-2.5 sm:mt-3">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenSnackbarId(
+                            openSnackbarId === car._id ? null : car._id,
+                          )
+                        }
+                        className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[12.5px] sm:text-[13.5px] font-bold transition duration-200 w-fit select-none"
+                      >
+                        <span>View all Links</span>
+                        <FaArrowRight className="text-[12px] sm:text-[13.5px]" />
+                      </button>
+                      {openSnackbarId === car._id && renderLinksSnackbar(car)}
                     </div>
                   </div>
+                </div>
 
                 {/* VERTICAL DIVIDER LINE */}
                 <div className="hidden md:block w-[1px] h-[240px] bg-zinc-800 my-auto shrink-0" />
@@ -612,7 +812,11 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   <button
                     onClick={(e) => handleVoteClick(e, car)}
                     disabled={isVoting || isLimitReached}
-                    title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
+                    title={
+                      isLimitReached
+                        ? "Daily limit of 3 votes reached for today"
+                        : "Click to cast a vote"
+                    }
                     className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border text-[16px] md:text-[18px] font-bold transition duration-200 select-none ${
                       isVoting || isLimitReached
                         ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
@@ -627,7 +831,9 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                       {car.votes || "0"}
                     </div>
                     <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
-                      {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
+                      {car.rawVotes
+                        ? car.rawVotes.toLocaleString()
+                        : car.votes || "0"}
                     </div>
                   </div>
 
@@ -652,7 +858,8 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
         if (car.isContentCreator) {
           const stats = getCreatorStats(car);
           const profilePicUrl = getCreatorProfilePic(car);
-          const bannerImageUrl = car.banner || car.bannerImage || car.coverImage || car.image;
+          const bannerImageUrl =
+            car.banner || car.bannerImage || car.coverImage || car.image;
 
           return (
             <div
@@ -705,16 +912,16 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                           alt={car.name}
                           className="w-full h-full object-cover rounded-full"
                           onError={(e) => {
-                            e.target.style.display = 'none';
+                            e.target.style.display = "none";
                             if (e.target.nextSibling) {
-                              e.target.nextSibling.style.display = 'flex';
+                              e.target.nextSibling.style.display = "flex";
                             }
                           }}
                         />
                       ) : null}
                       <div
                         className="w-full h-full rounded-full items-center justify-center text-white font-bold text-base sm:text-lg select-none"
-                        style={{ display: profilePicUrl ? 'none' : 'flex' }}
+                        style={{ display: profilePicUrl ? "none" : "flex" }}
                       >
                         {getInitials(car.name)}
                       </div>
@@ -724,7 +931,10 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                         {car.name}
                       </h2>
                       <div className="text-[13px] sm:text-[15px] lg:text-[16px] text-zinc-400 font-medium mt-1 sm:mt-2 leading-none">
-                        Channel : <span className="text-zinc-300">{car.channelName || car.name}</span>
+                        Channel :{" "}
+                        <span className="text-zinc-300">
+                          {car.channelName || car.name}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -765,35 +975,63 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                     <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
                       <FaUsers className="text-[#D6A125] text-[18px] sm:text-[24px] shrink-0" />
                       <div className="flex flex-col">
-                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">Total Subscribers</span>
-                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.total}</span>
+                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">
+                          Total Subscribers
+                        </span>
+                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">
+                          {stats.total}
+                        </span>
                       </div>
                     </div>
 
                     {/* YouTube Subscribers */}
                     <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
-                      <img src={youtubeIcon} alt="YouTube" className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0" />
+                      <img
+                        src={youtubeIcon}
+                        alt="YouTube"
+                        className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0"
+                      />
                       <div className="flex flex-col">
-                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">YouTube Subscribers</span>
-                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.youtube}</span>
+                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">
+                          YouTube Subscribers
+                        </span>
+                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">
+                          {stats.youtube}
+                        </span>
                       </div>
                     </div>
 
                     {/* Instagram Followers */}
                     <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
-                      <img src={instagramIcon} alt="Instagram" className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0" />
+                      <img
+                        src={instagramIcon}
+                        alt="Instagram"
+                        className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0"
+                      />
                       <div className="flex flex-col">
-                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">Instagram Followers</span>
-                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.instagram}</span>
+                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">
+                          Instagram Followers
+                        </span>
+                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">
+                          {stats.instagram}
+                        </span>
                       </div>
                     </div>
 
                     {/* Twitter Followers */}
                     <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
-                      <img src={xIcon} alt="Twitter" className="w-4.5 h-4.5 sm:w-[22px] sm:h-[22px] object-contain shrink-0" />
+                      <img
+                        src={xIcon}
+                        alt="Twitter"
+                        className="w-4.5 h-4.5 sm:w-[22px] sm:h-[22px] object-contain shrink-0"
+                      />
                       <div className="flex flex-col">
-                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">Twitter Followers</span>
-                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">{stats.twitter}</span>
+                        <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">
+                          Twitter Followers
+                        </span>
+                        <span className="text-[12px] sm:text-[14.5px] font-bold text-white mt-1 leading-none">
+                          {stats.twitter}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -802,7 +1040,11 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   <div className="relative mt-2">
                     <button
                       type="button"
-                      onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
+                      onClick={() =>
+                        setOpenSnackbarId(
+                          openSnackbarId === car._id ? null : car._id,
+                        )
+                      }
                       className="flex items-center gap-2 text-[#D6A125] hover:text-[#e5b338] text-[12.5px] sm:text-[13.5px] font-bold transition duration-200 w-fit select-none"
                     >
                       <span>View all Links</span>
@@ -820,7 +1062,11 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   <button
                     onClick={(e) => handleVoteClick(e, car)}
                     disabled={isVoting || isLimitReached}
-                    title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
+                    title={
+                      isLimitReached
+                        ? "Daily limit of 3 votes reached for today"
+                        : "Click to cast a vote"
+                    }
                     className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border text-[16px] md:text-[18px] font-bold transition duration-200 select-none ${
                       isVoting || isLimitReached
                         ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
@@ -835,7 +1081,9 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                       {car.votes || "0"}
                     </div>
                     <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
-                      {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
+                      {car.rawVotes
+                        ? car.rawVotes.toLocaleString()
+                        : car.votes || "0"}
                     </div>
                   </div>
 
@@ -861,7 +1109,10 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
         // REDESIGNED AUTOMOTIVE/CARS NOMINEE CARD
         const displayCarPrice = car.price ? car.price.replace("$", "$ ") : "";
         const displayAcceleration = car.acceleration || car.transmission || "";
-        const accelerationLabel = (car.acceleration && car.acceleration.toLowerCase().includes("s")) ? "0-100 km/h" : "Transmission";
+        const accelerationLabel =
+          car.acceleration && car.acceleration.toLowerCase().includes("s")
+            ? "0-100 km/h"
+            : "Transmission";
 
         return (
           <div
@@ -991,32 +1242,62 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   {/* Meta information */}
                   <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-2.5 md:gap-x-3 gap-y-1 text-[10px] sm:text-[10.5px] md:text-[11px] text-zinc-500 font-normal">
                     <span className="hidden md:inline">
-                      Brand : <span className="text-white font-semibold">{car.brand || car.location || "Bugatti"}</span>
+                      Brand :{" "}
+                      <span className="text-white font-semibold">
+                        {car.brand || car.location || "Bugatti"}
+                      </span>
                     </span>
                     <span className="text-zinc-700 hidden md:inline">|</span>
                     <span className="hidden md:inline">
-                      Model : <span className="text-white font-semibold">{car.model || car.bodyType || "Tourbillon"}</span>
+                      Model :{" "}
+                      <span className="text-white font-semibold">
+                        {car.model || car.bodyType || "Tourbillon"}
+                      </span>
                     </span>
                     <span className="text-zinc-700 hidden md:inline">|</span>
                     <span className="hidden md:inline">
-                      Year : <span className="text-white font-semibold">{car.year || "2026"}</span>
+                      Year :{" "}
+                      <span className="text-white font-semibold">
+                        {car.year || "2026"}
+                      </span>
                     </span>
                     <span className="text-zinc-700 hidden md:inline">|</span>
                     <span>
-                      Production Limit : <span className="text-white font-semibold">{car.productionUnits || car.productionLimit || car.limit || "250"}</span>
+                      Production Limit :{" "}
+                      <span className="text-white font-semibold">
+                        {car.productionUnits ||
+                          car.productionLimit ||
+                          car.limit ||
+                          "250"}
+                      </span>
                     </span>
                     <span className="text-zinc-700">|</span>
                     <span>
                       Origin :{" "}
                       <span className="inline-flex items-center gap-1.5 text-white font-semibold align-middle">
                         <img
-                          src={getCountryFlagInfo(car.country || car.origin, car.brand).flagUrl}
+                          src={
+                            getCountryFlagInfo(
+                              car.country || car.origin,
+                              car.brand,
+                            ).flagUrl
+                          }
                           srcSet={`${getCountryFlagInfo(car.country || car.origin, car.brand).flagUrl2x} 2x`}
-                          alt={getCountryFlagInfo(car.country || car.origin, car.brand).name}
+                          alt={
+                            getCountryFlagInfo(
+                              car.country || car.origin,
+                              car.brand,
+                            ).name
+                          }
                           className="w-4 h-auto rounded-[2px] object-contain shadow-xs inline-block"
                         />
                         <span>
-                          {getCountryFlagInfo(car.country || car.origin, car.brand).name}
+                          {
+                            getCountryFlagInfo(
+                              car.country || car.origin,
+                              car.brand,
+                            ).name
+                          }
                         </span>
                       </span>
                     </span>
@@ -1026,7 +1307,11 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   <div className="relative mt-1 md:mt-1.5 hidden md:block">
                     <button
                       type="button"
-                      onClick={() => setOpenSnackbarId(openSnackbarId === car._id ? null : car._id)}
+                      onClick={() =>
+                        setOpenSnackbarId(
+                          openSnackbarId === car._id ? null : car._id,
+                        )
+                      }
                       className="flex items-center gap-1.5 text-[#D6A125] hover:text-[#e5b338] text-[11px] md:text-[12px] font-bold transition duration-200 w-fit"
                     >
                       <span>View all Links</span>
@@ -1045,7 +1330,11 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                 <button
                   onClick={(e) => handleVoteClick(e, car)}
                   disabled={isVoting || isLimitReached}
-                  title={isLimitReached ? "Daily limit of 3 votes reached for today" : "Click to cast a vote"}
+                  title={
+                    isLimitReached
+                      ? "Daily limit of 3 votes reached for today"
+                      : "Click to cast a vote"
+                  }
                   className={`h-[40px] md:h-[44px] w-full max-w-[280px] md:max-w-none rounded-[10px] border text-[16px] md:text-[18px] font-bold transition duration-200 select-none ${
                     isVoting || isLimitReached
                       ? "opacity-50 cursor-not-allowed border-zinc-700 bg-zinc-900/60 text-zinc-500 hover:bg-zinc-900/60"
@@ -1060,7 +1349,9 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                     {car.votes || "0"}
                   </div>
                   <div className="text-[10.5px] md:text-[11px] text-zinc-500 font-medium mt-1 leading-none">
-                    {car.rawVotes ? car.rawVotes.toLocaleString() : car.votes || "0"}
+                    {car.rawVotes
+                      ? car.rawVotes.toLocaleString()
+                      : car.votes || "0"}
                   </div>
                 </div>
 
@@ -1092,15 +1383,34 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
             </div>
             <div className="flex flex-col min-w-0 pr-2 flex-1">
               <span className="text-[13.5px] font-bold text-white leading-snug flex items-center gap-1.5">
-                <span>{toast.limitReached ? "Daily Limit Reached ⚠️" : "Vote Registered!"}</span>
-                {!toast.limitReached && <span className="text-[#D6A125] text-xs">✨</span>}
+                <span>
+                  {toast.limitReached
+                    ? "Daily Limit Reached ⚠️"
+                    : "Vote Registered!"}
+                </span>
+                {!toast.limitReached && (
+                  <span className="text-[#D6A125] text-xs">✨</span>
+                )}
               </span>
               <span className="text-[11.5px] text-zinc-300 font-medium leading-relaxed mt-0.5 whitespace-normal sm:whitespace-nowrap">
                 {toast.limitReached ? (
-                  <span>You have <span className="text-[#D6A125] font-bold">0 votes</span> left today. Try again tomorrow!</span>
+                  <span>
+                    You have{" "}
+                    <span className="text-[#D6A125] font-bold">0 votes</span>{" "}
+                    left today. Try again tomorrow!
+                  </span>
                 ) : (
                   <span>
-                    Thank you for voting for <span className="text-white font-semibold">{toast.nomineeName}</span>. You have <span className="text-[#D6A125] font-bold">{toast.votesLeft} {toast.votesLeft === 1 ? 'vote' : 'votes'} left</span> today.
+                    Thank you for voting for{" "}
+                    <span className="text-white font-semibold">
+                      {toast.nomineeName}
+                    </span>
+                    . You have{" "}
+                    <span className="text-[#D6A125] font-bold">
+                      {toast.votesLeft}{" "}
+                      {toast.votesLeft === 1 ? "vote" : "votes"} left
+                    </span>{" "}
+                    today.
                   </span>
                 )}
               </span>
