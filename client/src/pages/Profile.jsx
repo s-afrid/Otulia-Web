@@ -270,7 +270,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
-      <SEO title="My Profile" description="Manage your Otulia profile, view your order history, and update your account details." />
+      <SEO title="My Profile" description="Manage your Otulia profile, view your order history, and update your account details." noindex />
       <Navbar />
 
       <div className="pt-32 pb-20 px-6 max-w-6xl mx-auto">

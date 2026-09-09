@@ -52,7 +52,7 @@ const Favorites = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <SEO title="My Favorites" description="View and manage your saved luxury assets on Otulia." />
+            <SEO title="My Favorites" description="View and manage your saved luxury assets on Otulia." noindex />
             <Navbar />
 
             <div className="pt-28 max-w-7xl mx-auto px-6">

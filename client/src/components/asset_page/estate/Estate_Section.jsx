@@ -100,11 +100,17 @@ const Estate_Section = () => {
   return (
     <div className="flex flex-col bg-white text-black min-h-screen">
       <SEO
-        title={`${info.title} | Luxury Estate`}
+        title={info.title}
         description={info.description}
         image={info.images?.[0]}
         type="article"
         productData={info}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Listings', path: '/shop' },
+          { label: 'Real Estate', path: '/listings' },
+          { label: info.title },
+        ]}
       />
 
       <AssetGallery

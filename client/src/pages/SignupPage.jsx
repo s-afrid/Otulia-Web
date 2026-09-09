@@ -66,6 +66,7 @@ const SignupPage = () => {
       <SEO
         title="Sign Up"
         description="Join Otulia and begin your legacy. Create an account to buy, sell, and rent exclusive luxury assets."
+        noindex
       />
 
       {/* ── LEFT PANEL ── */}

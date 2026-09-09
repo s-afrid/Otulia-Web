@@ -22,7 +22,8 @@ import ContactModal from "../components/ContactModal";
 import UpgradeModal from "../components/UpgradeModal";
 import AddLeadModal from "../components/inventory/AddLeadModal";
 import ScheduleMeetingModal from "../components/inventory/ScheduleMeetingModal";
-import ImageCropModal from "../components/ImageCropModal";
+import ImageCropModal from '../components/ImageCropModal';
+import SEO from '../components/SEO';
 
 import inventoryHubSound from "../assets/sounds/inventory_hub.mp3";
 
@@ -639,6 +640,11 @@ const Inventory = () => {
 
   return (
     <div className="flex h-screen bg-[#FDFDFD] overflow-hidden">
+      <SEO
+        title="Inventory & Dealer Dashboard"
+        description="Manage your Otulia inventory, leads, analytics, marketplace listings, and subscription."
+        noindex
+      />
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}

@@ -39,9 +39,13 @@ const ListingTemplate = ({
 
   return (
     <div className='relative w-full overflow-x-hidden'>
-      <SEO 
+      <SEO
         title={pageTitle}
         description={pageDescription}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          ...(breadcrumb || []),
+        ]}
       />
       <Navbar />
 

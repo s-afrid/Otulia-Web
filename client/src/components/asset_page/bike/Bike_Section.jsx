@@ -96,13 +96,19 @@ const Bike_Section = () => {
 
     return (
         <div className="flex flex-col bg-white text-black min-h-screen">
-           <SEO 
-                title={info.title}
-                description={info.description}
-                image={info.images?.[0]}
-                type="article"
-                productData={info}
-            />
+           <SEO
+                   title={info.title}
+                   description={info.description}
+                   image={info.images?.[0]}
+                   type="article"
+                   productData={info}
+                   breadcrumbs={[
+                     { label: 'Home', path: '/' },
+                     { label: 'Listings', path: '/shop' },
+                     { label: 'Bikes', path: '/listings' },
+                     { label: info.title },
+                   ]}
+                 />
             <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Bike" />
 
             <BikeDetails item={info} modelName="BikeAsset" />

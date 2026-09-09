@@ -235,7 +235,7 @@ const AdminDashboard = () => {
 
     return (
         <div className="min-h-screen bg-[#F9FAFB] flex montserrat">
-            <SEO title="Admin Dashboard" description="Otulia System Administration" />
+            <SEO title="Admin Dashboard" description="Otulia System Administration" noindex />
             
             {/* SIDEBAR */}
             <AdminSidebar 

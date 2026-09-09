@@ -241,6 +241,7 @@ const MyListings = () => {
       <SEO
         title="My Listings"
         description="Manage your luxury asset listings on Otulia."
+        noindex
       />
       <Navbar />
       <AddAssetModal

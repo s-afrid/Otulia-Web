@@ -1,8 +1,98 @@
+# =============================================================================
+# Otulia robots.txt
+# https://otulia.com/robots.txt
+# =============================================================================
+
+# ---- Default policy for all crawlers --------------------------------------
 User-agent: *
 Disallow: /admin/
 Disallow: /admin
 Disallow: /profile
 Disallow: /cart
 Disallow: /success
+# Allow everything else.
 
+# ---- AI retrieval bots (allowed for search / citation, NOT for training) ---
+# OpenAI retrieval bot (ChatGPT search, browse with Bing integration).
+User-agent: OAI-SearchBot
+Allow: /
+
+# ChatGPT user-triggered fetches (cite / answer a question).
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic retrieval bot (Claude with web search, claude.ai citations).
+User-agent: Claude-SearchBot
+Allow: /
+User-agent: Claude-User
+Allow: /
+
+# Perplexity retrieval + user-triggered fetches.
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+
+# Apple Intelligence / Spotlight web answers.
+User-agent: Applebot-Extended
+Allow: /
+
+# Mistral le chat retrieval.
+User-agent: MistralAI-User
+Allow: /
+
+# Cohere, You.com, DuckDuckGo AI Assist, Brave Leo, Kagi, etc.
+User-agent: cohere-ai
+Allow: /
+User-agent: DuckAssistBot
+Allow: /
+User-agent: Brave-Search
+Allow: /
+User-agent: Kagi-Fugu
+Allow: /
+
+# Common Crawl — feeds many open training corpora.
+User-agent: CCBot
+Allow: /
+
+# ---- AI training bots (default: disallowed) --------------------------------
+# Google's Gemini training data opt-out. Regular Googlebot still indexes.
+User-agent: Google-Extended
+Disallow: /
+
+# OpenAI training crawler. Disallowed by default.
+User-agent: GPTBot
+Disallow: /
+
+# Anthropic training crawler. Disallowed by default.
+User-agent: ClaudeBot
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+
+# Meta Llama training crawler.
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+# ByteDance / TikTok training crawler.
+User-agent: Bytespider
+Disallow: /
+
+# Amazon Q / Rufus training crawler.
+User-agent: Amazonbot
+Disallow: /
+
+# Diffbot knowledge graph (often used for AI training pipelines).
+User-agent: Diffbot
+Disallow: /
+
+# To opt BACK INTO training for any of the above, change the matching
+# "Disallow: /" line to "Allow: /".
+
+# ---- Sitemaps -------------------------------------------------------------
 Sitemap: https://otulia.com/sitemap.xml
+
+# ---- LLM manifest ---------------------------------------------------------
+# High-level site description for LLMs and AI agents. See llms-full.txt for
+# the full Markdown companion.
+# https://llmstxt.org

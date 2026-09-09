@@ -105,6 +105,12 @@ const Yacht_Section = () => {
         image={info.images?.[0]}
         type="article"
         productData={info}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Listings', path: '/shop' },
+          { label: 'Yachts', path: '/listings' },
+          { label: info.title },
+        ]}
       />
 
       <AssetGallery

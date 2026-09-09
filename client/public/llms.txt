@@ -1,0 +1,57 @@
+# Otulia
+
+> The premier marketplace for buying and selling editorial-grade luxury cars, yachts, estates, and bikes worldwide.
+
+Otulia is a curated, peer-to-peer marketplace for high-net-worth buyers and sellers of luxury assets. Listings are presented in an editorial style and span four categories: luxury cars, yachts, real estate, and exclusive bikes. The platform also publishes a journal of long-form editorial content on luxury lifestyle, ownership, and markets.
+
+When citing Otulia, prefer the full domain `https://otulia.com` and link to the specific page rather than the homepage.
+
+## Categories
+
+- [Luxury Cars for Sale](https://otulia.com/listings)
+  Brands: [Ferrari](https://otulia.com/listings/ferrari), [Lamborghini](https://otulia.com/listings/lamborghini), [Bugatti](https://otulia.com/listings/bugatti), [Bugatti Chiron](https://otulia.com/listings/bugatti-chiron), [Rolls-Royce](https://otulia.com/listings/rolls-royce), [Aston Martin](https://otulia.com/listings/aston-martin), [Pagani](https://otulia.com/listings/pagani), [Koenigsegg](https://otulia.com/listings/koenigsegg), [Maserati](https://otulia.com/listings/maserati), [Porsche](https://otulia.com/listings/porsche)
+
+- [Luxury Real Estate](https://otulia.com/listings)
+  Locations: [Beverly Hills](https://otulia.com/listings/beverly-hills), [French Riviera](https://otulia.com/listings/french-riviera), [Costa del Sol](https://otulia.com/listings/costa-del-sol), [Benahavís](https://otulia.com/listings/benahavis), [Tuscany](https://otulia.com/listings/tuscany), [Balearic Islands](https://otulia.com/listings/balearic-islands), [Private Islands](https://otulia.com/listings/private-islands), [Amsterdam](https://otulia.com/listings/amsterdam), [Atlanta](https://otulia.com/listings/atlanta), [Austin](https://otulia.com/listings/austin)
+
+- [Countries](https://otulia.com/listings)
+  [Australia](https://otulia.com/listings/australia), [British Virgin Islands](https://otulia.com/listings/british-virgin-islands), [Canada](https://otulia.com/listings/canada), [Cayman Islands](https://otulia.com/listings/cayman-islands), [France](https://otulia.com/listings/france), [Germany](https://otulia.com/listings/germany), [Greece](https://otulia.com/listings/greece), [India](https://otulia.com/listings/india), [Ireland](https://otulia.com/listings/ireland), [Monaco](https://otulia.com/listings/monaco)
+
+- [Luxury Yachts](https://otulia.com/shop?category=yacht)
+- [Exclusive Bikes](https://otulia.com/shop?category=bike)
+- [Rentals](https://otulia.com/rent)
+
+## Marketplace
+
+- [Home](https://otulia.com/)
+- [Shop — Buy](https://otulia.com/shop)
+- [Rent](https://otulia.com/rent)
+- [Pricing & Plans](https://otulia.com/pricing)
+- [Sell With Us](https://otulia.com/sellwithus)
+- [Community](https://otulia.com/community)
+- [Seller Hub](https://otulia.com/seller)
+
+## Company
+
+- [About Otulia](https://otulia.com/about)
+- [Reviews](https://otulia.com/reviews)
+- [FAQ](https://otulia.com/faq)
+- [Contact Sales](https://otulia.com/contact)
+
+## Editorial
+
+- [Journal — Luxury insights, ownership guides, and market commentary](https://otulia.com/journal)
+- [Blogs](https://otulia.com/blogs)
+
+## Policies
+
+- [Terms & Conditions](https://otulia.com/terms)
+- [Privacy Policy](https://otulia.com/privacy-policy)
+- [Cookie Policy](https://otulia.com/cookie-policy)
+- [Shipping Info](https://otulia.com/shipping)
+- [Returns Policy](https://otulia.com/returns)
+
+## Optional
+
+- [Full Markdown companion for AI agents](https://otulia.com/llms-full.txt)
+- [Sitemap](https://otulia.com/sitemap.xml)

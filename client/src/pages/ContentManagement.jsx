@@ -996,7 +996,7 @@ const ContentManagement = () => {
 
     return (
         <div className="min-h-screen bg-[#0B0F19] text-white flex select-none montserrat antialiased">
-            <SEO title="Rankings CMS" description="Manage and organize rankings categories" />
+            <SEO title="Rankings CMS" description="Manage and organize rankings categories" noindex />
             
             {/* Dark Theme Sidebar */}
             <ContentManagementSidebar 
