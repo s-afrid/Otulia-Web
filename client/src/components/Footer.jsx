@@ -13,13 +13,13 @@ const Footer = () => {
     },
     {
       id: 2,
-      name: "Luxury Cars & Bikes",
+      name: "Luxury Cars",
       navigate: "/category/cars",
     },
     {
       id: 3,
-      name: "Yachts & Homes",
-      navigate: "/category/yachts",
+      name: "Luxury Real Estate",
+      navigate: "/category/estates",
     },
     {
       id: 4,

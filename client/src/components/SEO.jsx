@@ -58,7 +58,9 @@ export default function SEO({
   const resolvedUrl = url || `${DEFAULT_URL}${location.pathname}${location.search || ''}`;
   const resolvedImage = image || DEFAULT_IMAGE;
 
-  const seoTitle = title ? `${title} | Otulia` : 'Otulia - Buy & Sell Luxury Assets Worldwide';
+  const seoTitle = title
+    ? (/\botulia\b/i.test(title) ? title : `${title} | Otulia`)
+    : 'Otulia - Buy & Sell Luxury Assets Worldwide';
 
   // Standard Organization Schema
   const structuredData = {

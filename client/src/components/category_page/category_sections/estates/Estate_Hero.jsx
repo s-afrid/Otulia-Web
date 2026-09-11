@@ -18,11 +18,12 @@ const Estate_Hero = () => {
       <div className="relative h-full w-full flex flex-col justify-center pl-8 md:pl-10 pr-[6%] z-10 pt-20">
         <div className="max-w-2xl flex flex-col gap-6 mb-16">
           <h1 className="text-white canela text-2xl md:text-[3.25rem] font-light leading-[1.05] drop-shadow-sm">
-            Discover Your Dream <br /> Estates With Us
+            Otulia Luxury Real Estate
           </h1>
           <div className="w-24 h-[2px] bg-[#D48D2A]"></div>
           <p className="text-white/90 montserrat text-lg md:text-xl font-normal tracking-wide">
-            The world's finest estates — curated.
+            Explore curated estates, villas, penthouses, and exceptional
+            properties worldwide.
           </p>
         </div>
 

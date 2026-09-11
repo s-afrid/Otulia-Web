@@ -47,15 +47,24 @@ const Categorty = () => {
       return {
         title: 'Explore Luxury Collections',
         description: "Discover the world's most exclusive cars, yachts, estates, and bikes.",
+        url: 'https://otulia.com/category',
       };
     }
 
     const isRent = acquisition && acquisition.toLowerCase() === 'rent';
     const actionPrefix = isRent ? 'Rent ' : '';
+    const hasFilters = Boolean(brand || loc || type || acquisition);
 
     let title = `${actionPrefix}Luxury ${categoryName}`;
+    let description = `Discover exclusive luxury ${categoryName.toLowerCase()} on Otulia.`;
 
-    if (brand && loc) {
+    if (!hasFilters && categorySegment === 'cars') {
+      title = 'Otulia Luxury Cars | Supercars for Sale';
+      description = 'Explore luxury cars on Otulia, including curated supercars, exotic vehicles, and collector cars from verified sellers worldwide.';
+    } else if (!hasFilters && categorySegment === 'estates') {
+      title = 'Otulia Luxury Real Estate | Exclusive Properties';
+      description = 'Explore luxury real estate on Otulia, including exceptional estates, villas, penthouses, and private properties worldwide.';
+    } else if (brand && loc) {
       title = `${actionPrefix}${brand} in ${loc} - Luxury ${categoryName}`;
     } else if (brand) {
       title = `${actionPrefix}${brand} - Luxury ${categoryName}`;
@@ -67,15 +76,16 @@ const Categorty = () => {
 
     return {
       title,
-      description: `Discover exclusive luxury ${categoryName.toLowerCase()} on Otulia.`,
+      description,
+      url: `https://otulia.com/category/${categorySegment}`,
     };
   };
 
-  const { title: seoTitle, description: seoDescription } = getSeoData();
+  const { title: seoTitle, description: seoDescription, url: seoUrl } = getSeoData();
 
   return (
     <div className='relative w-full overflow-x-hidden'>
-      <SEO title={seoTitle} description={seoDescription} />
+      <SEO title={seoTitle} description={seoDescription} url={seoUrl} />
       <Category_Navbar />
 
       <Routes>
