@@ -22,6 +22,8 @@ router.get('/sitemap.xml', async (req, res) => {
             '/seller',
             '/sellwithus',
             '/pricing',
+            '/category/cars',
+            '/category/estates',
             '/about',
             '/reviews',
             '/faq',
