@@ -11,9 +11,11 @@ import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
+import AssetUnavailable from "../AssetUnavailable";
 
 const Bike_Section = () => {
     const [info, setInfo] = useState(null);
+    const [loadFailed, setLoadFailed] = useState(false);
     const [similarAssets, setSimilarAssets] = useState([]);
     const [agentAssets, setAgentAssets] = useState([]);
 
@@ -39,6 +41,7 @@ const Bike_Section = () => {
 
         } catch (error) {
             console.error("Error fetching bike info:", error.message);
+            setLoadFailed(true);
         }
     };
 
@@ -85,6 +88,8 @@ const Bike_Section = () => {
     useEffect(() => {
         infoFetch();
     }, [id]);
+
+    if (loadFailed) return <AssetUnavailable />;
 
     if (!info) {
         return (

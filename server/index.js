@@ -33,14 +33,27 @@ app.use(compression());
 // Enforce HTTPS and Non-WWW Canonical Domain in Production
 app.use((req, res, next) => {
   if (process.env.NODE_ENV === "production") {
-    const host = req.get("host");
-    const isNotHttps = req.headers["x-forwarded-proto"] !== "https";
-    const hasWww = host.startsWith("www.");
+    const host = (req.get("host") || "").split(":")[0].toLowerCase();
+    const forwardedProto = String(req.headers["x-forwarded-proto"] || "")
+      .split(",")[0]
+      .trim();
+    const queryIndex = req.originalUrl.indexOf("?");
+    const query = queryIndex === -1 ? "" : req.originalUrl.slice(queryIndex);
+    let canonicalPath = req.path
+      .replace(/^\/asset\/cars(?=\/)/i, "/asset/car")
+      .replace(/^\/asset\/estates(?=\/)/i, "/asset/estate")
+      .replace(/^\/asset\/bikes(?=\/)/i, "/asset/bike")
+      .replace(/^\/asset\/yachts(?=\/)/i, "/asset/yacht")
+      .toLowerCase();
 
-    if (isNotHttps || hasWww) {
-      const newHost = host.replace(/^www\./, "");
-      // Redirect to https://otulia.com...
-      return res.redirect(301, `https://${newHost}${req.url}`);
+    if (canonicalPath.length > 1) canonicalPath = canonicalPath.replace(/\/+$/, "");
+
+    if (
+      forwardedProto !== "https" ||
+      host !== "otulia.com" ||
+      canonicalPath !== req.path
+    ) {
+      return res.redirect(301, `https://otulia.com${canonicalPath}${query}`);
     }
   }
   next();
@@ -66,6 +79,7 @@ app.get("/contact-us", (req, res) => res.redirect(301, "/contact"));
 app.get("/legal/privacy", (req, res) => res.redirect(301, "/privacy-policy"));
 app.get("/shipping-info", (req, res) => res.redirect(301, "/shipping"));
 app.get("/return-policy", (req, res) => res.redirect(301, "/returns"));
+app.get("/category", (req, res) => res.redirect(301, "/category/cars"));
 
 const PORT = process.env.PORT || 5000;
 
@@ -165,9 +179,83 @@ app.use(
   express.static(path.join(__dirname, "uploads"), { maxAge: "1y" }),
 );
 
+const clientRoutes = new Set([
+  "/",
+  "/shop",
+  "/community",
+  "/rent",
+  "/seller",
+  "/cart",
+  "/pricing",
+  "/blogs",
+  "/ranking",
+  "/journal",
+  "/login",
+  "/signup",
+  "/about",
+  "/reviews",
+  "/faq",
+  "/profile",
+  "/success",
+  "/listings",
+  "/inventory",
+  "/favorites",
+  "/admin",
+  "/admin/view-document",
+  "/content-management",
+  "/sellwithus",
+  "/terms",
+  "/privacy-policy",
+  "/shipping",
+  "/returns",
+  "/cookie-policy",
+  "/contact",
+  "/listings/private-islands",
+  "/listings/balearic-islands",
+  "/listings/costa-del-sol",
+  "/listings/french-riviera",
+  "/listings/tuscany",
+  "/listings/amsterdam",
+  "/listings/atlanta",
+  "/listings/austin",
+  "/listings/benahavis",
+  "/listings/beverly-hills",
+  "/listings/australia",
+  "/listings/british-virgin-islands",
+  "/listings/canada",
+  "/listings/cayman-islands",
+  "/listings/france",
+  "/listings/germany",
+  "/listings/greece",
+  "/listings/india",
+  "/listings/ireland",
+  "/listings/monaco",
+  "/listings/ferrari",
+  "/listings/aston-martin",
+  "/listings/koenigsegg",
+  "/listings/lamborghini",
+  "/listings/bugatti",
+  "/listings/maserati",
+  "/listings/pagani",
+  "/listings/porsche",
+  "/listings/rolls-royce",
+  "/listings/bugatti-chiron",
+]);
+
+const isClientRoute = (requestPath) =>
+  clientRoutes.has(requestPath) ||
+  /^\/category\/(cars|estates|yachts|bikes)$/.test(requestPath) ||
+  /^\/asset\/(car|estate|bike|yacht)\/[^/]+$/.test(requestPath) ||
+  /^\/journal\/[^/]+$/.test(requestPath) ||
+  /^\/ranking\/[^/]+(?:\/[^/]+)?$/.test(requestPath) ||
+  /^\/dealer\/[^/]+$/.test(requestPath);
+
 app.use((req, res) => {
   // If the request has a file extension (like .js, .css, .png) or is an API route, return 404
-  if (req.path.match(/\.[^\/]+$/) || req.path.startsWith("/api/")) {
+  if (
+    req.path.startsWith("/api/") ||
+    (req.path.match(/\.[^\/]+$/) && !isClientRoute(req.path))
+  ) {
     res.status(404).send("File not found");
   } else {
     // Prevent caching for the entry point
@@ -185,6 +273,10 @@ app.use((req, res) => {
 
     const indexPath =
       candidatePaths.find((p) => fs.existsSync(p)) || candidatePaths[0];
+
+    if (!isClientRoute(req.path)) {
+      res.status(404);
+    }
 
     // Serve the React app index.html for client-side routing
     res.sendFile(indexPath, (err) => {

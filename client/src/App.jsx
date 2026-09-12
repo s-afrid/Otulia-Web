@@ -46,6 +46,7 @@ const DocumentViewer = lazy(() => import("./pages/DocumentViewer"));
 const ContentManagement = lazy(() => import("./pages/ContentManagement"));
 const DealerProfile = lazy(() => import("./pages/DealerProfile"));
 const SellWithUs = lazy(() => import("./pages/SellWithUs"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Policy pages
 const Terms = lazy(() => import("./pages/policies/Terms"));
@@ -376,6 +377,7 @@ function App() {
             path="/listings/bugatti-chiron"
             element={<BugattiChironPage />}
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
       {shouldShowFooter && <Footer />}

@@ -11,9 +11,11 @@ import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
+import AssetUnavailable from "../AssetUnavailable";
 
 const Car_Section = () => {
   const [info, setInfo] = useState(null); // Initialize as null to track loading state
+  const [loadFailed, setLoadFailed] = useState(false);
   const [similarAssets, setSimilarAssets] = useState([]);
   const [agentAssets, setAgentAssets] = useState([]);
 
@@ -44,6 +46,7 @@ const Car_Section = () => {
       recordView(result._id || result.id);
     } catch (error) {
       console.error("Error fetching car info:", error.message);
+      setLoadFailed(true);
     }
   };
 
@@ -93,6 +96,8 @@ const Car_Section = () => {
   useEffect(() => {
     infoFetch();
   }, [id]);
+
+  if (loadFailed) return <AssetUnavailable />;
 
   // 2. Loading State: Don't render until info is loaded
   if (!info) {

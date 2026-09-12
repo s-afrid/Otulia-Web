@@ -5,12 +5,16 @@ import Car_Section from "./car/Car_Section";
 import Estate_Section from "./estate/Estate_Section";
 import YachtDetail_Section from "./yacht/Yacht_Section";
 import BikeDetail_Section from "./bike/Bike_Section";
+import AssetUnavailable from "./AssetUnavailable";
 
 const Asset_Section = () => {
   const path = useLocation()
   const navigate = useNavigate();
   const patharray = path.pathname.split('/')
   const cat = patharray[2]
+  const validCategories = ['car', 'cars', 'estate', 'estates', 'yacht', 'yachts', 'bike', 'bikes'];
+
+  if (!validCategories.includes(cat)) return <AssetUnavailable />;
 
   return (
     <div className="flex flex-col bg-white text-black min-h-screen">

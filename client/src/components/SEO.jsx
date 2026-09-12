@@ -9,6 +9,33 @@ const DEFAULT_KEYWORDS =
 const DEFAULT_IMAGE = 'https://otulia.com/images/exclusive_club_bg.jpg';
 const DEFAULT_URL = 'https://otulia.com';
 
+const normalizeCanonicalPath = (pathname) => {
+  let normalized = pathname
+    .replace(/\/{2,}/g, '/')
+    .replace(/^\/asset\/cars(?=\/)/i, '/asset/car')
+    .replace(/^\/asset\/estates(?=\/)/i, '/asset/estate')
+    .replace(/^\/asset\/bikes(?=\/)/i, '/asset/bike')
+    .replace(/^\/asset\/yachts(?=\/)/i, '/asset/yacht')
+    .toLowerCase();
+
+  if (normalized.length > 1) normalized = normalized.replace(/\/+$/, '');
+  return normalized || '/';
+};
+
+const resolveCanonicalUrl = (candidate) => {
+  try {
+    const canonical = new URL(candidate, DEFAULT_URL);
+    canonical.protocol = 'https:';
+    canonical.host = 'otulia.com';
+    canonical.pathname = normalizeCanonicalPath(canonical.pathname);
+    canonical.search = '';
+    canonical.hash = '';
+    return canonical.toString();
+  } catch {
+    return `${DEFAULT_URL}/`;
+  }
+};
+
 // Map the asset `condition` field to a schema.org itemCondition URL.
 const conditionToSchema = (raw) => {
   if (!raw) return null;
@@ -53,9 +80,9 @@ export default function SEO({
   noindex = false,
 }) {
   const location = useLocation();
-  // Use the router's pathname so canonical/og:url is in sync with the URL bar
-  // the moment the component renders, not after a window.location read.
-  const resolvedUrl = url || `${DEFAULT_URL}${location.pathname}${location.search || ''}`;
+  // Search/filter parameters, fragments, trailing slashes, case variants, and
+  // plural asset aliases must not create separate canonical URLs.
+  const resolvedUrl = resolveCanonicalUrl(url || location.pathname);
   const resolvedImage = image || DEFAULT_IMAGE;
 
   const seoTitle = title

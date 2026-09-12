@@ -7,6 +7,7 @@ export const createAssetSlug = (title, id) => {
     const slug = title
       .toString()
       .trim()
+      .toLowerCase()
       .replace(/[^\w\s-]/g, '') // remove special characters
       .replace(/[\s_-]+/g, '-')   // replace spaces and underscores with a single hyphen
       .replace(/^-+|-+$/g, '');  // remove leading and trailing hyphens

@@ -46,7 +46,7 @@ const ContactSales = () => {
             } else {
                 setError(data.error || 'Failed to submit inquiry.');
             }
-        } catch (err) {
+        } catch {
             setError('An error occurred. Please try again later.');
         } finally {
             setLoading(false);
@@ -56,7 +56,11 @@ const ContactSales = () => {
     if (success) {
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8">
-                <SEO title="Inquiry Received" description="Thank you for your inquiry. Our sales team will get back to you shortly." />
+                <SEO
+                    title="Inquiry Received"
+                    description="Thank you for your inquiry. Our sales team will get back to you shortly."
+                    noindex
+                />
                 <FiCheckCircle className="text-6xl text-green-500 mb-6" />
                 <h2 className="text-3xl font-bold text-gray-900 canela mb-4 text-center">Inquiry Received</h2>
                 <p className="text-gray-500 text-center max-w-lg mb-8">

@@ -7,10 +7,8 @@
 User-agent: *
 Disallow: /admin/
 Disallow: /admin
-Disallow: /profile
-Disallow: /cart
-Disallow: /success
-# Allow everything else.
+# User/account pages use a noindex meta tag. They remain crawlable so search
+# engines can see that directive and remove previously discovered URLs.
 
 # ---- AI retrieval bots (allowed for search / citation, NOT for training) ---
 # OpenAI retrieval bot (ChatGPT search, browse with Bing integration).

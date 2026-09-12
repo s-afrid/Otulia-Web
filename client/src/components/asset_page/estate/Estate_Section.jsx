@@ -11,9 +11,11 @@ import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
+import AssetUnavailable from "../AssetUnavailable";
 
 const Estate_Section = () => {
   const [info, setInfo] = useState(null);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [similarAssets, setSimilarAssets] = useState([]);
   const [agentAssets, setAgentAssets] = useState([]);
 
@@ -38,6 +40,7 @@ const Estate_Section = () => {
       recordView(result._id || result.id);
     } catch (error) {
       console.error("Error fetching estate info:", error.message);
+      setLoadFailed(true);
     }
   };
 
@@ -86,6 +89,8 @@ const Estate_Section = () => {
   useEffect(() => {
     infoFetch();
   }, [id]);
+
+  if (loadFailed) return <AssetUnavailable />;
 
   if (!info) {
     return (

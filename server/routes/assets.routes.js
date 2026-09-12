@@ -405,6 +405,7 @@ const createAssetSlug = (title, id) => {
     const slug = title
       .toString()
       .trim()
+      .toLowerCase()
       .replace(/[^\w\s-]/g, '')
       .replace(/[\s_-]+/g, '-')
       .replace(/^-+|-+$/g, '');
