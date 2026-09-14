@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 import {
     FiGrid, FiUsers, FiPieChart, FiDollarSign, FiSettings,
     FiXCircle, FiShoppingBag, FiShield, FiPercent, FiFileText
@@ -8,6 +9,7 @@ import {
 const AdminSidebar = ({ isSidebarOpen, toggleSidebar, activeTab, setActiveTab, user }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { showSnackbar } = useSnackbar();
 
     const menuItems = [
         { id: 'overview', label: 'Overview', icon: FiGrid },
@@ -40,6 +42,10 @@ const AdminSidebar = ({ isSidebarOpen, toggleSidebar, activeTab, setActiveTab, u
                     <button
                         key={item.id}
                         onClick={() => {
+                            if (item.id === 'users' || item.id === 'partners') {
+                                showSnackbar("COMING SOON");
+                                return;
+                            }
                             if (item.isRoute) {
                                 navigate(item.path);
                             } else {

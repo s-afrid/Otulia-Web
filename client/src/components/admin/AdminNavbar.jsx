@@ -1,5 +1,6 @@
 import React from 'react';
 import { FiGrid, FiSearch, FiBell, FiShield } from 'react-icons/fi';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 const AdminNavbar = ({
     activeTab,
@@ -10,6 +11,7 @@ const AdminNavbar = ({
     notifications,
     handleRemoveNotification
 }) => {
+    const { showSnackbar } = useSnackbar();
     const getTabTitle = () => {
         if (activeTab === 'overview') return 'Dashboard Overview';
         if (activeTab === 'partners') return 'Partner Verification';
@@ -72,7 +74,11 @@ const AdminNavbar = ({
                                             onClick={() => {
                                                 handleRemoveNotification(notif._id);
                                                 if (notif.targetTab) {
-                                                    setActiveTab(notif.targetTab);
+                                                    if (notif.targetTab === 'users' || notif.targetTab === 'partners') {
+                                                        showSnackbar("COMING SOON");
+                                                    } else {
+                                                        setActiveTab(notif.targetTab);
+                                                    }
                                                 }
                                                 setIsNotificationDropdownOpen(false);
                                             }}

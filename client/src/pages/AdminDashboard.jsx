@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useSnackbar } from '../contexts/SnackbarContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SEO from '../components/SEO';
 
@@ -18,11 +19,14 @@ import CouponModal from '../components/admin/CouponModal';
 
 const AdminDashboard = () => {
     const { token, user } = useAuth();
+    const { showSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const location = useLocation();
     const [activeTab, setActiveTab] = useState(() => {
         const params = new URLSearchParams(location.search);
-        return params.get('tab') || 'overview';
+        const tab = params.get('tab');
+        if (tab === 'users' || tab === 'partners') return 'overview';
+        return tab || 'overview';
     });
     const [statusFilter, setStatusFilter] = useState('All');
     const [stats, setStats] = useState(null);
@@ -158,10 +162,20 @@ const AdminDashboard = () => {
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const tab = params.get('tab');
-        if (tab && tab !== activeTab) {
+        if (tab === 'users' || tab === 'partners') {
+            showSnackbar("COMING SOON");
+            setActiveTab('overview');
+        } else if (tab && tab !== activeTab) {
             setActiveTab(tab);
         }
     }, [location.search]);
+
+    useEffect(() => {
+        if (activeTab === 'users' || activeTab === 'partners') {
+            showSnackbar("COMING SOON");
+            setActiveTab('overview');
+        }
+    }, [activeTab]);
 
     const fetchData = async () => {
         try {
