@@ -4,6 +4,7 @@ const express = require("express");
 const compression = require("compression");
 const connectDB = require("./db.js");
 const path = require("path");
+const fs = require("fs");
 
 // middleware import
 const corsMiddleware = require("./middleware/cors.middleware.js");
@@ -37,6 +38,24 @@ app.use((req, res, next) => {
     const forwardedProto = String(req.headers["x-forwarded-proto"] || "")
       .split(",")[0]
       .trim();
+
+    // Do NOT alter path casing or normalize for static assets, uploads, API, or files with extensions
+    const isStaticOrApi =
+      req.path.startsWith("/api/") ||
+      req.path.startsWith("/assets/") ||
+      req.path.startsWith("/uploads/") ||
+      req.path.startsWith("/images/") ||
+      req.path.startsWith("/logos/") ||
+      req.path.startsWith("/icons/") ||
+      /\.[a-zA-Z0-9]+$/.test(req.path);
+
+    if (isStaticOrApi) {
+      if (forwardedProto !== "https" || (host && host !== "otulia.com")) {
+        return res.redirect(301, `https://otulia.com${req.originalUrl}`);
+      }
+      return next();
+    }
+
     const queryIndex = req.originalUrl.indexOf("?");
     const query = queryIndex === -1 ? "" : req.originalUrl.slice(queryIndex);
     let canonicalPath = req.path
@@ -87,7 +106,6 @@ const distPath = path.join(__dirname, "../client/dist");
 console.log(`[Static] Serving files from: ${distPath}`);
 
 // Diagnostic: Check if dist exists
-const fs = require("fs");
 if (fs.existsSync(distPath)) {
   console.log(
     `[Static] dist folder found. Contents:`,
@@ -105,6 +123,31 @@ if (fs.existsSync(distPath)) {
 } else {
   console.error(`[Static] ERROR: dist folder NOT found at ${distPath}`);
 }
+
+// Case-insensitive asset resolver fallback (handles Linux case-sensitivity and cached lowercase redirects)
+app.use("/assets", (req, res, next) => {
+  const assetsDir = path.join(distPath, "assets");
+  const requestedFile = req.path.replace(/^\//, "");
+
+  if (fs.existsSync(path.join(assetsDir, requestedFile))) {
+    return next();
+  }
+
+  try {
+    if (fs.existsSync(assetsDir)) {
+      const lowerName = requestedFile.toLowerCase();
+      const files = fs.readdirSync(assetsDir);
+      const matched = files.find((f) => f.toLowerCase() === lowerName);
+      if (matched) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        return res.sendFile(path.join(assetsDir, matched));
+      }
+    }
+  } catch (err) {
+    console.error("[Assets Fallback Error]", err);
+  }
+  next();
+});
 
 app.use(
   express.static(distPath, {
