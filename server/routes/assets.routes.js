@@ -104,6 +104,82 @@ router.get("/cars", async (req, res) => {
 });
 
 /**
+ * GET ESTATE DEVELOPERS / DEALERS (EXACTLY 3: DAMAC, SOBHA, ELLINGTON)
+ * /api/assets/estate-developers
+ */
+router.get("/estate-developers", async (req, res) => {
+  try {
+    const targetDevelopers = [
+      {
+        id: "damac",
+        name: "DAMAC",
+        fullName: "DAMAC Properties",
+        companyName: "DAMAC Properties",
+        email: "damac@otulia.com",
+        subText: "LIVE THE LUXURY",
+        tag: "Official Partner"
+      },
+      {
+        id: "sobha",
+        name: "SOBHA",
+        fullName: "Sobha Realty",
+        companyName: "Sobha Realty",
+        email: "sobha@otulia.com",
+        subText: "REALTY",
+        tag: "Official Partner"
+      },
+      {
+        id: "ellington",
+        name: "ELLINGTON",
+        fullName: "Ellington Properties",
+        companyName: "Ellington Properties",
+        email: "ellington@otulia.com",
+        subText: "PROPERTIES",
+        tag: "Official Partner"
+      }
+    ];
+
+    // Fetch matching agent photos/logos/emails from DB if available
+    const dbEstateAgents = await EstateAsset.aggregate([
+      { 
+        $match: { 
+          status: 'Active', 
+          'agent.company': { $exists: true, $ne: null }
+        } 
+      },
+      {
+        $group: {
+          _id: '$agent.company',
+          company: { $first: '$agent.company' },
+          email: { $first: '$agent.email' },
+          companyLogo: { $first: '$agent.companyLogo' }
+        }
+      }
+    ]);
+
+    const result = targetDevelopers.map(dev => {
+      const dbMatch = dbEstateAgents.find(d => 
+        d.company && d.company.toLowerCase().includes(dev.id)
+      );
+      if (dbMatch) {
+        return {
+          ...dev,
+          photo: dbMatch.companyLogo || dev.photo || null,
+          logo: dbMatch.companyLogo || dev.logo || null,
+          email: dbMatch.email || dev.email
+        };
+      }
+      return dev;
+    });
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching estate developers:", error);
+    res.status(500).json({ message: "Failed to fetch estate developers" });
+  }
+});
+
+/**
  * ESTATE ASSETS
  * /api/assets/estates
  */
@@ -126,6 +202,9 @@ router.get("/estates", async (req, res) => {
     if (search) {
       orClauses.push({ title: { $regex: search, $options: "i" } });
       orClauses.push({ description: { $regex: search, $options: "i" } });
+      orClauses.push({ "agent.company": { $regex: search, $options: "i" } });
+      orClauses.push({ "agent.name": { $regex: search, $options: "i" } });
+      orClauses.push({ keywords: { $regex: search, $options: "i" } });
     }
 
     if (location || country) {

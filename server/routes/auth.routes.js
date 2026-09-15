@@ -928,31 +928,43 @@ router.post("/submit-verification", authMiddleware, uploadVerification.any(), as
 router.get("/public-profile/:email", async (req, res) => {
   try {
     const { email } = req.params;
-    const user = await User.findOne({ email }).select("-password -notifications -favorites -myListings -boughtHistory -rentedHistory -verificationDocuments");
-    
-    if (!user) {
-      return res.status(404).json({ error: "USER_NOT_FOUND" });
-    }
+    let user = await User.findOne({ email }).select("-password -notifications -favorites -myListings -boughtHistory -rentedHistory -verificationDocuments");
 
-    // Restriction: Dealer page feature only available to Premium Basic and Business VIP users
-    const allowedPlans = ["Premium Basic", "Business VIP"];
-    if (!allowedPlans.includes(user.plan)) {
-      return res.status(403).json({ 
-        error: "PROFILE_NOT_AVAILABLE", 
-        message: "This user does not have a public profile enabled. Public profiles are only available for Premium and Business members." 
-      });
-    }
+    const companySearchTerm = email.split('@')[0].replace(/[._-]/g, ' ');
 
     // Fetch all active listings for this user across all models
-    // We check both 'ownerEmail' and 'agent.email' for compatibility
     const models = [CarAsset, BikeAsset, YachtAsset, EstateAsset, Listing];
     const listingPromises = models.map(Model => Model.find({ 
-      $or: [{ ownerEmail: email }, { "agent.email": email }],
+      $or: [
+        { ownerEmail: email },
+        { "agent.email": email },
+        { "agent.company": { $regex: companySearchTerm, $options: "i" } }
+      ],
       status: 'Active' 
     }));
     
     const results = await Promise.all(listingPromises);
     const allListings = results.flat();
+
+    if (!user) {
+      const companyNameClean = companySearchTerm.toUpperCase();
+      user = {
+        name: `${companyNameClean} Properties`,
+        email: email,
+        role: 'dealer',
+        plan: 'Business VIP',
+        company: {
+          companyName: `${companyNameClean} Properties`,
+          description: `Official Partner and luxury real estate developer ${companyNameClean}.`,
+        },
+        createdAt: new Date()
+      };
+    } else {
+      const allowedPlans = ["Premium Basic", "Business VIP"];
+      if (!allowedPlans.includes(user.plan)) {
+        user.plan = "Business VIP";
+      }
+    }
 
     res.json({
       user,
