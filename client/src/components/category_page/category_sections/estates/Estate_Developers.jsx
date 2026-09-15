@@ -149,8 +149,8 @@ const Estate_Developers = ({ onDeveloperClick }) => {
         minHeight: "330px",
       }}
     >
-      {/* Main Title & Subtitle Centered */}
-      <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
+      {/* Main Title & Subtitle Centered (Shifted Down a Bit) */}
+      <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10 mt-4 md:mt-6">
         <h2 className="text-4xl md:text-5xl canela text-black font-normal tracking-tight mb-3">
           Our Trusted Developers
         </h2>
