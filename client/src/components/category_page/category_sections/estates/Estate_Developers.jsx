@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import trustedDevsBg from "../../../../assets/Trusted_estates_developers.png";
 
 const Estate_Developers = ({ onDeveloperClick }) => {
   const navigate = useNavigate();
@@ -140,15 +141,14 @@ const Estate_Developers = ({ onDeveloperClick }) => {
   };
 
   return (
-    <section className="w-full px-4 md:px-12 py-14 bg-white">
-      {/* Top Badge */}
-      <div className="flex items-center gap-3 mb-8">
-        <span className="w-10 h-[2px] bg-[#b38b46]"></span>
-        <span className="text-xs uppercase tracking-[0.22em] text-[#6b7280] font-sans font-semibold">
-          OFFICIAL PARTNERS
-        </span>
-      </div>
-
+    <section
+      className="w-full relative bg-contain bg-center bg-no-repeat flex flex-col justify-center px-4 md:px-12 py-8 md:py-12"
+      style={{
+        backgroundImage: `url(${trustedDevsBg})`,
+        aspectRatio: "2159 / 728",
+        minHeight: "360px",
+      }}
+    >
       {/* Main Title & Subtitle Centered */}
       <div className="text-center max-w-3xl mx-auto mb-12">
         <h2 className="text-4xl md:text-5xl canela text-black font-normal tracking-tight mb-4">
