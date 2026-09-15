@@ -189,6 +189,18 @@ const AssetCard = ({ item }) => {
             gap: "1.3cqi" /* gap: 2 (8px) */,
           }}
         >
+          {category === "estate" && (
+            <div
+              className="bg-transparent text-white font-medium tracking-[0.03em] drop-shadow-md flex items-center"
+              style={{
+                fontSize: "1.45cqi" /* text-[9px] */,
+                gap: "0.9cqi" /* gap-1 (4px) */,
+              }}
+            >
+              <span className="opacity-80 font-light">|</span>
+              <span>Directly from Developer</span>
+            </div>
+          )}
           {item.type === "Rent" && (
             <div
               className="bg-[#1a1a1a] text-white font-bold rounded-md uppercase tracking-[0.1em] shadow-lg text-center"
@@ -359,9 +371,9 @@ const AssetCard = ({ item }) => {
           ) : (
             <>
               {/* PRICE */}
-              <div>
+              <div className="flex items-center flex-wrap" style={{ gap: "1.5cqi" }}>
                 <h3
-                  className="text-[#1a1a1a] tracking-tight lining-nums"
+                  className="text-[#1a1a1a] tracking-tight lining-nums inline-block"
                   style={{
                     fontFamily: "'Konkhmer Sleokchher', cursive",
                     fontWeight: 400,
@@ -385,6 +397,18 @@ const AssetCard = ({ item }) => {
                     </span>
                   )}
                 </h3>
+
+                {category === "estate" && (
+                  <span
+                    className="text-[#047857] font-semibold inline-flex items-center shrink-0"
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: "1.85cqi",
+                    }}
+                  >
+                    -3% with Otulia
+                  </span>
+                )}
               </div>
 
               {/* PROPERTY DETAILS */}
