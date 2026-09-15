@@ -193,7 +193,7 @@ const AssetCard = ({ item }) => {
             <div
               className="bg-transparent text-white font-medium tracking-[0.03em] drop-shadow-md flex items-center"
               style={{
-                fontSize: "1.45cqi" /* text-[9px] */,
+                fontSize: "1.5225cqi" /* text-[9.45px] */,
                 gap: "0.9cqi" /* gap-1 (4px) */,
               }}
             >
@@ -212,7 +212,7 @@ const AssetCard = ({ item }) => {
               FOR RENT
             </div>
           )}
-          {item.videoUrl && (
+          {item.videoUrl && category !== "estate" && (
             <div
               className="bg-[#1a1a1a] text-white font-bold rounded-md uppercase tracking-[0.1em] shadow-lg flex items-center"
               style={{
