@@ -478,176 +478,166 @@ router.get("/all/yachts", async (req, res) => {
   }
 });
 
-// Helper to create asset slug with '-' instead of spaces/special chars
-const createAssetSlug = (title, id) => {
-  if (title) {
-    const slug = title
-      .toString()
-      .trim()
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-    if (slug) return slug;
-  }
-  return id || '';
-};
-
-// Helper to fetch and populate asset by ID, Title, or Slug
-const findAndPopulateAsset = async (Model, param) => {
-  if (!param) return null;
-  const decoded = decodeURIComponent(param).trim();
-
-  let asset = null;
-
-  // 1. Try finding by _id if it's a valid ObjectId
-  if (mongoose.Types.ObjectId.isValid(decoded)) {
-    asset = await Model.findByIdAndUpdate(decoded, { $inc: { views: 1 } }, { new: true });
-  }
-
-  // 2. Try exact title match
-  if (!asset) {
-    asset = await Model.findOneAndUpdate(
-      { title: decoded },
-      { $inc: { views: 1 } },
-      { new: true }
-    );
-  }
-
-  // 3. Try case-insensitive exact title match
-  if (!asset) {
-    const escaped = decoded.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    asset = await Model.findOneAndUpdate(
-      { title: { $regex: new RegExp(`^\\s*${escaped}\\s*$`, 'i') } },
-      { $inc: { views: 1 } },
-      { new: true }
-    );
-  }
-
-  // 4. Try slug-based matching (matching tokens separated by hyphens/spaces/punctuation)
-  if (!asset) {
-    const tokens = decoded
-      .split(/[-_\s]+/)
-      .map(t => t.trim())
-      .filter(Boolean)
-      .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-
-    if (tokens.length > 0) {
-      const slugRegexPattern = `^[\\s\\W_]*` + tokens.join(`[\\s\\W_]+`) + `[\\s\\W_]*$`;
-      asset = await Model.findOneAndUpdate(
-        {
-          $or: [
-            { title: { $regex: new RegExp(slugRegexPattern, 'i') } },
-            { propertyName: { $regex: new RegExp(slugRegexPattern, 'i') } },
-            { yachtName: { $regex: new RegExp(slugRegexPattern, 'i') } }
-          ]
-        },
-        { $inc: { views: 1 } },
-        { new: true }
-      );
-    }
-  }
-
-  // 5. Try propertyName / yachtName directly
-  if (!asset) {
-    const escaped = decoded.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    asset = await Model.findOneAndUpdate(
-      {
-        $or: [
-          { propertyName: decoded },
-          { yachtName: decoded },
-          { propertyName: { $regex: new RegExp(`^\\s*${escaped}\\s*$`, 'i') } },
-          { yachtName: { $regex: new RegExp(`^\\s*${escaped}\\s*$`, 'i') } }
-        ]
-      },
-      { $inc: { views: 1 } },
-      { new: true }
-    );
-  }
-
-  // 6. If still not found, search in Listing model
-  if (!asset && Model !== Listing) {
-    asset = await findAndPopulateAsset(Listing, param);
-    if (asset) return asset;
-  }
-
-  if (!asset) return null;
-
-  const assetObj = asset.toObject ? asset.toObject() : asset;
-  if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
-    const agentUser = await User.findById(assetObj.agent.id);
-    if (agentUser) {
-      assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
-      assetObj.agent.email = agentUser.email || assetObj.agent.email;
-      assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
-      assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
-      if (agentUser.company) {
-        assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
-        assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
-        assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
-      }
-    }
-  }
-
-  return assetObj;
-};
-
 /**
- * FETCH SINGLE CAR ASSET BY ID OR TITLE
+ * FETCH SINGLE CAR ASSET BY ID
  * /api/assets/car/:id
  */
 router.get("/car/:id", async (req, res) => {
   try {
-    const assetObj = await findAndPopulateAsset(CarAsset, req.params.id);
-    if (!assetObj) return res.status(404).json({ message: "Car asset not found" });
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid car asset ID" });
+    }
+
+    const asset = await CarAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
+
+    if (!asset) {
+      return res.status(404).json({ message: "Car asset not found" });
+    }
+
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
+        }
+      }
+    }
+
     res.json(assetObj);
   } catch (error) {
-    console.error("Error fetching car asset by ID/title:", error);
+    console.error("Error fetching car asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch car asset" });
   }
 });
 
 /**
- * FETCH SINGLE ESTATE ASSET BY ID OR TITLE
+ * FETCH SINGLE ESTATE ASSET BY ID
  * /api/assets/estate/:id
  */
 router.get("/estate/:id", async (req, res) => {
   try {
-    const assetObj = await findAndPopulateAsset(EstateAsset, req.params.id);
-    if (!assetObj) return res.status(404).json({ message: "Estate asset not found" });
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid estate asset ID" });
+    }
+
+    const asset = await EstateAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
+
+    if (!asset) {
+      return res.status(404).json({ message: "Estate asset not found" });
+    }
+
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
+        }
+      }
+    }
+
     res.json(assetObj);
   } catch (error) {
-    console.error("Error fetching estate asset by ID/title:", error);
+    console.error("Error fetching estate asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch estate asset" });
   }
 });
 
 /**
- * FETCH SINGLE BIKE ASSET BY ID OR TITLE
+ * FETCH SINGLE BIKE ASSET BY ID
  * /api/assets/bike/:id
  */
 router.get("/bike/:id", async (req, res) => {
   try {
-    const assetObj = await findAndPopulateAsset(BikeAsset, req.params.id);
-    if (!assetObj) return res.status(404).json({ message: "Bike asset not found" });
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid bike asset ID" });
+    }
+
+    const asset = await BikeAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
+
+    if (!asset) {
+      return res.status(404).json({ message: "Bike asset not found" });
+    }
+
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
+        }
+      }
+    }
+
     res.json(assetObj);
   } catch (error) {
-    console.error("Error fetching bike asset by ID/title:", error);
+    console.error("Error fetching bike asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch bike asset" });
   }
 });
 
 /**
- * FETCH SINGLE YACHT ASSET BY ID OR TITLE
+ * FETCH SINGLE YACHT ASSET BY ID
  * /api/assets/yacht/:id
  */
 router.get("/yacht/:id", async (req, res) => {
   try {
-    const assetObj = await findAndPopulateAsset(YachtAsset, req.params.id);
-    if (!assetObj) return res.status(404).json({ message: "Yacht asset not found" });
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid yacht asset ID" });
+    }
+
+    const asset = await YachtAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
+
+    if (!asset) {
+      return res.status(404).json({ message: "Yacht asset not found" });
+    }
+
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
+        }
+      }
+    }
+
     res.json(assetObj);
   } catch (error) {
-    console.error("Error fetching yacht asset by ID/title:", error);
+    console.error("Error fetching yacht asset by ID:", error);
     res.status(500).json({ message: "Failed to fetch yacht asset" });
   }
 });
@@ -660,15 +650,37 @@ router.get("/:type/:id", async (req, res) => {
   try {
     const { type, id } = req.params;
 
-    let Model;
-    if (type === "cars" || type === "car") Model = CarAsset;
-    else if (type === "estates" || type === "estate") Model = EstateAsset;
-    else if (type === "bikes" || type === "bike") Model = BikeAsset;
-    else if (type === "yachts" || type === "yacht") Model = YachtAsset;
-    else Model = Listing;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid asset ID" });
+    }
 
-    const assetObj = await findAndPopulateAsset(Model, id);
-    if (!assetObj) return res.status(404).json({ message: "Asset not found" });
+    let Model;
+
+    if (type === "cars") Model = CarAsset;
+    else if (type === "estates") Model = EstateAsset;
+    else if (type === "bikes") Model = BikeAsset;
+    else if (type === "yachts") Model = YachtAsset;
+    else return res.status(400).json({ message: "Invalid asset type" });
+
+    const asset = await Model.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
+
+    if (!asset) return res.status(404).json({ message: "Asset not found" });
+
+    const assetObj = asset.toObject();
+    if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
+      const agentUser = await User.findById(assetObj.agent.id);
+      if (agentUser) {
+        assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+        assetObj.agent.email = agentUser.email || assetObj.agent.email;
+        assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
+        assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+        if (agentUser.company) {
+          assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+          assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+          assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
+        }
+      }
+    }
 
     res.json(assetObj);
   } catch (error) {
@@ -732,7 +744,7 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
  */
 router.get("/combined", async (req, res) => {
   try {
-    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition, brand, model, category, propertyType, bedrooms, bathrooms, amenities, architecture, sort, excludeCategories } = req.query;
+    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition, brand, model, category, propertyType, bedrooms, bathrooms, amenities, architecture, sort } = req.query;
 
     const andClauses = [{ status: 'Active' }];
 
@@ -817,10 +829,6 @@ router.get("/combined", async (req, res) => {
 
     const query = { $and: andClauses };
 
-    const excludeList = (excludeCategories || '').toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
-    const excludeBikes = excludeList.includes('bikes') || excludeList.includes('bike');
-    const excludeYachts = excludeList.includes('yachts') || excludeList.includes('yacht');
-
     let sortOptions = { createdAt: -1 };
     if (sort === 'Low to High') sortOptions = { price: 1 };
     if (sort === 'High to Low') sortOptions = { price: -1 };
@@ -828,53 +836,25 @@ router.get("/combined", async (req, res) => {
     if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
     const fetchResults = async (q) => {
-        const promises = [
+        const [car, estate, bike, yacht, other] = await Promise.all([
             CarAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
             EstateAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
-        ];
-        if (!excludeBikes && (!category || /bike/i.test(category))) {
-            promises.push(BikeAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)));
-        }
-        if (!excludeYachts && (!category || /yacht/i.test(category))) {
-            promises.push(YachtAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)));
-        }
-        
-        let listingQ = q;
-        if (excludeBikes || excludeYachts) {
-            const ninCats = [];
-            if (excludeBikes) ninCats.push(/bike/i);
-            if (excludeYachts) ninCats.push(/yacht/i);
-            listingQ = { ...q, category: { $nin: ninCats } };
-        }
-        promises.push(Listing.find(listingQ).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)));
-
-        const results = await Promise.all(promises);
-        return results.flat();
+            BikeAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
+            YachtAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
+            Listing.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
+        ]);
+        return [...car, ...estate, ...bike, ...yacht, ...other];
     };
 
     const countResults = async (q) => {
-        const promises = [
+        const [car, estate, bike, yacht, other] = await Promise.all([
             CarAsset.countDocuments(q),
             EstateAsset.countDocuments(q),
-        ];
-        if (!excludeBikes && (!category || /bike/i.test(category))) {
-            promises.push(BikeAsset.countDocuments(q));
-        }
-        if (!excludeYachts && (!category || /yacht/i.test(category))) {
-            promises.push(YachtAsset.countDocuments(q));
-        }
-        
-        let listingQ = q;
-        if (excludeBikes || excludeYachts) {
-            const ninCats = [];
-            if (excludeBikes) ninCats.push(/bike/i);
-            if (excludeYachts) ninCats.push(/yacht/i);
-            listingQ = { ...q, category: { $nin: ninCats } };
-        }
-        promises.push(Listing.countDocuments(listingQ));
-
-        const counts = await Promise.all(promises);
-        return counts.reduce((sum, c) => sum + c, 0);
+            BikeAsset.countDocuments(q),
+            YachtAsset.countDocuments(q),
+            Listing.countDocuments(q),
+        ]);
+        return car + estate + bike + yacht + other;
     };
 
     let total = await countResults(query);
@@ -1200,32 +1180,17 @@ router.get("/similar/:category/:id", async (req, res) => {
     if (!currentAsset) return res.status(404).json({ message: "Asset not found" });
 
     // Define similarity criteria: 
-    // 1. Same brand/builder (for vehicles) or same location/propertyType (for estates)
+    // 1. Same brand/builder (for vehicles) or same location (for estates)
     // 2. Similar price (+/- 20%)
-    const priceMin = (currentAsset.price || 0) * 0.8;
-    const priceMax = (currentAsset.price || 0) * 1.2;
+    const priceMin = currentAsset.price * 0.8;
+    const priceMax = currentAsset.price * 1.2;
 
     let orClauses = [];
     
-    // Helper to safely escape strings for regex
-    const escapeRegex = (text) => {
-      if (!text) return '';
-      const specials = ['-', '/', '\\\\', '^', '$', '*', '+', '?', '.', '(', ')', '|', '[', ']', '{', '}'];
-      let result = '';
-      for (let i = 0; i < text.length; i++) {
-        if (specials.includes(text[i])) result += '\\\\' + text[i];
-        else result += text[i];
-      }
-      return result;
-    };
-
     if (catLower.includes('estate')) {
-      // For estates: Location and PropertyType are primary
+      // For estates: Location is primary
       if (currentAsset.location) {
-        orClauses.push({ location: { $regex: escapeRegex(currentAsset.location), $options: 'i' } });
-      }
-      if (currentAsset.keySpecifications && currentAsset.keySpecifications.propertyType) {
-        orClauses.push({ 'keySpecifications.propertyType': currentAsset.keySpecifications.propertyType });
+        orClauses.push({ location: { $regex: currentAsset.location, $options: 'i' } });
       }
     } else {
       // For vehicles: Brand/Builder is primary
@@ -1242,22 +1207,18 @@ router.get("/similar/:category/:id", async (req, res) => {
       $or: orClauses
     };
 
-    // Fetch up to 20 similar assets
+    // To ensure "First Brand/Location then Price" priority, we can fetch them and sort or use a weighted approach.
+    // For simplicity and performance, we'll fetch them and use JS to sort by match type.
     const similar = await Model.find(query).limit(20); 
     
     const sortedSimilar = similar.sort((a, b) => {
-      // Priority 1: Brand/Location/Type match
+      // Priority 1: Brand/Location match
       let aMatch = false;
       let bMatch = false;
 
       if (catLower.includes('estate')) {
-        const aLocMatch = a.location === currentAsset.location;
-        const bLocMatch = b.location === currentAsset.location;
-        const aTypeMatch = a.keySpecifications?.propertyType === currentAsset.keySpecifications?.propertyType;
-        const bTypeMatch = b.keySpecifications?.propertyType === currentAsset.keySpecifications?.propertyType;
-        
-        aMatch = aLocMatch || aTypeMatch;
-        bMatch = bLocMatch || bTypeMatch;
+        aMatch = a.location === currentAsset.location;
+        bMatch = b.location === currentAsset.location;
       } else {
         aMatch = (a.brand && a.brand === currentAsset.brand) || (a.builder && a.builder === currentAsset.builder);
         bMatch = (b.brand && b.brand === currentAsset.brand) || (b.builder && b.builder === currentAsset.builder);
@@ -1329,11 +1290,11 @@ router.get("/search/id/:id", async (req, res) => {
       Listing.findOne({ listingReference: cleanId })
     ]);
 
-    if (car) return res.json({ redirect: `/asset/car/${createAssetSlug(car.title, car._id)}`, found: true });
-    if (bike) return res.json({ redirect: `/asset/bike/${createAssetSlug(bike.title, bike._id)}`, found: true });
-    if (yacht) return res.json({ redirect: `/asset/yacht/${createAssetSlug(yacht.title, yacht._id)}`, found: true });
-    if (estate) return res.json({ redirect: `/asset/estate/${createAssetSlug(estate.title, estate._id)}`, found: true });
-    if (generic) return res.json({ redirect: `/asset/listing/${createAssetSlug(generic.title, generic._id)}`, found: true });
+    if (car) return res.json({ redirect: `/asset/car/${car._id}`, found: true });
+    if (bike) return res.json({ redirect: `/asset/bike/${bike._id}`, found: true });
+    if (yacht) return res.json({ redirect: `/asset/yacht/${yacht._id}`, found: true });
+    if (estate) return res.json({ redirect: `/asset/estate/${estate._id}`, found: true });
+    if (generic) return res.json({ redirect: `/asset/listing/${generic._id}`, found: true });
 
     res.json({ found: false, message: "No asset found with this reference ID" });
   } catch (err) {
