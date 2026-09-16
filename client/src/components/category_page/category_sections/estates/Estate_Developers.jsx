@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import trustedDevsBg from "../../../../assets/Trusted_estates_developers.png";
 
 const Estate_Developers = ({ onDeveloperClick }) => {
   const navigate = useNavigate();
@@ -141,16 +140,9 @@ const Estate_Developers = ({ onDeveloperClick }) => {
   };
 
   return (
-    <section
-      className="w-full relative bg-cover bg-center bg-no-repeat flex flex-col justify-center px-4 md:px-12 py-5 md:py-7 overflow-hidden"
-      style={{
-        backgroundImage: `url(${trustedDevsBg})`,
-        aspectRatio: "2159 / 560",
-        minHeight: "330px",
-      }}
-    >
-      {/* Main Title & Subtitle Centered (Shifted Down a Bit) */}
-      <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10 mt-4 md:mt-6">
+    <section className="w-full relative bg-white flex flex-col justify-center px-4 md:px-12 py-10 md:py-14 overflow-hidden">
+      {/* Main Title & Subtitle Centered */}
+      <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
         <h2 className="text-4xl md:text-5xl canela text-black font-normal tracking-tight mb-3">
           Our Trusted Developers
         </h2>
@@ -159,8 +151,8 @@ const Estate_Developers = ({ onDeveloperClick }) => {
         </p>
       </div>
 
-      {/* Developers Cards Grid (10% Larger Cards - Shifted Down) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-[1400px] mx-auto w-full mt-6 md:mt-8">
+      {/* Developers Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-[1400px] mx-auto w-full">
         {developers.map((dev) => (
           <div
             key={dev.id || dev.email}
