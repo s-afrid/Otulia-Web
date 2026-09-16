@@ -161,7 +161,7 @@ const AssetCard = ({ item }) => {
             <div
               className="bg-transparent text-white font-medium tracking-[0.03em] drop-shadow-md flex items-center"
               style={{
-                fontSize: "1.5225cqi" /* text-[9.45px] */,
+                fontSize: "2.28375cqi" /* 1.5x increased font size */,
                 gap: "0.9cqi" /* gap-1 (4px) */,
               }}
             >

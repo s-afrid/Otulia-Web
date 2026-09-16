@@ -74,22 +74,7 @@ const Navbar = ({
               CARS
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="/ranking/realestate"
-              className={({ isActive }) =>
-                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${
-                  isActive
-                    ? "text-[#D48D2A] font-bold"
-                    : isDarkText
-                    ? "text-black hover:text-black/70"
-                    : "text-white hover:text-white/70"
-                }`
-              }
-            >
-              REAL ESTATE
-            </NavLink>
-          </li>
+          
           <li>
             <NavLink
               to="/ranking/contentcreators"
@@ -104,6 +89,22 @@ const Navbar = ({
               }
             >
               CONTENT CREATORS
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/ranking/realestate"
+              className={({ isActive }) =>
+                `text-[clamp(10px,1.2vh,14px)] tracking-[0.2em] font-normal montserrat transition-colors whitespace-nowrap ${
+                  isActive
+                    ? "text-[#D48D2A] font-bold"
+                    : isDarkText
+                    ? "text-black hover:text-black/70"
+                    : "text-white hover:text-white/70"
+                }`
+              }
+            >
+              REAL ESTATE
             </NavLink>
           </li>
         </ul>
