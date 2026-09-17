@@ -179,13 +179,14 @@ const Hero = () => {
             CURATED GLOBALLY · EST. 2026
           </p>
 
-          <h1 className="text-white text-[clamp(1.5rem,5vw,2.5rem)] md:text-[clamp(2rem,4.5vw,3.5rem)] lg:text-5xl canela mb-6 md:mb-8 leading-tight font-light whitespace-nowrap">
-            Discover Exceptional Assets
+          <h1 className="text-white text-[clamp(1.5rem,5vw,2.5rem)] md:text-[clamp(2rem,4.5vw,3.5rem)] lg:text-5xl canela mb-6 md:mb-8 leading-tight font-light md:whitespace-nowrap">
+            Otulia — Discover Exceptional Assets
           </h1>
 
           <p className="text-white/90 montserrat text-sm md:text-xl max-w-2xl mb-10 md:mb-16 leading-relaxed">
-            Cars, estates, yachts, and rare assets — curated globally for those
-            who deal in the considered.
+            Otulia is the global marketplace for luxury cars, real estate,
+            yachts and rare assets — curated for those who deal in the
+            considered.
           </p>
 
           {/* Underline Search Bar */}

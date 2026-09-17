@@ -225,6 +225,11 @@ const MyListings = () => {
   if (!isAuthenticated) {
     return (
       <div className="pt-24 px-4 text-center">
+        <SEO
+          title="My Listings"
+          description="Manage your luxury asset listings on Otulia."
+          noindex
+        />
         <Navbar />
         <h2 className="text-2xl font-bold mb-4">
           Please log in to view your listings

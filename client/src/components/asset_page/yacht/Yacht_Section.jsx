@@ -95,6 +95,10 @@ const Yacht_Section = () => {
   if (!info) {
     return (
       <div className="flex h-[60vh] items-center justify-center bg-white text-black min-h-screen">
+        <SEO
+          title="Luxury Yacht Listing"
+          description="View this luxury yacht listing on Otulia, the global luxury marketplace for cars, real estate, yachts and bikes."
+        />
         <div className="text-xl montserrat text-gray-500">
           Loading Yacht Details...
         </div>
@@ -113,7 +117,6 @@ const Yacht_Section = () => {
         breadcrumbs={[
           { label: 'Home', path: '/' },
           { label: 'Listings', path: '/shop' },
-          { label: 'Yachts', path: '/listings' },
           { label: info.title },
         ]}
       />

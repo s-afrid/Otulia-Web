@@ -30,6 +30,69 @@ const carRankingRoutes = require("./routes/car-ranking.routes.js");
 const app = express();
 app.use(compression());
 
+// Legacy Shopify/Wix URLs: 301 to the current equivalent, 410 when nothing equivalent exists.
+// Runs before the host redirect so www/http legacy URLs resolve in a single hop.
+const LEGACY_BASE = process.env.NODE_ENV === "production" ? "https://otulia.com" : "";
+
+// Yacht and bike products are omitted (410) while those categories are "coming soon".
+const WIX_PRODUCT_301 = new Map([
+  ["lamborghini-huracan", "/listings/lamborghini"],
+  ["rolls-royce-phantom-ghost", "/listings/rolls-royce"],
+  ["new-atura-spider", "/category/cars"],
+  ["french-palace", "/category/estates"],
+  ["italian-mansion", "/category/estates"],
+  ["modern-penthouse", "/category/estates"],
+]);
+
+const LEGACY_301 = [
+  [/^\/(home|index\.html?|collections\/home-otulia-1)$/, "/"],
+  [/^\/about-us$|^\/pages\/about(-us)?$/, "/about"],
+  [/^\/contact-us$|^\/pages\/contact(-us)?$/, "/contact"],
+  [/^\/frequently-asked-questions$|^\/pages\/faqs?$/, "/faq"],
+  [/^\/terms-and-conditions$|^\/policies\/terms-of-service$/, "/terms"],
+  [/^\/legal\/privacy$|^\/policies\/privacy-policy$/, "/privacy-policy"],
+  [/^\/(shipping-info|shipping-policy|policies\/shipping-policy)$/, "/shipping"],
+  [/^\/(return-policy|refund-policy|policies\/refund-policy)$/, "/returns"],
+  [/^\/cookies-policy$/, "/cookie-policy"],
+  [/^\/sell-with-us$/, "/sellwithus"],
+  [/^\/pricing-plans(\/.*)?$/, "/pricing"],
+  [/^\/post\/.+$/, "/journal"],
+  [/^\/blog$/, "/blogs"],
+  [/^\/(shop-1|search|category\/all-products)$/, "/shop"],
+  [/^\/category$/, "/category/cars"],
+  [/^\/product-page\/([^/]+)$/, (m) => WIX_PRODUCT_301.get(m[1])],
+];
+
+const LEGACY_410 = [
+  /^\/products(\/|$)/,
+  /^\/collections(\/|$)/,
+  /^\/pages(\/|$)/,
+  /^\/policies(\/|$)/,
+  /^\/product-page(\/|$)/,
+  /^\/category\/(?!(cars|estates|yachts|bikes)$)[^/]+$/,
+  /^\/category-page(\/|$)/,
+  /^\/(members-area|courses-1|portfolio|portfolio-collections|account)(\/|$)/,
+  /^\/(loyalty|blog-feed\.xml|password|_zc|120)$/,
+  /^\/(sitemap_[a-z0-9_]+|[a-z0-9-]+-sitemap)\.xml$/,
+  /^\/9-[a-z0-9-]+$/,
+  /^\/(book-lovers|book-vase|drain-strainer|piano-labels|space-saving|tower-game|charger-bag|va513133)$/,
+];
+
+app.use((req, res, next) => {
+  if (req.method !== "GET" && req.method !== "HEAD") return next();
+  const legacyPath = req.path.toLowerCase().replace(/\/+$/, "") || "/";
+  for (const [pattern, destination] of LEGACY_301) {
+    const match = legacyPath.match(pattern);
+    if (!match) continue;
+    const target = typeof destination === "function" ? destination(match) : destination;
+    if (target) return res.redirect(301, `${LEGACY_BASE}${target}`);
+  }
+  if (LEGACY_410.some((pattern) => pattern.test(legacyPath))) {
+    return res.status(410).type("text/plain").send("Gone");
+  }
+  next();
+});
+
 // Enforce HTTPS and Non-WWW Canonical Domain in Production
 app.use((req, res, next) => {
   if (process.env.NODE_ENV === "production") {
@@ -66,20 +129,6 @@ app.use(corsMiddleware);
 
 // Sitemap MUST be at the top of all routes
 app.use("/", sitemapRoutes);
-
-// Redirect /about-us to /about for SEO
-app.get("/about-us", (req, res) => {
-  res.redirect(301, "/about");
-});
-
-// Additional SEO Redirects
-app.get("/frequently-asked-questions", (req, res) => res.redirect(301, "/faq"));
-app.get("/terms-and-conditions", (req, res) => res.redirect(301, "/terms"));
-app.get("/contact-us", (req, res) => res.redirect(301, "/contact"));
-app.get("/legal/privacy", (req, res) => res.redirect(301, "/privacy-policy"));
-app.get("/shipping-info", (req, res) => res.redirect(301, "/shipping"));
-app.get("/return-policy", (req, res) => res.redirect(301, "/returns"));
-app.get("/category", (req, res) => res.redirect(301, "/category/cars"));
 
 const PORT = process.env.PORT || 5000;
 

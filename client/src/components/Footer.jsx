@@ -1,9 +1,8 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSnackbar } from "../contexts/SnackbarContext";
 
 const Footer = () => {
-  const navigate = useNavigate();
   const { showSnackbar } = useSnackbar();
   const discover = [
     {
@@ -51,22 +50,22 @@ const Footer = () => {
       id: 1,
       name: "Facebook",
       navigate:
-        "https://www.facebook.com/people/Otulia-All-In-One-Marketplace/61584376807412/?rdid=4CBOz6vWZ7XCEmD5&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1EiwyfsxHS%2F",
+        "https://www.facebook.com/people/Otulia-All-In-One-Marketplace/61584376807412/",
     },
     {
       id: 2,
       name: "Instagram",
-      navigate: "https://www.instagram.com/otulia.in?igsh=enZpemNoNzh0ZmZx",
+      navigate: "https://www.instagram.com/otulia.in",
     },
     {
       id: 3,
       name: "YouTube",
-      navigate: "https://youtube.com/@otulia.com13?si=1klspMO6eVg1ZgQT",
+      navigate: "https://youtube.com/@otulia.com13",
     },
     {
       id: 4,
       name: "Twitter",
-      navigate: "https://x.com/OtuliaGlobal?s=20",
+      navigate: "https://x.com/OtuliaGlobal",
     },
     {
       id: 5,
@@ -80,19 +79,14 @@ const Footer = () => {
       {/* Top Section */}
       <div className="px-3 md:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-8">
         {/* Logo Column */}
-        <div
-          onClick={() => {
-            navigate("/");
-          }}
-          className="flex flex-col cursor-pointer"
-        >
+        <Link to="/" className="flex flex-col cursor-pointer">
           <img
             className="w-[200px] h-[60px]"
-            alt="logo"
+            alt="Otulia"
             src="/logos/logo_inverted.png"
             title="Otulia"
           />
-        </div>
+        </Link>
 
         {/* Discover */}
         <div className="flex flex-col gap-6">

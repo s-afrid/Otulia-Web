@@ -30,8 +30,19 @@ import HeaderRanking from "../../components/ranking_page/HeaderRanking";
 import RankingCard from "../../components/ranking_page/CardRanking";
 import RankingScaleWrapper from "../../components/ranking_page/RankingScaleWrapper";
 
+import SEO from "../../components/SEO";
 import { useAuth } from "../../contexts/AuthContext";
 import { rankings as staticRankings } from "../../data/rankings";
+
+const KNOWN_RANKING_TYPES = new Set([
+  "car",
+  "automotive",
+  "realestate",
+  "yacht",
+  "bike",
+  "contentcreator",
+  "other",
+]);
 
 function RankingHome() {
   const { category, slug } = useParams();
@@ -44,6 +55,7 @@ function RankingHome() {
   const [loading, setLoading] = useState(true);
   const [isVoting, setIsVoting] = useState(false);
   const [error, setError] = useState(null);
+  const [fallbackSlug, setFallbackSlug] = useState(null);
 
   // Nominate Modal State (Mobile)
   const [showNominateModal, setShowNominateModal] = useState(false);
@@ -106,20 +118,6 @@ function RankingHome() {
     fetchCategories();
   }, [slug]);
 
-  // Dynamic document.title update for ranking pages
-  useEffect(() => {
-    if (activeCategory && activeCategory.title) {
-      document.title = `${activeCategory.title} | Otulia Rankings`;
-    } else {
-      const catDisplayName = getCategoryDisplayName(category, categories);
-      document.title = `${catDisplayName} Rankings | Otulia`;
-    }
-
-    return () => {
-      document.title = "Otulia - Buy & Sell Luxury Assets Worldwide";
-    };
-  }, [activeCategory, category, categories]);
-
   const isTypeMatching = (type, param) => {
     if (!type || !param) return false;
     const t = type.toLowerCase().replace(/\s+/g, "").replace(/s$/, ""); // remove trailing 's'
@@ -146,19 +144,26 @@ function RankingHome() {
   const fetchCategoryDetails = async (targetSlug) => {
     setLoading(true);
     setError(null);
+    let notFound = false;
     try {
       const res = await fetch(`/api/rankings/category/${targetSlug}`);
       if (!res.ok) {
+        notFound = res.status === 404;
         throw new Error("Category not found in database");
       }
       const data = await res.json();
       setActiveCategory(data);
+      setFallbackSlug(null);
     } catch (err) {
       console.warn(
         "DB Category fetch failed, falling back to static mockup data:",
         err.message,
       );
-      // Fallback to static data
+      // Fallback to static data. Only a genuine 404 means the slug is unknown;
+      // a transient API failure must not make a real ranking page noindex.
+      setFallbackSlug(
+        notFound && !staticRankings[targetSlug] ? targetSlug : null,
+      );
       const staticData =
         staticRankings[targetSlug] || staticRankings["hypercars"];
       if (staticData) {
@@ -656,8 +661,28 @@ function RankingHome() {
   const isEstate = catParam.includes("estate") || catParam.includes("real");
   const isCreator = catParam.includes("creator");
 
+  const catDisplayName = getCategoryDisplayName(category, categories);
+  const seoTitle = activeCategory?.title
+    ? `${activeCategory.title} | Otulia Rankings`
+    : `${catDisplayName} Rankings`;
+  const seoDescription =
+    (activeCategory &&
+      (activeCategory.shortDescription ||
+        activeCategory.detailedDescription)) ||
+    `Otulia ${catDisplayName} rankings: explore curated luxury ranking categories and see what's leading, based on verified votes and user popularity.`;
+  const isKnownCategory = KNOWN_RANKING_TYPES.has(
+    catParam.replace(/[\s_-]+/g, "").replace(/s$/, ""),
+  );
+  const seoNoindex =
+    !isKnownCategory || (Boolean(slug) && fallbackSlug === slug);
+
   return (
     <RankingScaleWrapper>
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        noindex={seoNoindex}
+      />
       <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
       <div className="min-h-screen bg-black text-white flex-1 flex flex-col lg:ml-[260px] transition-all duration-300">

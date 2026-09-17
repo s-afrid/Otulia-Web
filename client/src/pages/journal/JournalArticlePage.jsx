@@ -1,28 +1,34 @@
 // pages/JournalArticlePage.jsx
-import React, { useEffect } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import React from "react";
+import { useParams } from "react-router-dom";
 import { journalArticles } from "../../data/journalArticles";
+import SEO from "../../components/SEO";
+import NotFound from "../NotFound";
 
 function JournalArticlePage() {
   const { slug } = useParams();
-  const article = journalArticles[slug];
+  const article = Object.prototype.hasOwnProperty.call(journalArticles, slug)
+    ? journalArticles[slug]
+    : null;
 
-  useEffect(() => {
-    if (article?.title) {
-      document.title = `${article.title} | Otulia Journal`;
-    } else {
-      document.title = "Journal | Otulia";
-    }
-
-    return () => {
-      document.title = "Otulia - Buy & Sell Luxury Assets Worldwide";
-    };
-  }, [article]);
-
-  if (!article) return <Navigate to="/journal" replace />;
+  if (!article) return <NotFound />;
 
   const ArticleContent = article.component;
-  return <ArticleContent />;
+  return (
+    <>
+      <SEO
+        title={`${article.title} | Otulia Journal`}
+        description={article.description}
+        type="article"
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Journal", path: "/journal" },
+          { label: article.title, path: `/journal/${slug}` },
+        ]}
+      />
+      <ArticleContent />
+    </>
+  );
 }
 
 export default JournalArticlePage;

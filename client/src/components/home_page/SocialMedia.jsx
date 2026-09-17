@@ -37,13 +37,13 @@ const SocialMedia = () => {
             <div className="flex flex-col items-center mb-16">
                 <h2 className="text-4xl canela text-black mb-10">Follow Us On Social Media</h2>
                 <div className="flex items-center gap-12">
-                    <a href="https://www.instagram.com/otulia.in?igsh=enZpemNoNzh0ZmZx" target='_blank'>
+                    <a href="https://www.instagram.com/otulia.in" target='_blank'>
                         <img src={instagramIcon} alt="instagram" className="h-8 w-8 object-contain cursor-pointer hover:scale-110 transition-transform" />
                     </a>
-                    <a href="https://youtube.com/@otulia.com13?si=1klspMO6eVg1ZgQT" target='_blank'>
+                    <a href="https://youtube.com/@otulia.com13" target='_blank'>
                         <img src={youtubeIcon} alt="youtube" className="h-8 w-8 object-contain cursor-pointer hover:scale-110 transition-transform" />
                     </a>
-                    <a href="https://x.com/OtuliaGlobal?s=20" target='_blank'>
+                    <a href="https://x.com/OtuliaGlobal" target='_blank'>
                         <img src={xIcon} alt="x" className="h-8 w-8 object-contain cursor-pointer hover:scale-110 transition-transform" />
                     </a>
                 </div>

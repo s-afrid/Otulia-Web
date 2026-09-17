@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import NavbarSellwithus from "../components/NavbarSellwithus";
 import { NavLink } from "react-router-dom";
+import SEO from "../components/SEO";
 import Hero from "../components/home_page/Hero";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import {
@@ -126,6 +127,10 @@ function Sellwithus() {
 
   return (
     <div className="bg-white text-black min-h-screen">
+      <SEO
+        title="Sell With Otulia – List Luxury Cars, Real Estate & Yachts"
+        description="List your luxury car, property, yacht or bike on Otulia, the global luxury marketplace, and reach verified buyers worldwide."
+      />
       {/* NAVBAR */}
       <NavbarSellwithus hideSearch={true} />
 
