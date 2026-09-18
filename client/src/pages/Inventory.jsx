@@ -624,6 +624,11 @@ const Inventory = () => {
   if (isLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-white">
+        <SEO
+          title="Inventory & Dealer Dashboard"
+          description="Manage your Otulia inventory, leads, analytics, marketplace listings, and subscription."
+          noindex
+        />
         <div className="flex flex-col items-center gap-4">
           <img
             src="/logos/O_logo_inverted.png"

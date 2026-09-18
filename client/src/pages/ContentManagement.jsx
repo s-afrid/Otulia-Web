@@ -985,13 +985,14 @@ const ContentManagement = () => {
     if (loading) {
         return (
             <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center">
+                <SEO title="Rankings CMS" description="Manage and organize rankings categories" noindex />
                 <div className="w-12 h-12 border-4 border-[#6366F1] border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
 
     if (!token || !user || user.role !== 'admin') {
-        return null; // Gate redirects to home
+        return <SEO title="Rankings CMS" description="Manage and organize rankings categories" noindex />; // Gate redirects to home
     }
 
     return (

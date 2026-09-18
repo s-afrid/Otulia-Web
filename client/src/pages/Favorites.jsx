@@ -43,6 +43,7 @@ const Favorites = () => {
     if (!isAuthenticated) {
         return (
             <div className="pt-24 px-4 text-center">
+                <SEO title="My Favorites" description="View and manage your saved luxury assets on Otulia." noindex />
                 <Navbar />
                 <h2 className="text-2xl font-bold mb-4">Please log in to view your favorites</h2>
                 <Link to="/login" className="text-blue-600 underline">Login here</Link>

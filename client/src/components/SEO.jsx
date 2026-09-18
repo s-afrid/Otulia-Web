@@ -2,8 +2,9 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 
+export const BRAND_TITLE = 'Otulia | Luxury Cars, Real Estate & Yachts Marketplace';
 const DEFAULT_DESCRIPTION =
-  'The premier marketplace for buying and selling editorial-grade luxury cars, yachts, estates, and bikes. Explore exclusive global listings from verified dealers and private sellers.';
+  'Otulia is the global luxury marketplace to buy and sell luxury cars, real estate, yachts and bikes from verified dealers and private sellers.';
 const DEFAULT_KEYWORDS =
   'luxury assets, luxury cars, yachts for sale, luxury real estate, exclusive bikes, otulia, buy luxury assets, sell luxury assets, luxury marketplace';
 const DEFAULT_IMAGE = 'https://otulia.com/images/exclusive_club_bg.jpg';
@@ -87,43 +88,7 @@ export default function SEO({
 
   const seoTitle = title
     ? (/\botulia\b/i.test(title) ? title : `${title} | Otulia`)
-    : 'Otulia - Buy & Sell Luxury Assets Worldwide';
-
-  // Standard Organization Schema
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Otulia',
-    url: DEFAULT_URL,
-    logo: 'https://otulia.com/logos/logo.png',
-    description: DEFAULT_DESCRIPTION,
-    sameAs: [
-      'https://facebook.com/otulia',
-      'https://instagram.com/otulia',
-      'https://twitter.com/otulia',
-    ],
-  };
-
-  // WebSite schema with SearchAction (helps Google SGE and AI engines).
-  const websiteSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Otulia',
-    url: DEFAULT_URL,
-    description: DEFAULT_DESCRIPTION,
-    publisher: { '@type': 'Organization', name: 'Otulia' },
-  };
-
-  const navSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    itemListElement: [
-      { '@type': 'SiteNavigationElement', position: 1, name: 'Shop', url: `${DEFAULT_URL}/shop` },
-      { '@type': 'SiteNavigationElement', position: 2, name: 'Explore', url: `${DEFAULT_URL}/#Category` },
-      { '@type': 'SiteNavigationElement', position: 3, name: 'About Us', url: `${DEFAULT_URL}/about` },
-      { '@type': 'SiteNavigationElement', position: 4, name: 'Login', url: `${DEFAULT_URL}/login` },
-    ],
-  };
+    : BRAND_TITLE;
 
   // Product Schema for Assets
   let productSchema = null;
@@ -211,10 +176,7 @@ export default function SEO({
       {/* Canonical Link */}
       <link rel="canonical" href={resolvedUrl} />
 
-      {/* Structured Data */}
-      <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
-      <script type="application/ld+json">{JSON.stringify(websiteSchema)}</script>
-      <script type="application/ld+json">{JSON.stringify(navSchema)}</script>
+      {/* Structured Data (Organization/WebSite graph is static in index.html) */}
       {breadcrumbSchema && (
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
       )}

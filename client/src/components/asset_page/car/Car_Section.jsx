@@ -103,6 +103,10 @@ const Car_Section = () => {
   if (!info) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
+        <SEO
+          title="Luxury Car Listing"
+          description="View this luxury car listing on Otulia, the global luxury marketplace for cars, real estate, yachts and bikes."
+        />
         <div className="text-xl montserrat text-gray-500">
           Loading Asset Details...
         </div>
@@ -121,7 +125,7 @@ const Car_Section = () => {
         breadcrumbs={[
           { label: 'Home', path: '/' },
           { label: 'Listings', path: '/shop' },
-          { label: 'Cars', path: '/listings' },
+          { label: 'Cars', path: '/category/cars' },
           { label: info.title },
         ]}
       />

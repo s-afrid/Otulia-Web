@@ -95,6 +95,10 @@ const Estate_Section = () => {
   if (!info) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
+        <SEO
+          title="Luxury Property Listing"
+          description="View this luxury property listing on Otulia, the global luxury marketplace for cars, real estate, yachts and bikes."
+        />
         <div className="text-xl montserrat text-gray-500">
           Loading Asset Details...
         </div>
@@ -113,7 +117,7 @@ const Estate_Section = () => {
         breadcrumbs={[
           { label: 'Home', path: '/' },
           { label: 'Listings', path: '/shop' },
-          { label: 'Real Estate', path: '/listings' },
+          { label: 'Real Estate', path: '/category/estates' },
           { label: info.title },
         ]}
       />

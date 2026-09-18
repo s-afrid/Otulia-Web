@@ -243,6 +243,7 @@ const AdminDashboard = () => {
 
     if (loading) return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <SEO title="Admin Dashboard" description="Otulia System Administration" noindex />
             <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
         </div>
     );

@@ -13,69 +13,79 @@
     <meta name="author" content="Otulia" />
     <meta name="application-name" content="Otulia" />
     <meta name="generator" content="Otulia Web" />
-    <meta
-      data-rh="true"
-      name="description"
-      content="Otulia - The premier marketplace for buying and selling editorial-grade luxury cars, yachts, estates, and bikes worldwide. Verified dealers, editorial listings, global inventory."
-    />
-    <meta
-      data-rh="true"
-      name="keywords"
-      content="luxury assets, luxury cars, luxury cars for sale, yachts for sale, luxury real estate, exclusive bikes, otulia, buy luxury, sell luxury, luxury marketplace, luxury cars Beverly Hills, luxury cars Monaco, Ferrari for sale, Bugatti for sale, Lamborghini for sale, Rolls-Royce for sale"
-    />
-    <meta data-rh="true" name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="googlebot" content="index, follow" />
-    <meta name="rating" content="general" />
-    <meta name="distribution" content="global" />
-    <meta name="revisit-after" content="1 day" />
 
-    <!-- Canonical & hreflang -->
-    <link data-rh="true" rel="canonical" href="https://otulia.com/" />
+    <!-- data-static-head tags are the non-JS fallback; main.jsx removes them so only SEO.jsx's per-page tags remain. The title element is kept: Helmet rewrites it in place. -->
+    <title data-static-head>Otulia | Luxury Cars, Real Estate &amp; Yachts Marketplace</title>
+    <meta
+      data-static-head
+      name="description"
+      content="Otulia is the global luxury marketplace to buy and sell luxury cars, real estate, yachts and bikes from verified dealers and private sellers."
+    />
+    <meta data-static-head name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Otulia" />
-    <meta property="og:title" content="Otulia - Buy & Sell Luxury Assets Worldwide" />
+    <meta data-static-head property="og:type" content="website" />
+    <meta data-static-head property="og:site_name" content="Otulia" />
+    <meta data-static-head property="og:title" content="Otulia | Luxury Cars, Real Estate &amp; Yachts Marketplace" />
     <meta
+      data-static-head
       property="og:description"
-      content="The premier marketplace for editorial-grade luxury cars, yachts, estates, and bikes. Verified dealers, global inventory."
+      content="Otulia is the global luxury marketplace to buy and sell luxury cars, real estate, yachts and bikes from verified dealers and private sellers."
     />
-    <meta property="og:url" content="https://otulia.com/" />
-    <meta property="og:image" content="https://otulia.com/images/exclusive_club_bg.jpg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta data-static-head property="og:image" content="https://otulia.com/images/exclusive_club_bg.jpg" />
+    <meta data-static-head property="og:image:width" content="1200" />
+    <meta data-static-head property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Otulia — premier marketplace for luxury assets" />
-    <meta property="og:locale" content="en_US" />
+    <meta data-static-head property="og:locale" content="en_US" />
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Otulia - Buy & Sell Luxury Assets Worldwide" />
+    <meta data-static-head name="twitter:card" content="summary_large_image" />
+    <meta data-static-head name="twitter:title" content="Otulia | Luxury Cars, Real Estate &amp; Yachts Marketplace" />
     <meta
+      data-static-head
       name="twitter:description"
-      content="The premier marketplace for editorial-grade luxury cars, yachts, estates, and bikes."
+      content="Otulia is the global luxury marketplace to buy and sell luxury cars, real estate, yachts and bikes from verified dealers and private sellers."
     />
-    <meta name="twitter:image" content="https://otulia.com/images/exclusive_club_bg.jpg" />
-    <meta name="twitter:image:alt" content="Otulia — premier marketplace for luxury assets" />
+    <meta data-static-head name="twitter:image" content="https://otulia.com/images/exclusive_club_bg.jpg" />
+    <meta data-static-head name="twitter:image:alt" content="Otulia | Luxury Cars, Real Estate &amp; Yachts Marketplace" />
 
-    <!-- Organization schema (static fallback; per-page schema is emitted by react-helmet-async) -->
+    <!-- Organization + WebSite entity graph (the only copy; SEO.jsx emits per-page Product/BreadcrumbList) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Otulia",
-        "url": "https://otulia.com/",
-        "logo": "https://otulia.com/logos/logo.png",
-        "description": "The premier marketplace for buying and selling editorial-grade luxury cars, yachts, estates, and bikes worldwide.",
-        "sameAs": [
-          "https://facebook.com/otulia",
-          "https://instagram.com/otulia",
-          "https://twitter.com/otulia"
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://otulia.com/#organization",
+            "name": "Otulia",
+            "alternateName": "Otulia Luxury Marketplace",
+            "url": "https://otulia.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://otulia.com/logos/logo_inverted.png",
+              "width": 782,
+              "height": 241
+            },
+            "description": "Otulia is the global luxury marketplace to buy and sell luxury cars, real estate, yachts and bikes.",
+            "sameAs": [
+              "https://www.linkedin.com/company/otulia/",
+              "https://x.com/OtuliaGlobal",
+              "https://www.facebook.com/people/Otulia-All-In-One-Marketplace/61584376807412/",
+              "https://www.youtube.com/@otulia.com13"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://otulia.com/#website",
+            "name": "Otulia",
+            "alternateName": ["Otulia.com", "Otulia Luxury Marketplace"],
+            "url": "https://otulia.com/",
+            "inLanguage": "en",
+            "publisher": { "@id": "https://otulia.com/#organization" }
+          }
         ]
       }
     </script>
-
-    <!-- Google Search Console Verification Placeholder -->
-    <!-- <meta name="google-site-verification" content="ADD_YOUR_VERIFICATION_CODE_HERE" /> -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -112,7 +122,6 @@
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9499299946676364"
       crossorigin="anonymous"
     ></script>
-    <title>Otulia - Buy & Sell Luxury Assets Worldwide</title>
 
     <!--
       Plain-text snapshot for crawlers that do not execute JavaScript
@@ -127,8 +136,8 @@
       <div id="otulia-noscript" style="font-family: Georgia, 'Times New Roman', serif; max-width: 880px; padding: 32px; color: #111; background: #fff;">
         <h1 style="font-size: 32px; margin: 0 0 8px 0;">Otulia</h1>
         <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
-          Otulia is the premier marketplace for buying and selling editorial-grade luxury
-          cars, yachts, estates, and bikes worldwide. This page requires JavaScript to
+          Otulia is the global luxury marketplace to buy and sell luxury cars, real estate,
+          yachts and bikes from verified dealers and private sellers. This page requires JavaScript to
           render the full experience &mdash; please enable it, or browse the static
           sections below.
         </p>

@@ -148,7 +148,7 @@ const Profile = () => {
 
   if (!user) {
     navigate('/login');
-    return null;
+    return <SEO title="My Profile" description="Manage your Otulia profile, view your order history, and update your account details." noindex />;
   }
 
   const handleLogout = () => {

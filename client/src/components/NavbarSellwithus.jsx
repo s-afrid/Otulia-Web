@@ -61,7 +61,7 @@ const Navbar = ({
           <NavLink to={"/"}>
             <img
               className="w-[clamp(100px,10vw,160px)] h-auto object-contain transition-all"
-              alt="logo"
+              alt="Otulia"
               src={logoSrc}
               title="Otulia"
             />

@@ -62,12 +62,21 @@ const DealerProfile = () => {
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
+        <SEO
+          title="Dealer Profile"
+          description="Explore luxury assets from verified dealers and private sellers on Otulia."
+        />
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
       </div>
     );
   if (error || !data)
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
+        <SEO
+          title="Dealer Not Found"
+          description="This dealer profile could not be found."
+          noindex
+        />
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">{error}</h1>
           <button

@@ -7,6 +7,7 @@ import Yacht_Section from '../components/category_page/category_sections/yachts/
 import Bike_Section from '../components/category_page/category_sections/bikes/Bike_Section';
 import Estate_Section from '../components/category_page/category_sections/estates/Estate_Section'
 import SEO from '../components/SEO';
+import NotFound from './NotFound';
 import { useSnackbar } from '../contexts/SnackbarContext';
 
 const Categorty = () => {
@@ -80,6 +81,11 @@ const Categorty = () => {
       url: `https://otulia.com/category/${categorySegment}`,
     };
   };
+
+  const [, categorySegment, ...extraSegments] = location.pathname.toLowerCase().split('/').filter(Boolean);
+  if (extraSegments.length > 0 || (categorySegment && !['cars', 'estates', 'yachts', 'bikes'].includes(categorySegment))) {
+    return <NotFound />;
+  }
 
   const { title: seoTitle, description: seoDescription, url: seoUrl } = getSeoData();
 

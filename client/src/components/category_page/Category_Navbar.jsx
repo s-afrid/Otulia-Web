@@ -52,7 +52,7 @@ const Category_Navbar = () => {
                     <NavLink to={'/'}>
                         <img
                             className="w-[100px] md:w-[120px] h-[40px] md:h-[50px] object-contain"
-                            alt="logo"
+                            alt="Otulia"
                             src={isScrolled ? `/logos/logo_inverted.png` : `/logos/logo.png`}
                             title="Otulia"
                         />

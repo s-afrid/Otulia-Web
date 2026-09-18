@@ -2,7 +2,22 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import SEO from '../../components/SEO';
 import { FiChevronRight } from 'react-icons/fi';
-import { createAssetSlug } from '../../utils/slugUtils';
+
+// Same category inference as AssetCard, so links resolve to /asset/<car|estate|bike|yacht>/<id>.
+const getAssetCategory = (listing) => {
+  const cat = listing.category?.toLowerCase();
+  if (cat) {
+    if (['vehicles', 'cars', 'car', 'carasset'].includes(cat)) return 'car';
+    if (['bikes', 'bike', 'bikeasset'].includes(cat)) return 'bike';
+    if (['yachts', 'yacht', 'yachtasset'].includes(cat)) return 'yacht';
+    return 'estate';
+  }
+  const model = listing.itemModel?.toLowerCase() || '';
+  if (model.includes('car')) return 'car';
+  if (model.includes('bike')) return 'bike';
+  if (model.includes('yacht')) return 'yacht';
+  return 'estate';
+};
 
 const ListingTemplate = ({ 
   pageTitle, 
@@ -111,7 +126,7 @@ const ListingTemplate = ({
                         ${listing.price?.toLocaleString()}
                       </span>
                       <a 
-                        href={`/asset/${listing.category}/${createAssetSlug(listing.title, listing._id)}`}
+                        href={`/asset/${getAssetCategory(listing)}/${listing._id}`}
                         className="bg-[#D48D2A] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#b8731f] transition-colors"
                       >
                         View Details
