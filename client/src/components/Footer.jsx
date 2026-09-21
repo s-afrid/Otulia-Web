@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSnackbar } from "../contexts/SnackbarContext";
+import appStoreBadge from "../assets/App_Buttons/app_store.webp";
+import playStoreBadge from "../assets/App_Buttons/play_store.webp";
 
 const Footer = () => {
   const { showSnackbar } = useSnackbar();
@@ -77,7 +79,7 @@ const Footer = () => {
   return (
     <footer className="w-full bg-[#F8F8F8] pt-13 montserrat">
       {/* Top Section */}
-      <div className="px-3 md:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-8">
+      <div className="px-3 md:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 xl:gap-12 mb-8">
         {/* Logo Column */}
         <Link to="/" className="flex flex-col cursor-pointer">
           <img
@@ -154,6 +156,45 @@ const Footer = () => {
               </li>
             ))}
           </ul>
+        </div>
+
+        {/* Experience App */}
+        <div className="flex flex-col gap-6">
+          <h3 className="text-sm font-bold text-black uppercase tracking-widest">
+            Experience App
+          </h3>
+          <div className="flex flex-col gap-3">
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                showSnackbar("COMING SOON");
+              }}
+              className="inline-block transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] w-fit"
+              aria-label="Download on the App Store"
+            >
+              <img
+                src={appStoreBadge}
+                alt="Download on the App Store"
+                className="h-10 w-auto object-contain cursor-pointer"
+              />
+            </a>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                showSnackbar("COMING SOON");
+              }}
+              className="inline-block transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] w-fit"
+              aria-label="Get it on Google Play"
+            >
+              <img
+                src={playStoreBadge}
+                alt="Get it on Google Play"
+                className="h-10 w-auto object-contain cursor-pointer"
+              />
+            </a>
+          </div>
         </div>
       </div>
 
