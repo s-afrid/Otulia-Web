@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { FiChevronDown } from "react-icons/fi";
 import { useSnackbar } from "../contexts/SnackbarContext";
 import appStoreBadge from "../assets/App_Buttons/app_store.webp";
 import playStoreBadge from "../assets/App_Buttons/play_store.webp";
 
 const Footer = () => {
   const { showSnackbar } = useSnackbar();
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
+  const [selectedCurrency, setSelectedCurrency] = useState("INR");
+  const [selectedUnit, setSelectedUnit] = useState("sqft");
   const discover = [
     {
       id: 1,
@@ -79,11 +83,11 @@ const Footer = () => {
   return (
     <footer className="w-full bg-[#151515] text-white pt-13 montserrat">
       {/* Top Section */}
-      <div className="px-3 md:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 xl:gap-12 mb-8">
+      <div className="px-3 md:px-6 xl:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 xl:gap-8 mb-8">
         {/* Logo Column */}
         <Link to="/" className="flex flex-col cursor-pointer">
           <img
-            className="w-[200px] h-[60px] object-contain object-left"
+            className="w-[150px] xl:w-[200px] h-auto object-contain object-left"
             alt="Otulia"
             src="/logos/otulia_logo_white.png"
             title="Otulia"
@@ -194,6 +198,89 @@ const Footer = () => {
                 className="h-10 w-auto object-contain cursor-pointer"
               />
             </a>
+          </div>
+        </div>
+
+        {/* Settings */}
+        <div className="flex flex-col gap-6">
+          <h3 className="text-sm font-bold text-white uppercase tracking-widest">
+            Settings
+          </h3>
+          <div className="w-full max-w-[210px] border border-[#2D2D2D] rounded bg-transparent overflow-hidden">
+            {/* Language */}
+            <div className="relative border-b border-[#2D2D2D]">
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="w-full bg-transparent text-xs text-gray-200 px-3 py-2.5 pr-8 appearance-none focus:outline-none cursor-pointer"
+              >
+                <option value="English" className="bg-[#151515] text-white">
+                  English
+                </option>
+              </select>
+              <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none w-3.5 h-3.5" />
+            </div>
+
+            {/* Currency */}
+            <div className="relative border-b border-[#2D2D2D]">
+              <select
+                value={selectedCurrency}
+                onChange={(e) => setSelectedCurrency(e.target.value)}
+                className="w-full bg-transparent text-xs text-gray-200 px-3 py-2.5 pr-8 appearance-none focus:outline-none cursor-pointer"
+              >
+                <option value="INR" className="bg-[#151515] text-white">
+                  Indian rupee - INR ₹
+                </option>
+                <option value="USD" className="bg-[#151515] text-white">
+                  US Dollar - USD $
+                </option>
+                <option value="EUR" className="bg-[#151515] text-white">
+                  Euro - EUR €
+                </option>
+                <option value="GBP" className="bg-[#151515] text-white">
+                  British Pound - GBP £
+                </option>
+                <option value="AED" className="bg-[#151515] text-white">
+                  UAE Dirham - AED د.إ
+                </option>
+                <option value="JPY" className="bg-[#151515] text-white">
+                  Japanese Yen - JPY ¥
+                </option>
+                <option value="CHF" className="bg-[#151515] text-white">
+                  Swiss Franc - CHF Fr.
+                </option>
+                <option value="CAD" className="bg-[#151515] text-white">
+                  Canadian Dollar - CAD $
+                </option>
+                <option value="AUD" className="bg-[#151515] text-white">
+                  Australian Dollar - AUD $
+                </option>
+                <option value="SGD" className="bg-[#151515] text-white">
+                  Singapore Dollar - SGD $
+                </option>
+              </select>
+              <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none w-3.5 h-3.5" />
+            </div>
+
+            {/* Measurement Unit */}
+            <div className="relative">
+              <select
+                value={selectedUnit}
+                onChange={(e) => setSelectedUnit(e.target.value)}
+                className="w-full bg-transparent text-xs text-gray-200 px-3 py-2.5 pr-8 appearance-none focus:outline-none cursor-pointer"
+              >
+                <option value="sqft" className="bg-[#151515] text-white">
+                  Square Feet — ft² / Acr
+                </option>
+                <option value="sqm" className="bg-[#151515] text-white">
+                  Square Meters — m² / Ha
+                </option>
+                <option value="sqyd" className="bg-[#151515] text-white">
+                  Square Yards — sq yd
+                </option>
+              </select>
+              <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none w-3.5 h-3.5" />
+            </div>
           </div>
         </div>
       </div>
