@@ -77,27 +77,27 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="w-full bg-[#F8F8F8] pt-13 montserrat">
+    <footer className="w-full bg-[#151515] text-white pt-13 montserrat">
       {/* Top Section */}
       <div className="px-3 md:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 xl:gap-12 mb-8">
         {/* Logo Column */}
         <Link to="/" className="flex flex-col cursor-pointer">
           <img
-            className="w-[200px] h-[60px]"
+            className="w-[200px] h-[60px] object-contain object-left"
             alt="Otulia"
-            src="/logos/logo_inverted.png"
+            src="/logos/otulia_logo_white.png"
             title="Otulia"
           />
         </Link>
 
         {/* Discover */}
         <div className="flex flex-col gap-6">
-          <h3 className="text-sm font-bold text-black uppercase tracking-widest">
+          <h3 className="text-sm font-bold text-white uppercase tracking-widest">
             Discover
           </h3>
           <ul className="flex flex-col gap-3">
             {discover.map((item) => (
-              // <li key={item.id}><a href={`${item.navigate}`} className="text-sm text-gray-500 hover:text-black">{item.name}</a></li>
+              // <li key={item.id}><a href={`${item.navigate}`} className="text-sm text-gray-400 hover:text-white">{item.name}</a></li>
               <li key={item.id}>
                 <a
                   href={`${item.navigate}`}
@@ -110,7 +110,7 @@ const Footer = () => {
                       showSnackbar("COMING SOON");
                     }
                   }}
-                  className="text-sm text-gray-500 hover:text-black"
+                  className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   {item.name}
                 </a>
@@ -121,7 +121,7 @@ const Footer = () => {
 
         {/* Our Company */}
         <div className="flex flex-col gap-6">
-          <h3 className="text-sm font-bold text-black uppercase tracking-widest">
+          <h3 className="text-sm font-bold text-white uppercase tracking-widest">
             Our Company
           </h3>
           <ul className="flex flex-col gap-3">
@@ -129,7 +129,7 @@ const Footer = () => {
               <li key={item.id}>
                 <a
                   href={`${item.navigate}`}
-                  className="text-sm text-gray-500 hover:text-black"
+                  className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   {item.page}
                 </a>
@@ -140,7 +140,7 @@ const Footer = () => {
 
         {/* Connect With Us */}
         <div className="flex flex-col gap-6">
-          <h3 className="text-sm font-bold text-black uppercase tracking-widest">
+          <h3 className="text-sm font-bold text-white uppercase tracking-widest">
             Connect With Us
           </h3>
           <ul className="flex flex-col gap-3">
@@ -149,7 +149,7 @@ const Footer = () => {
                 <a
                   href={item.navigate}
                   target="_blank"
-                  className="text-sm text-gray-500 hover:text-black"
+                  className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   {item.name}
                 </a>
@@ -160,7 +160,7 @@ const Footer = () => {
 
         {/* Experience App */}
         <div className="flex flex-col gap-6">
-          <h3 className="text-sm font-bold text-black uppercase tracking-widest">
+          <h3 className="text-sm font-bold text-white uppercase tracking-widest">
             Experience App
           </h3>
           <div className="flex flex-col gap-3">
@@ -200,7 +200,7 @@ const Footer = () => {
 
       {/* Divider */}
       <div className="px-3 md:px-6">
-        <div className="w-full h-px bg-gray-300"></div>
+        <div className="w-full h-px bg-white/10"></div>
       </div>
 
       {/* Legal Links Section */}
@@ -215,7 +215,7 @@ const Footer = () => {
           <a
             key={item.name}
             href={item.path}
-            className="text-sm text-gray-500 hover:text-black text-center"
+            className="text-sm text-gray-400 hover:text-white transition-colors duration-200 text-center"
           >
             {item.name}
           </a>
@@ -224,12 +224,12 @@ const Footer = () => {
 
       {/* Divider */}
       <div className="px-3 md:px-6">
-        <div className="w-full h-px bg-gray-300"></div>
+        <div className="w-full h-px bg-white/10"></div>
       </div>
 
       {/* Payment Options Section */}
       <div className="px-3 md:px-6 py-12 flex flex-col items-center gap-6 hidden">
-        <h4 className="text-sm font-bold text-black uppercase tracking-widest">
+        <h4 className="text-sm font-bold text-white uppercase tracking-widest">
           Payment Options
         </h4>
         <div className="flex items-center gap-8 justify-center grayscale opacity-70 flex-wrap">
@@ -268,12 +268,12 @@ const Footer = () => {
 
       {/* Divider */}
       <div className="px-16">
-        <div className="w-full h-px bg-gray-200"></div>
+        <div className="w-full h-px bg-white/10"></div>
       </div>
 
       {/* Copyright Bar */}
       <div className="px-16 py-8 flex flex-col items-center gap-4">
-        <p className="text-sm text-gray-800 font-medium">
+        <p className="text-sm text-gray-400 font-medium">
           © 2026 Otulia. All Rights Reserved.
         </p>
       </div>
