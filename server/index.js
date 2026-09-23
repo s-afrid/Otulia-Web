@@ -33,7 +33,8 @@ app.use(compression());
 
 // Legacy Shopify/Wix URLs: 301 to the current equivalent, 410 when nothing equivalent exists.
 // Runs before the host redirect so www/http legacy URLs resolve in a single hop.
-const LEGACY_BASE = process.env.NODE_ENV === "production" ? "https://otulia.com" : "";
+const LEGACY_BASE =
+  process.env.NODE_ENV === "production" ? "https://otulia.com" : "";
 
 // Yacht and bike products are omitted (410) while those categories are "coming soon".
 const WIX_PRODUCT_301 = new Map([
@@ -52,7 +53,10 @@ const LEGACY_301 = [
   [/^\/frequently-asked-questions$|^\/pages\/faqs?$/, "/faq"],
   [/^\/terms-and-conditions$|^\/policies\/terms-of-service$/, "/terms"],
   [/^\/legal\/privacy$|^\/policies\/privacy-policy$/, "/privacy-policy"],
-  [/^\/(shipping-info|shipping-policy|policies\/shipping-policy)$/, "/shipping"],
+  [
+    /^\/(shipping-info|shipping-policy|policies\/shipping-policy)$/,
+    "/shipping",
+  ],
   [/^\/(return-policy|refund-policy|policies\/refund-policy)$/, "/returns"],
   [/^\/cookies-policy$/, "/cookie-policy"],
   [/^\/sell-with-us$/, "/sellwithus"],
@@ -85,7 +89,8 @@ app.use((req, res, next) => {
   for (const [pattern, destination] of LEGACY_301) {
     const match = legacyPath.match(pattern);
     if (!match) continue;
-    const target = typeof destination === "function" ? destination(match) : destination;
+    const target =
+      typeof destination === "function" ? destination(match) : destination;
     if (target) return res.redirect(301, `${LEGACY_BASE}${target}`);
   }
   if (LEGACY_410.some((pattern) => pattern.test(legacyPath))) {
@@ -128,7 +133,8 @@ app.use((req, res, next) => {
       .replace(/^\/asset\/yachts(?=\/)/i, "/asset/yacht")
       .toLowerCase();
 
-    if (canonicalPath.length > 1) canonicalPath = canonicalPath.replace(/\/+$/, "");
+    if (canonicalPath.length > 1)
+      canonicalPath = canonicalPath.replace(/\/+$/, "");
 
     if (
       forwardedProto !== "https" ||

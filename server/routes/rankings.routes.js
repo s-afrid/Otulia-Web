@@ -14,6 +14,7 @@ const OtherNominee = require("../models/OtherNominee.model");
 const AssetNominee = require("../models/AssetNominee.model");
 const DealerNominee = require("../models/DealerNominee.model");
 const VoteLog = require("../models/VoteLog.model");
+const Comment = require("../models/Comment.model");
 
 const nomineeModelMap = {
     'CarNominee': CarNominee,
@@ -313,6 +314,195 @@ router.post("/vote", authMiddleware, async (req, res) => {
     } catch (err) {
         console.error("POST vote error:", err);
         res.status(500).json({ error: "CAST_VOTE_FAILED" });
+    }
+});
+
+/**
+ * SHAPE A COMMENT FOR THE CLIENT
+ */
+const mapComment = (c) => ({
+    _id: c._id,
+    text: c.text,
+    parentCommentId: c.parentCommentId || null,
+    likes: (c.likes || []).map((id) => id.toString()),
+    edited: c.edited,
+    createdAt: c.createdAt,
+    user: c.userId && c.userId._id
+        ? {
+            _id: c.userId._id,
+            name: c.userId.name,
+            profilePicture: c.userId.profilePicture || "",
+        }
+        : { _id: null, name: "Unknown User", profilePicture: "" },
+});
+
+/**
+ * GET ALL COMMENTS FOR A NOMINEE (OLDEST FIRST, CLIENT SORTS FOR DISPLAY)
+ */
+router.get("/comments/:nomineeId", async (req, res) => {
+    try {
+        const comments = await Comment.find({ nomineeId: req.params.nomineeId })
+            .sort({ createdAt: 1 })
+            .populate("userId", "name profilePicture");
+
+        res.json({ comments: comments.map(mapComment) });
+    } catch (err) {
+        console.error("GET comments error:", err);
+        res.status(500).json({ error: "FETCH_COMMENTS_FAILED" });
+    }
+});
+
+/**
+ * POST A COMMENT OR REPLY
+ */
+router.post("/comments", authMiddleware, async (req, res) => {
+    try {
+        const { categoryId, nomineeId, parentCommentId, text } = req.body;
+
+        if (!nomineeId || !text || !text.trim()) {
+            return res.status(400).json({ error: "TEXT_REQUIRED" });
+        }
+
+        if (parentCommentId) {
+            const parent = await Comment.findById(parentCommentId);
+            if (!parent) {
+                return res.status(404).json({ error: "PARENT_COMMENT_NOT_FOUND" });
+            }
+            if (parent.nomineeId.toString() !== nomineeId.toString()) {
+                return res.status(400).json({ error: "PARENT_COMMENT_MISMATCH" });
+            }
+        }
+
+        const comment = await Comment.create({
+            userId: req.user.id,
+            categoryId: categoryId || null,
+            nomineeId,
+            parentCommentId: parentCommentId || null,
+            text: text.trim(),
+        });
+
+        const populated = await Comment.findById(comment._id)
+            .populate("userId", "name profilePicture");
+
+        res.status(201).json({ comment: mapComment(populated) });
+    } catch (err) {
+        console.error("POST comment error:", err);
+        res.status(500).json({ error: "POST_COMMENT_FAILED" });
+    }
+});
+
+/**
+ * EDIT A COMMENT (OWNER ONLY)
+ */
+router.put("/comments/:id", authMiddleware, async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text || !text.trim()) {
+            return res.status(400).json({ error: "TEXT_REQUIRED" });
+        }
+
+        const comment = await Comment.findById(req.params.id);
+        if (!comment) {
+            return res.status(404).json({ error: "COMMENT_NOT_FOUND" });
+        }
+        if (comment.userId.toString() !== req.user.id) {
+            return res.status(403).json({ error: "NOT_COMMENT_OWNER" });
+        }
+
+        comment.text = text.trim();
+        comment.edited = true;
+        await comment.save();
+
+        const populated = await Comment.findById(comment._id)
+            .populate("userId", "name profilePicture");
+
+        res.json({ comment: mapComment(populated) });
+    } catch (err) {
+        console.error("PUT comment error:", err);
+        res.status(500).json({ error: "EDIT_COMMENT_FAILED" });
+    }
+});
+
+/**
+ * DELETE A COMMENT AND ITS REPLIES (OWNER ONLY)
+ */
+router.delete("/comments/:id", authMiddleware, async (req, res) => {
+    try {
+        const comment = await Comment.findById(req.params.id);
+        if (!comment) {
+            return res.status(404).json({ error: "COMMENT_NOT_FOUND" });
+        }
+        if (comment.userId.toString() !== req.user.id) {
+            return res.status(403).json({ error: "NOT_COMMENT_OWNER" });
+        }
+
+        // Collect replies (2 levels max) so no orphaned comments remain
+        const children = await Comment.find({ parentCommentId: comment._id }).select("_id");
+        const childIds = children.map((c) => c._id);
+        const grandChildren = childIds.length
+            ? await Comment.find({ parentCommentId: { $in: childIds } }).select("_id")
+            : [];
+        const allIds = [comment._id, ...childIds, ...grandChildren.map((c) => c._id)];
+
+        await Comment.deleteMany({ _id: { $in: allIds } });
+
+        res.json({ success: true, deleted: allIds.length });
+    } catch (err) {
+        console.error("DELETE comment error:", err);
+        res.status(500).json({ error: "DELETE_COMMENT_FAILED" });
+    }
+});
+
+/**
+ * TOGGLE LIKE ON A COMMENT
+ */
+router.post("/comments/:id/like", authMiddleware, async (req, res) => {
+    try {
+        const comment = await Comment.findById(req.params.id);
+        if (!comment) {
+            return res.status(404).json({ error: "COMMENT_NOT_FOUND" });
+        }
+
+        const userId = req.user.id;
+        const existingIndex = comment.likes.findIndex((id) => id.toString() === userId);
+
+        if (existingIndex >= 0) {
+            comment.likes.splice(existingIndex, 1);
+        } else {
+            comment.likes.push(userId);
+        }
+        await comment.save();
+
+        res.json({
+            liked: existingIndex < 0,
+            likesCount: comment.likes.length,
+        });
+    } catch (err) {
+        console.error("POST comment like error:", err);
+        res.status(500).json({ error: "LIKE_COMMENT_FAILED" });
+    }
+});
+
+/**
+ * REPORT A COMMENT
+ */
+router.post("/comments/:id/report", authMiddleware, async (req, res) => {
+    try {
+        const comment = await Comment.findById(req.params.id);
+        if (!comment) {
+            return res.status(404).json({ error: "COMMENT_NOT_FOUND" });
+        }
+
+        const alreadyReported = comment.reportedBy.some((id) => id.toString() === req.user.id);
+        if (!alreadyReported) {
+            comment.reportedBy.push(req.user.id);
+            await comment.save();
+        }
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error("POST comment report error:", err);
+        res.status(500).json({ error: "REPORT_COMMENT_FAILED" });
     }
 });
 
