@@ -12,8 +12,6 @@ const Cars_Hero = () => {
         alt="hero_car"
       />
 
-      {/* Clearer Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent -z-5" />
 
       <div className="relative h-full w-full flex flex-col justify-start items-center text-center px-4 md:px-8 z-10 pt-34 md:pt-50">
         <div className="max-w-2xl flex flex-col items-center text-center gap-4 mb-6 md:mb-8 mx-auto">

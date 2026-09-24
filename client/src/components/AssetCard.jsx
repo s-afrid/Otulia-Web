@@ -495,12 +495,22 @@ const AssetCard = ({ item }) => {
                 src={optimizeCloudinaryUrl(item.agent.companyLogo, 200)}
                 alt="Company"
                 className="w-auto object-contain shrink-0"
-                style={{ height: "4.7cqi" /* h-7 (28px) */ }}
+                style={{
+                  height:
+                    category === "estate" || category === "car"
+                      ? "4.935cqi"
+                      : "4.7cqi",
+                }}
               />
             ) : (
               <div
                 className="font-normal tracking-tight text-[#2a2a2a] canela"
-                style={{ fontSize: "3.36cqi" /* text-[20px] */ }}
+                style={{
+                  fontSize:
+                    category === "estate" || category === "car"
+                      ? "3.528cqi"
+                      : "3.36cqi",
+                }}
               >
                 RH
               </div>
