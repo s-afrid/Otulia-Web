@@ -12,6 +12,81 @@ const { incrementPopularity } = require("../utils/popularityUpdater");
 const axios = require("axios");
 const router = express.Router();
 
+// Helper to keep agent/dealer information in sync with User collection in database
+const syncAgentInfo = async (assets) => {
+  if (!assets) return assets;
+  const list = Array.isArray(assets) ? assets : [assets];
+  if (list.length === 0) return assets;
+
+  const agentIds = [];
+  const agentEmails = [];
+
+  list.forEach((item) => {
+    if (item && item.agent) {
+      if (item.agent.id && mongoose.Types.ObjectId.isValid(item.agent.id)) {
+        agentIds.push(item.agent.id.toString());
+      }
+      if (item.agent.email) {
+        agentEmails.push(item.agent.email.toLowerCase());
+      }
+    }
+    if (item && item.ownerEmail) {
+      agentEmails.push(item.ownerEmail.toLowerCase());
+    }
+  });
+
+  const uniqueIds = [...new Set(agentIds)];
+  const uniqueEmails = [...new Set(agentEmails)];
+
+  if (uniqueIds.length === 0 && uniqueEmails.length === 0) return assets;
+
+  try {
+    const userQuery = [];
+    if (uniqueIds.length > 0) userQuery.push({ _id: { $in: uniqueIds } });
+    if (uniqueEmails.length > 0) userQuery.push({ email: { $in: uniqueEmails } });
+
+    const users = await User.find({ $or: userQuery })
+      .select("email company isVerified verificationStatus name role plan phone profilePicture")
+      .lean();
+
+    const userById = new Map();
+    const userByEmail = new Map();
+    users.forEach((u) => {
+      userById.set(u._id.toString(), u);
+      if (u.email) userByEmail.set(u.email.toLowerCase(), u);
+    });
+
+    list.forEach((item) => {
+      if (!item) return;
+      if (!item.agent) item.agent = {};
+
+      const u =
+        (item.agent.id && userById.get(item.agent.id.toString())) ||
+        (item.agent.email && userByEmail.get(item.agent.email.toLowerCase())) ||
+        (item.ownerEmail && userByEmail.get(item.ownerEmail.toLowerCase()));
+
+      if (u) {
+        item.agent.id = item.agent.id || u._id.toString();
+        item.agent.email = u.email || item.agent.email;
+        item.agent.name = item.agent.name || u.name;
+        if (u.company?.companyLogo) {
+          item.agent.companyLogo = u.company.companyLogo;
+        }
+        if (u.company?.companyName) {
+          item.agent.company = u.company.companyName;
+        }
+        item.agent.isVerified =
+          u.isVerified || u.verificationStatus === "Verified";
+        if (u.plan) item.agent.plan = u.plan;
+      }
+    });
+  } catch (err) {
+    console.error("Error in syncAgentInfo:", err);
+  }
+
+  return assets;
+};
+
 /**
  * CAR ASSETS
  * /api/assets/cars
@@ -87,6 +162,8 @@ router.get("/cars", async (req, res) => {
       .limit(Number(limit))
       .sort(sortOptions)
       .lean();
+
+    await syncAgentInfo(data);
 
     res.json({
       data,
@@ -433,6 +510,7 @@ router.get("/yachts", async (req, res) => {
 router.get("/all/cars", async (req, res) => {
   try {
     const data = await CarAsset.find({ status: 'Active' }).sort({ createdAt: -1 }).lean();
+    await syncAgentInfo(data);
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all car assets" });
@@ -569,18 +647,27 @@ const findAndPopulateAsset = async (Model, param) => {
   if (!asset) return null;
 
   const assetObj = asset.toObject();
+  let agentUser = null;
   if (assetObj.agent && assetObj.agent.id && mongoose.Types.ObjectId.isValid(assetObj.agent.id)) {
-    const agentUser = await User.findById(assetObj.agent.id);
-    if (agentUser) {
-      assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
-      assetObj.agent.email = agentUser.email || assetObj.agent.email;
-      assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
-      assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
-      if (agentUser.company) {
-        assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
-        assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
-        assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
-      }
+    agentUser = await User.findById(assetObj.agent.id);
+  } else if (assetObj.agent && assetObj.agent.email) {
+    agentUser = await User.findOne({ email: assetObj.agent.email.toLowerCase() });
+  } else if (assetObj.ownerEmail) {
+    agentUser = await User.findOne({ email: assetObj.ownerEmail.toLowerCase() });
+  }
+
+  if (agentUser) {
+    if (!assetObj.agent) assetObj.agent = {};
+    assetObj.agent.id = assetObj.agent.id || agentUser._id.toString();
+    assetObj.agent.phone = agentUser.phone || assetObj.agent.phone;
+    assetObj.agent.email = agentUser.email || assetObj.agent.email;
+    assetObj.agent.plan = agentUser.plan || assetObj.agent.plan;
+    assetObj.agent.createdAt = agentUser.createdAt || assetObj.agent.createdAt;
+    assetObj.agent.isVerified = agentUser.isVerified || agentUser.verificationStatus === 'Verified';
+    if (agentUser.company) {
+      assetObj.agent.company = agentUser.company.companyName || assetObj.agent.company;
+      assetObj.agent.companyLogo = agentUser.company.companyLogo || assetObj.agent.companyLogo;
+      assetObj.agent.website = agentUser.company.website || assetObj.agent.website;
     }
   }
 
@@ -1213,6 +1300,7 @@ router.get("/similar/:category/:id", async (req, res) => {
       return 0; // Both are matches or both are price-only matches
     }).slice(0, 10);
 
+    await syncAgentInfo(sortedSimilar);
     res.json(sortedSimilar);
   } catch (error) {
     console.error("Similar assets error:", error);
@@ -1247,6 +1335,7 @@ router.get("/agent/:agentId/:category", async (req, res) => {
     }
 
     const assets = await Model.find(query).limit(10);
+    await syncAgentInfo(assets);
     res.json(assets);
   } catch (error) {
     console.error("Agent assets error:", error);

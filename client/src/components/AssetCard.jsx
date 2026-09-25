@@ -489,77 +489,152 @@ const AssetCard = ({ item }) => {
         </div>
 
         {/* FOOTER */}
-        <div
-          className="mt-auto border-t border-[#eeeeee] flex items-center justify-between"
-          style={{
-            paddingTop: "1.6cqi",
-          }}
-        >
-          {/* Logo / Initials */}
-          <div className="flex items-center">
-            {item.agent?.companyLogo ? (
-              <img
-                src={optimizeCloudinaryUrl(item.agent.companyLogo, 200)}
-                alt="Company"
-                className="w-auto object-contain shrink-0"
+        {category === "car" ? (
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              const dealerEmail = item.agent?.email || item.ownerEmail;
+              if (dealerEmail) {
+                navigate(`/dealer/${encodeURIComponent(dealerEmail)}`);
+              }
+            }}
+            className="mt-auto border-t border-[#eeeeee] flex items-center justify-between cursor-pointer group/dealer"
+            style={{
+              paddingTop: "1.6cqi",
+            }}
+            title={`View ${item.agent?.company || item.agent?.name || "Dealer"} Profile`}
+          >
+            {/* Left Side: Dealer Business Logo + Verified Dealer Badge */}
+            <div className="flex items-center min-w-0" style={{ gap: "1.8cqi" }}>
+              {item.agent?.companyLogo ? (
+                <img
+                  src={optimizeCloudinaryUrl(item.agent.companyLogo, 200)}
+                  alt={item.agent?.company || item.agent?.name || "Dealer"}
+                  className="w-auto object-contain shrink-0"
+                  style={{
+                    height: "6.169cqi",
+                    maxHeight: "38px",
+                  }}
+                />
+              ) : (
+                <span
+                  className="font-bold tracking-wider text-[#2A2A2A] uppercase truncate montserrat shrink-0"
+                  style={{
+                    fontSize: "2.75cqi",
+                  }}
+                >
+                  {item.agent?.company || item.agent?.name || "Dealer"}
+                </span>
+              )}
+
+              {/* Verified Dealer Badge */}
+              <span
+                className="inline-flex items-center rounded-full font-medium bg-[#F3F4F6] text-[#71717A] tracking-tight shrink-0 select-none"
                 style={{
-                  height:
-                    category === "estate" || category === "car"
-                      ? "4.935cqi"
-                      : "4.7cqi",
-                }}
-              />
-            ) : (
-              <div
-                className="font-normal tracking-tight text-[#2a2a2a] canela"
-                style={{
-                  fontSize:
-                    category === "estate" || category === "car"
-                      ? "3.528cqi"
-                      : "3.36cqi",
+                  fontSize: "1.68cqi",
+                  padding: "0.35cqi 1.4cqi",
                 }}
               >
-                RH
-              </div>
-            )}
-          </div>
-
-          {/* Agent Section */}
-          <div
-            className="flex items-center"
-            style={{ gap: "1.7cqi" /* gap-[10px] (10px) */ }}
-          >
-            <span
-              className="font-normal text-[#9a9a9a] montserrat truncate"
-              style={{
-                fontSize: "1.68cqi" /* text-[10px] (10px) */,
-                maxWidth: "20cqi" /* max-w-[120px] */,
-              }}
-            >
-              Listed by{" "}
-              <span className="text-[#5a5a5a] font-normal">
-                {item.agent?.name?.split(" ")[0] || "Marshall"}
+                Verified Dealer
               </span>
-            </span>
+            </div>
+
+            {/* Right Side: Circular Arrow Button */}
             <div
-              className="rounded-full overflow-hidden border border-gray-50 shadow-sm shrink-0"
+              className="rounded-full border border-gray-200 flex items-center justify-center text-gray-700 group-hover/dealer:border-black group-hover/dealer:bg-gray-50 transition-all shrink-0 ml-auto"
               style={{
-                width: "7.9cqi" /* w-[47px] (47px) */,
-                height: "7.9cqi" /* h-[47px] (47px) */,
+                width: "5.5cqi",
+                height: "5.5cqi",
+                minWidth: "26px",
+                minHeight: "26px",
               }}
             >
-              <img
-                src={optimizeCloudinaryUrl(
-                  item.agent?.photo || "https://via.placeholder.com/100",
-                  100,
-                  100,
-                )}
-                alt="Agent"
-                className="w-full h-full object-cover"
-              />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  width: "2.8cqi",
+                  height: "2.8cqi",
+                  minWidth: "13px",
+                  minHeight: "13px",
+                }}
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
             </div>
           </div>
-        </div>
+        ) : (
+          <div
+            className="mt-auto border-t border-[#eeeeee] flex items-center justify-between"
+            style={{
+              paddingTop: "1.6cqi",
+            }}
+          >
+            {/* Logo / Initials */}
+            <div className="flex items-center">
+              {item.agent?.companyLogo ? (
+                <img
+                  src={optimizeCloudinaryUrl(item.agent.companyLogo, 200)}
+                  alt="Company"
+                  className="w-auto object-contain shrink-0"
+                  style={{
+                    height: category === "estate" ? "6.169cqi" : "4.7cqi",
+                  }}
+                />
+              ) : (
+                <div
+                  className="font-normal tracking-tight text-[#2a2a2a] canela"
+                  style={{
+                    fontSize: category === "estate" ? "4.41cqi" : "3.36cqi",
+                  }}
+                >
+                  RH
+                </div>
+              )}
+            </div>
+
+            {/* Agent Section */}
+            <div
+              className="flex items-center"
+              style={{ gap: "1.7cqi" /* gap-[10px] (10px) */ }}
+            >
+              <span
+                className="font-normal text-[#9a9a9a] montserrat truncate"
+                style={{
+                  fontSize: "1.68cqi" /* text-[10px] (10px) */,
+                  maxWidth: "20cqi" /* max-w-[120px] */,
+                }}
+              >
+                Listed by{" "}
+                <span className="text-[#5a5a5a] font-normal">
+                  {item.agent?.name?.split(" ")[0] || "Marshall"}
+                </span>
+              </span>
+              <div
+                className="rounded-full overflow-hidden border border-gray-50 shadow-sm shrink-0"
+                style={{
+                  width: "7.9cqi" /* w-[47px] (47px) */,
+                  height: "7.9cqi" /* h-[47px] (47px) */,
+                }}
+              >
+                <img
+                  src={optimizeCloudinaryUrl(
+                    item.agent?.photo || "https://via.placeholder.com/100",
+                    100,
+                    100,
+                  )}
+                  alt="Agent"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
