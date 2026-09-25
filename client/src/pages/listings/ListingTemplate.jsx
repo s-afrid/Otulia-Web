@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import SEO from '../../components/SEO';
 import { FiChevronRight } from 'react-icons/fi';
+import { createAssetSlug } from '../../utils/slugUtils';
 
 // Same category inference as AssetCard, so links resolve to /asset/<car|estate|bike|yacht>/<id>.
 const getAssetCategory = (listing) => {
@@ -125,12 +127,13 @@ const ListingTemplate = ({
                       <span className="text-xl font-bold text-[#D48D2A]">
                         ${listing.price?.toLocaleString()}
                       </span>
-                      <a 
-                        href={`/asset/${getAssetCategory(listing)}/${listing._id}`}
+                      <Link 
+                        to={`/asset/${getAssetCategory(listing)}/${createAssetSlug(listing.title, listing._id)}`}
+                        state={{ id: listing._id }}
                         className="bg-[#D48D2A] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#b8731f] transition-colors"
                       >
                         View Details
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>

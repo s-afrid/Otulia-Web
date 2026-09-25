@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // 1. Import useParams
+import { useParams, useLocation } from "react-router-dom"; // 1. Import useParams & useLocation
 import AssetGallery from "../AssetGallery";
 import AssetStats from "../AssetStats";
 import CarDetails from "../car/CarDetails";
@@ -19,15 +19,17 @@ const Car_Section = () => {
   const [similarAssets, setSimilarAssets] = useState([]);
   const [agentAssets, setAgentAssets] = useState([]);
 
-  // 1. Get ID correctly regardless of URL structure
+  // 1. Get ID correctly: prefer ID passed via router state from navigation, fallback to URL slug/ID
   const { id } = useParams();
+  const location = useLocation();
+  const targetId = location.state?.id || id;
 
   // Car info fetching
   const infoFetch = async () => {
     // Safety check
-    if (!id) return;
+    if (!targetId) return;
 
-    const url = `/api/assets/car/${encodeURIComponent(id)}`;
+    const url = `/api/assets/car/${encodeURIComponent(targetId)}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -92,10 +94,10 @@ const Car_Section = () => {
     }
   };
 
-  // Fetch data when ID changes
+  // Fetch data when ID or router state changes
   useEffect(() => {
     infoFetch();
-  }, [id]);
+  }, [id, location.state?.id]);
 
   if (loadFailed) return <AssetUnavailable />;
 

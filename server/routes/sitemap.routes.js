@@ -90,18 +90,33 @@ router.get('/sitemap.xml', async (req, res) => {
         // A database outage must not make the entire sitemap return HTTP 500.
         // Successful collections are included; static routes remain available.
         const collections = await Promise.allSettled([
-            CarAsset.find({ status: 'Active' }, '_id updatedAt').lean().exec(),
-            EstateAsset.find({ status: 'Active' }, '_id updatedAt').lean().exec(),
-            BikeAsset.find({ status: 'Active' }, '_id updatedAt').lean().exec(),
-            YachtAsset.find({ status: 'Active' }, '_id updatedAt').lean().exec()
+            CarAsset.find({ status: 'Active' }, 'title _id updatedAt').lean().exec(),
+            EstateAsset.find({ status: 'Active' }, 'title _id updatedAt').lean().exec(),
+            BikeAsset.find({ status: 'Active' }, 'title _id updatedAt').lean().exec(),
+            YachtAsset.find({ status: 'Active' }, 'title _id updatedAt').lean().exec()
         ]);
 
-        // Asset detail pages are addressed by ObjectId, matching the /api/assets/:category/:id lookup.
+        const createAssetSlug = (title, id) => {
+            if (title) {
+                const slug = title
+                    .toString()
+                    .trim()
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/[\s_-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                if (slug) return slug;
+            }
+            return id || '';
+        };
+
+        // Asset detail pages are addressed by title slug with ID fallback.
         const seenLocs = new Set();
         const addAssets = (assets, category) => {
             assets.forEach(asset => {
                 if (!asset._id) return;
-                const loc = `${BASE_URL}/asset/${category}/${asset._id}`;
+                const slug = createAssetSlug(asset.title, asset._id);
+                const loc = `${BASE_URL}/asset/${category}/${slug}`;
                 if (seenLocs.has(loc)) return;
                 seenLocs.add(loc);
                 const lastModified = asset.updatedAt instanceof Date && !Number.isNaN(asset.updatedAt.valueOf())

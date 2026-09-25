@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import AssetGallery from "../AssetGallery";
 import AssetStats from "../AssetStats";
 import BikeDetails from "./BikeDetails";
@@ -20,10 +20,12 @@ const Bike_Section = () => {
     const [agentAssets, setAgentAssets] = useState([]);
 
     const { id } = useParams();
+    const location = useLocation();
+    const targetId = location.state?.id || id;
 
     const infoFetch = async () => {
-        if (!id) return;
-        const url = `/api/assets/bike/${encodeURIComponent(id)}`;
+        if (!targetId) return;
+        const url = `/api/assets/bike/${encodeURIComponent(targetId)}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -87,7 +89,7 @@ const Bike_Section = () => {
 
     useEffect(() => {
         infoFetch();
-    }, [id]);
+    }, [id, location.state?.id]);
 
     if (loadFailed) return <AssetUnavailable />;
 
