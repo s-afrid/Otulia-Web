@@ -21,6 +21,7 @@ const RankingCategoryTable = ({ categories, onEdit, onDelete, onAddNew }) => {
             case 'Real Estate': return 'bg-[#D48D2A]/10 text-[#F59E0B] border border-[#D48D2A]/30';
             case 'Yachts': return 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30';
             case 'Bikes': return 'bg-purple-500/10 text-purple-400 border border-purple-500/30';
+            case 'Content Creator': return 'bg-rose-500/10 text-rose-400 border border-rose-500/30';
             default: return 'bg-gray-500/10 text-gray-400 border border-gray-500/30';
         }
     };

@@ -21,16 +21,27 @@ const ImageCropModal = ({ src, onCropComplete, onClose, isUploading }) => {
       height
     );
     setCrop(initialCrop);
+    setCompletedCrop({
+      unit: 'px',
+      x: Math.round(width * 0.05),
+      y: Math.round(height * 0.05),
+      width: Math.round(width * 0.9),
+      height: Math.round(height * 0.9),
+    });
   };
 
   const handleCrop = () => {
-    if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
-      return;
-    }
-
     const image = imgRef.current;
     const canvas = previewCanvasRef.current;
-    const crop = completedCrop;
+    if (!image || !canvas) return;
+
+    const crop = completedCrop || {
+      unit: 'px',
+      x: 0,
+      y: 0,
+      width: image.width,
+      height: image.height,
+    };
 
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;

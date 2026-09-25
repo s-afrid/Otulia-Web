@@ -320,7 +320,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
 
     const uploadToCloudinary = async (blob, target, title, oldUrl) => {
         const uploadData = new FormData();
-        uploadData.append('image', blob);
+        uploadData.append('image', blob, `${target}_${Date.now()}.png`);
         
         let endpoint = target === 'cover' 
             ? `/api/upload/category-cover?title=${encodeURIComponent(title)}` 
@@ -979,22 +979,37 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                             type="button"
                             onClick={() => {
                                 const customId = 'custom-' + Date.now();
-                                const slugType = formData.type === 'Real Estate' ? 'real-estate' : (formData.type ? formData.type.toLowerCase() : 'cars');
+                                const isContentCreator = formData.type === 'Content Creator';
+                                const slugType = isContentCreator 
+                                    ? 'contentcreators' 
+                                    : (formData.type === 'Real Estate' ? 'real-estate' : (formData.type ? formData.type.toLowerCase() : 'cars'));
                                 const newNominee = {
                                     id: customId,
-                                    name: 'New Custom Nominee',
-                                    detail: 'Custom Nominee',
+                                    name: isContentCreator ? 'New Creator Nominee' : 'New Custom Nominee',
+                                    detail: isContentCreator ? 'Content Creator' : 'Custom Nominee',
                                     image: '',
+                                    banner: '',
+                                    channelName: '',
                                     votes: 0,
                                     fakeVotes: 0,
                                     brand: '',
                                     model: '',
                                     description: '',
                                     listingLink: '',
-                                    keyDetails: {},
+                                    keyDetails: isContentCreator ? {
+                                        subscribers: '',
+                                        views: '',
+                                        category: '',
+                                        location: '',
+                                        joinDate: ''
+                                    } : {},
                                     sources: [
                                         { title: 'Listing Link', url: `https://otulia.com/ranking/${slugType}/` }
-                                    ]
+                                    ],
+                                    youtube: '',
+                                    instagram: '',
+                                    twitter: '',
+                                    tiktok: ''
                                 };
                                 setFormData(prev => ({
                                     ...prev,
@@ -1445,12 +1460,14 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                         } else if (cropTarget.startsWith('nominee-')) {
                             setIsSubmitting(true);
                             const uploadData = new FormData();
-                            uploadData.append('image', blob);
+                            const isBanner = cropTarget.startsWith('nominee-banner-');
+                            const filename = isBanner ? `banner_${Date.now()}.png` : `logo_${Date.now()}.png`;
+                            uploadData.append('image', blob, filename);
                             
                             const categoryTitle = formData.title || 'general';
                             const nomineeName = editNomineeData?.name || `nominee-${editingNomineeIndex}`;
                             
-                            const oldUrl = cropTarget.startsWith('nominee-banner-') 
+                            const oldUrl = isBanner 
                                 ? editNomineeData?.banner 
                                 : editNomineeData?.image;
                                 
@@ -1469,11 +1486,18 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                             .then(res => res.json())
                             .then(data => {
                                 if (data.success && data.url) {
-                                    if (cropTarget.startsWith('nominee-banner-')) {
-                                        setEditNomineeData(prev => ({ ...prev, banner: data.url }));
-                                    } else {
-                                        setEditNomineeData(prev => ({ ...prev, image: data.url }));
-                                    }
+                                    const fieldKey = isBanner ? 'banner' : 'image';
+                                    setEditNomineeData(prev => ({ ...prev, [fieldKey]: data.url }));
+                                    setFormData(prev => {
+                                        const updated = [...prev.nominees];
+                                        if (updated[editingNomineeIndex]) {
+                                            updated[editingNomineeIndex] = {
+                                                ...updated[editingNomineeIndex],
+                                                [fieldKey]: data.url
+                                            };
+                                        }
+                                        return { ...prev, nominees: updated };
+                                    });
                                 } else {
                                     alert("Failed to upload image. Please try again.");
                                 }

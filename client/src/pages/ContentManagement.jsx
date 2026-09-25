@@ -22,6 +22,7 @@ const ContentManagement = () => {
             case 'Real Estate': return 'bg-[#D48D2A]/10 text-[#F59E0B] border border-[#D48D2A]/30';
             case 'Yachts': return 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30';
             case 'Bikes': return 'bg-purple-500/10 text-purple-400 border border-purple-500/30';
+            case 'Content Creator': return 'bg-rose-500/10 text-rose-400 border border-rose-500/30';
             default: return 'bg-gray-500/10 text-gray-400 border border-gray-500/30';
         }
     };
@@ -330,22 +331,37 @@ const ContentManagement = () => {
 
     const addCustomNomineeInline = () => {
         const customId = 'custom-' + Date.now();
-        const slugType = viewingCategory.type === 'Real Estate' ? 'real-estate' : (viewingCategory.type ? viewingCategory.type.toLowerCase() : 'cars');
+        const isContentCreator = viewingCategory.type === 'Content Creator';
+        const slugType = isContentCreator 
+            ? 'contentcreators' 
+            : (viewingCategory.type === 'Real Estate' ? 'real-estate' : (viewingCategory.type ? viewingCategory.type.toLowerCase() : 'cars'));
         const newNominee = {
             id: customId,
-            name: 'New Custom Nominee',
-            detail: 'Custom Nominee',
+            name: isContentCreator ? 'New Creator Nominee' : 'New Custom Nominee',
+            detail: isContentCreator ? 'Content Creator' : 'Custom Nominee',
             image: '',
+            banner: '',
+            channelName: '',
             votes: 0,
             fakeVotes: 0,
             brand: '',
             model: '',
             description: '',
             listingLink: '',
-            keyDetails: {},
+            keyDetails: isContentCreator ? {
+                subscribers: '',
+                views: '',
+                category: '',
+                location: '',
+                joinDate: ''
+            } : {},
             sources: [
                 { title: 'Listing Link', url: `https://otulia.com/ranking/${slugType}/` }
-            ]
+            ],
+            youtube: '',
+            instagram: '',
+            twitter: '',
+            tiktok: ''
         };
         setViewingCategory(prev => ({
             ...prev,
@@ -787,31 +803,46 @@ const ContentManagement = () => {
                                         />
                                     </div>
 
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-                                            {viewingCategory.type === 'Real Estate' ? 'Property Type' : 'Brand'}
-                                        </label>
-                                        <input 
-                                            type="text"
-                                            value={editNomineeInlineData.brand || ''}
-                                            onChange={(e) => setEditNomineeInlineData({ ...editNomineeInlineData, brand: e.target.value })}
-                                            className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs font-bold text-white focus:outline-none focus:border-[#6366F1] transition-all"
-                                            placeholder={viewingCategory.type === 'Real Estate' ? 'e.g. Mansion' : 'e.g. Bugatti'}
-                                        />
-                                    </div>
+                                    {viewingCategory.type === 'Content Creator' ? (
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Channel Name</label>
+                                            <input 
+                                                type="text"
+                                                value={editNomineeInlineData.channelName || ''}
+                                                onChange={(e) => setEditNomineeInlineData({ ...editNomineeInlineData, channelName: e.target.value })}
+                                                className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs font-bold text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                placeholder="e.g. MrBeast"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                                    {viewingCategory.type === 'Real Estate' ? 'Property Type' : 'Brand'}
+                                                </label>
+                                                <input 
+                                                    type="text"
+                                                    value={editNomineeInlineData.brand || ''}
+                                                    onChange={(e) => setEditNomineeInlineData({ ...editNomineeInlineData, brand: e.target.value })}
+                                                    className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs font-bold text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                    placeholder={viewingCategory.type === 'Real Estate' ? 'e.g. Mansion' : 'e.g. Bugatti'}
+                                                />
+                                            </div>
 
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-                                            {viewingCategory.type === 'Real Estate' ? 'Location' : 'Model'}
-                                        </label>
-                                        <input 
-                                            type="text"
-                                            value={editNomineeInlineData.model || ''}
-                                            onChange={(e) => setEditNomineeInlineData({ ...editNomineeInlineData, model: e.target.value })}
-                                            className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs font-bold text-white focus:outline-none focus:border-[#6366F1] transition-all"
-                                            placeholder={viewingCategory.type === 'Real Estate' ? 'e.g. Beverly Hills' : 'e.g. Tourbillon'}
-                                        />
-                                    </div>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                                    {viewingCategory.type === 'Real Estate' ? 'Location' : 'Model'}
+                                                </label>
+                                                <input 
+                                                    type="text"
+                                                    value={editNomineeInlineData.model || ''}
+                                                    onChange={(e) => setEditNomineeInlineData({ ...editNomineeInlineData, model: e.target.value })}
+                                                    className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-3 text-xs font-bold text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                    placeholder={viewingCategory.type === 'Real Estate' ? 'e.g. Beverly Hills' : 'e.g. Tourbillon'}
+                                                />
+                                            </div>
+                                        </>
+                                    )}
 
                                     <div>
                                         <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Listing Link</label>
@@ -842,59 +873,222 @@ const ContentManagement = () => {
                                 </div>
 
                                 {/* Image upload section */}
-                                <div className="space-y-3">
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nominee Image</label>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-20 h-20 rounded-xl bg-gray-900 border border-[#2B395B]/40 overflow-hidden shrink-0">
-                                            {editNomineeInlineData.image ? (
-                                                <img src={editNomineeInlineData.image} alt="Preview" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-700 font-bold">No Image</div>
-                                            )}
-                                        </div>
-                                        <button 
-                                            type="button" 
-                                            onClick={() => {
-                                                const fileInput = document.createElement('input');
-                                                fileInput.type = 'file';
-                                                fileInput.accept = 'image/*';
-                                                fileInput.onchange = async (e) => {
-                                                    const file = e.target.files[0];
-                                                    if (file) {
-                                                        const uploadData = new FormData();
-                                                        uploadData.append('image', file);
-                                                        
-                                                        let url = `/api/upload/nominee-image?category=${encodeURIComponent(viewingCategory.title)}&nominee=${encodeURIComponent(editNomineeInlineData.name || 'nominee')}`;
-                                                        if (editNomineeInlineData.image) {
-                                                            url += `&oldUrl=${encodeURIComponent(editNomineeInlineData.image)}`;
-                                                        }
-
-                                                        try {
-                                                            const res = await fetch(url, {
-                                                                method: 'POST',
-                                                                headers: { 'Authorization': `Bearer ${token}` },
-                                                                body: uploadData
-                                                            });
-                                                            const data = await res.json();
-                                                            if (data.success && data.url) {
-                                                                setEditNomineeInlineData(prev => ({ ...prev, image: data.url }));
-                                                            } else {
-                                                                alert("Failed to upload image.");
+                                {viewingCategory.type === 'Content Creator' ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {/* Channel Logo */}
+                                        <div className="space-y-3">
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Channel Logo</label>
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-16 h-16 rounded-xl bg-gray-900 border border-[#2B395B]/40 overflow-hidden shrink-0">
+                                                    {editNomineeInlineData.image ? (
+                                                        <img src={editNomineeInlineData.image} alt="Logo" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-700 font-bold">No Logo</div>
+                                                    )}
+                                                </div>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => {
+                                                        const fileInput = document.createElement('input');
+                                                        fileInput.type = 'file';
+                                                        fileInput.accept = 'image/*';
+                                                        fileInput.onchange = async (e) => {
+                                                            const file = e.target.files[0];
+                                                            if (file) {
+                                                                const uploadData = new FormData();
+                                                                uploadData.append('image', file, file.name);
+                                                                let url = `/api/upload/nominee-image?category=${encodeURIComponent(viewingCategory.title)}&nominee=${encodeURIComponent(editNomineeInlineData.name || 'nominee')}`;
+                                                                if (editNomineeInlineData.image) {
+                                                                    url += `&oldUrl=${encodeURIComponent(editNomineeInlineData.image)}`;
+                                                                }
+                                                                try {
+                                                                    const res = await fetch(url, {
+                                                                        method: 'POST',
+                                                                        headers: { 'Authorization': `Bearer ${token}` },
+                                                                        body: uploadData
+                                                                    });
+                                                                    const data = await res.json();
+                                                                    if (data.success && data.url) {
+                                                                        setEditNomineeInlineData(prev => ({ ...prev, image: data.url }));
+                                                                    } else {
+                                                                        alert("Failed to upload channel logo.");
+                                                                    }
+                                                                } catch (err) {
+                                                                    console.error("Nominee logo upload error:", err);
+                                                                    alert("Error uploading channel logo.");
+                                                                }
                                                             }
-                                                        } catch (err) {
-                                                            console.error("Nominee image upload error:", err);
-                                                            alert("Error uploading image.");
-                                                        }
-                                                    }
-                                                };
-                                                fileInput.click();
-                                            }}
-                                            className="py-2.5 px-4 bg-[#151D30]/80 border border-[#2B395B] hover:border-[#6366F1] hover:bg-[#6366F1]/10 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 cursor-pointer"
-                                        >
-                                            Change Image
-                                        </button>
+                                                        };
+                                                        fileInput.click();
+                                                    }}
+                                                    className="py-2 px-3 bg-[#151D30]/80 border border-[#2B395B] hover:border-[#6366F1] text-white rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all"
+                                                >
+                                                    Change Logo
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Banner Image */}
+                                        <div className="space-y-3">
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Banner Image</label>
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-24 h-16 rounded-xl bg-gray-900 border border-[#2B395B]/40 overflow-hidden shrink-0">
+                                                    {editNomineeInlineData.banner ? (
+                                                        <img src={editNomineeInlineData.banner} alt="Banner" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-700 font-bold">No Banner</div>
+                                                    )}
+                                                </div>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => {
+                                                        const fileInput = document.createElement('input');
+                                                        fileInput.type = 'file';
+                                                        fileInput.accept = 'image/*';
+                                                        fileInput.onchange = async (e) => {
+                                                            const file = e.target.files[0];
+                                                            if (file) {
+                                                                const uploadData = new FormData();
+                                                                uploadData.append('image', file, file.name);
+                                                                let url = `/api/upload/nominee-image?category=${encodeURIComponent(viewingCategory.title)}&nominee=${encodeURIComponent(editNomineeInlineData.name || 'nominee')}`;
+                                                                if (editNomineeInlineData.banner) {
+                                                                    url += `&oldUrl=${encodeURIComponent(editNomineeInlineData.banner)}`;
+                                                                }
+                                                                try {
+                                                                    const res = await fetch(url, {
+                                                                        method: 'POST',
+                                                                        headers: { 'Authorization': `Bearer ${token}` },
+                                                                        body: uploadData
+                                                                    });
+                                                                    const data = await res.json();
+                                                                    if (data.success && data.url) {
+                                                                        setEditNomineeInlineData(prev => ({ ...prev, banner: data.url }));
+                                                                    } else {
+                                                                        alert("Failed to upload banner.");
+                                                                    }
+                                                                } catch (err) {
+                                                                    console.error("Nominee banner upload error:", err);
+                                                                    alert("Error uploading banner.");
+                                                                }
+                                                            }
+                                                        };
+                                                        fileInput.click();
+                                                    }}
+                                                    className="py-2 px-3 bg-[#151D30]/80 border border-[#2B395B] hover:border-[#6366F1] text-white rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all"
+                                                >
+                                                    Change Banner
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nominee Image</label>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-20 h-20 rounded-xl bg-gray-900 border border-[#2B395B]/40 overflow-hidden shrink-0">
+                                                {editNomineeInlineData.image ? (
+                                                    <img src={editNomineeInlineData.image} alt="Preview" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-700 font-bold">No Image</div>
+                                                )}
+                                            </div>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => {
+                                                    const fileInput = document.createElement('input');
+                                                    fileInput.type = 'file';
+                                                    fileInput.accept = 'image/*';
+                                                    fileInput.onchange = async (e) => {
+                                                        const file = e.target.files[0];
+                                                        if (file) {
+                                                            const uploadData = new FormData();
+                                                            uploadData.append('image', file, file.name);
+                                                            
+                                                            let url = `/api/upload/nominee-image?category=${encodeURIComponent(viewingCategory.title)}&nominee=${encodeURIComponent(editNomineeInlineData.name || 'nominee')}`;
+                                                            if (editNomineeInlineData.image) {
+                                                                url += `&oldUrl=${encodeURIComponent(editNomineeInlineData.image)}`;
+                                                            }
+
+                                                            try {
+                                                                const res = await fetch(url, {
+                                                                    method: 'POST',
+                                                                    headers: { 'Authorization': `Bearer ${token}` },
+                                                                    body: uploadData
+                                                                });
+                                                                const data = await res.json();
+                                                                if (data.success && data.url) {
+                                                                    setEditNomineeInlineData(prev => ({ ...prev, image: data.url }));
+                                                                } else {
+                                                                    alert("Failed to upload image.");
+                                                                }
+                                                            } catch (err) {
+                                                                console.error("Nominee image upload error:", err);
+                                                                alert("Error uploading image.");
+                                                            }
+                                                        }
+                                                    };
+                                                    fileInput.click();
+                                                }}
+                                                className="py-2.5 px-4 bg-[#151D30]/80 border border-[#2B395B] hover:border-[#6366F1] hover:bg-[#6366F1]/10 text-white rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 cursor-pointer"
+                                            >
+                                                Change Image
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {viewingCategory.type === 'Content Creator' && (
+                                    <div className="space-y-4 pt-2 border-t border-[#1C253B]">
+                                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">Creator Metrics</h4>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {[
+                                                { label: 'Subscribers', key: 'subscribers', placeholder: '10M+' },
+                                                { label: 'Total Views', key: 'views', placeholder: '500M+' },
+                                                { label: 'Category', key: 'category', placeholder: 'Tech / Lifestyle' },
+                                                { label: 'Location', key: 'location', placeholder: 'United States' },
+                                                { label: 'Joined Date', key: 'joinDate', placeholder: '2018' }
+                                            ].map((field) => (
+                                                <div key={field.key}>
+                                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">{field.label}</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={editNomineeInlineData.keyDetails?.[field.key] || ''}
+                                                        onChange={(e) => setEditNomineeInlineData({
+                                                            ...editNomineeInlineData,
+                                                            keyDetails: { ...(editNomineeInlineData.keyDetails || {}), [field.key]: e.target.value }
+                                                        })}
+                                                        className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                        placeholder={field.placeholder}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <h4 className="text-xs font-bold text-white uppercase tracking-wider pt-2">Social Links</h4>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {[
+                                                { label: 'Youtube Channel', key: 'youtube', placeholder: 'https://youtube.com/...' },
+                                                { label: 'Instagram Link', key: 'instagram', placeholder: 'https://instagram.com/...' },
+                                                { label: 'Twitter Link', key: 'twitter', placeholder: 'https://twitter.com/...' },
+                                                { label: 'TikTok Link', key: 'tiktok', placeholder: 'https://tiktok.com/...' }
+                                            ].map((social) => (
+                                                <div key={social.key}>
+                                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">{social.label}</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={editNomineeInlineData[social.key] || ''}
+                                                        onChange={(e) => setEditNomineeInlineData({
+                                                            ...editNomineeInlineData,
+                                                            [social.key]: e.target.value
+                                                        })}
+                                                        className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                        placeholder={social.placeholder}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div>
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Description</label>
@@ -926,9 +1120,15 @@ const ContentManagement = () => {
                                                 const updatedNominee = { ...editNomineeInlineData };
                                                 
                                                 const parts = [];
-                                                if (updatedNominee.brand) parts.push(updatedNominee.brand);
-                                                if (updatedNominee.model) parts.push(updatedNominee.model);
-                                                updatedNominee.detail = parts.join(' · ') || 'Custom Nominee';
+                                                if (viewingCategory.type === 'Content Creator') {
+                                                    if (updatedNominee.channelName) parts.push(updatedNominee.channelName);
+                                                    if (updatedNominee.keyDetails?.category) parts.push(updatedNominee.keyDetails.category);
+                                                    updatedNominee.detail = parts.join(' · ') || 'Content Creator';
+                                                } else {
+                                                    if (updatedNominee.brand) parts.push(updatedNominee.brand);
+                                                    if (updatedNominee.model) parts.push(updatedNominee.model);
+                                                    updatedNominee.detail = parts.join(' · ') || 'Custom Nominee';
+                                                }
                                                 
                                                 updatedNominees[editingNomineeInlineIndex] = updatedNominee;
                                                 return { ...prev, nominees: updatedNominees };

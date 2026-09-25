@@ -460,6 +460,12 @@ router.get("/ranking-categories", authMiddleware, adminCheck, async (req, res) =
                     name: n.name,
                     detail: n.detail,
                     image: n.image,
+                    banner: n.banner || '',
+                    channelName: n.channelName || '',
+                    youtube: n.youtube || '',
+                    instagram: n.instagram || '',
+                    twitter: n.twitter || '',
+                    tiktok: n.tiktok || '',
                     votes: n.votes || 0,
                     fakeVotes: n.fakeVotes || 0,
                     brand: n.brand || '',
@@ -475,6 +481,12 @@ router.get("/ranking-categories", authMiddleware, adminCheck, async (req, res) =
                     name: n.name,
                     detail: n.detail,
                     image: n.image,
+                    banner: n.banner || '',
+                    channelName: n.channelName || '',
+                    youtube: n.youtube || '',
+                    instagram: n.instagram || '',
+                    twitter: n.twitter || '',
+                    tiktok: n.tiktok || '',
                     votes: n.votes || 0,
                     fakeVotes: n.fakeVotes || 0,
                     brand: n.brand || '',
@@ -599,12 +611,13 @@ router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) 
                     instagram: nom.instagram || '',
                     twitter: nom.twitter || '',
                     tiktok: nom.tiktok || '',
-                    ...(targetType === 'Assets' ? {
-                        asset: nom.asset || null,
+                    ...(nom.asset ? {
+                        asset: nom.asset,
                         ...(nom.assetModel ? { assetModel: nom.assetModel } : {})
-                    } : {
-                        dealer: nom.dealer || null
-                    })
+                    } : {}),
+                    ...(nom.dealer ? {
+                        dealer: nom.dealer
+                    } : {})
                 });
                 await newNominee.save();
                 nomineeIds.push(newNominee._id);
@@ -696,7 +709,7 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
                     category: category._id,
                     name: nom.name,
                     detail: nom.detail || '',
-                    image: nom.image || '',
+                    image: nom.image || (match ? match.image : '') || '',
                     targetType: targetType,
                     votes: match ? match.votes : 0,
                     fakeVotes: nom.fakeVotes !== undefined ? Number(nom.fakeVotes) : (match ? (match.fakeVotes || 0) : 0),
@@ -707,18 +720,19 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
                     listingLink: nom.listingLink || '',
                     keyDetails: nom.keyDetails || {},
                     sources: nom.sources || [],
-                    channelName: nom.channelName || '',
-                    banner: nom.banner || '',
-                    youtube: nom.youtube || '',
-                    instagram: nom.instagram || '',
-                    twitter: nom.twitter || '',
-                    tiktok: nom.tiktok || '',
-                    ...(targetType === 'Assets' ? {
-                        asset: nom.asset || null,
+                    channelName: nom.channelName !== undefined ? nom.channelName : (match ? match.channelName : '') || '',
+                    banner: nom.banner || (match ? match.banner : '') || '',
+                    youtube: nom.youtube !== undefined ? nom.youtube : (match ? match.youtube : '') || '',
+                    instagram: nom.instagram !== undefined ? nom.instagram : (match ? match.instagram : '') || '',
+                    twitter: nom.twitter !== undefined ? nom.twitter : (match ? match.twitter : '') || '',
+                    tiktok: nom.tiktok !== undefined ? nom.tiktok : (match ? match.tiktok : '') || '',
+                    ...(nom.asset ? {
+                        asset: nom.asset,
                         ...(nom.assetModel ? { assetModel: nom.assetModel } : {})
-                    } : {
-                        dealer: nom.dealer || null
-                    })
+                    } : {}),
+                    ...(nom.dealer ? {
+                        dealer: nom.dealer
+                    } : {})
                 });
                 await newNominee.save();
                 nomineeIds.push(newNominee._id);
