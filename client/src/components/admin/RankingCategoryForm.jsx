@@ -1001,7 +1001,12 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                         views: '',
                                         category: '',
                                         location: '',
-                                        joinDate: ''
+                                        joinDate: '',
+                                        youtubeFollowers: '',
+                                        instagramFollowers: '',
+                                        twitterFollowers: '',
+                                        tiktokFollowers: '',
+                                        totalFollowers: ''
                                     } : {},
                                     sources: [
                                         { title: 'Listing Link', url: `https://otulia.com/ranking/${slugType}/` }
@@ -1009,7 +1014,12 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                     youtube: '',
                                     instagram: '',
                                     twitter: '',
-                                    tiktok: ''
+                                    tiktok: '',
+                                    youtubeFollowers: '',
+                                    instagramFollowers: '',
+                                    twitterFollowers: '',
+                                    tiktokFollowers: '',
+                                    totalFollowers: ''
                                 };
                                 setFormData(prev => ({
                                     ...prev,
@@ -1298,29 +1308,57 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                             {renderKeyDetailsFields()}
 
                             {formData.type === 'Content Creator' && (
-                                <div className="pt-4 border-t border-[#1C253B]">
-                                    <h4 className="text-base font-bold text-white mb-4">Social Links</h4>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {[
-                                            { label: 'Youtube Channel', key: 'youtube', placeholder: 'https://youtube.com/...' },
-                                            { label: 'Instagram Link', key: 'instagram', placeholder: 'https://instagram.com/...' },
-                                            { label: 'Twitter Link', key: 'twitter', placeholder: 'https://twitter.com/...' },
-                                            { label: 'TikTok Link', key: 'tiktok', placeholder: 'https://tiktok.com/...' }
-                                        ].map((social) => (
-                                            <div key={social.key}>
-                                                <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{social.label}</label>
-                                                <input 
-                                                    type="text"
-                                                    value={editNomineeData[social.key] || ''}
-                                                    onChange={(e) => setEditNomineeData({
-                                                        ...editNomineeData,
-                                                        [social.key]: e.target.value
-                                                    })}
-                                                    className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
-                                                    placeholder={social.placeholder}
-                                                />
-                                            </div>
-                                        ))}
+                                <div className="pt-4 border-t border-[#1C253B] space-y-5">
+                                    <div>
+                                        <h4 className="text-base font-bold text-white mb-3">Exact Follower Counts</h4>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {[
+                                                { label: 'YouTube Subscribers', key: 'youtubeFollowers', placeholder: 'e.g. 318M' },
+                                                { label: 'Instagram Followers', key: 'instagramFollowers', placeholder: 'e.g. 60.9M' },
+                                                { label: 'Twitter Followers', key: 'twitterFollowers', placeholder: 'e.g. 30.9M' },
+                                                { label: 'TikTok Followers', key: 'tiktokFollowers', placeholder: 'e.g. 105M' }
+                                            ].map((follower) => (
+                                                <div key={follower.key}>
+                                                    <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{follower.label}</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={editNomineeData[follower.key] || editNomineeData.keyDetails?.[follower.key] || ''}
+                                                        onChange={(e) => setEditNomineeData({
+                                                            ...editNomineeData,
+                                                            [follower.key]: e.target.value,
+                                                            keyDetails: { ...(editNomineeData.keyDetails || {}), [follower.key]: e.target.value }
+                                                        })}
+                                                        className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                        placeholder={follower.placeholder}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-base font-bold text-white mb-3">Social Links</h4>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {[
+                                                { label: 'Youtube Channel', key: 'youtube', placeholder: 'https://youtube.com/...' },
+                                                { label: 'Instagram Link', key: 'instagram', placeholder: 'https://instagram.com/...' },
+                                                { label: 'Twitter Link', key: 'twitter', placeholder: 'https://twitter.com/...' },
+                                                { label: 'TikTok Link', key: 'tiktok', placeholder: 'https://tiktok.com/...' }
+                                            ].map((social) => (
+                                                <div key={social.key}>
+                                                    <label className="block text-[13px] text-[#A1A1AA] mb-2 font-medium">{social.label}</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={editNomineeData[social.key] || ''}
+                                                        onChange={(e) => setEditNomineeData({
+                                                            ...editNomineeData,
+                                                            [social.key]: e.target.value
+                                                        })}
+                                                        className="w-full bg-[#0D0D0E] border border-[#222E4A] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                        placeholder={social.placeholder}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             )}

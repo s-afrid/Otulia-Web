@@ -353,7 +353,12 @@ const ContentManagement = () => {
                 views: '',
                 category: '',
                 location: '',
-                joinDate: ''
+                joinDate: '',
+                youtubeFollowers: '',
+                instagramFollowers: '',
+                twitterFollowers: '',
+                tiktokFollowers: '',
+                totalFollowers: ''
             } : {},
             sources: [
                 { title: 'Listing Link', url: `https://otulia.com/ranking/${slugType}/` }
@@ -361,7 +366,12 @@ const ContentManagement = () => {
             youtube: '',
             instagram: '',
             twitter: '',
-            tiktok: ''
+            tiktok: '',
+            youtubeFollowers: '',
+            instagramFollowers: '',
+            twitterFollowers: '',
+            tiktokFollowers: '',
+            totalFollowers: ''
         };
         setViewingCategory(prev => ({
             ...prev,
@@ -1059,6 +1069,31 @@ const ContentManagement = () => {
                                                         })}
                                                         className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
                                                         placeholder={field.placeholder}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                         <h4 className="text-xs font-bold text-white uppercase tracking-wider pt-2">Exact Follower Counts</h4>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {[
+                                                { label: 'YouTube Subscribers', key: 'youtubeFollowers', placeholder: 'e.g. 318M' },
+                                                { label: 'Instagram Followers', key: 'instagramFollowers', placeholder: 'e.g. 60.9M' },
+                                                { label: 'Twitter Followers', key: 'twitterFollowers', placeholder: 'e.g. 30.9M' },
+                                                { label: 'TikTok Followers', key: 'tiktokFollowers', placeholder: 'e.g. 105M' }
+                                            ].map((follower) => (
+                                                <div key={follower.key}>
+                                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">{follower.label}</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={editNomineeInlineData[follower.key] || editNomineeInlineData.keyDetails?.[follower.key] || ''}
+                                                        onChange={(e) => setEditNomineeInlineData({
+                                                            ...editNomineeInlineData,
+                                                            [follower.key]: e.target.value,
+                                                            keyDetails: { ...(editNomineeInlineData.keyDetails || {}), [follower.key]: e.target.value }
+                                                        })}
+                                                        className="w-full bg-[#151D30] border border-[#222E4A] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#6366F1] transition-all"
+                                                        placeholder={follower.placeholder}
                                                     />
                                                 </div>
                                             ))}

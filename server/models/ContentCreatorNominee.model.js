@@ -75,6 +75,26 @@ const contentCreatorNomineeSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    youtubeFollowers: {
+        type: String,
+        default: ''
+    },
+    instagramFollowers: {
+        type: String,
+        default: ''
+    },
+    twitterFollowers: {
+        type: String,
+        default: ''
+    },
+    tiktokFollowers: {
+        type: String,
+        default: ''
+    },
+    totalFollowers: {
+        type: String,
+        default: ''
+    },
     description: {
         type: String,
         default: ''
@@ -88,7 +108,12 @@ const contentCreatorNomineeSchema = new mongoose.Schema({
         views: { type: String, default: '' },
         category: { type: String, default: '' },
         location: { type: String, default: '' },
-        joinDate: { type: String, default: '' }
+        joinDate: { type: String, default: '' },
+        youtubeFollowers: { type: String, default: '' },
+        instagramFollowers: { type: String, default: '' },
+        twitterFollowers: { type: String, default: '' },
+        tiktokFollowers: { type: String, default: '' },
+        totalFollowers: { type: String, default: '' }
     },
     sources: [{
         title: { type: String, default: '' },
