@@ -5,6 +5,8 @@ const express = require("express");
 const compression = require("compression");
 const connectDB = require("./db.js");
 const fs = require("fs");
+const dns = require("dns");
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 // middleware import
 const corsMiddleware = require("./middleware/cors.middleware.js");
