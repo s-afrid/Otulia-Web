@@ -664,8 +664,8 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
           const displayPrice = car.price ? car.price.replace("$", "$ ") : "";
 
           return (
-            <React.Fragment key={car._id}>
             <div
+              key={car._id}
               id={car._id}
               className="flex flex-col md:flex-row gap-0 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[300px] rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
             >
@@ -963,10 +963,6 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                 </div>
               </div>
             </div>
-            <div className="w-full max-w-[1592px] mx-auto">
-              <NomineeComments nomineeId={car._id} categoryId={car.categoryId} />
-            </div>
-            </React.Fragment>
           );
         }
         if (car.isContentCreator) {
@@ -976,8 +972,8 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
             car.banner || car.bannerImage || car.coverImage || car.image;
 
           return (
-            <React.Fragment key={car._id}>
             <div
+              key={car._id}
               id={car._id}
               className="flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[310px] rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
             >
@@ -1217,10 +1213,6 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                 </div>
               </div>
             </div>
-            <div className="w-full max-w-[1592px] mx-auto">
-              <NomineeComments nomineeId={car._id} categoryId={car.categoryId} />
-            </div>
-            </React.Fragment>
           );
         }
 
@@ -1233,8 +1225,8 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
             : "Transmission";
 
         return (
-          <React.Fragment key={car._id}>
           <div
+            key={car._id}
             id={car._id}
             className="flex flex-col md:flex-row gap-0 md:gap-4 w-full max-w-[1592px] h-auto md:h-[210px] mx-auto rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
           >
@@ -1489,12 +1481,17 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
               </div>
             </div>
           </div>
-          <div className="w-full max-w-[1592px] mx-auto">
-            <NomineeComments nomineeId={car._id} categoryId={car.categoryId} />
-          </div>
-          </React.Fragment>
         );
       })}
+
+      {carList.length > 0 && carList[0].categoryId && (
+        <div className="w-full max-w-[1592px] mx-auto">
+          <NomineeComments
+            nomineeId={carList[0].categoryId}
+            categoryId={carList[0].categoryId}
+          />
+        </div>
+      )}
 
       {/* FLOATING BOTTOM GOLDEN SNACKBAR / TOAST */}
       {toast.show && (
