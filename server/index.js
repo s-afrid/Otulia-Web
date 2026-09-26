@@ -1,9 +1,9 @@
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const express = require("express");
 const compression = require("compression");
 const connectDB = require("./db.js");
-const path = require("path");
 const fs = require("fs");
 
 // middleware import

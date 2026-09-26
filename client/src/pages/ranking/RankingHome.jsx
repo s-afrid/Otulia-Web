@@ -626,6 +626,35 @@ function RankingHome() {
         twitterFollowers: nominee.twitterFollowers || keyDetails.twitterFollowers || nominee.xFollowers || keyDetails.xFollowers || "",
         tiktokFollowers: nominee.tiktokFollowers || keyDetails.tiktokFollowers || "",
         totalFollowers: nominee.totalFollowers || keyDetails.totalFollowers || keyDetails.subscribers || nominee.subscribers || "",
+        rawCounts: nominee.rawCounts,
+        banner:
+          nominee.banner ||
+          nominee.bannerImage ||
+          nominee.coverImage ||
+          keyDetails.banner ||
+          keyDetails.bannerImage ||
+          "",
+        bannerImage:
+          nominee.banner ||
+          nominee.bannerImage ||
+          nominee.coverImage ||
+          keyDetails.banner ||
+          keyDetails.bannerImage ||
+          "",
+        profilePic:
+          nominee.profilePic ||
+          nominee.profilePicture ||
+          nominee.avatar ||
+          nominee.image ||
+          keyDetails.profilePic ||
+          keyDetails.profilePicture ||
+          "",
+        logo:
+          nominee.profilePic ||
+          nominee.profilePicture ||
+          nominee.avatar ||
+          nominee.image ||
+          "",
         keyDetails: keyDetails,
         joinDate: keyDetails.joinDate || "",
         genre: keyDetails.category || "",

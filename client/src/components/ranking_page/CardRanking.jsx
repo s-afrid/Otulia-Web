@@ -43,38 +43,38 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
 
   useEffect(() => {
     const list = Array.isArray(cars) ? cars : data ? [data] : [];
-    const creatorsToFetch = list.filter(
-      (c) =>
-        c &&
-        c.isContentCreator &&
-        c.youtube &&
-        !c.youtubeFollowers &&
-        !c.keyDetails?.youtubeFollowers,
-    );
+    const creators = list.filter((c) => c && c.isContentCreator);
 
-    if (creatorsToFetch.length === 0) return;
+    if (creators.length === 0) return;
 
-    creatorsToFetch.forEach(async (creator) => {
-      try {
-        const targetId = creator._id || creator.id;
-        const res = await fetch(
-          `/api/rankings/social-stats?youtube=${encodeURIComponent(creator.youtube)}`,
-        );
-        if (res.ok) {
-          const json = await res.json();
-          if (json.success && json.youtube) {
-            setLiveSocialStats((prev) => ({
-              ...prev,
-              [targetId]: {
-                youtube: json.youtube,
-              },
-            }));
-          }
+    // Fetch real-time follower stats for all creators via batch API
+    const payload = {
+      nominees: creators.map((c) => ({
+        id: c._id || c.id,
+        name: c.name || "",
+        channelName: c.channelName || "",
+        youtube: c.youtube || "",
+        instagram: c.instagram || "",
+        twitter: c.twitter || c.x || "",
+        tiktok: c.tiktok || "",
+      })),
+    };
+
+    fetch("/api/rankings/social-stats/batch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json && json.success && json.stats) {
+          setLiveSocialStats((prev) => ({
+            ...prev,
+            ...json.stats,
+          }));
         }
-      } catch (err) {
-        // Silent catch for live fetch
-      }
-    });
+      })
+      .catch(() => {});
   }, [cars, data]);
 
   const isLimitReached = votesRemaining <= 0;
@@ -469,16 +469,72 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
     return parts[0].substring(0, 2).toUpperCase();
   };
 
-  const getCreatorProfilePic = (car) => {
-    if (car.profilePic) return car.profilePic;
-    if (car.profilePicture) return car.profilePicture;
-    if (car.avatar) return car.avatar;
-    if (car.profileImage) return car.profileImage;
-    if (car.keyDetails?.profilePic) return car.keyDetails.profilePic;
-    if (car.keyDetails?.profilePicture) return car.keyDetails.profilePicture;
+  const optimizeCloudinaryUrl = (url, width = 800) => {
+    if (!url || typeof url !== "string") return url;
+    if (url.includes("res.cloudinary.com") && url.includes("/upload/")) {
+      if (url.includes("/upload/f_auto") || url.includes("/upload/w_") || url.includes("/upload/q_")) {
+        return url;
+      }
+      return url.replace("/upload/", `/upload/f_auto,q_auto,w_${width}/`);
+    }
+    return url;
+  };
 
-    if (car.image && car.banner && car.image !== car.banner) {
-      return car.image;
+  const CREATOR_FALLBACK_BANNERS = {
+    "supercar blondie": "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_800/v1790419409/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Supercar_Blondie/nryl5szzq21a6pptx4hb.png",
+    "supercarblondie": "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_800/v1790419409/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Supercar_Blondie/nryl5szzq21a6pptx4hb.png",
+    "gmk": "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_800/v1790358498/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/GMK/piwycxdr9eznd8pcet0f.png",
+    "mr.benz": "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_800/v1790358755/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Mr.Benz/uhlfoulrspkmwl3hglcu.png",
+    "mrbenz": "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_800/v1790358755/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Mr.Benz/uhlfoulrspkmwl3hglcu.png",
+    "daniel mac": "https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?q=80&w=1200&auto=format&fit=crop",
+    "thestradman": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop",
+    "dailydrivenexotics": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1200&auto=format&fit=crop",
+    "shmee150": "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1200&auto=format&fit=crop",
+    "jay leno": "https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=1200&auto=format&fit=crop",
+    "david lee": "https://images.unsplash.com/photo-1592198084033-aade902d1aae?q=80&w=1200&auto=format&fit=crop",
+  };
+
+  const getCreatorBannerImage = (car) => {
+    const nameKey = (car.name || "").toLowerCase().trim();
+    const candidate = car.banner || car.bannerImage || car.coverImage || car.keyDetails?.banner || car.keyDetails?.bannerImage;
+
+    if (candidate && candidate !== car.image && candidate !== car.profilePic && candidate !== car.avatar && candidate !== car.logo) {
+      return optimizeCloudinaryUrl(candidate, 800);
+    }
+
+    if (candidate) {
+      return optimizeCloudinaryUrl(candidate, 800);
+    }
+
+    const matchKey = Object.keys(CREATOR_FALLBACK_BANNERS).find((k) => nameKey.includes(k));
+    if (matchKey) {
+      return CREATOR_FALLBACK_BANNERS[matchKey];
+    }
+
+    if (car.image && car.image !== car.profilePic && car.image !== car.avatar && car.image !== car.logo) {
+      return optimizeCloudinaryUrl(car.image, 800);
+    }
+
+    return "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1200&auto=format&fit=crop";
+  };
+
+  const getCreatorProfilePic = (car) => {
+    const candidate = car.profilePic || car.profilePicture || car.avatar || car.logo || car.profileImage || car.keyDetails?.profilePic || car.keyDetails?.profilePicture;
+    if (candidate) return optimizeCloudinaryUrl(candidate, 200);
+
+    if (car.image && car.image !== car.banner) {
+      return optimizeCloudinaryUrl(car.image, 200);
+    }
+
+    const nameKey = (car.name || "").toLowerCase().trim();
+    if (nameKey.includes("supercar blondie")) {
+      return "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_200/v1790358097/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Supercar_Blondie/lt5ge9vmoqfzlqqnamlv.png";
+    }
+    if (nameKey.includes("gmk")) {
+      return "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_200/v1790358384/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/GMK/s4rnnoev1ccopglm1qxn.png";
+    }
+    if (nameKey.includes("mr.benz") || nameKey.includes("mrbenz")) {
+      return "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_200/v1790358609/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Mr.Benz/lhvctn2uwol4pbn09v9a.png";
     }
 
     if (car.name === "MrBeast") {
@@ -502,44 +558,44 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
       if (handle) return `https://unavatar.io/twitter/${handle}`;
     }
 
-    return car.image || null;
+    return optimizeCloudinaryUrl(car.image, 200) || null;
   };
 
   const VERIFIED_CREATOR_STATS = {
-    "supercar blondie": { youtube: "22.2M", instagram: "17.4M", twitter: "75.8K", tiktok: "19.2M", total: "39.6M+" },
-    "supercarblondie": { youtube: "22.2M", instagram: "17.4M", twitter: "75.8K", tiktok: "19.2M", total: "39.6M+" },
-    "gmk": { youtube: "2.85M", instagram: "4.1M", twitter: "—", tiktok: "1.2M", total: "8.1M+" },
-    "mr.benz": { youtube: "1.26M", instagram: "2.2M", twitter: "—", tiktok: "850K", total: "4.3M+" },
-    "mrbenz": { youtube: "1.26M", instagram: "2.2M", twitter: "—", tiktok: "850K", total: "4.3M+" },
-    "daniel mac": { youtube: "3.33M", instagram: "2.8M", twitter: "25K", tiktok: "14.2M", total: "20.3M+" },
-    "danielmac": { youtube: "3.33M", instagram: "2.8M", twitter: "25K", tiktok: "14.2M", total: "20.3M+" },
-    "itsdanielmac": { youtube: "3.33M", instagram: "2.8M", twitter: "25K", tiktok: "14.2M", total: "20.3M+" },
-    "thestradman": { youtube: "4.45M", instagram: "1.5M", twitter: "55K", tiktok: "1.6M", total: "6.0M" },
-    "stradman": { youtube: "4.45M", instagram: "1.5M", twitter: "55K", tiktok: "1.6M", total: "6.0M" },
-    "chrisfix": { youtube: "10.3M", instagram: "920K", twitter: "90K", tiktok: "1.8M", total: "11.3M" },
-    "doug demuro": { youtube: "4.88M", instagram: "480K", twitter: "275K", tiktok: "120K", total: "5.6M" },
-    "dougdemuro": { youtube: "4.88M", instagram: "480K", twitter: "275K", tiktok: "120K", total: "5.6M" },
-    "mat armstrong": { youtube: "4.54M", instagram: "1.4M", twitter: "85K", tiktok: "2.2M", total: "6.0M" },
-    "matarmstrong": { youtube: "4.54M", instagram: "1.4M", twitter: "85K", tiktok: "2.2M", total: "6.0M" },
-    "carwow": { youtube: "9.87M", instagram: "1.2M", twitter: "155K", tiktok: "3.5M", total: "11.2M" },
-    "salomondrin": { youtube: "1.6M", instagram: "2.5M", twitter: "190K", tiktok: "1.1M", total: "4.29M" },
-    "dailydrivenexotics": { youtube: "3.52M", instagram: "670K", twitter: "50K", tiktok: "1.2M", total: "4.24M" },
-    "dde": { youtube: "3.52M", instagram: "670K", twitter: "50K", tiktok: "1.2M", total: "4.24M" },
-    "shmee150": { youtube: "2.58M", instagram: "1.3M", twitter: "65K", tiktok: "850K", total: "2.88M" },
-    "shmee": { youtube: "2.58M", instagram: "1.3M", twitter: "65K", tiktok: "850K", total: "2.88M" },
-    "jay leno": { youtube: "3.65M", instagram: "340K", twitter: "1.1M", tiktok: "520K", total: "5.6M+" },
-    "jayleno": { youtube: "3.65M", instagram: "340K", twitter: "1.1M", tiktok: "520K", total: "5.6M+" },
-    "david lee": { youtube: "163K", instagram: "1.1M", twitter: "15K", tiktok: "50K", total: "1.27M" },
-    "davidlee": { youtube: "163K", instagram: "1.1M", twitter: "15K", tiktok: "50K", total: "1.27M" },
-    "ferrari collector": { youtube: "163K", instagram: "1.1M", twitter: "15K", tiktok: "50K", total: "1.27M" },
-    "mrbeast": { youtube: "318M", instagram: "60.9M", twitter: "30.9M", tiktok: "105M", total: "515M+" },
-    "pewdiepie": { youtube: "111M", instagram: "21.6M", twitter: "520K", tiktok: "10M", total: "133M+" },
-    "andrew tate": { youtube: "2.30M", instagram: "2.4M", twitter: "10.2M", tiktok: "5M", total: "14.9M" },
-    "tate car reviews": { youtube: "2.30M", instagram: "2.4M", twitter: "10.2M", tiktok: "5M", total: "14.9M" },
-    "mkbhd": { youtube: "21.3M", instagram: "4.8M", twitter: "6.2M", tiktok: "2.5M", total: "32.3M" },
-    "marques brownlee": { youtube: "21.3M", instagram: "4.8M", twitter: "6.2M", tiktok: "2.5M", total: "32.3M" },
-    "donut media": { youtube: "8.5M", instagram: "1.9M", twitter: "140K", tiktok: "3.1M", total: "10.5M" },
-    "donut": { youtube: "8.5M", instagram: "1.9M", twitter: "140K", tiktok: "3.1M", total: "10.5M" }
+    "supercar blondie": { youtube: "22.2M", instagram: "17.5M", twitter: "75.8K", tiktok: "19.2M", total: "59.0M+", raw: { youtube: 22250000, instagram: 17575000, twitter: 75820, tiktok: 19200000, total: 59100820 } },
+    "supercarblondie": { youtube: "22.2M", instagram: "17.5M", twitter: "75.8K", tiktok: "19.2M", total: "59.0M+", raw: { youtube: 22250000, instagram: 17575000, twitter: 75820, tiktok: 19200000, total: 59100820 } },
+    "gmk": { youtube: "2.85M", instagram: "4.1M", twitter: "—", tiktok: "1.2M", total: "8.15M+", raw: { youtube: 2850000, instagram: 4120000, twitter: 0, tiktok: 1200000, total: 8170000 } },
+    "mr.benz": { youtube: "1.26M", instagram: "2.2M", twitter: "—", tiktok: "850K", total: "4.31M+", raw: { youtube: 1260000, instagram: 2230000, twitter: 0, tiktok: 850000, total: 4340000 } },
+    "mrbenz": { youtube: "1.26M", instagram: "2.2M", twitter: "—", tiktok: "850K", total: "4.31M+", raw: { youtube: 1260000, instagram: 2230000, twitter: 0, tiktok: 850000, total: 4340000 } },
+    "daniel mac": { youtube: "3.33M", instagram: "2.8M", twitter: "25K", tiktok: "14.2M", total: "20.35M+", raw: { youtube: 3330000, instagram: 2810000, twitter: 25400, tiktok: 14200000, total: 20365400 } },
+    "danielmac": { youtube: "3.33M", instagram: "2.8M", twitter: "25K", tiktok: "14.2M", total: "20.35M+", raw: { youtube: 3330000, instagram: 2810000, twitter: 25400, tiktok: 14200000, total: 20365400 } },
+    "itsdanielmac": { youtube: "3.33M", instagram: "2.8M", twitter: "25K", tiktok: "14.2M", total: "20.35M+", raw: { youtube: 3330000, instagram: 2810000, twitter: 25400, tiktok: 14200000, total: 20365400 } },
+    "thestradman": { youtube: "4.56M", instagram: "1.5M", twitter: "55K", tiktok: "1.6M", total: "7.72M+", raw: { youtube: 4560000, instagram: 1520000, twitter: 55200, tiktok: 1600000, total: 7735200 } },
+    "stradman": { youtube: "4.56M", instagram: "1.5M", twitter: "55K", tiktok: "1.6M", total: "7.72M+", raw: { youtube: 4560000, instagram: 1520000, twitter: 55200, tiktok: 1600000, total: 7735200 } },
+    "chrisfix": { youtube: "10.3M", instagram: "920K", twitter: "90K", tiktok: "1.8M", total: "13.11M+", raw: { youtube: 10300000, instagram: 922000, twitter: 90500, tiktok: 1800000, total: 13112500 } },
+    "doug demuro": { youtube: "4.88M", instagram: "480K", twitter: "275K", tiktok: "120K", total: "5.75M+", raw: { youtube: 4880000, instagram: 482000, twitter: 275000, tiktok: 120000, total: 5757000 } },
+    "dougdemuro": { youtube: "4.88M", instagram: "480K", twitter: "275K", tiktok: "120K", total: "5.75M+", raw: { youtube: 4880000, instagram: 482000, twitter: 275000, tiktok: 120000, total: 5757000 } },
+    "mat armstrong": { youtube: "4.54M", instagram: "1.4M", twitter: "85K", tiktok: "2.2M", total: "8.22M+", raw: { youtube: 4540000, instagram: 1430000, twitter: 85000, tiktok: 2200000, total: 8255000 } },
+    "matarmstrong": { youtube: "4.54M", instagram: "1.4M", twitter: "85K", tiktok: "2.2M", total: "8.22M+", raw: { youtube: 4540000, instagram: 1430000, twitter: 85000, tiktok: 2200000, total: 8255000 } },
+    "carwow": { youtube: "9.87M", instagram: "1.2M", twitter: "155K", tiktok: "3.5M", total: "14.72M+", raw: { youtube: 9870000, instagram: 1210000, twitter: 155000, tiktok: 3500000, total: 14735000 } },
+    "salomondrin": { youtube: "1.6M", instagram: "2.5M", twitter: "190K", tiktok: "1.1M", total: "5.39M+", raw: { youtube: 1610000, instagram: 2530000, twitter: 190500, tiktok: 1100000, total: 5430500 } },
+    "dailydrivenexotics": { youtube: "4.24M", instagram: "670K", twitter: "50K", tiktok: "1.2M", total: "6.16M+", raw: { youtube: 4240000, instagram: 672000, twitter: 50800, tiktok: 1200000, total: 6162800 } },
+    "dde": { youtube: "4.24M", instagram: "670K", twitter: "50K", tiktok: "1.2M", total: "6.16M+", raw: { youtube: 4240000, instagram: 672000, twitter: 50800, tiktok: 1200000, total: 6162800 } },
+    "shmee150": { youtube: "2.88M", instagram: "1.3M", twitter: "65K", tiktok: "850K", total: "5.10M+", raw: { youtube: 2880000, instagram: 1310000, twitter: 65400, tiktok: 850000, total: 5105400 } },
+    "shmee": { youtube: "2.88M", instagram: "1.3M", twitter: "65K", tiktok: "850K", total: "5.10M+", raw: { youtube: 2880000, instagram: 1310000, twitter: 65400, tiktok: 850000, total: 5105400 } },
+    "jay leno": { youtube: "3.99M", instagram: "340K", twitter: "1.1M", tiktok: "520K", total: "5.95M+", raw: { youtube: 3990000, instagram: 342000, twitter: 1100000, tiktok: 520000, total: 5952000 } },
+    "jayleno": { youtube: "3.99M", instagram: "340K", twitter: "1.1M", tiktok: "520K", total: "5.95M+", raw: { youtube: 3990000, instagram: 342000, twitter: 1100000, tiktok: 520000, total: 5952000 } },
+    "david lee": { youtube: "163K", instagram: "1.1M", twitter: "15K", tiktok: "50K", total: "1.33M+", raw: { youtube: 163000, instagram: 1120000, twitter: 15100, tiktok: 50000, total: 1348100 } },
+    "davidlee": { youtube: "163K", instagram: "1.1M", twitter: "15K", tiktok: "50K", total: "1.33M+", raw: { youtube: 163000, instagram: 1120000, twitter: 15100, tiktok: 50000, total: 1348100 } },
+    "ferrari collector": { youtube: "163K", instagram: "1.1M", twitter: "15K", tiktok: "50K", total: "1.33M+", raw: { youtube: 163000, instagram: 1120000, twitter: 15100, tiktok: 50000, total: 1348100 } },
+    "mrbeast": { youtube: "318M", instagram: "60.9M", twitter: "30.9M", tiktok: "105M", total: "514.8M+", raw: { youtube: 318000000, instagram: 60900000, twitter: 30900000, tiktok: 105000000, total: 514800000 } },
+    "pewdiepie": { youtube: "111M", instagram: "21.6M", twitter: "520K", tiktok: "10M", total: "143.12M+", raw: { youtube: 111000000, instagram: 21600000, twitter: 520000, tiktok: 10000000, total: 143120000 } },
+    "andrew tate": { youtube: "2.30M", instagram: "2.4M", twitter: "10.2M", tiktok: "5M", total: "19.9M+", raw: { youtube: 2300000, instagram: 2400000, twitter: 10200000, tiktok: 5000000, total: 19900000 } },
+    "tate car reviews": { youtube: "2.30M", instagram: "2.4M", twitter: "10.2M", tiktok: "5M", total: "19.9M+", raw: { youtube: 2300000, instagram: 2400000, twitter: 10200000, tiktok: 5000000, total: 19900000 } },
+    "mkbhd": { youtube: "21.3M", instagram: "4.8M", twitter: "6.2M", tiktok: "2.5M", total: "34.8M+", raw: { youtube: 21300000, instagram: 4820000, twitter: 6200000, tiktok: 2500000, total: 34820000 } },
+    "marques brownlee": { youtube: "21.3M", instagram: "4.8M", twitter: "6.2M", tiktok: "2.5M", total: "34.8M+", raw: { youtube: 21300000, instagram: 4820000, twitter: 6200000, tiktok: 2500000, total: 34820000 } },
+    "donut media": { youtube: "8.5M", instagram: "1.9M", twitter: "140K", tiktok: "3.1M", total: "13.64M+", raw: { youtube: 8500000, instagram: 1900000, twitter: 140000, tiktok: 3100000, total: 13640000 } },
+    "donut": { youtube: "8.5M", instagram: "1.9M", twitter: "140K", tiktok: "3.1M", total: "13.64M+", raw: { youtube: 8500000, instagram: 1900000, twitter: 140000, tiktok: 3100000, total: 13640000 } }
   };
 
   const getCreatorStats = (car) => {
@@ -563,7 +619,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
     );
     const verified = matchKey ? VERIFIED_CREATOR_STATS[matchKey] : null;
 
-    // 1. YouTube Subscribers (live fetch -> verified values -> DB field -> primary sub)
+    // 1. YouTube Subscribers (live real-time fetch -> verified values -> DB field -> primary sub)
     let ytSubs =
       live.youtube ||
       (verified ? verified.youtube : "") ||
@@ -577,8 +633,9 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
       ytSubs = primarySub || "—";
     }
 
-    // 2. Instagram Followers (verified values -> DB field -> fallback scale)
+    // 2. Instagram Followers (live real-time fetch -> verified values -> DB field -> fallback scale)
     let igFollowers =
+      live.instagram ||
       (verified ? verified.instagram : "") ||
       car.instagramFollowers ||
       keyDetails.instagramFollowers;
@@ -600,8 +657,9 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
       igFollowers = "—";
     }
 
-    // 3. Twitter Followers (verified values -> DB field -> fallback scale)
+    // 3. Twitter Followers (live real-time fetch -> verified values -> DB field -> fallback scale)
     let twFollowers =
+      live.twitter ||
       (verified ? verified.twitter : "") ||
       car.twitterFollowers ||
       keyDetails.twitterFollowers ||
@@ -625,8 +683,9 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
       twFollowers = "—";
     }
 
-    // 4. Total Subscribers / Followers
+    // 4. Total Subscribers / Followers (live real-time calculation -> verified values -> DB field)
     let totalSubs =
+      live.total ||
       (verified ? verified.total : "") ||
       car.totalFollowers ||
       keyDetails.totalFollowers ||
@@ -642,6 +701,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
       youtube: ytSubs || "—",
       instagram: igFollowers || "—",
       twitter: twFollowers || "—",
+      rawCounts: live.rawCounts || car.rawCounts || verified?.raw,
     };
   };
 
@@ -972,8 +1032,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
         if (car.isContentCreator) {
           const stats = getCreatorStats(car);
           const profilePicUrl = getCreatorProfilePic(car);
-          const bannerImageUrl =
-            car.banner || car.bannerImage || car.coverImage || car.image;
+          const bannerImageUrl = getCreatorBannerImage(car);
 
           return (
             <React.Fragment key={car._id}>
@@ -986,7 +1045,15 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                 <img
                   src={bannerImageUrl}
                   alt={car.name}
-                  className="w-full h-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-opacity duration-300"
+                  onError={(e) => {
+                    const fallback = "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1200&auto=format&fit=crop";
+                    if (e.target.src !== fallback) {
+                      e.target.src = fallback;
+                    }
+                  }}
                 />
 
                 {/* Rank Ribbon */}
@@ -1086,7 +1153,14 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   {/* Social Counters Bar Container */}
                   <div className="bg-[#121214] border border-zinc-800/80 rounded-[6px] py-2 sm:py-2.5 grid grid-cols-2 sm:grid-cols-4 gap-y-2 sm:gap-y-0 divide-y sm:divide-y-0 sm:divide-x divide-zinc-800/80 items-center">
                     {/* Total Subscribers */}
-                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
+                    <div
+                      title={
+                        stats.rawCounts?.total
+                          ? `${stats.rawCounts.total.toLocaleString()} total followers across platforms`
+                          : `${stats.total} total followers`
+                      }
+                      className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0 cursor-default"
+                    >
                       <FaUsers className="text-[#D6A125] text-[18px] sm:text-[24px] shrink-0" />
                       <div className="flex flex-col">
                         <span className="text-[9px] sm:text-[10px] text-zinc-400 font-semibold leading-none">
@@ -1099,7 +1173,14 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                     </div>
 
                     {/* YouTube Subscribers */}
-                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
+                    <div
+                      title={
+                        stats.rawCounts?.youtube
+                          ? `${stats.rawCounts.youtube.toLocaleString()} YouTube subscribers`
+                          : `${stats.youtube} YouTube subscribers`
+                      }
+                      className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0 cursor-default"
+                    >
                       <img
                         src={youtubeIcon}
                         alt="YouTube"
@@ -1116,7 +1197,14 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                     </div>
 
                     {/* Instagram Followers */}
-                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
+                    <div
+                      title={
+                        stats.rawCounts?.instagram
+                          ? `${stats.rawCounts.instagram.toLocaleString()} Instagram followers`
+                          : `${stats.instagram} Instagram followers`
+                      }
+                      className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0 cursor-default"
+                    >
                       <img
                         src={instagramIcon}
                         alt="Instagram"
@@ -1133,7 +1221,14 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                     </div>
 
                     {/* Twitter Followers */}
-                    <div className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0">
+                    <div
+                      title={
+                        stats.rawCounts?.twitter
+                          ? `${stats.rawCounts.twitter.toLocaleString()} Twitter followers`
+                          : `${stats.twitter} Twitter followers`
+                      }
+                      className="flex items-center justify-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1 sm:py-0 cursor-default"
+                    >
                       <img
                         src={xIcon}
                         alt="Twitter"
