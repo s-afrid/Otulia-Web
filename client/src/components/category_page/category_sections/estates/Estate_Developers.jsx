@@ -140,7 +140,7 @@ const Estate_Developers = ({ onDeveloperClick }) => {
   };
 
   return (
-    <section className="w-full relative bg-white flex flex-col justify-center px-4 md:px-12 pt-[42px] md:pt-[59px] pb-10 md:pb-14 overflow-hidden">
+    <section className="w-full relative bg-white flex flex-col justify-center px-4 md:px-12 pt-[46px] md:pt-[65px] pb-10 md:pb-14 overflow-hidden">
       {/* Main Title & Subtitle Centered */}
       <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
         <h2 className="text-4xl md:text-5xl canela text-black font-normal tracking-tight mb-3">
