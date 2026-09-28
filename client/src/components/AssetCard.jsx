@@ -192,7 +192,7 @@ const AssetCard = ({ item }) => {
             gap: "1.3cqi" /* gap: 2 (8px) */,
           }}
         >
-          {category === "estate" && (
+          {category === "estate" && Boolean(item.directlyFromDeveloper || item.isDirectFromDeveloper || item.isDirectDeveloper) && (
             <div
               className="bg-transparent text-white font-medium tracking-[0.03em] drop-shadow-md flex items-center"
               style={{
@@ -401,7 +401,7 @@ const AssetCard = ({ item }) => {
                   )}
                 </h3>
 
-                {category === "estate" && (
+                {category === "estate" && Boolean(item.directlyFromDeveloper || item.isDirectFromDeveloper || item.isDirectDeveloper) && (
                   <span
                     className="text-[#047857] font-semibold inline-flex items-center shrink-0"
                     style={{

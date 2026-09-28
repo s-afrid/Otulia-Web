@@ -62,6 +62,10 @@ const listingSchema = new mongoose.Schema(
             default: false,
             index: true
         },
+        directlyFromDeveloper: {
+            type: Boolean,
+            default: false,
+        },
 
         views: {
             type: Number,

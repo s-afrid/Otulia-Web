@@ -43,9 +43,16 @@ const EstateDetails = ({ item, modelName = "EstateAsset" }) => {
   } = item || {};
 
   // Price calculations for Otulia 3% discount
+  const isDirectFromDeveloper = Boolean(
+    item?.directlyFromDeveloper || item?.isDirectDeveloper || item?.isDirectFromDeveloper
+  );
   const isPriceOnDemand = item?.isPriceOnRequest || !price || price <= 0;
   const originalPrice = isPriceOnDemand ? 0 : Math.round(price);
-  const discountedPrice = isPriceOnDemand ? 0 : Math.round(price * 0.97);
+  const discountedPrice = isPriceOnDemand
+    ? 0
+    : isDirectFromDeveloper
+    ? Math.round(price * 0.97)
+    : originalPrice;
 
   const handleCallAgent = async () => {
     if (!isAuthenticated) {
@@ -184,8 +191,8 @@ Reference ID: #${refId}
         tempId: Date.now() + Math.random().toString(),
         title,
         image: images.length > 0 ? images[0] : null,
-        price: discountedPrice || price,
-        totalPrice: discountedPrice || price,
+        price: isDirectFromDeveloper ? (discountedPrice || price) : (originalPrice || price),
+        totalPrice: isDirectFromDeveloper ? (discountedPrice || price) : (originalPrice || price),
         type: "Sale",
       });
     }
@@ -380,7 +387,7 @@ Reference ID: #${refId}
                 >
                   Price on Demand
                 </h2>
-              ) : (
+              ) : isDirectFromDeveloper ? (
                 <div>
                   {/* Original Strikethrough Price */}
                   <div
@@ -408,9 +415,21 @@ Reference ID: #${refId}
                     </div>
                   </div>
                 </div>
+              ) : (
+                <div>
+                  {/* Standard Price Without Discount */}
+                  <h2
+                    className="text-3xl md:text-4xl font-poppins-light text-black whitespace-nowrap"
+                    style={{
+                      fontFamily: 'Canela, "Times New Roman", Times, serif',
+                    }}
+                  >
+                    ${numberWithCommas(originalPrice)}
+                  </h2>
+                </div>
               )}
 
-              {!isPriceOnDemand && (
+              {!isPriceOnDemand && isDirectFromDeveloper && (
                 <div className="text-xs text-gray-500 font-normal mt-2.5 flex items-center gap-1.5">
                   <FiInfo className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                   <span>

@@ -345,6 +345,7 @@ router.post('/create', authMiddleware, upload.fields([
             images: [],
             documents: [],
             status: req.body.isPublic === 'true' || req.body.isPublic === true ? 'Active' : 'Draft',
+            directlyFromDeveloper: req.body.directlyFromDeveloper === 'true' || req.body.directlyFromDeveloper === true,
             type: req.body.type || 'Sale',
             acquisition: (req.body.type === 'Rent' ? 'rent' : 'buy'),
             priceHistory: req.body.priceHistory ? JSON.parse(req.body.priceHistory) : [],
@@ -607,6 +608,7 @@ router.post('/create', authMiddleware, upload.fields([
             };
         } else if (category === 'Estate') {
             updateData.propertyName = req.body.propertyName;
+            updateData.directlyFromDeveloper = req.body.directlyFromDeveloper === 'true' || req.body.directlyFromDeveloper === true;
             updateData.highlights = req.body.highlights ? cleanHighlights(JSON.parse(req.body.highlights)) : [];
             updateData.videoUrl = req.body.videoUrl;
             updateData.amenities = req.body.amenities ? JSON.parse(req.body.amenities) : [];
@@ -1091,6 +1093,10 @@ router.put('/:id', authMiddleware, upload.fields([
 
         } else if (modelName === 'EstateAsset') {
             if (req.body.propertyName) listing.propertyName = req.body.propertyName;
+            if (req.body.directlyFromDeveloper !== undefined) {
+                listing.directlyFromDeveloper = req.body.directlyFromDeveloper === 'true' || req.body.directlyFromDeveloper === true;
+                listing.markModified('directlyFromDeveloper');
+            }
             
             if (req.body.amenities) {
                 try {
