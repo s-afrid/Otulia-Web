@@ -12,22 +12,19 @@ const Estate_Hero = () => {
         alt="hero_estate"
       />
 
-      {/* Clearer Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent -z-5" />
-
-      <div className="relative h-full w-full flex flex-col justify-center pl-8 md:pl-10 pr-[6%] z-10 pt-20">
-        <div className="max-w-2xl flex flex-col gap-6 mb-16">
-          <h1 className="text-white canela text-2xl md:text-[3.25rem] font-light leading-[1.05] drop-shadow-sm">
+      <div className="relative h-full w-full flex flex-col justify-center items-center text-center px-4 md:px-8 z-10 pt-20">
+        <div className="max-w-2xl flex flex-col items-center text-center gap-6 mb-12 md:mb-16 mx-auto">
+          <h1 className="text-white canela text-2xl md:text-[3.25rem] font-light leading-[1.05] drop-shadow-md text-center">
             Otulia Luxury Real Estate
           </h1>
-          <div className="w-24 h-[2px] bg-[#D48D2A]"></div>
-          <p className="text-white/90 montserrat text-lg md:text-xl font-normal tracking-wide">
+          <div className="w-24 h-[2px] bg-[#D48D2A] mx-auto"></div>
+          <p className="text-white/90 montserrat text-lg md:text-xl font-normal tracking-wide text-center drop-shadow-sm">
             Explore curated estates, villas, penthouses, and exceptional
             properties worldwide.
           </p>
         </div>
 
-        <div className="w-full max-w-4xl">
+        <div className="w-full max-w-4xl mx-auto flex justify-center">
           <Estate_Search />
         </div>
       </div>
