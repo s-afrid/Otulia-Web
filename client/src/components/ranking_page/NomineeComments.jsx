@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSnackbar } from "../../contexts/SnackbarContext";
-import { FiChevronDown, FiMoreVertical } from "react-icons/fi";
+import { FiMoreVertical, FiThumbsUp } from "react-icons/fi";
 
 const MAX_DEPTH = 2;
 
@@ -11,6 +11,23 @@ const SORT_OPTIONS = [
   { value: "oldest", label: "Oldest" },
   { value: "liked", label: "Most Liked" },
 ];
+
+function SortIcon({ className = "w-5 h-5" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    >
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="4" y1="12" x2="15" y2="12" />
+      <line x1="4" y1="18" x2="10" y2="18" />
+    </svg>
+  );
+}
 
 function getInitials(name) {
   if (!name) return "?";
@@ -97,7 +114,7 @@ function buildTree(comments, sort) {
   return build("root", 0);
 }
 
-function Avatar({ name, picture, className = "w-9 h-9" }) {
+function Avatar({ name, picture, className = "w-10 h-10" }) {
   const [failed, setFailed] = useState(false);
 
   if (picture && !failed) {
@@ -106,14 +123,14 @@ function Avatar({ name, picture, className = "w-9 h-9" }) {
         src={picture}
         alt={name || "User"}
         onError={() => setFailed(true)}
-        className={`${className} rounded-full object-cover border border-zinc-800 shrink-0`}
+        className={`${className} rounded-full object-cover shrink-0`}
       />
     );
   }
 
   return (
     <div
-      className={`${className} rounded-full bg-[#141416] border border-zinc-800 flex items-center justify-center text-[11px] font-bold text-[#D6A125] shrink-0 select-none`}
+      className={`${className} rounded-full bg-[#272727] flex items-center justify-center text-[12px] font-medium text-[#F1F1F1] shrink-0 select-none`}
     >
       {getInitials(name)}
     </div>
@@ -368,28 +385,33 @@ export default function NomineeComments({ nomineeId, categoryId }) {
       user && c.user?._id && String(c.user._id) === String(user._id);
     const liked = user && c.likes.includes(String(user._id));
     const isEditing = editingId === c._id;
+    const isReply = c.depth > 0;
 
     const indent =
       c.depth === 1
-        ? "ml-4 sm:ml-6 pl-3 sm:pl-4 border-l border-zinc-800/80"
+        ? "ml-8 pl-4 border-l border-[#272727]"
         : c.depth === 2
-          ? "ml-8 sm:ml-14 pl-3 sm:pl-4 border-l border-zinc-800/60"
+          ? "ml-6 pl-4 border-l border-[#272727]"
           : "";
 
     return (
       <div key={c._id} className={indent}>
-        <div className="flex items-start gap-3 px-2 sm:px-3 py-3 rounded-lg hover:bg-white/[0.02] transition-colors">
-          <Avatar name={c.user?.name} picture={c.user?.picture} />
+        <div className="flex items-start gap-3 px-4 py-3">
+          <Avatar
+            name={c.user?.name}
+            picture={c.user?.picture}
+            className={isReply ? "w-6 h-6" : "w-10 h-10"}
+          />
 
           <div className="flex-1 min-w-0">
             {/* Username + timestamp + more menu */}
             <div className="flex items-center gap-2">
-              <span className="text-[13px] font-semibold text-white truncate">
+              <span className="text-[13px] font-medium text-[#F1F1F1] truncate">
                 {c.user?.name || "Unknown User"}
               </span>
-              <span className="text-[11px] text-zinc-500 shrink-0">
+              <span className="text-[12px] font-normal text-[#AAAAAA] shrink-0">
                 {formatTime(c.createdAt)}
-                {c.edited ? " · edited" : ""}
+                {c.edited ? " (edited)" : ""}
               </span>
 
               <div className="relative ml-auto shrink-0">
@@ -399,14 +421,14 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                     e.stopPropagation();
                     setOpenMenuId(openMenuId === c._id ? null : c._id);
                   }}
-                  className="p-1 text-zinc-500 hover:text-white rounded transition"
+                  className="rounded-full p-1.5 text-[#AAAAAA] hover:bg-white/10 hover:text-[#F1F1F1] transition"
                   aria-label="Comment options"
                 >
                   <FiMoreVertical className="w-4 h-4" />
                 </button>
                 {openMenuId === c._id && (
                   <div
-                    className="absolute right-0 top-7 z-30 w-32 rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-xl"
+                    className="absolute right-0 top-8 z-30 w-32 rounded-lg border border-[#3F3F3F] bg-[#272727] py-1 shadow-xl"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {isOwner ? (
@@ -414,14 +436,14 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                         <button
                           type="button"
                           onClick={() => startEdit(c)}
-                          className="w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition"
+                          className="w-full text-left px-4 py-1.5 text-[12px] text-[#F1F1F1] hover:bg-white/10 transition"
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDelete(c)}
-                          className="w-full text-left px-3 py-1.5 text-xs text-red-400 hover:bg-zinc-800 transition"
+                          className="w-full text-left px-4 py-1.5 text-[12px] text-[#F28B82] hover:bg-white/10 transition"
                         >
                           Delete
                         </button>
@@ -430,7 +452,7 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                       <button
                         type="button"
                         onClick={() => handleReport(c)}
-                        className="w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition"
+                        className="w-full text-left px-4 py-1.5 text-[12px] text-[#F1F1F1] hover:bg-white/10 transition"
                       >
                         Report
                       </button>
@@ -448,14 +470,14 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                   onChange={(e) => setEditText(e.target.value)}
                   rows={2}
                   autoFocus
-                  className="w-full resize-none bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-[13px] text-white placeholder-zinc-500 focus:outline-none focus:border-[#D6A125]"
+                  className="w-full resize-none rounded border border-[#303030] bg-transparent px-2 py-1.5 text-[14px] leading-5 text-[#F1F1F1] focus:border-[#F1F1F1] focus:outline-none"
                 />
-                <div className="flex items-center gap-2 mt-1.5">
+                <div className="flex items-center gap-2 mt-2">
                   <button
                     type="button"
                     disabled={!editText.trim() || !!postingKey}
                     onClick={() => handleSaveEdit(c)}
-                    className="rounded-md bg-[#D6A125] px-3 py-1 text-[11px] font-bold text-black hover:bg-[#e5b338] disabled:opacity-50 disabled:cursor-not-allowed transition"
+                    className="rounded-full bg-[#3EA6FF] px-4 py-1.5 text-[12px] font-medium text-[#0F0F0F] hover:brightness-110 disabled:bg-transparent disabled:text-[#AAAAAA] disabled:cursor-not-allowed transition"
                   >
                     {postingKey === `edit-${c._id}` ? "Saving..." : "Save"}
                   </button>
@@ -465,14 +487,14 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                       setEditingId(null);
                       setEditText("");
                     }}
-                    className="rounded-md border border-zinc-800 px-3 py-1 text-[11px] font-medium text-zinc-400 hover:text-white transition"
+                    className="rounded-full px-3 py-1.5 text-[12px] font-medium text-[#F1F1F1] hover:bg-white/10 transition"
                   >
                     Cancel
                   </button>
                 </div>
               </div>
             ) : (
-              <p className="mt-1 text-[13px] leading-relaxed text-zinc-300 whitespace-pre-wrap break-words">
+              <p className="mt-1 text-[14px] font-normal leading-5 text-[#F1F1F1] whitespace-pre-wrap break-words">
                 {c.text}
               </p>
             )}
@@ -483,21 +505,22 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                 type="button"
                 onClick={() => handleLike(c)}
                 disabled={likingId === c._id}
-                className={`text-xs transition disabled:opacity-50 ${
+                className={`flex items-center gap-1 text-[12px] font-medium transition disabled:opacity-50 ${
                   liked
-                    ? "text-[#D6A125] font-semibold"
-                    : "text-zinc-500 hover:text-white"
+                    ? "text-[#D6A125]"
+                    : "text-[#AAAAAA] hover:text-[#F1F1F1]"
                 }`}
                 title={liked ? "Unlike" : "Like"}
               >
-                👍 {c.likes.length}
+                <FiThumbsUp className="w-4 h-4" />
+                <span>{c.likes.length}</span>
               </button>
               <button
                 type="button"
                 onClick={() =>
                   replyTo?.id === c._id ? setReplyTo(null) : openReply(c)
                 }
-                className="text-xs text-zinc-500 hover:text-[#D6A125] font-medium transition"
+                className="rounded-full px-2 py-1 text-[12px] font-medium text-[#AAAAAA] hover:bg-white/10 hover:text-[#F1F1F1] transition"
               >
                 Reply
               </button>
@@ -505,11 +528,11 @@ export default function NomineeComments({ nomineeId, categoryId }) {
 
             {/* Reply composer */}
             {replyTo?.id === c._id && (
-              <div className="flex items-start gap-2.5 mt-3">
+              <div className="flex items-start gap-3 mt-3">
                 <Avatar
                   name={user?.name}
                   picture={user?.profilePicture}
-                  className="w-7 h-7"
+                  className="w-6 h-6"
                 />
                 <div className="flex-1 min-w-0">
                   <textarea
@@ -521,16 +544,16 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                       setReplyText(e.target.value);
                       autoGrow(e.target);
                     }}
-                    className="w-full resize-none overflow-hidden bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-[13px] text-white placeholder-zinc-500 focus:outline-none focus:border-[#D6A125]"
+                    className="w-full resize-none overflow-hidden border-b border-[#272727] bg-transparent px-0 py-1.5 text-[14px] leading-5 text-[#F1F1F1] placeholder:text-[#AAAAAA] focus:border-[#F1F1F1] focus:outline-none transition-colors"
                   />
-                  <div className="flex items-center justify-end gap-2 mt-1.5">
+                  <div className="flex items-center justify-end gap-2 mt-2">
                     <button
                       type="button"
                       onClick={() => {
                         setReplyTo(null);
                         setReplyText("");
                       }}
-                      className="text-[11px] text-zinc-500 hover:text-white transition"
+                      className="rounded-full px-3 py-1.5 text-[12px] font-medium text-[#F1F1F1] hover:bg-white/10 transition"
                     >
                       Cancel
                     </button>
@@ -538,7 +561,7 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                       type="button"
                       disabled={!replyText.trim() || !!postingKey}
                       onClick={handlePostReply}
-                      className="rounded-md bg-[#D6A125] px-3 py-1.5 text-[11px] font-bold text-black hover:bg-[#e5b338] disabled:opacity-50 disabled:cursor-not-allowed transition"
+                      className="rounded-full bg-[#3EA6FF] px-4 py-1.5 text-[12px] font-medium text-[#0F0F0F] hover:brightness-110 disabled:bg-transparent disabled:text-[#AAAAAA] disabled:cursor-not-allowed transition"
                     >
                       {postingKey === replyTo.id ? "Posting..." : "Post Reply"}
                     </button>
@@ -558,18 +581,26 @@ export default function NomineeComments({ nomineeId, categoryId }) {
   if (!nomineeId) return null;
 
   const tree = buildTree(comments, sort);
-  const activeSortLabel =
-    SORT_OPTIONS.find((option) => option.value === sort)?.label || "Newest";
 
   return (
-    <section className="select-text rounded-[12px] border border-zinc-800 bg-[#0E0E11] px-4 sm:px-6 py-5">
+    <section
+      style={{ fontFamily: "Roboto, Arial, sans-serif" }}
+      className="select-text rounded-[12px] border border-[#272727] bg-[#0F0F0F] pt-3 pb-1"
+    >
       {/* Section header */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4">
         <div>
-          <h3 className="text-[16px] sm:text-[18px] font-bold text-white">
-            Community Discussion
-          </h3>
-          <p className="text-[12.5px] text-zinc-500 mt-0.5">
+          <div className="flex items-baseline gap-2">
+            <h3 className="text-[18px] font-bold text-[#F1F1F1]">
+              Community Discussion
+            </h3>
+            {comments.length > 0 && (
+              <span className="text-[18px] font-bold text-[#F1F1F1]">
+                {comments.length}
+              </span>
+            )}
+          </div>
+          <p className="text-[12px] text-[#AAAAAA] mt-0.5">
             Share your thoughts about this ranking.
           </p>
         </div>
@@ -579,17 +610,13 @@ export default function NomineeComments({ nomineeId, categoryId }) {
             <button
               type="button"
               onClick={() => setSortOpen(!sortOpen)}
-              className="flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs text-zinc-400 hover:border-[#D6A125]/50 hover:text-white transition"
+              className="flex items-center gap-2 rounded-full px-3 py-1.5 text-[14px] font-medium text-[#F1F1F1] hover:bg-white/10 transition"
             >
-              {activeSortLabel}
-              <FiChevronDown
-                className={`w-3.5 h-3.5 transition-transform ${
-                  sortOpen ? "rotate-180" : ""
-                }`}
-              />
+              <SortIcon className="w-5 h-5" />
+              Sort by
             </button>
             {sortOpen && (
-              <div className="absolute right-0 top-9 z-30 w-36 rounded-lg border border-zinc-800 bg-zinc-900 py-1 shadow-xl">
+              <div className="absolute right-0 top-full mt-1 z-30 w-40 rounded-lg border border-[#3F3F3F] bg-[#272727] py-1 shadow-xl">
                 {SORT_OPTIONS.map((option) => (
                   <button
                     key={option.value}
@@ -598,10 +625,10 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                       setSort(option.value);
                       setSortOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 text-xs transition hover:bg-zinc-800 ${
+                    className={`w-full text-left px-4 py-1.5 text-[14px] transition hover:bg-white/10 ${
                       sort === option.value
-                        ? "text-[#D6A125] font-semibold"
-                        : "text-zinc-300"
+                        ? "text-[#D6A125] font-medium"
+                        : "text-[#F1F1F1]"
                     }`}
                   >
                     {option.label}
@@ -614,7 +641,7 @@ export default function NomineeComments({ nomineeId, categoryId }) {
       </div>
 
       {/* Comment composer */}
-      <div className="mt-4 border-t border-zinc-800/80 pt-4">
+      <div className="mt-3 px-4 pb-3">
         {token && user ? (
           <div className="flex items-start gap-3">
             <Avatar
@@ -632,14 +659,14 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                   setText(e.target.value);
                   autoGrow(e.target);
                 }}
-                className="w-full resize-none overflow-hidden bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#D6A125] transition"
+                className="w-full resize-none overflow-hidden border-b border-[#272727] bg-transparent px-0 py-1.5 text-[14px] leading-5 text-[#F1F1F1] placeholder:text-[#AAAAAA] focus:border-[#F1F1F1] focus:outline-none transition-colors"
               />
-              <div className="flex justify-end mt-2">
+              <div className="flex justify-end">
                 <button
                   type="button"
                   disabled={!text.trim() || !!postingKey}
                   onClick={handlePostMain}
-                  className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#B8812D] via-[#A37025] to-[#8C5E1D] px-4 py-2 text-xs font-bold text-white shadow-md hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition"
+                  className="flex items-center gap-2 rounded-full bg-[#3EA6FF] px-4 py-2 mt-2 text-[12px] font-medium text-[#0F0F0F] hover:brightness-110 disabled:bg-transparent disabled:text-[#AAAAAA] disabled:cursor-not-allowed transition"
                 >
                   {postingKey === "main" && (
                     <span className="w-3.5 h-3.5 rounded-full border-2 border-white/40 border-t-white animate-spin" />
@@ -650,13 +677,13 @@ export default function NomineeComments({ nomineeId, categoryId }) {
             </div>
           </div>
         ) : (
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
-            <span className="text-[13px] text-zinc-400">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#272727] px-4 py-3">
+            <span className="text-[14px] text-[#AAAAAA]">
               Sign in to join the discussion.
             </span>
             <Link
               to="/login"
-              className="montserrat rounded-full bg-white px-5 py-1.5 text-[11px] font-bold uppercase tracking-widest text-black hover:bg-zinc-200 transition"
+              className="rounded-full border border-[#3EA6FF] px-4 py-1.5 text-[12px] font-medium text-[#3EA6FF] hover:bg-[#3EA6FF]/10 transition"
             >
               Sign In
             </Link>
@@ -665,24 +692,22 @@ export default function NomineeComments({ nomineeId, categoryId }) {
       </div>
 
       {/* Comment list */}
-      <div className="mt-4 border-t border-zinc-800/80 pt-2">
+      <div className="border-t border-[#272727] pt-1">
         {loading ? (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-7 w-7 border-t-2 border-b-2 border-[#D6A125]" />
           </div>
         ) : tree.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-sm text-zinc-300 font-medium">
+            <p className="text-[14px] text-[#F1F1F1] font-normal">
               No discussions yet.
             </p>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-[12px] text-[#AAAAAA] mt-1">
               Be the first to share your thoughts about this ranking.
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-zinc-800/60">
-            {tree.map(renderComment)}
-          </div>
+          <div className="pb-1">{tree.map(renderComment)}</div>
         )}
       </div>
     </section>
