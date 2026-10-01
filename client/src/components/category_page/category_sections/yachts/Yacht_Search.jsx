@@ -35,39 +35,39 @@ const Yacht_Search = () => {
 
   return (
     <div className="w-full max-w-4xl relative" ref={searchContainerRef}>
-      <div className="bg-[#D9D9D9]/90 backdrop-blur-md p-1.5 rounded-full flex items-center shadow-2xl">
+      <div className="bg-white/[0.06] backdrop-blur-[2px] border-[1.25px] border-white/35 p-1.5 rounded-full flex items-center shadow-2xl">
         
         {/* 1. Location Section */}
-        <div className="flex-[2.5] flex items-center px-8 gap-4 border-r border-black/10">
-          <FiMapPin className="text-gray-600 text-xl shrink-0" />
+        <div className="flex-[2.5] flex items-center px-6 md:px-8 gap-3 border-r-[1.25px] border-white/25">
+          <FiMapPin className="text-white text-xl shrink-0" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by location"
-            className="bg-transparent border-none outline-none text-gray-800 text-sm font-medium placeholder-gray-500 w-full focus:ring-0 p-0 h-10"
+            className="bg-transparent border-none outline-none text-white text-sm font-normal placeholder:text-white w-full focus:ring-0 p-0 h-10"
           />
         </div>
 
         {/* 2. Toggle Section */}
-        <div className="flex-[1.5] flex items-center px-4">
-          <div className="flex bg-black/5 rounded-full p-1 w-full">
+        <div className="flex-[1.5] flex items-center px-3">
+          <div className="flex items-center w-full">
             <button
               onClick={() => setListingType('buy')}
-              className={`flex-1 py-2 text-sm font-semibold rounded-full transition-all duration-300 ${
+              className={`flex-1 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                 listingType === 'buy' 
-                  ? 'bg-[#2C2C2C] text-white shadow-md' 
-                  : 'text-gray-600 hover:text-black'
+                  ? 'bg-[#1e1e1e] text-white shadow-md' 
+                  : 'text-white hover:text-white/80'
               }`}
             >
               Buy
             </button>
             <button
               onClick={() => setListingType('rent')}
-              className={`flex-1 py-2 text-sm font-semibold rounded-full transition-all duration-300 ${
+              className={`flex-1 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                 listingType === 'rent' 
-                  ? 'bg-[#2C2C2C] text-white shadow-md' 
-                  : 'text-gray-600 hover:text-black'
+                  ? 'bg-[#1e1e1e] text-white shadow-md' 
+                  : 'text-white hover:text-white/80'
               }`}
             >
               Rent
@@ -78,7 +78,7 @@ const Yacht_Search = () => {
         {/* 3. Circular Button */}
         <button 
           onClick={handleSearch}
-          className="w-12 h-12 bg-[#2C2C2C] rounded-full flex items-center justify-center text-white hover:bg-black transition-all shadow-lg active:scale-95 shrink-0"
+          className="w-11 h-11 md:w-12 md:h-12 bg-[#1e1e1e] hover:bg-black rounded-full flex items-center justify-center text-white transition-all shadow-md active:scale-95 shrink-0 border border-white/15"
         >
           <FiSearch className="text-xl" />
         </button>
@@ -86,7 +86,7 @@ const Yacht_Search = () => {
 
       {/* Suggestions */}
       {suggestions.length > 0 && (
-        <div className="absolute mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-[9999] animate-fade-in left-6">
+        <div className="absolute mt-2 w-72 bg-[#161616]/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/15 py-3 z-[9999] animate-fade-in left-6">
           {suggestions.map((loc, idx) => (
             <div 
               key={idx}
@@ -94,7 +94,7 @@ const Yacht_Search = () => {
                 setQuery(loc);
                 setSuggestions([]);
               }}
-              className="px-6 py-2 hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-700 transition-colors"
+              className="px-6 py-2.5 hover:bg-white/10 cursor-pointer text-sm font-medium text-gray-200 hover:text-white transition-colors"
             >
               {loc}
             </div>
