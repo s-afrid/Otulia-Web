@@ -12,8 +12,8 @@ const Estate_Hero = () => {
         alt="hero_estate"
       />
 
-      <div className="relative h-full w-full flex flex-col justify-center items-center text-center px-4 md:px-8 z-10 pt-20">
-        <div className="max-w-2xl flex flex-col items-center text-center gap-6 mb-12 md:mb-16 mx-auto">
+      <div className="relative h-full w-full flex flex-col justify-start items-center text-center px-4 md:px-8 z-10 pt-28 md:pt-32">
+        <div className="max-w-2xl flex flex-col items-center text-center gap-6 mb-8 md:mb-10 mx-auto">
           <h1 className="text-white canela text-2xl md:text-[3.25rem] font-light leading-[1.05] drop-shadow-md text-center">
             Otulia Luxury Real Estate
           </h1>
