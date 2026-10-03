@@ -23,6 +23,7 @@ const categories = [
 
 const staticRoutes = [
     '/', '/shop', '/community', '/rent', '/seller', '/sellwithus', '/pricing',
+    '/login', '/ranking', '/ranking/realestate',
     '/category/cars', '/category/estates', '/about', '/reviews', '/faq', '/blogs',
     '/journal', '/terms', '/privacy-policy', '/shipping', '/returns', '/cookie-policy',
     '/contact', '/listings/private-islands', '/listings/balearic-islands',

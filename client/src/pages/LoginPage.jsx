@@ -75,7 +75,6 @@ const LoginPage = () => {
       <SEO
         title="Login"
         description="Access your personal sanctuary on Otulia. Log in to manage your luxury listings and favorites."
-        noindex
       />
 
       {/* ── LEFT PANEL ── */}

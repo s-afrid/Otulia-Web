@@ -5,7 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 import Cart from "./navbar/Cart";
 import { Link, useNavigate } from "react-router-dom";
 import UserURL from "../assets/user.png";
-import { FiGrid, FiLogOut, FiShoppingCart, FiTag, FiKey, FiPlusCircle } from "react-icons/fi";
+import { FiGrid, FiLogOut, FiShoppingCart, FiTag, FiKey, FiPlusCircle, FiHome } from "react-icons/fi";
 import { FaTrophy } from "react-icons/fa";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 
@@ -50,6 +50,15 @@ const NavbarMobile = ({ onClose }) => {
           >
             <FiKey className="text-gray-500 text-lg shrink-0" />
             <span className="tracking-wide text-[15px]">Rent</span>
+          </Link>
+
+          <Link
+            to="/category/estates"
+            onClick={handleLinkClick}
+            className="flex items-center gap-3 p-3 rounded-lg text-[#161618] hover:bg-gray-100 transition duration-200 font-medium"
+          >
+            <FiHome className="text-gray-500 text-lg shrink-0" />
+            <span className="tracking-wide text-[15px]">Real Estate</span>
           </Link>
 
           <Link
