@@ -5,6 +5,11 @@ const express = require("express");
 const compression = require("compression");
 const connectDB = require("./db.js");
 const fs = require("fs");
+const mongoose = require("mongoose");
+const CarAsset = require("./models/CarAsset.model.js");
+const EstateAsset = require("./models/EstateAsset.model.js");
+const BikeAsset = require("./models/BikeAsset.model.js");
+const YachtAsset = require("./models/YachtAsset.model.js");
 
 // middleware import
 const corsMiddleware = require("./middleware/cors.middleware.js");
@@ -154,6 +159,67 @@ app.use(corsMiddleware);
 
 // Sitemap MUST be at the top of all routes
 app.use("/", sitemapRoutes);
+
+// Social preview bots read the initial HTML and do not run the React app.
+// Put listing-specific Open Graph values into that response on the server.
+const listingModels = { car: CarAsset, estate: EstateAsset, bike: BikeAsset, yacht: YachtAsset };
+const htmlEscape = (value) => String(value || "").replace(/[&<>\"']/g, (char) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+}[char]));
+const assetSlug = (title) => String(title || "").trim().toLowerCase()
+  .replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
+
+app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next) => {
+  try {
+    const [, categoryRaw, slugRaw] = req.path.match(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i);
+    const category = categoryRaw.toLowerCase();
+    const slug = decodeURIComponent(slugRaw).toLowerCase();
+    const Model = listingModels[category];
+    let asset = mongoose.isValidObjectId(slug)
+      ? await Model.findOne({ _id: slug, status: "Active" }).select("title description images brand location").lean()
+      : null;
+
+    if (!asset) {
+      const titlePattern = slug.split("-").map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[\\s_-]+");
+      const matches = await Model.find({ status: "Active", title: { $regex: `^${titlePattern}$`, $options: "i" } })
+        .select("title description images brand location").limit(10).lean();
+      asset = matches.find((candidate) => assetSlug(candidate.title) === slug);
+    }
+    if (!asset) return next();
+
+    const title = `${asset.title}${asset.location ? ` in ${asset.location}` : ""} | Otulia`;
+    const description = String(asset.description || `Explore ${asset.title} on Otulia, the luxury marketplace.`).replace(/\s+/g, " ").slice(0, 300);
+    const rawImage = asset.images?.find((value) => typeof value === "string" && value.trim()) || "https://otulia.com/images/exclusive_club_bg.jpg";
+    const image = new URL(rawImage, "https://otulia.com").toString();
+    const canonical = `https://otulia.com/asset/${category}/${encodeURIComponent(assetSlug(asset.title) || slug)}`;
+    const tags = {
+      'property="og:type"': "product",
+      'property="og:title"': title,
+      'property="og:description"': description,
+      'property="og:url"': canonical,
+      'property="og:image"': image,
+      'name="twitter:title"': title,
+      'name="twitter:description"': description,
+      'name="twitter:image"': image,
+    };
+    const indexPath = path.join(distPath, "index.html");
+    let html = await fs.promises.readFile(indexPath, "utf8");
+    for (const [selector, value] of Object.entries(tags)) {
+      const escapedValue = htmlEscape(value);
+      const tagPattern = new RegExp(`<meta\\s+data-static-head\\s+${selector}\\s+content="[^"]*"\\s*\\/>`, "i");
+      html = html.replace(tagPattern, `<meta data-static-head ${selector} content="${escapedValue}" />`);
+    }
+    html = html.replace(/<title data-static-head>[^<]*<\/title>/i, `<title data-static-head>${htmlEscape(title)}</title>`);
+    html = html.replace(/<meta\s+(?:data-static-head\s+)?name="description"\s+content="[^"]*"\s*\/>/i, `<meta data-static-head name="description" content="${htmlEscape(description)}" />`);
+    html = html.replace(/<link\s+rel="canonical"[^>]*>/i, "");
+    html = html.replace("</head>", `<link data-static-head rel="canonical" href="${htmlEscape(canonical)}" />\n  </head>`);
+    res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
+    return res.type("html").send(html);
+  } catch (error) {
+    console.error("Listing SEO HTML error:", error);
+    return next();
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 
