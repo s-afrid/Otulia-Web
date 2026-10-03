@@ -621,11 +621,24 @@ function RankingHome() {
         instagram: nominee.instagram || keyDetails.instagram || "",
         twitter: nominee.twitter || keyDetails.twitter || nominee.x || "",
         tiktok: nominee.tiktok || keyDetails.tiktok || "",
-        youtubeFollowers: nominee.youtubeFollowers || keyDetails.youtubeFollowers || "",
-        instagramFollowers: nominee.instagramFollowers || keyDetails.instagramFollowers || "",
-        twitterFollowers: nominee.twitterFollowers || keyDetails.twitterFollowers || nominee.xFollowers || keyDetails.xFollowers || "",
-        tiktokFollowers: nominee.tiktokFollowers || keyDetails.tiktokFollowers || "",
-        totalFollowers: nominee.totalFollowers || keyDetails.totalFollowers || keyDetails.subscribers || nominee.subscribers || "",
+        youtubeFollowers:
+          nominee.youtubeFollowers || keyDetails.youtubeFollowers || "",
+        instagramFollowers:
+          nominee.instagramFollowers || keyDetails.instagramFollowers || "",
+        twitterFollowers:
+          nominee.twitterFollowers ||
+          keyDetails.twitterFollowers ||
+          nominee.xFollowers ||
+          keyDetails.xFollowers ||
+          "",
+        tiktokFollowers:
+          nominee.tiktokFollowers || keyDetails.tiktokFollowers || "",
+        totalFollowers:
+          nominee.totalFollowers ||
+          keyDetails.totalFollowers ||
+          keyDetails.subscribers ||
+          nominee.subscribers ||
+          "",
         rawCounts: nominee.rawCounts,
         banner:
           nominee.banner ||
@@ -717,11 +730,7 @@ function RankingHome() {
 
   return (
     <RankingScaleWrapper>
-      <SEO
-        title={seoTitle}
-        description={seoDescription}
-        noindex={seoNoindex}
-      />
+      <SEO title={seoTitle} description={seoDescription} noindex={seoNoindex} />
       <Sidebar categories={filteredCategories} activeSlug={activeSlug} />
 
       <div className="min-h-screen bg-black text-white flex-1 flex flex-col lg:ml-[260px] transition-all duration-300">
@@ -876,9 +885,10 @@ function RankingHome() {
                             alt={cat.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
-                          <div className="absolute top-3 left-3 bg-black/70 text-white text-[10.5px] sm:text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded backdrop-blur-sm border border-white/10">
+                          {/* <div className="absolute top-3 left-3 bg-black/70 text-white text-[10.5px] sm:text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded backdrop-blur-sm border border-white/10">
                             {cat.type}
-                          </div>
+                          </div> */}
+                          {/* Disabled Tag ^ */}
                         </div>
 
                         <div className="p-4 sm:p-5 flex-1 flex flex-col">

@@ -2,7 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSnackbar } from "../../contexts/SnackbarContext";
-import { FiMoreVertical, FiThumbsUp } from "react-icons/fi";
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiMoreVertical,
+  FiThumbsUp,
+} from "react-icons/fi";
 
 const MAX_DEPTH = 2;
 
@@ -81,6 +86,13 @@ function compareComments(a, b, sort) {
   return new Date(b.createdAt) - new Date(a.createdAt);
 }
 
+function countAllReplies(node) {
+  return (node.replies || []).reduce(
+    (sum, child) => sum + 1 + countAllReplies(child),
+    0,
+  );
+}
+
 // Builds the comment tree (max 2 levels). Anything deeper attaches
 // to the latest visible reply level instead of nesting further.
 function buildTree(comments, sort) {
@@ -92,7 +104,7 @@ function buildTree(comments, sort) {
 
   const collectDescendants = (commentId, list) => {
     (byParent[commentId] || []).forEach((child) => {
-      list.push({ ...child, depth: MAX_DEPTH, replies: [] });
+      list.push({ ...child, depth: MAX_DEPTH, replies: [], totalReplies: 0 });
       collectDescendants(child._id, list);
     });
   };
@@ -100,12 +112,13 @@ function buildTree(comments, sort) {
   const build = (parentId, depth) => {
     const nodes = [];
     (byParent[parentId] || []).forEach((c) => {
-      const node = { ...c, depth, replies: [] };
+      const node = { ...c, depth, replies: [], totalReplies: 0 };
       if (depth < MAX_DEPTH) {
         node.replies = build(c._id, depth + 1);
       } else {
         collectDescendants(c._id, nodes);
       }
+      node.totalReplies = countAllReplies(node);
       nodes.push(node);
     });
     return nodes.sort((a, b) => compareComments(a, b, sort));
@@ -153,6 +166,14 @@ export default function NomineeComments({ nomineeId, categoryId }) {
   const [sortOpen, setSortOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [likingId, setLikingId] = useState(null);
+  const [expandedReplies, setExpandedReplies] = useState({});
+
+  const toggleReplies = (commentId) => {
+    setExpandedReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
 
   const mainTextareaRef = useRef(null);
   const replyTextareaRef = useRef(null);
@@ -237,7 +258,12 @@ export default function NomineeComments({ nomineeId, categoryId }) {
       const res = await fetch("/api/rankings/comments", {
         method: "POST",
         headers: authHeaders,
-        body: JSON.stringify({ categoryId, nomineeId, parentCommentId, text: trimmed }),
+        body: JSON.stringify({
+          categoryId,
+          nomineeId,
+          parentCommentId,
+          text: trimmed,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -256,7 +282,8 @@ export default function NomineeComments({ nomineeId, categoryId }) {
     const posted = await submitComment("main", null, text);
     if (posted) {
       setText("");
-      if (mainTextareaRef.current) mainTextareaRef.current.style.height = "auto";
+      if (mainTextareaRef.current)
+        mainTextareaRef.current.style.height = "auto";
     }
   };
 
@@ -280,6 +307,14 @@ export default function NomineeComments({ nomineeId, categoryId }) {
 
     const posted = await submitComment(replyTo.id, parentId, replyText);
     if (posted) {
+      // Auto-expand the root comment thread so the newly posted reply is visible
+      let curr = comments.find((c) => c._id === parentId);
+      let rootId = parentId;
+      while (curr && curr.parentCommentId) {
+        rootId = curr.parentCommentId;
+        curr = comments.find((c) => c._id === curr.parentCommentId);
+      }
+      setExpandedReplies((prev) => ({ ...prev, [rootId]: true }));
       setReplyTo(null);
       setReplyText("");
     }
@@ -386,6 +421,8 @@ export default function NomineeComments({ nomineeId, categoryId }) {
     const liked = user && c.likes.includes(String(user._id));
     const isEditing = editingId === c._id;
     const isReply = c.depth > 0;
+    const showRepliesToggle = !isReply && c.totalReplies > 0;
+    const isExpanded = !!expandedReplies[c._id];
 
     const indent =
       c.depth === 1
@@ -396,12 +433,20 @@ export default function NomineeComments({ nomineeId, categoryId }) {
 
     return (
       <div key={c._id} className={indent}>
-        <div className="flex items-start gap-3 px-4 py-3">
-          <Avatar
-            name={c.user?.name}
-            picture={c.user?.picture}
-            className={isReply ? "w-6 h-6" : "w-10 h-10"}
-          />
+        <div className="flex items-stretch gap-3 px-4 py-3">
+          <div className="relative flex flex-col items-center shrink-0">
+            <Avatar
+              name={c.user?.name}
+              picture={c.user?.picture}
+              className={isReply ? "w-6 h-6" : "w-10 h-10"}
+            />
+            {showRepliesToggle && (
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute top-11 bottom-[17px] left-[19px] w-7 border-l-[1.5px] border-b-[1.5px] border-[#3F3F3F] rounded-bl-[12px]"
+              />
+            )}
+          </div>
 
           <div className="flex-1 min-w-0">
             {/* Username + timestamp + more menu */}
@@ -569,11 +614,32 @@ export default function NomineeComments({ nomineeId, categoryId }) {
                 </div>
               </div>
             )}
+
+            {/* Total replies toggle (YouTube style) */}
+            {showRepliesToggle && (
+              <div className="mt-1.5">
+                <button
+                  type="button"
+                  onClick={() => toggleReplies(c._id)}
+                  className="flex items-center gap-1.5 rounded-full px-3 py-1.5 -ml-1 text-[13px] font-normal text-[#F1F1F1] hover:bg-white/10 transition"
+                >
+                  <span>
+                    {c.totalReplies}{" "}
+                    {c.totalReplies === 1 ? "reply" : "replies"}
+                  </span>
+                  {isExpanded ? (
+                    <FiChevronUp className="w-4 h-4" />
+                  ) : (
+                    <FiChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Nested replies */}
-        {c.replies.map(renderComment)}
+        {(isReply || isExpanded) && c.replies.map(renderComment)}
       </div>
     );
   };
