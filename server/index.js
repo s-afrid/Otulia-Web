@@ -180,7 +180,7 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
       : null;
 
     if (!asset) {
-      const titlePattern = slug.split("-").map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[\\s_-]+");
+      const titlePattern = slug.split("-").map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[^a-z0-9]*");
       const matches = await Model.find({ status: "Active", title: { $regex: `^${titlePattern}$`, $options: "i" } })
         .select("title description images brand location").limit(10).lean();
       asset = matches.find((candidate) => assetSlug(candidate.title) === slug);
@@ -208,6 +208,9 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
       const escapedValue = htmlEscape(value);
       const tagPattern = new RegExp(`<meta\\s+data-static-head\\s+${selector}\\s+content="[^"]*"\\s*\\/>`, "i");
       html = html.replace(tagPattern, `<meta data-static-head ${selector} content="${escapedValue}" />`);
+    }
+    if (!/<meta\s+(?:data-static-head\s+)?property="og:url"\s+content="[^"]*"\s*\/>/i.test(html)) {
+      html = html.replace("</head>", `<meta data-static-head property="og:url" content="${htmlEscape(canonical)}" />\n  </head>`);
     }
     html = html.replace(/<title data-static-head>[^<]*<\/title>/i, `<title data-static-head>${htmlEscape(title)}</title>`);
     html = html.replace(/<meta\s+(?:data-static-head\s+)?name="description"\s+content="[^"]*"\s*\/>/i, `<meta data-static-head name="description" content="${htmlEscape(description)}" />`);
