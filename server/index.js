@@ -166,8 +166,56 @@ const listingModels = { car: CarAsset, estate: EstateAsset, bike: BikeAsset, yac
 const htmlEscape = (value) => String(value || "").replace(/[&<>\"']/g, (char) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 }[char]));
+const jsonForHtml = (value) => JSON.stringify(value).replace(/</g, "\\u003c");
 const assetSlug = (title) => String(title || "").trim().toLowerCase()
   .replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
+
+const assetSeoDetails = (asset) => {
+  const specification = asset.specification || {};
+  const publicSpecificationLabels = {
+    yearOfConstruction: "Year", year: "Year", model: "Model", variant: "Variant", body: "Body style",
+    mileage: "Mileage", mileageKM: "Mileage", power: "Power", maxPower: "Maximum power",
+    cylinderCapacity: "Engine capacity", engineCapacityCC: "Engine capacity", topSpeed: "Top speed",
+    engineType: "Engine", transmission: "Transmission", drive: "Drive", fuel: "Fuel",
+    fuelType: "Fuel type", exteriorColor: "Exterior color", interiorColor: "Interior color",
+    condition: "Condition", propertyType: "Property type", bedrooms: "Bedrooms", bathrooms: "Bathrooms",
+    builtUpArea: "Built-up area", landArea: "Land area", yachtType: "Yacht type", length: "Length",
+    beam: "Beam", draft: "Draft", guestCapacity: "Guest capacity", crewCapacity: "Crew capacity",
+    hullMaterial: "Hull material", usageHours: "Usage hours", accidentFree: "Accident-free",
+  };
+  const brand = asset.brand || specification.brand || specification.brandBuilder || asset.builder;
+  const model = specification.model || specification.variant || asset.variant;
+  const year = specification.yearOfConstruction || specification.year;
+  const location = asset.location || specification.carLocation || specification.yachtLocation || specification.city;
+  const purpose = asset.type === "Rent" ? "for rent" : "for sale";
+  const brandAndModel = [
+    brand && model && String(model).toLowerCase().startsWith(String(brand).toLowerCase()) ? null : brand,
+    model,
+  ].filter(Boolean).join(" ");
+  const searchName = brandAndModel
+    ? `${year && !brandAndModel.includes(String(year)) ? `${year} ` : ""}${brandAndModel}`
+    : asset.title;
+  const title = `${searchName}${asset.type === "Rent" ? " for rent" : " for sale"}${location ? ` in ${location}` : ""} | Otulia`;
+  const price = Number(asset.price);
+  const hasPrice = asset.type !== "Rent" && asset.isPriceOnRequest !== true && Number.isFinite(price) && price > 0;
+  const summary = [
+    `${searchName} ${purpose}${location ? ` in ${location}` : ""}.`,
+    year && !searchName.includes(String(year)) ? `Year: ${year}.` : null,
+    asset.isPriceOnRequest ? "Price on request." : hasPrice ? `Price: USD ${price.toLocaleString("en-US")}.` : null,
+    String(asset.description || "").replace(/\s+/g, " ").trim(),
+  ].filter(Boolean).join(" ").slice(0, 300);
+  const additionalProperties = Object.entries({ ...specification, ...(asset.keySpecifications || {}) })
+    .filter(([key, value]) => publicSpecificationLabels[key] && (typeof value === "string" || typeof value === "number") && String(value).trim())
+    .map(([key, value]) => ({ name: publicSpecificationLabels[key], value: String(value).trim() }));
+  const images = (Array.isArray(asset.images) ? asset.images : [])
+    .filter((value) => typeof value === "string" && value.trim())
+    .map((value) => {
+      try { return new URL(value, "https://otulia.com").toString(); } catch { return null; }
+    })
+    .filter(Boolean);
+
+  return { brand, model, year, location, title, searchName, summary, images, price, hasPrice, additionalProperties };
+};
 
 app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next) => {
   try {
@@ -175,22 +223,26 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
     const category = categoryRaw.toLowerCase();
     const slug = decodeURIComponent(slugRaw).toLowerCase();
     const Model = listingModels[category];
+    const seoFields = "title description images brand location price isPriceOnRequest status type category variant builder specification keySpecifications agent _id";
     let asset = mongoose.isValidObjectId(slug)
-      ? await Model.findOne({ _id: slug, status: "Active" }).select("title description images brand location").lean()
+      ? await Model.findOne({ _id: slug, status: "Active" }).select(seoFields).lean()
       : null;
 
     if (!asset) {
       const titlePattern = slug.split("-").map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[^a-z0-9]*");
       const matches = await Model.find({ status: "Active", title: { $regex: `^${titlePattern}$`, $options: "i" } })
-        .select("title description images brand location").limit(10).lean();
+        .select(seoFields).limit(10).lean();
       asset = matches.find((candidate) => assetSlug(candidate.title) === slug);
     }
-    if (!asset) return next();
+    if (!asset) {
+      res.setHeader("X-Robots-Tag", "noindex, nofollow");
+      return res.status(404).type("html").send("<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex, nofollow\"><title>Listing not found | Otulia</title></head><body><main><h1>Listing not found</h1><p>This listing is no longer available.</p><a href=\"/shop\">Browse active listings</a></main></body></html>");
+    }
 
-    const title = `${asset.title}${asset.location ? ` in ${asset.location}` : ""} | Otulia`;
-    const description = String(asset.description || `Explore ${asset.title} on Otulia, the luxury marketplace.`).replace(/\s+/g, " ").slice(0, 300);
-    const rawImage = asset.images?.find((value) => typeof value === "string" && value.trim()) || "https://otulia.com/images/exclusive_club_bg.jpg";
-    const image = new URL(rawImage, "https://otulia.com").toString();
+    const seo = assetSeoDetails(asset);
+    const title = seo.title;
+    const description = seo.summary || `Explore ${asset.title} on Otulia, the luxury marketplace.`;
+    const image = seo.images[0] || "https://otulia.com/images/exclusive_club_bg.jpg";
     const canonical = `https://otulia.com/asset/${category}/${encodeURIComponent(assetSlug(asset.title) || slug)}`;
     const tags = {
       'property="og:type"': "product",
@@ -198,16 +250,23 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
       'property="og:description"': description,
       'property="og:url"': canonical,
       'property="og:image"': image,
+      'property="og:image:alt"': `${asset.title}${seo.brand ? ` ${seo.brand}` : ""}${seo.model ? ` ${seo.model}` : ""}`,
       'name="twitter:title"': title,
       'name="twitter:description"': description,
       'name="twitter:image"': image,
+      'name="twitter:image:alt"': `${asset.title}${seo.brand ? ` ${seo.brand}` : ""}${seo.model ? ` ${seo.model}` : ""}`,
     };
     const indexPath = path.join(distPath, "index.html");
     let html = await fs.promises.readFile(indexPath, "utf8");
     for (const [selector, value] of Object.entries(tags)) {
       const escapedValue = htmlEscape(value);
-      const tagPattern = new RegExp(`<meta\\s+data-static-head\\s+${selector}\\s+content="[^"]*"\\s*\\/>`, "i");
-      html = html.replace(tagPattern, `<meta data-static-head ${selector} content="${escapedValue}" />`);
+      const tagPattern = new RegExp(`<meta\\s+(?:data-static-head\\s+)?${selector}\\s+content="[^"]*"\\s*\\/>`, "i");
+      const replacement = `<meta data-static-head ${selector} content="${escapedValue}" />`;
+      if (tagPattern.test(html)) {
+        html = html.replace(tagPattern, replacement);
+      } else {
+        html = html.replace("</head>", `${replacement}\n  </head>`);
+      }
     }
     if (!/<meta\s+(?:data-static-head\s+)?property="og:url"\s+content="[^"]*"\s*\/>/i.test(html)) {
       html = html.replace("</head>", `<meta data-static-head property="og:url" content="${htmlEscape(canonical)}" />\n  </head>`);
@@ -216,11 +275,52 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
     html = html.replace(/<meta\s+(?:data-static-head\s+)?name="description"\s+content="[^"]*"\s*\/>/i, `<meta data-static-head name="description" content="${htmlEscape(description)}" />`);
     html = html.replace(/<link\s+rel="canonical"[^>]*>/i, "");
     html = html.replace("</head>", `<link data-static-head rel="canonical" href="${htmlEscape(canonical)}" />\n  </head>`);
+
+    const productSchema = seo.hasPrice && seo.images.length ? {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: seo.searchName,
+      description: String(asset.description || description).replace(/\s+/g, " ").trim().slice(0, 5000),
+      image: seo.images,
+      sku: String(asset._id),
+      category: asset.category || category,
+      ...(seo.model ? { model: seo.model } : {}),
+      ...(seo.brand ? { brand: { "@type": "Brand", name: seo.brand } } : {}),
+      ...(seo.additionalProperties.length ? {
+        additionalProperty: seo.additionalProperties.map((property) => ({ "@type": "PropertyValue", ...property })),
+      } : {}),
+      offers: {
+        "@type": "Offer",
+        url: canonical,
+        price: seo.price,
+        priceCurrency: "USD",
+        availability: "https://schema.org/InStock",
+        ...(seo.location ? { availableAtOrFrom: { "@type": "Place", name: seo.location } } : {}),
+        ...(asset.agent?.company ? { seller: { "@type": "Organization", name: asset.agent.company } } : {}),
+      },
+    } : null;
+    if (productSchema) {
+      html = html.replace("</head>", `<script data-static-head type="application/ld+json">${jsonForHtml(productSchema)}</script>\n  </head>`);
+    }
+
+    const fallbackDetails = [
+      seo.brand ? `<li><strong>Brand:</strong> ${htmlEscape(seo.brand)}</li>` : "",
+      seo.model ? `<li><strong>Model:</strong> ${htmlEscape(seo.model)}</li>` : "",
+      seo.year ? `<li><strong>Year:</strong> ${htmlEscape(seo.year)}</li>` : "",
+      seo.location ? `<li><strong>Location:</strong> ${htmlEscape(seo.location)}</li>` : "",
+      asset.isPriceOnRequest ? "<li><strong>Price:</strong> Price on request</li>" : seo.hasPrice ? `<li><strong>Price:</strong> USD ${htmlEscape(seo.price.toLocaleString("en-US"))}</li>` : "",
+      ...seo.additionalProperties.map(({ name, value }) => `<li><strong>${htmlEscape(name)}:</strong> ${htmlEscape(value)}</li>`),
+    ].filter(Boolean).join("");
+    const fallbackImage = seo.images[0]
+      ? `<img src="${htmlEscape(seo.images[0])}" alt="${htmlEscape(`${asset.title}${seo.brand ? ` ${seo.brand}` : ""}${seo.model ? ` ${seo.model}` : ""}`)}" style="max-width:100%;height:auto">`
+      : "";
+    const noScriptPage = `<noscript><main style="font-family:Arial,sans-serif;max-width:900px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(title.replace(/ \| Otulia$/, ""))}</h1>${fallbackImage}<p>${htmlEscape(String(asset.description || "").replace(/\s+/g, " ").trim())}</p><ul>${fallbackDetails}</ul><p><a href="${htmlEscape(canonical)}">View this ${htmlEscape(category)} listing on Otulia</a></p></main></noscript>`;
+    html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, noScriptPage);
     res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
     return res.type("html").send(html);
   } catch (error) {
     console.error("Listing SEO HTML error:", error);
-    return next();
+    return res.status(503).type("html").send("<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex\"><title>Listing temporarily unavailable | Otulia</title></head><body><h1>Listing temporarily unavailable</h1></body></html>");
   }
 });
 

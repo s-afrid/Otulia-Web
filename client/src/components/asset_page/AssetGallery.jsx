@@ -3,7 +3,7 @@ import { optimizeCloudinaryUrl } from '../../utils/imageUtils';
 import { IoClose, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
 
-const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
+const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset', assetTitle }) => {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -14,9 +14,11 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
   if (hasVideo) {
     allMedia.push({ type: 'video', url: videoUrl });
   }
-  images.forEach(img => {
-    allMedia.push({ type: 'image', url: img });
+  images.forEach((img, imageIndex) => {
+    allMedia.push({ type: 'image', url: img, imageIndex });
   });
+  const imageAlt = (media, view = 'photo') =>
+    `${assetTitle || `${assetType} listing`}${media?.imageIndex !== undefined ? ` ${view} ${media.imageIndex + 1}` : ` ${view}`}`;
 
   const getYouTubeId = (url) => {
     if (!url) return null;
@@ -93,7 +95,7 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
             ) : (
               <img 
                 src={optimizeCloudinaryUrl(allMedia[0].url, 1200)} 
-                alt={`${assetType} cover`}
+                alt={imageAlt(allMedia[0], 'cover photo')}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 ease-out"
                 fetchpriority="high"
               />
@@ -114,7 +116,7 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
                     <img 
                       src={`https://img.youtube.com/vi/${getYouTubeId(allMedia[idx].url)}/mqdefault.jpg`}
                       className="w-full h-full object-cover opacity-60"
-                      alt="Video thumbnail"
+                      alt={`${assetTitle || assetType} video thumbnail`}
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
@@ -125,7 +127,7 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
                 ) : (
                   <img 
                     src={optimizeCloudinaryUrl(allMedia[idx].url, 600)} 
-                    alt={`${assetType} view ${idx + 1}`}
+                    alt={imageAlt(allMedia[idx])}
                     className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-out"
                   />
                 )
@@ -194,7 +196,7 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
             ) : (
               <img 
                 src={allMedia[activeIndex].url} 
-                alt={`${assetType} full view ${activeIndex + 1}`}
+                alt={imageAlt(allMedia[activeIndex], 'photo')}
                 className="max-w-full max-h-full object-contain select-none shadow-2xl"
               />
             )}
@@ -230,13 +232,13 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset' }) => {
               >
                 {item.type === 'video' ? (
                   <>
-                    <img src={`https://img.youtube.com/vi/${getYouTubeId(item.url)}/mqdefault.jpg`} className="w-full h-full object-cover" alt="Video thumb" />
+                  <img src={`https://img.youtube.com/vi/${getYouTubeId(item.url)}/mqdefault.jpg`} className="w-full h-full object-cover" alt={`${assetTitle || assetType} video thumbnail`} />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                       <div className="w-6 h-6 border-t-4 border-t-transparent border-l-6 border-l-white border-b-4 border-b-transparent ml-1" />
                     </div>
                   </>
                 ) : (
-                  <img src={optimizeCloudinaryUrl(item.url, 200)} className="w-full h-full object-cover" alt={`Thumb ${idx}`} />
+                  <img src={optimizeCloudinaryUrl(item.url, 200)} className="w-full h-full object-cover" alt={imageAlt(item, 'thumbnail')} />
                 )}
               </button>
             ))}

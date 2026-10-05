@@ -116,7 +116,7 @@ const Yacht_Section = () => {
         description={info.description}
         image={info.images?.[0]}
         url={`/asset/yacht/${encodeURIComponent(createAssetSlug(info.title, info._id || info.id))}`}
-        type="article"
+        type="product"
         productData={info}
         breadcrumbs={[
           { label: 'Home', path: '/' },
@@ -129,6 +129,7 @@ const Yacht_Section = () => {
         images={info.images}
         videoUrl={info.videoUrl}
         assetType="Yacht"
+        assetTitle={info.title}
       />
 
       <YachtDetails item={info} modelName="YachtAsset" />

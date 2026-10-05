@@ -116,7 +116,7 @@ const Estate_Section = () => {
         description={info.description}
         image={info.images?.[0]}
         url={`/asset/estate/${encodeURIComponent(createAssetSlug(info.title, info._id || info.id))}`}
-        type="article"
+        type="product"
         productData={info}
         breadcrumbs={[
           { label: 'Home', path: '/' },
@@ -130,6 +130,7 @@ const Estate_Section = () => {
         images={info.images}
         videoUrl={info.videoUrl}
         assetType="Estate"
+        assetTitle={info.title}
       />
 
       {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="EstateAsset" /> */}

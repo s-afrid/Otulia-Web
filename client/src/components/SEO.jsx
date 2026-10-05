@@ -46,6 +46,29 @@ const conditionToSchema = (raw) => {
   return 'https://schema.org/UsedCondition';
 };
 
+const productPropertyLabels = {
+  yearOfConstruction: 'Year', year: 'Year', model: 'Model', variant: 'Variant', body: 'Body style',
+  mileage: 'Mileage', mileageKM: 'Mileage', power: 'Power', maxPower: 'Maximum power',
+  cylinderCapacity: 'Engine capacity', engineCapacityCC: 'Engine capacity', topSpeed: 'Top speed',
+  engineType: 'Engine', transmission: 'Transmission', drive: 'Drive', fuel: 'Fuel',
+  fuelType: 'Fuel type', exteriorColor: 'Exterior color', interiorColor: 'Interior color',
+  condition: 'Condition', propertyType: 'Property type', bedrooms: 'Bedrooms', bathrooms: 'Bathrooms',
+  builtUpArea: 'Built-up area', landArea: 'Land area', yachtType: 'Yacht type', length: 'Length',
+  beam: 'Beam', draft: 'Draft', guestCapacity: 'Guest capacity', crewCapacity: 'Crew capacity',
+  hullMaterial: 'Hull material', usageHours: 'Usage hours', accidentFree: 'Accident-free',
+};
+
+const getProductProperties = (productData) => Object.entries({
+  ...(productData?.specification || {}),
+  ...(productData?.keySpecifications || {}),
+})
+  .filter(([key, value]) => productPropertyLabels[key] && (typeof value === 'string' || typeof value === 'number') && String(value).trim())
+  .map(([key, value]) => ({
+    '@type': 'PropertyValue',
+    name: productPropertyLabels[key],
+    value: String(value).trim(),
+  }));
+
 // Map the asset `status` field to a schema.org availability URL.
 const statusToAvailability = (status) => {
   switch (status) {
@@ -86,9 +109,37 @@ export default function SEO({
   const resolvedUrl = resolveCanonicalUrl(url || location.pathname);
   const resolvedImage = image || DEFAULT_IMAGE;
 
-  const seoTitle = title
-    ? (/\botulia\b/i.test(title) ? title : `${title} | Otulia`)
-    : BRAND_TITLE;
+  const specification = productData?.specification || {};
+  const productBrand = productData?.brand || specification.brand || specification.brandBuilder;
+  const productModel = specification.model || specification.variant || productData?.variant;
+  const productYear = specification.yearOfConstruction || specification.year;
+  const brandAndModel = [
+    productBrand && productModel && String(productModel).toLowerCase().startsWith(String(productBrand).toLowerCase()) ? null : productBrand,
+    productModel,
+  ].filter(Boolean).join(' ');
+  const productName = brandAndModel
+    ? `${productYear && !brandAndModel.includes(String(productYear)) ? `${productYear} ` : ''}${brandAndModel}`
+    : productData?.title || title || 'Luxury listing';
+  const listingPurpose = productData?.type === 'Rent' ? 'for rent' : 'for sale';
+  const seoTitle = productData
+    ? `${productName} ${listingPurpose}${productData.location ? ` in ${productData.location}` : ''} | Otulia`
+    : title
+      ? (/\botulia\b/i.test(title) ? title : `${title} | Otulia`)
+      : BRAND_TITLE;
+  const productDescription = productData
+    ? [
+        `${productName} ${listingPurpose}${productData.location ? ` in ${productData.location}` : ''}.`,
+        productBrand && !productName.toLowerCase().includes(String(productBrand).toLowerCase()) ? productBrand : null,
+        productModel && !productName.toLowerCase().includes(String(productModel).toLowerCase()) ? productModel : null,
+        productYear && !productName.includes(String(productYear)) ? productYear : null,
+        productData.isPriceOnRequest
+          ? 'Price on request.'
+          : toNumericPrice(productData.price) > 0
+            ? `Price: USD ${toNumericPrice(productData.price).toLocaleString('en-US')}.`
+            : null,
+        description || DEFAULT_DESCRIPTION,
+      ].filter(Boolean).join(' ').replace(/\s+/g, ' ').slice(0, 300)
+    : description || DEFAULT_DESCRIPTION;
 
   // Product Schema for Assets
   let productSchema = null;
@@ -100,15 +151,18 @@ export default function SEO({
     const numericPrice = toNumericPrice(productData.price);
     const onRequest = productData.isPriceOnRequest === true;
 
-    productSchema = {
+    productSchema = numericPrice > 0 && !onRequest && productData.type !== 'Rent' && productData.images?.length ? {
       '@context': 'https://schema.org',
       '@type': 'Product',
       name: productData.title,
-      description: productData.description || description || DEFAULT_DESCRIPTION,
+      description: productData.description || productDescription,
       image: productData.images?.length
         ? productData.images
         : [resolvedImage],
       sku: productData._id,
+      category: productData.category || undefined,
+      model: productData.specification?.model || undefined,
+      ...(getProductProperties(productData).length ? { additionalProperty: getProductProperties(productData) } : {}),
       brand: {
         '@type': 'Brand',
         name: productData.brand || productData.specification?.manufacturer || 'Luxury Asset',
@@ -119,17 +173,10 @@ export default function SEO({
         priceCurrency: 'USD',
         availability,
         ...(itemCondition ? { itemCondition } : {}),
-        // Only emit price when it's a real number; otherwise leave it absent
-        // (Google flags empty / string prices, and `isPriceOnRequest` is the
-        // honest signal to use instead).
-        ...(onRequest || numericPrice === null
-          ? { priceSpecification: {
-              '@type': 'PriceSpecification',
-              priceCurrency: 'USD',
-              valueAddedTaxIncluded: false,
-              description: 'Price on request',
-            } }
-          : { price: numericPrice }),
+        price: numericPrice,
+        ...(productData.location
+          ? { availableAtOrFrom: { '@type': 'Place', name: productData.location } }
+          : {}),
         seller: productData.agent?.company
           ? {
               '@type': 'Organization',
@@ -137,7 +184,7 @@ export default function SEO({
             }
           : undefined,
       },
-    };
+    } : null;
   }
 
   // BreadcrumbList JSON-LD. Accepts `[{label, path}]` from ListingTemplate
@@ -162,7 +209,7 @@ export default function SEO({
     <Helmet>
       {/* Standard metadata tags */}
       <title>{seoTitle}</title>
-      <meta name="description" content={description || DEFAULT_DESCRIPTION} />
+      <meta name="description" content={productDescription} />
       <meta name="keywords" content={keywords || DEFAULT_KEYWORDS} />
       <meta
         name="robots"
@@ -187,10 +234,11 @@ export default function SEO({
       {/* OpenGraph tags */}
       <meta property="og:type" content={type} />
       <meta property="og:title" content={seoTitle} />
-      <meta property="og:description" content={description || DEFAULT_DESCRIPTION} />
+      <meta property="og:description" content={productDescription} />
       <meta property="og:site_name" content={name} />
       <meta property="og:url" content={resolvedUrl} />
       <meta property="og:image" content={resolvedImage} />
+      <meta property="og:image:alt" content={seoTitle} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:locale" content="en_US" />
@@ -198,7 +246,7 @@ export default function SEO({
       {/* Twitter tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={seoTitle} />
-      <meta name="twitter:description" content={description || DEFAULT_DESCRIPTION} />
+      <meta name="twitter:description" content={productDescription} />
       <meta name="twitter:image" content={resolvedImage} />
       <meta name="twitter:image:alt" content={seoTitle} />
     </Helmet>

@@ -60,12 +60,24 @@ router.get('/sitemap-pages.xml', (req, res) => {
 const sendCategorySitemap = async (req, res, category) => {
     try {
         const { Model } = categories.find(({ key }) => key === category);
-        const assets = await Model.find({ status: 'Active' }, 'title _id updatedAt').lean().exec();
-        const urls = assets.filter((asset) => asset._id).map((asset) => renderUrl(
-            `${BASE_URL}/asset/${category}/${slugify(asset.title) || asset._id}`,
-            asset.updatedAt,
-        ));
-        return sendXml(res, `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>`);
+        const assets = await Model.find({ status: 'Active' }, 'title _id updatedAt images').lean().exec();
+        const urls = assets.filter((asset) => asset._id).map((asset) => {
+            const pageUrl = `${BASE_URL}/asset/${category}/${slugify(asset.title) || asset._id}`;
+            const images = (Array.isArray(asset.images) ? asset.images : [])
+                .filter((image) => typeof image === 'string' && image.trim())
+                .map((image) => {
+                    try { return new URL(image, BASE_URL).toString(); } catch { return null; }
+                })
+                .filter(Boolean)
+                .slice(0, 1000)
+                .map((image) => `<image:image><image:loc>${escapeXml(image)}</image:loc></image:image>`)
+                .join('');
+            const lastmod = asset.updatedAt instanceof Date && !Number.isNaN(asset.updatedAt.valueOf())
+                ? `<lastmod>${asset.updatedAt.toISOString().slice(0, 10)}</lastmod>`
+                : '';
+            return `<url><loc>${escapeXml(pageUrl)}</loc>${lastmod}<changefreq>weekly</changefreq><priority>0.6</priority>${images}</url>`;
+        });
+        return sendXml(res, `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">${urls.join('')}</urlset>`);
 
     } catch (error) {
         console.error("Error generating sitemap:", error);

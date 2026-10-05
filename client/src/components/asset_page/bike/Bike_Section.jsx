@@ -113,7 +113,7 @@ const Bike_Section = () => {
                    description={info.description}
                    image={info.images?.[0]}
                    url={`/asset/bike/${encodeURIComponent(createAssetSlug(info.title, info._id || info.id))}`}
-                   type="article"
+                   type="product"
                    productData={info}
                    breadcrumbs={[
                      { label: 'Home', path: '/' },
@@ -121,7 +121,7 @@ const Bike_Section = () => {
                      { label: info.title },
                    ]}
                  />
-            <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Bike" />
+            <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Bike" assetTitle={info.title} />
 
             <BikeDetails item={info} modelName="BikeAsset" />
 
