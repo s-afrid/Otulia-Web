@@ -30,7 +30,7 @@ const Estate_Hero = () => {
       </div>
 
       <div className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/55 to-transparent px-5 pb-5 pt-12 md:px-10 md:pb-7">
-        <p className="montserrat text-right text-lg font-light tracking-wide text-white drop-shadow-md md:text-xl">
+        <p className="montserrat text-right text-[16px] font-light tracking-wide text-white drop-shadow-md md:text-[16px]">
           Umm Al Sheif, Dubai, United Arab Emirates
         </p>
       </div>
