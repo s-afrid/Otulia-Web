@@ -9,6 +9,7 @@ import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
 import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
+import { createAssetSlug } from "../../../utils/slugUtils";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
 import AssetUnavailable from "../AssetUnavailable";
@@ -111,6 +112,7 @@ const Bike_Section = () => {
                    title={info.title}
                    description={info.description}
                    image={info.images?.[0]}
+                   url={`/asset/bike/${encodeURIComponent(createAssetSlug(info.title, info._id || info.id))}`}
                    type="article"
                    productData={info}
                    breadcrumbs={[
