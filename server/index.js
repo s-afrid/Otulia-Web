@@ -10,6 +10,9 @@ const CarAsset = require("./models/CarAsset.model.js");
 const EstateAsset = require("./models/EstateAsset.model.js");
 const BikeAsset = require("./models/BikeAsset.model.js");
 const YachtAsset = require("./models/YachtAsset.model.js");
+const RankingCategory = require("./models/RankingCategory.model.js");
+const User = require("./models/User.model.js");
+const Listing = require("./models/Listing.model.js");
 
 // middleware import
 const corsMiddleware = require("./middleware/cors.middleware.js");
@@ -167,6 +170,12 @@ const htmlEscape = (value) => String(value || "").replace(/[&<>\"']/g, (char) =>
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
 }[char]));
 const jsonForHtml = (value) => JSON.stringify(value).replace(/</g, "\\u003c");
+const publicUrl = (value) => {
+  try {
+    const url = new URL(value, "https://otulia.com");
+    return ["http:", "https:"].includes(url.protocol) ? url.toString() : "";
+  } catch { return ""; }
+};
 const assetSlug = (title) => String(title || "").trim().toLowerCase()
   .replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
 
@@ -300,7 +309,7 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
       },
     } : null;
     if (productSchema) {
-      html = html.replace("</head>", `<script data-static-head type="application/ld+json">${jsonForHtml(productSchema)}</script>\n  </head>`);
+      html = html.replace("</head>", `<script type="application/ld+json">${jsonForHtml(productSchema)}</script>\n  </head>`);
     }
 
     const fallbackDetails = [
@@ -314,14 +323,393 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
     const fallbackImage = seo.images[0]
       ? `<img src="${htmlEscape(seo.images[0])}" alt="${htmlEscape(`${asset.title}${seo.brand ? ` ${seo.brand}` : ""}${seo.model ? ` ${seo.model}` : ""}`)}" style="max-width:100%;height:auto">`
       : "";
-    const noScriptPage = `<noscript><main style="font-family:Arial,sans-serif;max-width:900px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(title.replace(/ \| Otulia$/, ""))}</h1>${fallbackImage}<p>${htmlEscape(String(asset.description || "").replace(/\s+/g, " ").trim())}</p><ul>${fallbackDetails}</ul><p><a href="${htmlEscape(canonical)}">View this ${htmlEscape(category)} listing on Otulia</a></p></main></noscript>`;
-    html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, noScriptPage);
+    const listingHtml = `<main style="font-family:Arial,sans-serif;max-width:900px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(title.replace(/ \| Otulia$/, ""))}</h1>${fallbackImage}<p>${htmlEscape(String(asset.description || "").replace(/\s+/g, " ").trim())}</p><ul>${fallbackDetails}</ul><p><a href="${htmlEscape(canonical)}">View this ${htmlEscape(category)} listing on Otulia</a></p></main>`;
+    html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, "");
+    html = html.replace('<div id="root"></div>', `<div id="root">${listingHtml}</div>`);
     res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
     return res.type("html").send(html);
   } catch (error) {
     console.error("Listing SEO HTML error:", error);
     return res.status(503).type("html").send("<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex\"><title>Listing temporarily unavailable | Otulia</title></head><body><h1>Listing temporarily unavailable</h1></body></html>");
   }
+});
+
+// Render ranking content into the initial HTML so crawlers and link-preview
+// clients can read the entries without executing the React application.
+app.get(/^\/ranking\/([^/]+)\/([^/]+)\/?$/i, async (req, res) => {
+  try {
+    const [, categoryParam, slugParam] = req.path.match(/^\/ranking\/([^/]+)\/([^/]+)\/?$/i);
+    const slug = decodeURIComponent(slugParam).toLowerCase();
+    const category = await RankingCategory.findOne({ slug, status: "Active" })
+      .populate("assetNominees")
+      .populate("dealerNominees");
+
+    if (!category) {
+      res.setHeader("X-Robots-Tag", "noindex, nofollow");
+      return res.status(404).type("html").send("<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex, nofollow\"><title>Ranking not found | Otulia</title></head><body><main><h1>Ranking not found</h1><a href=\"/ranking\">Browse Otulia rankings</a></main></body></html>");
+    }
+
+    const categoryPath = category.type.toLowerCase().replace(/\s+/g, "").replace(/contentcreator/i, "contentcreators");
+    const canonical = `https://otulia.com/ranking/${categoryPath}/${encodeURIComponent(category.slug)}`;
+    if (categoryParam.toLowerCase() !== categoryPath) return res.redirect(301, canonical);
+
+    const nominees = category.targetType === "Assets" ? category.assetNominees : category.dealerNominees;
+    const rankedNominees = [...(nominees || [])]
+      .sort((a, b) => ((b.votes || 0) + (b.fakeVotes || 0)) - ((a.votes || 0) + (a.fakeVotes || 0)))
+      .map((nominee, index) => ({
+        name: nominee.name,
+        image: nominee.image || nominee.profilePic || nominee.avatar || "",
+        description: nominee.description || nominee.detail || "",
+        brand: nominee.brand || "",
+        model: nominee.model || "",
+        listingLink: nominee.listingLink || "",
+        keyDetails: nominee.keyDetails || {},
+        rank: index + 1,
+      }));
+
+    const title = `${category.title} | Otulia Rankings`;
+    const description = String(category.shortDescription || category.detailedDescription || `Explore Otulia's ${category.title.toLowerCase()} and see how they rank.`)
+      .replace(/\s+/g, " ").trim().slice(0, 300);
+    const socialImage = publicUrl(category.bannerImage || category.categoryImage || rankedNominees.find((nominee) => nominee.image)?.image) || "https://otulia.com/images/exclusive_club_bg.jpg";
+    const indexPath = path.join(distPath, "index.html");
+    let html = await fs.promises.readFile(indexPath, "utf8");
+    html = html.replace(/<title data-static-head>[^<]*<\/title>/i, `<title data-static-head>${htmlEscape(title)}</title>`);
+    html = html.replace(/<meta\s+(?:data-static-head\s+)?name="description"\s+content="[^"]*"\s*\/>/i, `<meta data-static-head name="description" content="${htmlEscape(description)}" />`);
+    html = html.replace(/<link\s+rel="canonical"[^>]*>/i, "");
+    const rankingMeta = {
+      'property="og:type"': "article",
+      'property="og:title"': title,
+      'property="og:description"': description,
+      'property="og:url"': canonical,
+      'property="og:image"': socialImage,
+      'property="og:image:alt"': category.title,
+      'name="twitter:title"': title,
+      'name="twitter:description"': description,
+      'name="twitter:image"': socialImage,
+      'name="twitter:image:alt"': category.title,
+    };
+    for (const [selector, value] of Object.entries(rankingMeta)) {
+      const pattern = new RegExp(`<meta\\s+(?:data-static-head\\s+)?${selector}\\s+content="[^"]*"\\s*\\/>`, "i");
+      const replacement = `<meta data-static-head ${selector} content="${htmlEscape(value)}" />`;
+      if (pattern.test(html)) html = html.replace(pattern, replacement);
+      else html = html.replace("</head>", `${replacement}\n  </head>`);
+    }
+    html = html.replace("</head>", `<link data-static-head rel="canonical" href="${htmlEscape(canonical)}" />\n  </head>`);
+
+    const entries = rankedNominees.map((nominee) => {
+      const name = [nominee.brand, nominee.model].filter((part) => part && !nominee.name.toLowerCase().includes(part.toLowerCase())).join(" ");
+      const displayName = name ? `${nominee.name} (${name})` : nominee.name;
+      const imageUrl = publicUrl(nominee.image);
+      const image = imageUrl ? `<img src="${htmlEscape(imageUrl)}" alt="${htmlEscape(displayName)}" style="max-width:240px;height:auto">` : "";
+      const details = Object.entries(nominee.keyDetails)
+        .filter(([, value]) => ["string", "number"].includes(typeof value) && String(value).trim())
+        .map(([key, value]) => `<li><strong>${htmlEscape(key.replace(/([A-Z])/g, " $1"))}:</strong> ${htmlEscape(value)}</li>`)
+        .join("");
+      const link = /^https?:\/\//i.test(nominee.listingLink) || nominee.listingLink.startsWith("/")
+        ? `<p><a href="${htmlEscape(nominee.listingLink.startsWith("/") ? new URL(nominee.listingLink, "https://otulia.com").toString() : nominee.listingLink)}">View listing</a></p>`
+        : "";
+      return `<article><h2>${nominee.rank}. ${htmlEscape(displayName)}</h2>${image}${nominee.description ? `<p>${htmlEscape(nominee.description)}</p>` : ""}${details ? `<ul>${details}</ul>` : ""}${link}</article>`;
+    }).join("");
+    const renderedContent = `<main style="font-family:Arial,sans-serif;max-width:900px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(category.title)}</h1><p>${htmlEscape(description)}</p>${entries || "<p>No ranked entries are currently available.</p>"}<p><a href="/ranking">Browse all Otulia rankings</a></p></main>`;
+    html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, "");
+    html = html.replace('<div id="root"></div>', `<div id="root">${renderedContent}</div>`);
+
+    if (rankedNominees.length) {
+      const itemList = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: category.title,
+        description,
+        url: canonical,
+        numberOfItems: rankedNominees.length,
+        itemListOrder: "https://schema.org/ItemListOrderAscending",
+        itemListElement: rankedNominees.map((nominee) => ({
+          "@type": "ListItem",
+          position: nominee.rank,
+          name: nominee.name,
+          ...(publicUrl(nominee.image) ? { image: publicUrl(nominee.image) } : {}),
+          ...(nominee.description ? { description: nominee.description } : {}),
+          ...(publicUrl(nominee.listingLink) ? { url: publicUrl(nominee.listingLink) } : {}),
+        })),
+      };
+      html = html.replace("</head>", `<script type="application/ld+json">${jsonForHtml(itemList)}</script>\n  </head>`);
+    }
+
+    res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
+    return res.type("html").send(html);
+  } catch (error) {
+    console.error("Ranking SEO HTML error:", error);
+    return res.status(503).type("html").send("<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex\"><title>Ranking temporarily unavailable | Otulia</title></head><body><h1>Ranking temporarily unavailable</h1></body></html>");
+  }
+});
+
+// Public collection and information pages also need useful first-response HTML.
+// Authenticated/account routes intentionally stay on the app shell and remain noindex.
+const publicPageDetails = {
+  "/": ["Luxury Cars, Real Estate & Yachts for Sale | Otulia", "Discover luxury cars, real estate, yachts and bikes for sale from dealers and private sellers around the world."],
+  "/shop": ["Buy Luxury Cars, Real Estate & More | Otulia", "Browse luxury cars, estates, yachts and bikes for sale on Otulia."],
+  "/rent": ["Rent Luxury Cars, Estates & Yachts | Otulia", "Explore luxury cars, estates, yachts and bikes available to rent through Otulia."],
+  "/community": ["Otulia Luxury Community", "Explore the Otulia community for luxury asset owners, buyers and enthusiasts."],
+  "/seller": ["Sell Luxury Assets on Otulia", "Reach a global audience of qualified buyers for your luxury cars, real estate, yachts and bikes."],
+  "/sellwithus": ["Sell With Otulia", "List your luxury asset with Otulia and connect with buyers around the world."],
+  "/pricing": ["Otulia Seller Plans & Pricing", "Compare Otulia plans for dealers and private sellers listing luxury assets."],
+  "/about": ["About Otulia", "Otulia is a global marketplace for luxury cars, real estate, yachts and bikes."],
+  "/reviews": ["Otulia Reviews", "Read buyer and seller experiences with the Otulia luxury marketplace."],
+  "/faq": ["Otulia Frequently Asked Questions", "Answers about buying, selling and renting luxury assets through Otulia."],
+  "/blogs": ["Luxury Market News & Stories | Otulia", "Read the latest luxury automotive, real estate and lifestyle stories from Otulia."],
+  "/journal": ["Otulia Journal | Luxury Market Guides & Stories", "Explore practical guides and editorial stories about luxury cars, real estate and ownership."],
+  "/terms": ["Terms of Use | Otulia", "Review the terms that apply when using the Otulia marketplace."],
+  "/privacy-policy": ["Privacy Policy | Otulia", "Learn how Otulia collects, uses and protects personal information."],
+  "/shipping": ["Shipping Information | Otulia", "Information about coordinating delivery for assets purchased through Otulia."],
+  "/returns": ["Returns Policy | Otulia", "Review Otulia's returns and cancellation information."],
+  "/cookie-policy": ["Cookie Policy | Otulia", "Learn how Otulia uses cookies and similar technologies."],
+  "/contact": ["Contact Otulia", "Contact Otulia about luxury listings, buying, selling or marketplace support."],
+};
+
+const safePattern = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const formatListingPrice = (asset) => asset.isPriceOnRequest
+  ? "Price on request"
+  : Number.isFinite(Number(asset.price)) && Number(asset.price) > 0
+    ? `USD ${Number(asset.price).toLocaleString("en-US")}`
+    : "Contact for price";
+
+const readJournalMetadata = (slug) => {
+  const sourcePath = path.join(__dirname, "../client/src/data/journalArticles.js");
+  if (!fs.existsSync(sourcePath)) return null;
+  const source = fs.readFileSync(sourcePath, "utf8");
+  const key = `"${slug}":`;
+  const start = source.indexOf(key);
+  if (start < 0) return null;
+  const block = source.slice(start, start + 3000);
+  const titleMatch = block.match(/title:\s*([\s\S]*?),\s*description:/);
+  const descriptionMatch = block.match(/description:\s*([\s\S]*?)\s*\n\s*},?/);
+  const literals = (expression) => expression?.match(/(['"])(?:\\.|(?!\1)[\s\S])*?\1/g)
+    ?.map((literal) => literal.slice(1, -1).replace(/\\(['"\\])/g, "$1")).join("") || "";
+  const title = literals(titleMatch?.[1]);
+  const description = literals(descriptionMatch?.[1]);
+  return title && description ? { title, description } : null;
+};
+
+const renderPublicPage = async (req, res, { title, description, canonical, assets = [], extraContent = "", noindex = false }) => {
+  const indexPath = path.join(distPath, "index.html");
+  let html = await fs.promises.readFile(indexPath, "utf8");
+  html = html.replace(/<title data-static-head>[^<]*<\/title>/i, `<title data-static-head>${htmlEscape(title)}</title>`);
+  html = html.replace(/<meta\s+(?:data-static-head\s+)?name="description"\s+content="[^"]*"\s*\/>/i, `<meta data-static-head name="description" content="${htmlEscape(description)}" />`);
+  html = html.replace(/<link\s+rel="canonical"[^>]*>/i, "");
+  const metadata = {
+    'property="og:type"': "website",
+    'property="og:title"': title,
+    'property="og:description"': description,
+    'property="og:url"': canonical,
+    'property="og:image"': publicUrl(assets.find((asset) => asset.images?.[0])?.images?.[0]) || "https://otulia.com/images/exclusive_club_bg.jpg",
+    'property="og:image:alt"': assets[0]?.title || "Otulia luxury marketplace",
+    'name="twitter:title"': title,
+    'name="twitter:description"': description,
+    'name="twitter:image"': publicUrl(assets.find((asset) => asset.images?.[0])?.images?.[0]) || "https://otulia.com/images/exclusive_club_bg.jpg",
+    'name="twitter:image:alt"': assets[0]?.title || "Otulia luxury marketplace",
+  };
+  for (const [selector, value] of Object.entries(metadata)) {
+    const pattern = new RegExp(`<meta\\s+(?:data-static-head\\s+)?${selector}\\s+content="[^"]*"\\s*\\/>`, "i");
+    const replacement = `<meta data-static-head ${selector} content="${htmlEscape(value)}" />`;
+    if (pattern.test(html)) html = html.replace(pattern, replacement);
+    else html = html.replace("</head>", `${replacement}\n  </head>`);
+  }
+  html = html.replace(/<meta\s+(?:data-static-head\s+)?name="robots"\s+content="[^"]*"\s*\/>/i,
+    `<meta data-static-head name="robots" content="${noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"}" />`);
+  html = html.replace("</head>", `<link data-static-head rel="canonical" href="${htmlEscape(canonical)}" />\n  </head>`);
+
+  const cards = assets.map((asset) => {
+    const category = asset.categoryPath;
+    const href = `/asset/${category}/${encodeURIComponent(assetSlug(asset.title) || asset._id)}`;
+    const image = publicUrl(asset.images?.[0]);
+    const imageHtml = image ? `<img src="${htmlEscape(image)}" alt="${htmlEscape(`${asset.title}${asset.brand ? ` ${asset.brand}` : ""}`)}" style="max-width:260px;height:auto">` : "";
+    const location = asset.location ? `<p>${htmlEscape(asset.location)}</p>` : "";
+    return `<article><h2><a href="${htmlEscape(href)}">${htmlEscape(asset.title)}</a></h2>${imageHtml}${asset.brand ? `<p>${htmlEscape(asset.brand)}</p>` : ""}${location}<p>${htmlEscape(formatListingPrice(asset))}</p><p>${htmlEscape(String(asset.description || "").replace(/\s+/g, " ").trim().slice(0, 450))}</p></article>`;
+  }).join("");
+  const categoryLinks = [
+    ["Cars for sale", "/category/cars"], ["Luxury real estate", "/category/estates"],
+    ["Yachts", "/category/yachts"], ["Bikes", "/category/bikes"],
+    ["Rentals", "/rent"], ["Otulia Journal", "/journal"], ["Rankings", "/ranking"],
+  ].map(([label, href]) => `<li><a href="${href}">${label}</a></li>`).join("");
+  const main = `<main style="font-family:Arial,sans-serif;max-width:1100px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(title.replace(/\s*\|\s*Otulia(?: Journal| Rankings)?$/, ""))}</h1><p>${htmlEscape(description)}</p>${extraContent}${assets.length ? `<section><h2>Featured listings</h2>${cards}</section>` : ""}<nav aria-label="Explore Otulia"><h2>Explore Otulia</h2><ul>${categoryLinks}</ul></nav></main>`;
+  html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, "");
+  html = html.replace('<div id="root"></div>', `<div id="root">${main}</div>`);
+  if (assets.length) {
+    const itemList = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: title,
+      description,
+      url: canonical,
+      numberOfItems: assets.length,
+      itemListElement: assets.map((asset, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: asset.title,
+        url: `https://otulia.com/asset/${asset.categoryPath}/${encodeURIComponent(assetSlug(asset.title) || asset._id)}`,
+        ...(publicUrl(asset.images?.[0]) ? { image: publicUrl(asset.images[0]) } : {}),
+      })),
+    };
+    html = html.replace("</head>", `<script type="application/ld+json">${jsonForHtml(itemList)}</script>\n  </head>`);
+  }
+  res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
+  return res.type("html").send(html);
+};
+
+app.get(/^\/(?:$|shop|rent|community|seller|sellwithus|pricing|about|reviews|faq|blogs|journal|terms|privacy-policy|shipping|returns|cookie-policy|contact|category\/(?:cars|estates|yachts|bikes)|ranking(?:\/(?:cars|realestate|yachts|bikes|contentcreators))?)\/?$/i, async (req, res, next) => {
+  try {
+    const route = req.path.replace(/\/$/, "") || "/";
+    let title = publicPageDetails[route]?.[0];
+    let description = publicPageDetails[route]?.[1];
+    const isCategory = route.startsWith("/category/");
+    const categoryName = isCategory ? route.split("/")[2] : "";
+    if (isCategory) {
+      const label = { cars: "Cars", estates: "Luxury Real Estate", yachts: "Yachts", bikes: "Bikes" }[categoryName];
+      title = `${label} for Sale | Otulia`;
+      description = `Browse luxury ${label.toLowerCase()} for sale from verified dealers and private sellers on Otulia.`;
+    }
+    if (route.startsWith("/ranking")) {
+      title ||= "Luxury Asset Rankings | Otulia";
+      description ||= "Explore Otulia rankings of standout luxury cars, real estate, yachts and other assets.";
+    }
+    const assets = [];
+    const modelEntries = Object.entries(listingModels);
+    for (const [category, Model] of modelEntries) {
+      if (isCategory && !({ cars: "car", estates: "estate", yachts: "yacht", bikes: "bike" }[categoryName] === category)) continue;
+      if (!isCategory && !["/shop", "/rent"].includes(route)) continue;
+      let filter = { status: "Active", type: route === "/rent" ? "Rent" : "Sale" };
+      const records = await Model.find(filter).select("title description images brand location price isPriceOnRequest type updatedAt").sort({ updatedAt: -1 }).limit(12).lean();
+      assets.push(...records.map((asset) => ({ ...asset, categoryPath: category })));
+    }
+    if (route === "/") {
+      title = publicPageDetails["/"][0];
+      description = publicPageDetails["/"][1];
+      assets.splice(0, assets.length);
+      for (const [category, Model] of modelEntries) {
+        const records = await Model.find({ status: "Active", type: "Sale" }).select("title description images brand location price isPriceOnRequest type updatedAt").sort({ updatedAt: -1 }).limit(3).lean();
+        assets.push(...records.map((asset) => ({ ...asset, categoryPath: category })));
+      }
+    }
+    let extraContent = "";
+    if (route.startsWith("/ranking")) {
+      const categories = await RankingCategory.find({ status: "Active" }).select("title slug type shortDescription categoryImage bannerImage").sort({ displayOrder: 1 }).lean();
+      extraContent = `<section><h2>Explore ranking categories</h2>${categories.map((item) => {
+        const category = item.type.toLowerCase().replace(/\s+/g, "").replace(/contentcreator/i, "contentcreators");
+        return `<article><h3><a href="/ranking/${encodeURIComponent(category)}/${encodeURIComponent(item.slug)}">${htmlEscape(item.title)}</a></h3><p>${htmlEscape(item.shortDescription || "Explore this Otulia ranking.")}</p></article>`;
+      }).join("")}</section>`;
+    }
+    if (route === "/journal") {
+      const articles = [
+        ["the-true-cost-of-owning-a-luxurycar", "The True Cost of Owning a Luxury Car", "Understand depreciation, insurance and maintenance costs."],
+        ["how-to-verify-a-luxury-car-history-and-authenticity-before-you-buy", "How to Verify a Luxury Car's History and Authenticity", "A guide to checking a luxury car before buying."],
+        ["how-to-stage-a-luxury-home-to-sell-faster", "How to Stage a Luxury Home to Sell Faster", "Practical ideas for presenting a luxury property."],
+        ["luxury-real-estate-trends-2026-what-buyers-and-sellers-need-to-know", "Luxury Real Estate Trends 2026", "What buyers and sellers should know about the luxury property market."],
+        ["jumbo-loans-explained-what-buyers-need-to-know-before-financing-a-luxury-home", "Jumbo Loans Explained", "How jumbo financing works for luxury homes."],
+        ["which-exotic-cars-hold-their-value-best-a-guide-to-investment-grade-vehicles", "Which Exotic Cars Hold Their Value Best", "A guide to exotic cars with collector appeal."],
+      ];
+      extraContent = `<section><h2>Latest guides and stories</h2>${articles.map(([slug, articleTitle, summary]) => `<article><h3><a href="/journal/${slug}">${htmlEscape(articleTitle)}</a></h3><p>${htmlEscape(summary)}</p></article>`).join("")}</section>`;
+    }
+    const canonical = `https://otulia.com${route}`;
+    return renderPublicPage(req, res, { title, description, canonical, assets: assets.slice(0, 12), extraContent });
+  } catch (error) {
+    console.error("Public page HTML error:", error);
+    return next(error);
+  }
+});
+
+app.get(/^\/journal\/([^/]+)\/?$/i, async (req, res, next) => {
+  const slug = req.path.match(/^\/journal\/([^/]+)\/?$/i)?.[1]?.toLowerCase();
+  const article = slug ? readJournalMetadata(slug) : null;
+  if (!article) return next();
+  try {
+    const title = `${article.title} | Otulia Journal`;
+    const canonical = `https://otulia.com/journal/${encodeURIComponent(slug)}`;
+    return renderPublicPage(req, res, { title, description: article.description, canonical });
+  } catch (error) {
+    console.error("Journal article HTML error:", error);
+    return next(error);
+  }
+});
+
+app.get(/^\/dealer\/([^/]+)\/?$/i, async (req, res, next) => {
+  try {
+    const email = decodeURIComponent(req.path.match(/^\/dealer\/([^/]+)\/?$/i)[1]).toLowerCase();
+    const user = await User.findOne({ email }).select("name company profilePicture plan agentDescription createdAt").lean();
+    const listingModelsForProfile = [
+      ["car", CarAsset], ["estate", EstateAsset], ["bike", BikeAsset], ["yacht", YachtAsset],
+      ["", Listing],
+    ];
+    const matches = await Promise.all(listingModelsForProfile.map(async ([category, Model]) => {
+      const records = await Model.find({ status: "Active", $or: [{ ownerEmail: email }, { "agent.email": email }] })
+        .select("title description images brand location price isPriceOnRequest type category updatedAt")
+        .sort({ updatedAt: -1 }).limit(20).lean();
+      return records.map((record) => ({
+        ...record,
+        categoryPath: category || String(record.category || "car").toLowerCase().replace(/s$/, ""),
+      }));
+    }));
+    const assets = matches.flat();
+    if (!user && !assets.length) {
+      res.setHeader("X-Robots-Tag", "noindex, nofollow");
+      return res.status(404).type("html").send("<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex, nofollow\"><title>Dealer not found | Otulia</title></head><body><main><h1>Dealer not found</h1></main></body></html>");
+    }
+    const name = user?.company?.companyName || user?.name || assets[0]?.agent?.company || "Luxury Asset Dealer";
+    const description = String(user?.company?.description || user?.agentDescription || `Explore current luxury listings from ${name} on Otulia.`).replace(/\s+/g, " ").trim().slice(0, 300);
+    const title = `${name} | Luxury Listings on Otulia`;
+    return renderPublicPage(req, res, { title, description, canonical: `https://otulia.com/dealer/${encodeURIComponent(email)}`, assets: assets.slice(0, 20) });
+  } catch (error) {
+    console.error("Dealer profile HTML error:", error);
+    return next(error);
+  }
+});
+
+// Public brand and location landing pages show matching active inventory in the
+// first response; this covers every /listings/:topic route from the public site.
+app.get(/^\/listings\/([^/]+)\/?$/i, async (req, res, next) => {
+  try {
+    const topic = decodeURIComponent(req.path.match(/^\/listings\/([^/]+)\/?$/i)[1]).toLowerCase();
+    const words = topic.replace(/-/g, " ");
+    const expression = new RegExp(safePattern(words), "i");
+    const assets = [];
+    for (const [category, Model] of Object.entries(listingModels)) {
+      const matches = await Model.find({
+        status: "Active",
+        type: "Sale",
+        $or: [{ title: expression }, { brand: expression }, { location: expression }, { "specification.city": expression }, { "specification.country": expression }],
+      }).select("title description images brand location price isPriceOnRequest type updatedAt").sort({ updatedAt: -1 }).limit(20).lean();
+      assets.push(...matches.map((asset) => ({ ...asset, categoryPath: category })));
+    }
+    const label = words.replace(/\b\w/g, (letter) => letter.toUpperCase());
+    const title = `${label} Luxury Listings for Sale | Otulia`;
+    const description = `Explore luxury cars and properties in ${label}, including active listings from dealers and private sellers on Otulia.`;
+    if (!assets.length) {
+      res.setHeader("X-Robots-Tag", "noindex, follow");
+      return renderPublicPage(req, res, { title, description, canonical: `https://otulia.com/listings/${topic}`, noindex: true });
+    }
+    return renderPublicPage(req, res, { title, description, canonical: `https://otulia.com/listings/${topic}`, assets: assets.slice(0, 20) });
+  } catch (error) {
+    console.error("Listing collection HTML error:", error);
+    return next(error);
+  }
+});
+
+app.get(/^\/(?:login|signup|cart|profile|success|inventory|favorites|admin|content-management|listings)(?:\/.*)?$/i, async (req, res) => {
+  const route = req.path.split("/").filter(Boolean)[0] || "account";
+  const labels = {
+    login: ["Sign in to Otulia", "Sign in to manage your Otulia account."],
+    signup: ["Create an Otulia Account", "Create an account to save listings and manage your marketplace activity."],
+    cart: ["Your Otulia Cart", "Review items saved to your cart."],
+    profile: ["Your Otulia Profile", "Manage your account profile and preferences."],
+    success: ["Transaction Complete | Otulia", "Your Otulia transaction has been processed."],
+    inventory: ["Your Inventory | Otulia", "Manage your active luxury listings."],
+    favorites: ["Your Favorites | Otulia", "View your saved luxury listings."],
+    admin: ["Otulia Administration", "Administrative tools for Otulia."],
+    "content-management": ["Otulia Content Management", "Manage Otulia website content."],
+    listings: ["Your Listings | Otulia", "Manage listings associated with your Otulia account."],
+  };
+  const [title, description] = labels[route] || ["Account | Otulia", "Manage your Otulia account."];
+  res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  return renderPublicPage(req, res, { title, description, canonical: `https://otulia.com${req.path}`, noindex: true });
 });
 
 const PORT = process.env.PORT || 5000;
@@ -542,6 +930,7 @@ app.use((req, res) => {
       candidatePaths.find((p) => fs.existsSync(p)) || candidatePaths[0];
 
     if (!isClientRoute(req.path)) {
+      res.setHeader("X-Robots-Tag", "noindex, nofollow");
       res.status(404);
     }
 

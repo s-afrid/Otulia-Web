@@ -4,6 +4,7 @@ const CarAsset = require('../models/CarAsset.model');
 const EstateAsset = require('../models/EstateAsset.model');
 const BikeAsset = require('../models/BikeAsset.model');
 const YachtAsset = require('../models/YachtAsset.model');
+const RankingCategory = require('../models/RankingCategory.model');
 
 const BASE_URL = (process.env.CLIENT_URL || 'https://otulia.com').replace(/\/+$/, '');
 
@@ -23,8 +24,8 @@ const categories = [
 
 const staticRoutes = [
     '/', '/shop', '/community', '/rent', '/seller', '/sellwithus', '/pricing',
-    '/login', '/ranking', '/ranking/realestate',
-    '/category/cars', '/category/estates', '/about', '/reviews', '/faq', '/blogs',
+    '/ranking', '/ranking/cars', '/ranking/realestate', '/ranking/yachts', '/ranking/bikes', '/ranking/contentcreators',
+    '/category/cars', '/category/estates', '/category/yachts', '/category/bikes', '/about', '/reviews', '/faq', '/blogs',
     '/journal', '/terms', '/privacy-policy', '/shipping', '/returns', '/cookie-policy',
     '/contact', '/listings/private-islands', '/listings/balearic-islands',
     '/listings/costa-del-sol', '/listings/french-riviera', '/listings/tuscany',
@@ -34,7 +35,32 @@ const staticRoutes = [
     '/listings/greece', '/listings/india', '/listings/ireland', '/listings/monaco',
     '/listings/ferrari', '/listings/aston-martin', '/listings/koenigsegg',
     '/listings/lamborghini', '/listings/bugatti', '/listings/maserati', '/listings/pagani',
-    '/listings/porsche', '/listings/rolls-royce', '/listings/bugatti-chiron'
+    '/listings/porsche', '/listings/rolls-royce', '/listings/bugatti-chiron',
+    '/listings/aston-martin', '/listings/koenigsegg', '/listings/lamborghini',
+    '/listings/bugatti', '/listings/maserati', '/listings/pagani',
+    '/listings/private-islands', '/listings/balearic-islands', '/listings/costa-del-sol',
+    '/listings/french-riviera', '/listings/tuscany', '/listings/amsterdam',
+    '/listings/atlanta', '/listings/austin', '/listings/benahavis', '/listings/beverly-hills',
+    '/listings/australia', '/listings/british-virgin-islands', '/listings/canada',
+    '/listings/cayman-islands', '/listings/france', '/listings/germany', '/listings/greece',
+    '/listings/india', '/listings/ireland', '/listings/monaco'
+];
+
+const journalSlugs = [
+    'the-true-cost-of-owning-a-luxurycar',
+    'how-to-verify-a-luxury-car-history-and-authenticity-before-you-buy',
+    'how-to-stage-a-luxury-home-to-sell-faster',
+    'luxury-real-estate-trends-2026-what-buyers-and-sellers-need-to-know',
+    'jumbo-loans-explained-what-buyers-need-to-know-before-financing-a-luxury-home',
+    'which-exotic-cars-hold-their-value-best-a-guide-to-investment-grade-vehicles',
+    'mclaren-just-unveiled-its-first-new-supercar-since-2024',
+    'photos-2027-ferrari-12cilindri-manuale',
+    'justin-hailey-bieber-buy-west-village-condo',
+    'novak-djokovic-property-portfolio',
+    'erling-haaland-multimillion-dollar-car-collection',
+    'terry-crews-binghatti-aquarise-dubai',
+    'zendaya-tom-holland-property-portfolio',
+    'porsche-cayenne-turbo-coupe-electric-road-test',
 ];
 
 const slugify = (title) => String(title || '').trim().toLowerCase()
@@ -52,9 +78,25 @@ router.get('/sitemap.xml', (req, res) => {
     return sendXml(res, `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitemapUrls.join('')}</sitemapindex>`);
 });
 
-router.get('/sitemap-pages.xml', (req, res) => {
-    const urls = staticRoutes.map((route) => renderUrl(`${BASE_URL}${route}`, null, route === '/' ? '1.0' : '0.8'));
-    return sendXml(res, `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>`);
+router.get('/sitemap-pages.xml', async (req, res) => {
+    try {
+        const categories = await RankingCategory.find({ status: 'Active' }, 'slug type updatedAt').lean();
+        const categoryUrls = categories.map((category) => {
+            const type = category.type.toLowerCase().replace(/\s+/g, '').replace(/contentcreator/i, 'contentcreators');
+            return renderUrl(`${BASE_URL}/ranking/${type}/${category.slug}`, category.updatedAt, '0.8');
+        });
+        const editorialUrls = journalSlugs.map((slug) => renderUrl(`${BASE_URL}/journal/${slug}`, null, '0.7'));
+        const urls = [
+            ...[...new Set(staticRoutes)].map((route) => renderUrl(`${BASE_URL}${route}`, null, route === '/' ? '1.0' : '0.8')),
+            ...editorialUrls,
+            ...categoryUrls,
+        ];
+        return sendXml(res, `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>`);
+    } catch (error) {
+        console.error('Error generating pages sitemap:', error);
+        const urls = [...new Set(staticRoutes)].map((route) => renderUrl(`${BASE_URL}${route}`, null, route === '/' ? '1.0' : '0.8'));
+        return sendXml(res, `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>`);
+    }
 });
 
 const sendCategorySitemap = async (req, res, category) => {
