@@ -176,6 +176,20 @@ const publicUrl = (value) => {
     return ["http:", "https:"].includes(url.protocol) ? url.toString() : "";
   } catch { return ""; }
 };
+const socialPreviewImage = (value) => {
+  const imageUrl = publicUrl(value);
+  if (!imageUrl) return "";
+  try {
+    const parsed = new URL(imageUrl);
+    if (parsed.hostname === "res.cloudinary.com" && parsed.pathname.includes("/image/upload/")) {
+      parsed.pathname = parsed.pathname.replace(
+        "/image/upload/",
+        "/image/upload/c_fill,g_auto,w_1200,h_630,q_auto:good,f_jpg/",
+      );
+    }
+    return parsed.toString();
+  } catch { return imageUrl; }
+};
 const assetSlug = (title, id) => {
   const titleSlug = String(title || "").trim().toLowerCase()
     .replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
@@ -200,10 +214,12 @@ const assetSeoDetails = (asset) => {
   const year = specification.yearOfConstruction || specification.year;
   const location = asset.location || specification.carLocation || specification.yachtLocation || specification.city;
   const purpose = asset.type === "Rent" ? "for rent" : "for sale";
+  const brandName = String(brand || "").trim();
+  const modelName = String(model || "").trim();
   const brandAndModel = [
-    brand && model && String(model).toLowerCase().startsWith(String(brand).toLowerCase()) ? null : brand,
-    model,
-  ].filter(Boolean).join(" ");
+    brandName && modelName.toLowerCase().startsWith(brandName.toLowerCase()) ? null : brandName,
+    modelName,
+  ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
   const searchName = brandAndModel
     ? `${year && !brandAndModel.includes(String(year)) ? `${year} ` : ""}${brandAndModel}`
     : asset.title;
@@ -265,7 +281,7 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
     const seo = assetSeoDetails(asset);
     const title = seo.title;
     const description = seo.summary || `Explore ${asset.title} on Otulia, the luxury marketplace.`;
-    const image = seo.images[0] || "https://otulia.com/images/exclusive_club_bg.jpg";
+    const image = socialPreviewImage(seo.images[0]) || "https://otulia.com/images/exclusive_club_bg.jpg";
     const canonicalSlug = assetSlug(asset.title, asset._id);
     const canonical = `https://otulia.com/asset/${category}/${encodeURIComponent(canonicalSlug || slug)}`;
     if (slug !== canonicalSlug) return res.redirect(301, canonical);
@@ -275,7 +291,12 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
       'property="og:description"': description,
       'property="og:url"': canonical,
       'property="og:image"': image,
+      'property="og:image:secure_url"': image,
+      'property="og:image:type"': "image/jpeg",
+      'property="og:image:width"': "1200",
+      'property="og:image:height"': "630",
       'property="og:image:alt"': `${asset.title}${seo.brand ? ` ${seo.brand}` : ""}${seo.model ? ` ${seo.model}` : ""}`,
+      'name="twitter:card"': "summary_large_image",
       'name="twitter:title"': title,
       'name="twitter:description"': description,
       'name="twitter:image"': image,
