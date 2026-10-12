@@ -104,7 +104,8 @@ const sendCategorySitemap = async (req, res, category) => {
         const { Model } = categories.find(({ key }) => key === category);
         const assets = await Model.find({ status: 'Active' }, 'title _id updatedAt images').lean().exec();
         const urls = assets.filter((asset) => asset._id).map((asset) => {
-            const pageUrl = `${BASE_URL}/asset/${category}/${slugify(asset.title) || asset._id}`;
+            const titleSlug = slugify(asset.title);
+            const pageUrl = `${BASE_URL}/asset/${category}/${titleSlug ? `${titleSlug}-` : ''}${asset._id}`;
             const images = (Array.isArray(asset.images) ? asset.images : [])
                 .filter((image) => typeof image === 'string' && image.trim())
                 .map((image) => {
