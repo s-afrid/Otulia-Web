@@ -566,7 +566,7 @@ const createAssetSlug = (title, id) => {
       .replace(/[^\w\s-]/g, '')
       .replace(/[\s_-]+/g, '-')
       .replace(/^-+|-+$/g, '');
-    if (slug) return slug;
+    if (slug) return id ? `${slug}-${id}` : slug;
   }
   return id || '';
 };

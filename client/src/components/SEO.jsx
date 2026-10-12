@@ -10,6 +10,21 @@ const DEFAULT_KEYWORDS =
 const DEFAULT_IMAGE = 'https://otulia.com/images/exclusive_club_bg.jpg';
 const DEFAULT_URL = 'https://otulia.com';
 
+const getSocialPreviewImage = (value) => {
+  try {
+    const image = new URL(value || DEFAULT_IMAGE, DEFAULT_URL);
+    if (image.hostname === 'res.cloudinary.com' && image.pathname.includes('/image/upload/')) {
+      image.pathname = image.pathname.replace(
+        '/image/upload/',
+        '/image/upload/c_fill,g_auto,w_1200,h_630,q_auto:good,f_jpg/',
+      );
+    }
+    return image.toString();
+  } catch {
+    return DEFAULT_IMAGE;
+  }
+};
+
 const normalizeCanonicalPath = (pathname) => {
   let normalized = pathname
     .replace(/\/{2,}/g, '/')
@@ -107,16 +122,18 @@ export default function SEO({
   // Search/filter parameters, fragments, trailing slashes, case variants, and
   // plural asset aliases must not create separate canonical URLs.
   const resolvedUrl = resolveCanonicalUrl(url || location.pathname);
-  const resolvedImage = image || DEFAULT_IMAGE;
+  const resolvedImage = getSocialPreviewImage(image);
 
   const specification = productData?.specification || {};
   const productBrand = productData?.brand || specification.brand || specification.brandBuilder;
   const productModel = specification.model || specification.variant || productData?.variant;
   const productYear = specification.yearOfConstruction || specification.year;
+  const brandName = String(productBrand || '').trim();
+  const modelName = String(productModel || '').trim();
   const brandAndModel = [
-    productBrand && productModel && String(productModel).toLowerCase().startsWith(String(productBrand).toLowerCase()) ? null : productBrand,
-    productModel,
-  ].filter(Boolean).join(' ');
+    brandName && modelName.toLowerCase().startsWith(brandName.toLowerCase()) ? null : brandName,
+    modelName,
+  ].filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
   const productName = brandAndModel
     ? `${productYear && !brandAndModel.includes(String(productYear)) ? `${productYear} ` : ''}${brandAndModel}`
     : productData?.title || title || 'Luxury listing';
@@ -238,6 +255,8 @@ export default function SEO({
       <meta property="og:site_name" content={name} />
       <meta property="og:url" content={resolvedUrl} />
       <meta property="og:image" content={resolvedImage} />
+      <meta property="og:image:secure_url" content={resolvedImage} />
+      <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:image:alt" content={seoTitle} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />

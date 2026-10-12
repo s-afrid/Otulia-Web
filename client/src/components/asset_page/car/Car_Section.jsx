@@ -9,7 +9,7 @@ import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
 import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
-import { createAssetSlug } from "../../../utils/slugUtils";
+import { createAssetSlug, getAssetIdFromSlug } from "../../../utils/slugUtils";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
 import AssetUnavailable from "../AssetUnavailable";
@@ -23,7 +23,7 @@ const Car_Section = () => {
   // 1. Get ID correctly: prefer ID passed via router state from navigation, fallback to URL slug/ID
   const { id } = useParams();
   const location = useLocation();
-  const targetId = location.state?.id || id;
+  const targetId = location.state?.id || getAssetIdFromSlug(id) || id;
 
   // Car info fetching
   const infoFetch = async () => {

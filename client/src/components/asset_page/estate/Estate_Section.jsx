@@ -9,7 +9,7 @@ import AssetCard from "../../AssetCard";
 import LocationMap from "../LocationMap";
 import PriceHistoryChart from "../PriceHistoryChart";
 import SEO from "../../../components/SEO";
-import { createAssetSlug } from "../../../utils/slugUtils";
+import { createAssetSlug, getAssetIdFromSlug } from "../../../utils/slugUtils";
 import AssetSlider from "../../AssetSlider";
 import CompanyProfileSection from "../CompanyProfileSection";
 import AssetUnavailable from "../AssetUnavailable";
@@ -22,7 +22,7 @@ const Estate_Section = () => {
 
   const { id } = useParams();
   const location = useLocation();
-  const targetId = location.state?.id || id;
+  const targetId = location.state?.id || getAssetIdFromSlug(id) || id;
 
   const infoFetch = async () => {
     if (!targetId) return;

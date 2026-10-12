@@ -176,8 +176,25 @@ const publicUrl = (value) => {
     return ["http:", "https:"].includes(url.protocol) ? url.toString() : "";
   } catch { return ""; }
 };
-const assetSlug = (title) => String(title || "").trim().toLowerCase()
-  .replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
+const socialPreviewImage = (value) => {
+  const imageUrl = publicUrl(value);
+  if (!imageUrl) return "";
+  try {
+    const parsed = new URL(imageUrl);
+    if (parsed.hostname === "res.cloudinary.com" && parsed.pathname.includes("/image/upload/")) {
+      parsed.pathname = parsed.pathname.replace(
+        "/image/upload/",
+        "/image/upload/c_fill,g_auto,w_1200,h_630,q_auto:good,f_jpg/",
+      );
+    }
+    return parsed.toString();
+  } catch { return imageUrl; }
+};
+const assetSlug = (title, id) => {
+  const titleSlug = String(title || "").trim().toLowerCase()
+    .replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
+  return [titleSlug, id ? String(id) : ""].filter(Boolean).join("-");
+};
 
 const assetSeoDetails = (asset) => {
   const specification = asset.specification || {};
@@ -197,10 +214,12 @@ const assetSeoDetails = (asset) => {
   const year = specification.yearOfConstruction || specification.year;
   const location = asset.location || specification.carLocation || specification.yachtLocation || specification.city;
   const purpose = asset.type === "Rent" ? "for rent" : "for sale";
+  const brandName = String(brand || "").trim();
+  const modelName = String(model || "").trim();
   const brandAndModel = [
-    brand && model && String(model).toLowerCase().startsWith(String(brand).toLowerCase()) ? null : brand,
-    model,
-  ].filter(Boolean).join(" ");
+    brandName && modelName.toLowerCase().startsWith(brandName.toLowerCase()) ? null : brandName,
+    modelName,
+  ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
   const searchName = brandAndModel
     ? `${year && !brandAndModel.includes(String(year)) ? `${year} ` : ""}${brandAndModel}`
     : asset.title;
@@ -233,14 +252,25 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
     const slug = decodeURIComponent(slugRaw).toLowerCase();
     const Model = listingModels[category];
     const seoFields = "title description images brand location price isPriceOnRequest status type category variant builder specification keySpecifications agent _id";
-    let asset = mongoose.isValidObjectId(slug)
-      ? await Model.findOne({ _id: slug, status: "Active" }).select(seoFields).lean()
+    const idSuffix = slug.match(/(?:^|-)([a-f0-9]{24})$/i)?.[1];
+    const requestedId = idSuffix || (mongoose.isValidObjectId(slug) ? slug : null);
+    let asset = requestedId
+      ? await Model.findOne({ _id: requestedId, status: "Active" }).select(seoFields).lean()
       : null;
 
     if (!asset) {
-      const titlePattern = slug.split("-").map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[^a-z0-9]*");
-      const matches = await Model.find({ status: "Active", title: { $regex: `^${titlePattern}$`, $options: "i" } })
-        .select(seoFields).limit(10).lean();
+      // Slugs remove punctuation, including punctuation inside a word (for
+      // example, "Provençal" -> "provenal" and "85,650" -> "85650").
+      // Allow non-alphanumeric separators between every slug character so
+      // older title-only URLs still resolve to their active listing.
+      const normalizedSlug = slug.replace(/[^a-z0-9]/g, "");
+      const titlePattern = normalizedSlug.split("")
+        .map((character) => character.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+        .join("[^a-z0-9]*");
+      const matches = normalizedSlug
+        ? await Model.find({ status: "Active", title: { $regex: `^[^a-z0-9]*${titlePattern}[^a-z0-9]*$`, $options: "i" } })
+          .select(seoFields).sort({ _id: 1 }).lean()
+        : [];
       asset = matches.find((candidate) => assetSlug(candidate.title) === slug);
     }
     if (!asset) {
@@ -251,15 +281,22 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
     const seo = assetSeoDetails(asset);
     const title = seo.title;
     const description = seo.summary || `Explore ${asset.title} on Otulia, the luxury marketplace.`;
-    const image = seo.images[0] || "https://otulia.com/images/exclusive_club_bg.jpg";
-    const canonical = `https://otulia.com/asset/${category}/${encodeURIComponent(assetSlug(asset.title) || slug)}`;
+    const image = socialPreviewImage(seo.images[0]) || "https://otulia.com/images/exclusive_club_bg.jpg";
+    const canonicalSlug = assetSlug(asset.title, asset._id);
+    const canonical = `https://otulia.com/asset/${category}/${encodeURIComponent(canonicalSlug || slug)}`;
+    if (slug !== canonicalSlug) return res.redirect(301, canonical);
     const tags = {
       'property="og:type"': "product",
       'property="og:title"': title,
       'property="og:description"': description,
       'property="og:url"': canonical,
       'property="og:image"': image,
+      'property="og:image:secure_url"': image,
+      'property="og:image:type"': "image/jpeg",
+      'property="og:image:width"': "1200",
+      'property="og:image:height"': "630",
       'property="og:image:alt"': `${asset.title}${seo.brand ? ` ${seo.brand}` : ""}${seo.model ? ` ${seo.model}` : ""}`,
+      'name="twitter:card"': "summary_large_image",
       'name="twitter:title"': title,
       'name="twitter:description"': description,
       'name="twitter:image"': image,
@@ -520,7 +557,7 @@ const renderPublicPage = async (req, res, { title, description, canonical, asset
 
   const cards = assets.map((asset) => {
     const category = asset.categoryPath;
-    const href = `/asset/${category}/${encodeURIComponent(assetSlug(asset.title) || asset._id)}`;
+    const href = `/asset/${category}/${encodeURIComponent(assetSlug(asset.title, asset._id) || asset._id)}`;
     const image = publicUrl(asset.images?.[0]);
     const imageHtml = image ? `<img src="${htmlEscape(image)}" alt="${htmlEscape(`${asset.title}${asset.brand ? ` ${asset.brand}` : ""}`)}" style="max-width:260px;height:auto">` : "";
     const location = asset.location ? `<p>${htmlEscape(asset.location)}</p>` : "";
@@ -546,7 +583,7 @@ const renderPublicPage = async (req, res, { title, description, canonical, asset
         "@type": "ListItem",
         position: index + 1,
         name: asset.title,
-        url: `https://otulia.com/asset/${asset.categoryPath}/${encodeURIComponent(assetSlug(asset.title) || asset._id)}`,
+        url: `https://otulia.com/asset/${asset.categoryPath}/${encodeURIComponent(assetSlug(asset.title, asset._id) || asset._id)}`,
         ...(publicUrl(asset.images?.[0]) ? { image: publicUrl(asset.images[0]) } : {}),
       })),
     };
