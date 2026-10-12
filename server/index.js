@@ -243,11 +243,19 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
       : null;
 
     if (!asset) {
-      const titlePattern = slug.split("-").map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[^a-z0-9]*");
-      const matches = await Model.find({ status: "Active", title: { $regex: `^${titlePattern}$`, $options: "i" } })
-        .select(seoFields).lean();
+      // Slugs remove punctuation, including punctuation inside a word (for
+      // example, "Provençal" -> "provenal" and "85,650" -> "85650").
+      // Allow non-alphanumeric separators between every slug character so
+      // older title-only URLs still resolve to their active listing.
+      const normalizedSlug = slug.replace(/[^a-z0-9]/g, "");
+      const titlePattern = normalizedSlug.split("")
+        .map((character) => character.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+        .join("[^a-z0-9]*");
+      const matches = normalizedSlug
+        ? await Model.find({ status: "Active", title: { $regex: `^[^a-z0-9]*${titlePattern}[^a-z0-9]*$`, $options: "i" } })
+          .select(seoFields).sort({ _id: 1 }).lean()
+        : [];
       asset = matches.find((candidate) => assetSlug(candidate.title) === slug);
-      if (!asset && matches.length) asset = matches[0];
     }
     if (!asset) {
       res.setHeader("X-Robots-Tag", "noindex, nofollow");
