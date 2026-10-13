@@ -9,6 +9,8 @@ import xIcon from "../../assets/icons/social/x.svg";
 const ShareListingModal = ({ asset, assetType, image, onClose }) => {
   const [message, setMessage] = useState("");
   const [copied, setCopied] = useState(false);
+  const [photoData, setPhotoData] = useState(null);
+  const [photoLoading, setPhotoLoading] = useState(Boolean(image));
   const listingUrl = useMemo(() => `${window.location.origin}${window.location.pathname}`, []);
   const title = asset?.title || `${assetType} listing on Otulia`;
   const location = asset?.location || asset?.carLocation || asset?.specification?.carLocation;
@@ -40,6 +42,45 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
     };
   }, [onClose]);
 
+  useEffect(() => {
+    if (!image) {
+      setPhotoLoading(false);
+      return undefined;
+    }
+    let isCurrent = true;
+    setPhotoLoading(true);
+
+    const loadPhoto = async () => {
+      try {
+        const response = await fetch(image);
+        if (!response.ok) throw new Error("Photo download failed");
+        const downloadBlob = await response.blob();
+        let clipboardBlob = null;
+
+        if (typeof createImageBitmap === "function") {
+          const bitmap = await createImageBitmap(downloadBlob);
+          const canvas = document.createElement("canvas");
+          canvas.width = bitmap.width;
+          canvas.height = bitmap.height;
+          canvas.getContext("2d").drawImage(bitmap, 0, 0);
+          bitmap.close();
+          clipboardBlob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+        }
+
+        if (isCurrent) setPhotoData({ downloadBlob, clipboardBlob });
+      } catch {
+        if (isCurrent) setPhotoData({ downloadBlob: null, clipboardBlob: null });
+      } finally {
+        if (isCurrent) setPhotoLoading(false);
+      }
+    };
+
+    void loadPhoto();
+    return () => {
+      isCurrent = false;
+    };
+  }, [image]);
+
   const copyText = async (value, successMessage) => {
     try {
       await navigator.clipboard.writeText(value);
@@ -51,86 +92,98 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
     }
   };
 
-  const shareImageToApp = async () => {
-    if (!image) {
-      setMessage("This listing does not have a photo to share.");
-      return;
+  const prepareBrowserShare = async (platform = "your post") => {
+    let clipboardPromise = null;
+    try {
+      if (photoData?.clipboardBlob && navigator.clipboard?.write && window.ClipboardItem) {
+        clipboardPromise = navigator.clipboard.write([
+          new ClipboardItem({
+            "image/png": photoData.clipboardBlob,
+            "text/plain": new Blob([shareText], { type: "text/plain" }),
+          }),
+        ]);
+      }
+    } catch {
+      clipboardPromise = null;
     }
 
-    try {
-      const response = await fetch(image);
-      if (!response.ok) throw new Error("The listing photo could not be downloaded.");
-      const blob = await response.blob();
+    let photoDownloaded = false;
+    const blob = photoData?.downloadBlob;
+    if (blob) {
       const mimeType = blob.type || "image/jpeg";
       const extension = mimeType.includes("png") ? "png" : mimeType.includes("webp") ? "webp" : "jpg";
-      const file = new File([blob], `${title.replace(/[^a-z0-9-]+/gi, "-").replace(/^-|-$/g, "") || "otulia-listing"}.${extension}`, {
-        type: mimeType,
-      });
-      const shareData = { files: [file], title, text: shareText };
-
-      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
-        await navigator.share(shareData);
-        setMessage("Choose a social app in the share sheet to send the photo with its details and link.");
-        return;
-      }
-
-      const imageUrl = URL.createObjectURL(blob);
+      const filename = `${title.replace(/[^a-z0-9-]+/gi, "-").replace(/^-|-$/g, "") || "otulia-listing"}.${extension}`;
+      const photoUrl = URL.createObjectURL(blob);
       const download = document.createElement("a");
-      download.href = imageUrl;
-      download.download = file.name;
+      download.href = photoUrl;
+      download.download = filename;
       document.body.appendChild(download);
       download.click();
       download.remove();
-      window.setTimeout(() => URL.revokeObjectURL(imageUrl), 1000);
-      await copyText(shareText, "Photo downloaded and listing details copied. Attach the photo when you post.");
-    } catch (error) {
-      if (error.name === "AbortError") return;
-      setMessage("Your browser could not share the photo. Open the photo below, then copy the listing link.");
+      window.setTimeout(() => URL.revokeObjectURL(photoUrl), 1000);
+      photoDownloaded = true;
+    }
+
+    let photoCopied = false;
+    let detailsCopied = false;
+    try {
+      if (clipboardPromise) {
+        await clipboardPromise;
+        photoCopied = true;
+        detailsCopied = true;
+      } else {
+        await navigator.clipboard.writeText(shareText);
+        detailsCopied = true;
+      }
+    } catch {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        detailsCopied = true;
+      } catch {
+        // The platform composer still opens; the listing details remain visible in the modal.
+      }
+    }
+
+    if (photoCopied) {
+      setMessage(`Photo copied and downloaded. Paste with Ctrl+V in ${platform}'s browser composer; the listing details and link are copied too.`);
+    } else if (photoDownloaded && detailsCopied) {
+      setMessage(`Photo downloaded and listing details copied. Attach the photo in ${platform}'s browser composer.`);
+    } else if (detailsCopied) {
+      setMessage(`Listing details copied. Attach the photo in ${platform}'s browser composer.`);
+    } else if (photoDownloaded) {
+      setMessage(`Photo downloaded. Copy the listing details below and attach the photo in ${platform}'s browser composer.`);
+    } else {
+      setMessage(`Copy the listing details and attach the photo in ${platform}'s browser composer.`);
     }
   };
 
-  const openShareWindow = (url) => window.open(url, "_blank", "noopener,noreferrer");
+  const openBrowserShare = (platform, url) => {
+    const tab = window.open("about:blank", "_blank");
+    if (tab) tab.opener = null;
+    void prepareBrowserShare(platform).finally(() => {
+      if (tab) tab.location.replace(url);
+      else setMessage("Your browser blocked the new tab. Allow pop-ups for Otulia, then choose the platform again.");
+    });
+  };
+
   const shareOptions = [
-    {
-      name: "WhatsApp",
-      icon: whatsappIcon,
-      action: () => openShareWindow(`https://wa.me/?text=${encodeURIComponent(shareText)}`),
-    },
-    {
-      name: "Facebook",
-      icon: facebookIcon,
-      action: () => openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(listingUrl)}`),
-    },
-    {
-      name: "Instagram",
-      icon: instagramIcon,
-      action: () => {
-        openShareWindow("https://www.instagram.com/");
-        void copyText(shareText, "Listing details copied. Use Share photo & listing to send the photo to Instagram.");
-      },
-    },
-    {
-      name: "X",
-      icon: xIcon,
-      action: () => openShareWindow(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(listingUrl)}`),
-    },
-    {
-      name: "LinkedIn",
-      icon: linkedInIcon,
-      action: () => openShareWindow(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(listingUrl)}`),
-    },
+    { name: "WhatsApp", icon: whatsappIcon, url: `https://web.whatsapp.com/send?text=${encodeURIComponent(shareText)}` },
+    { name: "Facebook", icon: facebookIcon, url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(listingUrl)}` },
+    { name: "Instagram", icon: instagramIcon, url: "https://www.instagram.com/" },
+    { name: "X", icon: xIcon, url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(listingUrl)}` },
+    { name: "LinkedIn", icon: linkedInIcon, url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(listingUrl)}` },
   ];
 
   return (
     <div
-      className="fixed inset-0 z-[1200] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[1200] flex items-end justify-center bg-black/55 p-2 backdrop-blur-sm sm:items-center sm:p-4"
       onMouseDown={(event) => event.target === event.currentTarget && onClose()}
     >
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="share-listing-title"
-        className="w-full max-w-lg overflow-hidden rounded-2xl bg-white text-gray-900 shadow-2xl"
+        className="flex w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white text-gray-900 shadow-2xl max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)]"
       >
         <header className="flex items-start justify-between border-b border-gray-100 px-6 py-5">
           <div>
@@ -142,7 +195,7 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
           </button>
         </header>
 
-        <div className="no-scrollbar max-h-[75vh] space-y-5 overflow-y-auto px-6 py-5">
+        <div className="no-scrollbar min-h-0 space-y-5 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
           <div className="flex gap-4">
             {image && <img src={image} alt={title} className="h-20 w-28 shrink-0 rounded-lg bg-gray-100 object-cover" />}
             <div className="min-w-0">
@@ -154,25 +207,27 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
 
           <button
             type="button"
-            onClick={shareImageToApp}
-            className="flex w-full items-center justify-center gap-3 rounded-xl bg-gray-950 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+            onClick={() => void prepareBrowserShare()}
+            disabled={photoLoading}
+            className="flex w-full items-center justify-center gap-3 rounded-xl bg-gray-950 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-wait disabled:opacity-60"
           >
             <IoShareSocialOutline className="h-5 w-5" />
-            Share photo &amp; listing
+            {photoLoading ? "Preparing listing photo…" : "Copy photo & details for browser sharing"}
           </button>
           <p className="-mt-3 text-xs leading-5 text-gray-500">
-            Opens your device’s share sheet with the listing photo, details, and link. If unsupported, the photo downloads and the details are copied for you.
+            Platform buttons prepare the photo and listing details, then open that platform in a new browser tab. Paste with Ctrl+V to attach the photo; a download is provided as a fallback.
           </p>
 
           <div>
-            <p className="mb-3 text-sm font-semibold text-gray-700">Share the listing link</p>
-            <div className="grid grid-cols-5 gap-2">
-              {shareOptions.map(({ name, icon, action }) => (
+            <p className="mb-3 text-sm font-semibold text-gray-700">Open a platform to share</p>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+              {shareOptions.map(({ name, icon, url }) => (
                 <button
                   key={name}
                   type="button"
-                  onClick={action}
-                  className="flex min-w-0 flex-col items-center gap-2 rounded-xl border border-gray-100 px-2 py-3 transition hover:border-gray-300 hover:bg-gray-50"
+                  onClick={() => openBrowserShare(name, url)}
+                  disabled={photoLoading}
+                  className="flex min-w-0 flex-col items-center gap-2 rounded-xl border border-gray-100 px-2 py-3 transition hover:border-gray-300 hover:bg-gray-50 disabled:cursor-wait disabled:opacity-50"
                   aria-label={`Share on ${name}`}
                 >
                   <img src={icon} alt="" className="h-7 w-7 object-contain" />
