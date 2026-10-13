@@ -6,7 +6,7 @@ import linkedInIcon from "../../assets/icons/social/linkedin.svg";
 import whatsappIcon from "../../assets/icons/social/whatsapp.svg";
 import xIcon from "../../assets/icons/social/x.svg";
 
-const ShareListingModal = ({ asset, assetType, image, onClose }) => {
+const ShareListingModal = ({ asset, assetType, image, onClose, shareDescription, showPrice = true }) => {
   const [message, setMessage] = useState("");
   const [copied, setCopied] = useState(false);
   const [photoData, setPhotoData] = useState(null);
@@ -25,7 +25,7 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
           maximumFractionDigits: 0,
         }).format(priceValue)
       : "Contact for price";
-  const shareText = [title, location && `Location: ${location}`, `Price: ${price}`, listingUrl]
+  const shareText = [title, location && `Location: ${location}`, showPrice && `Price: ${price}`, shareDescription, listingUrl]
     .filter(Boolean)
     .join("\n");
 
@@ -212,7 +212,8 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
             <div className="min-w-0">
               <h3 className="line-clamp-2 font-medium">{title}</h3>
               {location && <p className="mt-1 line-clamp-1 text-sm text-gray-500">{location}</p>}
-              <p className="mt-1 text-sm font-medium text-gray-700">{price}</p>
+              {showPrice && <p className="mt-1 text-sm font-medium text-gray-700">{price}</p>}
+              {shareDescription && <p className="mt-1 line-clamp-2 text-sm text-gray-500">{shareDescription}</p>}
             </div>
           </div>
 

@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FaTrophy,
   FaUsers,
   FaRegCalendarAlt,
   FaChevronRight,
 } from "react-icons/fa";
+import { IoShareSocialOutline } from "react-icons/io5";
+import ShareListingModal from "../asset_page/ShareListingModal";
 
 function RankingHeader({ data }) {
+  const [isShareOpen, setIsShareOpen] = useState(false);
   if (!data) return null;
 
   const { tag, main, sub } = (function getTitleParts(
@@ -71,6 +74,16 @@ function RankingHeader({ data }) {
           alt={data.titleMain || "Category Banner"}
           className="w-full h-auto block lg:absolute lg:inset-0 lg:h-full lg:object-cover object-center"
         />
+
+        <button
+          type="button"
+          onClick={() => setIsShareOpen(true)}
+          aria-label="Share this ranking"
+          className="absolute right-3 top-3 z-20 inline-flex h-10 items-center gap-2 rounded-full border border-white/25 bg-black/70 px-4 text-sm font-medium text-white shadow-lg backdrop-blur transition hover:bg-black/90 sm:right-4 sm:top-4"
+        >
+          <IoShareSocialOutline className="h-5 w-5" />
+          <span>Share</span>
+        </button>
 
         {/* Gradient Overlay for Text Contrast */}
         {/* 
@@ -143,6 +156,16 @@ function RankingHeader({ data }) {
         </div> 
         */}
       </div>
+      {isShareOpen && (
+        <ShareListingModal
+          asset={{ title: data.titleMain || main, description: data.description }}
+          assetType="Ranking"
+          image={coverImg}
+          shareDescription={data.description}
+          showPrice={false}
+          onClose={() => setIsShareOpen(false)}
+        />
+      )}
     </section>
   );
 }
