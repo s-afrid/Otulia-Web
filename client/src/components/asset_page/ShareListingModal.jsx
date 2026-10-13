@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { IoClose, IoCopyOutline, IoCheckmark, IoOpenOutline } from "react-icons/io5";
+import { IoClose, IoCopyOutline, IoCheckmark, IoOpenOutline, IoShareSocialOutline } from "react-icons/io5";
 import facebookIcon from "../../assets/icons/social/facebook.svg";
 import instagramIcon from "../../assets/icons/social/instagram.svg";
 import linkedInIcon from "../../assets/icons/social/linkedin.svg";
-import shareIcon from "../../assets/icons/social/share.svg";
 import whatsappIcon from "../../assets/icons/social/whatsapp.svg";
 import xIcon from "../../assets/icons/social/x.svg";
 
@@ -158,7 +157,7 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
             onClick={shareImageToApp}
             className="flex w-full items-center justify-center gap-3 rounded-xl bg-gray-950 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800"
           >
-            <img src={shareIcon} alt="" className="h-5 w-5 brightness-0 invert" />
+            <IoShareSocialOutline className="h-5 w-5" />
             Share photo &amp; listing
           </button>
           <p className="-mt-3 text-xs leading-5 text-gray-500">
