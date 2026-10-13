@@ -121,7 +121,7 @@ const Bike_Section = () => {
                      { label: info.title },
                    ]}
                  />
-            <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Bike" assetTitle={info.title} />
+            <AssetGallery images={info.images} videoUrl={info.videoUrl} assetType="Bike" assetTitle={info.title} asset={info} />
 
             <BikeDetails item={info} modelName="BikeAsset" />
 

@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { optimizeCloudinaryUrl } from '../../utils/imageUtils';
 import { IoClose, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
+import { IoShareSocialOutline } from 'react-icons/io5';
+import ShareListingModal from './ShareListingModal';
 
-const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset', assetTitle }) => {
+const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset', assetTitle, asset }) => {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   const hasVideo = videoUrl && (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be'));
   
@@ -19,6 +22,8 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset', assetTitle }
   });
   const imageAlt = (media, view = 'photo') =>
     `${assetTitle || `${assetType} listing`}${media?.imageIndex !== undefined ? ` ${view} ${media.imageIndex + 1}` : ` ${view}`}`;
+
+  const closeShare = useCallback(() => setIsShareOpen(false), []);
 
   const getYouTubeId = (url) => {
     if (!url) return null;
@@ -63,8 +68,22 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset', assetTitle }
 
   if (allMedia.length === 0) {
     return (
-      <div className="w-full h-64 bg-gray-100 flex items-center justify-center text-gray-400 rounded-xl">
-        No Media Available
+      <div className="relative w-full px-[2%] py-6">
+        <button
+          type="button"
+          onClick={() => setIsShareOpen(true)}
+          aria-label="Share this listing"
+          className="absolute right-[2%] top-2 z-20 inline-flex h-10 items-center gap-2 rounded-full border border-gray-200 bg-white px-4 text-sm font-medium text-gray-800 shadow-sm transition hover:border-gray-400 hover:bg-gray-50"
+        >
+          <IoShareSocialOutline className="h-5 w-5" />
+          <span>Share</span>
+        </button>
+        <div className="flex h-64 items-center justify-center rounded-xl bg-gray-100 text-gray-400">
+          No Media Available
+        </div>
+        {isShareOpen && (
+          <ShareListingModal asset={asset} assetType={assetType} image={images[0]} onClose={closeShare} />
+        )}
       </div>
     );
   }
@@ -73,6 +92,15 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset', assetTitle }
     <div className="w-full px-[2%] py-6">
       {/* Collage Grid Layout */}
       <div className="relative group">
+        <button
+          type="button"
+          onClick={() => setIsShareOpen(true)}
+          aria-label="Share this listing"
+          className="absolute -top-14 right-0 z-20 inline-flex h-10 items-center gap-2 rounded-full border border-gray-200 bg-white px-4 text-sm font-medium text-gray-800 shadow-sm transition hover:border-gray-400 hover:bg-gray-50"
+        >
+          <IoShareSocialOutline className="h-5 w-5" />
+          <span>Share</span>
+        </button>
         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-1 h-auto md:h-[450px] lg:h-[550px] rounded-lg overflow-hidden shadow-sm">
           
           {/* Main Large Image (Cover) */}
@@ -159,6 +187,15 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset', assetTitle }
           <span>Show all photos</span>
         </button>
       </div>
+
+      {isShareOpen && (
+        <ShareListingModal
+          asset={asset}
+          assetType={assetType}
+          image={images[0]}
+          onClose={closeShare}
+        />
+      )}
 
       {/* Lightbox Modal */}
       {isLightboxOpen && (

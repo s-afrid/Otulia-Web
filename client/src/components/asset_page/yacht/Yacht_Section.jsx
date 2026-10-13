@@ -130,6 +130,7 @@ const Yacht_Section = () => {
         videoUrl={info.videoUrl}
         assetType="Yacht"
         assetTitle={info.title}
+        asset={info}
       />
 
       <YachtDetails item={info} modelName="YachtAsset" />

@@ -131,6 +131,7 @@ const Estate_Section = () => {
         videoUrl={info.videoUrl}
         assetType="Estate"
         assetTitle={info.title}
+        asset={info}
       />
 
       {/* <AssetStats views={info.views} likes={info.likes} assetId={info._id} assetType="EstateAsset" /> */}

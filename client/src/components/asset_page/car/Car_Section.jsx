@@ -139,6 +139,7 @@ const Car_Section = () => {
         videoUrl={info.videoUrl}
         assetType="Car"
         assetTitle={info.title}
+        asset={info}
       />
 
       <CarDetails item={info} modelName="CarAsset" />
