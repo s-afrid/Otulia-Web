@@ -92,9 +92,9 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
     }
   };
 
-  const prepareBrowserShare = async (platform = "your post") => {
+  const prepareBrowserShare = async (platform = "your post", useNativeShare = true) => {
     const blob = photoData?.downloadBlob;
-    if (blob && navigator.share && window.File) {
+    if (useNativeShare && blob && navigator.share && window.File) {
       const mimeType = blob.type || "image/jpeg";
       const extension = mimeType.includes("png") ? "png" : mimeType.includes("webp") ? "webp" : "jpg";
       const filename = `${title.replace(/[^a-z0-9-]+/gi, "-").replace(/^-|-$/g, "") || "otulia-listing"}.${extension}`;
@@ -157,17 +157,13 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
   };
 
   const openBrowserShare = (platform, url) => {
-    if (photoData?.downloadBlob && navigator.share && window.File && navigator.canShare?.({ files: [new File([photoData.downloadBlob], "otulia-listing-photo", { type: photoData.downloadBlob.type || "image/jpeg" })] })) {
-      void prepareBrowserShare(platform);
-      return;
-    }
-
-    const tab = window.open(url, "_blank", "noopener,noreferrer");
+    const tab = window.open(url, "_blank");
     if (!tab) {
       setMessage("Your browser blocked the new tab. Allow pop-ups for Otulia, then choose the platform again.");
       return;
     }
-    void prepareBrowserShare(platform);
+    tab.opener = null;
+    void prepareBrowserShare(platform, false);
   };
 
   const shareOptions = [
