@@ -143,7 +143,7 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
           </button>
         </header>
 
-        <div className="max-h-[75vh] space-y-5 overflow-y-auto px-6 py-5">
+        <div className="no-scrollbar max-h-[75vh] space-y-5 overflow-y-auto px-6 py-5">
           <div className="flex gap-4">
             {image && <img src={image} alt={title} className="h-20 w-28 shrink-0 rounded-lg bg-gray-100 object-cover" />}
             <div className="min-w-0">
