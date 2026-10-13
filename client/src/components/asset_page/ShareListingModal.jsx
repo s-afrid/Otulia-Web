@@ -93,6 +93,26 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
   };
 
   const prepareBrowserShare = async (platform = "your post") => {
+    const blob = photoData?.downloadBlob;
+    if (blob && navigator.share && window.File) {
+      const mimeType = blob.type || "image/jpeg";
+      const extension = mimeType.includes("png") ? "png" : mimeType.includes("webp") ? "webp" : "jpg";
+      const filename = `${title.replace(/[^a-z0-9-]+/gi, "-").replace(/^-|-$/g, "") || "otulia-listing"}.${extension}`;
+      const file = new File([blob], filename, { type: mimeType });
+      const sharePayload = { files: [file], title, text: shareText };
+
+      if (navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share(sharePayload);
+          setMessage(`Listing photo and details shared. Choose ${platform} in your device's share sheet if it is available.`);
+          return;
+        } catch (error) {
+          if (error?.name === "AbortError") return;
+          // Some browsers advertise file sharing but reject it at runtime; use the clipboard fallback below.
+        }
+      }
+    }
+
     let clipboardPromise = null;
     try {
       if (photoData?.clipboardBlob && navigator.clipboard?.write && window.ClipboardItem) {
@@ -105,23 +125,6 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
       }
     } catch {
       clipboardPromise = null;
-    }
-
-    let photoDownloaded = false;
-    const blob = photoData?.downloadBlob;
-    if (blob) {
-      const mimeType = blob.type || "image/jpeg";
-      const extension = mimeType.includes("png") ? "png" : mimeType.includes("webp") ? "webp" : "jpg";
-      const filename = `${title.replace(/[^a-z0-9-]+/gi, "-").replace(/^-|-$/g, "") || "otulia-listing"}.${extension}`;
-      const photoUrl = URL.createObjectURL(blob);
-      const download = document.createElement("a");
-      download.href = photoUrl;
-      download.download = filename;
-      document.body.appendChild(download);
-      download.click();
-      download.remove();
-      window.setTimeout(() => URL.revokeObjectURL(photoUrl), 1000);
-      photoDownloaded = true;
     }
 
     let photoCopied = false;
@@ -145,25 +148,26 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
     }
 
     if (photoCopied) {
-      setMessage(`Photo copied and downloaded. Paste with Ctrl+V in ${platform}'s browser composer; the listing details and link are copied too.`);
-    } else if (photoDownloaded && detailsCopied) {
-      setMessage(`Photo downloaded and listing details copied. Attach the photo in ${platform}'s browser composer.`);
+      setMessage(`Photo and listing details copied. Paste with Ctrl+V in ${platform}'s browser composer.`);
     } else if (detailsCopied) {
-      setMessage(`Listing details copied. Attach the photo in ${platform}'s browser composer.`);
-    } else if (photoDownloaded) {
-      setMessage(`Photo downloaded. Copy the listing details below and attach the photo in ${platform}'s browser composer.`);
+      setMessage(`Listing details copied. This browser cannot share the photo directly here; use the main Share photo & listing button on a device that supports photo sharing.`);
     } else {
-      setMessage(`Copy the listing details and attach the photo in ${platform}'s browser composer.`);
+      setMessage(`This browser could not copy the listing details or share the photo. Try the main Share photo & listing button on a device that supports photo sharing.`);
     }
   };
 
   const openBrowserShare = (platform, url) => {
-    const tab = window.open("about:blank", "_blank");
-    if (tab) tab.opener = null;
-    void prepareBrowserShare(platform).finally(() => {
-      if (tab) tab.location.replace(url);
-      else setMessage("Your browser blocked the new tab. Allow pop-ups for Otulia, then choose the platform again.");
-    });
+    if (photoData?.downloadBlob && navigator.share && window.File && navigator.canShare?.({ files: [new File([photoData.downloadBlob], "otulia-listing-photo", { type: photoData.downloadBlob.type || "image/jpeg" })] })) {
+      void prepareBrowserShare(platform);
+      return;
+    }
+
+    const tab = window.open(url, "_blank", "noopener,noreferrer");
+    if (!tab) {
+      setMessage("Your browser blocked the new tab. Allow pop-ups for Otulia, then choose the platform again.");
+      return;
+    }
+    void prepareBrowserShare(platform);
   };
 
   const shareOptions = [
@@ -212,10 +216,10 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
             className="flex w-full items-center justify-center gap-3 rounded-xl bg-gray-950 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-wait disabled:opacity-60"
           >
             <IoShareSocialOutline className="h-5 w-5" />
-            {photoLoading ? "Preparing listing photo…" : "Copy photo & details for browser sharing"}
+            {photoLoading ? "Preparing listing photo…" : "Share photo & listing"}
           </button>
           <p className="-mt-3 text-xs leading-5 text-gray-500">
-            Platform buttons prepare the photo and listing details, then open that platform in a new browser tab. Paste with Ctrl+V to attach the photo; a download is provided as a fallback.
+            Shares the photo and listing details through your browser or device share sheet when supported. Otherwise, copy the photo and details, then paste them into the platform composer.
           </p>
 
           <div>
