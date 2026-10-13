@@ -92,7 +92,7 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
     }
   };
 
-  const prepareBrowserShare = async (platform = "your post", useNativeShare = true) => {
+  const prepareBrowserShare = async (platform = "your post", useNativeShare = true, imageOnlyClipboard = false) => {
     const blob = photoData?.downloadBlob;
     if (useNativeShare && blob && navigator.share && window.File) {
       const mimeType = blob.type || "image/jpeg";
@@ -119,7 +119,7 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
         clipboardPromise = navigator.clipboard.write([
           new ClipboardItem({
             "image/png": photoData.clipboardBlob,
-            "text/plain": new Blob([shareText], { type: "text/plain" }),
+            ...(!imageOnlyClipboard && { "text/plain": new Blob([shareText], { type: "text/plain" }) }),
           }),
         ]);
       }
@@ -133,7 +133,7 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
       if (clipboardPromise) {
         await clipboardPromise;
         photoCopied = true;
-        detailsCopied = true;
+        detailsCopied = !imageOnlyClipboard;
       } else {
         await navigator.clipboard.writeText(shareText);
         detailsCopied = true;
@@ -148,7 +148,9 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
     }
 
     if (photoCopied) {
-      setMessage(`Photo and listing details copied. Paste with Ctrl+V in ${platform}'s browser composer.`);
+      setMessage(imageOnlyClipboard
+        ? `Photo copied. Paste with Ctrl+V in ${platform}'s browser composer; the listing text and link are included where the platform supports them.`
+        : `Photo and listing details copied. Paste with Ctrl+V in ${platform}'s browser composer.`);
     } else if (detailsCopied) {
       setMessage(`Listing details copied. This browser cannot share the photo directly here; use the main Share photo & listing button on a device that supports photo sharing.`);
     } else {
@@ -157,13 +159,22 @@ const ShareListingModal = ({ asset, assetType, image, onClose }) => {
   };
 
   const openBrowserShare = (platform, url) => {
+    const blob = photoData?.downloadBlob;
+    if (blob && navigator.share && window.File) {
+      const file = new File([blob], "otulia-listing-photo", { type: blob.type || "image/jpeg" });
+      if (navigator.canShare?.({ files: [file] })) {
+        void prepareBrowserShare(platform);
+        return;
+      }
+    }
+
     const tab = window.open(url, "_blank");
     if (!tab) {
       setMessage("Your browser blocked the new tab. Allow pop-ups for Otulia, then choose the platform again.");
       return;
     }
     tab.opener = null;
-    void prepareBrowserShare(platform, false);
+    void prepareBrowserShare(platform, false, true);
   };
 
   const shareOptions = [
