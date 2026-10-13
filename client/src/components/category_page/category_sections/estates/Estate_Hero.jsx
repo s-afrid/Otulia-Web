@@ -20,8 +20,8 @@ const Estate_Hero = () => {
         alt="hero_estate"
       />
 
-      {/* Centered Content: Heading, Subtitle & Search */}
-      <div className="relative h-full w-full flex flex-col justify-center items-center text-center px-4 md:px-8 z-10 pt-16 pb-16 md:pt-20 md:pb-20">
+      {/* Content: Heading, Subtitle & Search */}
+      <div className="relative h-full w-full flex flex-col justify-start items-center text-center px-4 md:px-8 z-10 pt-34 md:pt-50">
         <div className="max-w-2xl flex flex-col items-center text-center gap-4 mb-6 md:mb-8 mx-auto">
           <h1 className="text-white canela text-2xl md:text-[3.25rem] font-light leading-[1.05] drop-shadow-sm">
             Otulia Luxury Real Estate
@@ -57,7 +57,7 @@ const Estate_Hero = () => {
 
           {/* Location on the right */}
           <div className="pointer-events-auto">
-            <p className="montserrat text-right text-xs md:text-[15px] font-light tracking-wide text-white drop-shadow-md">
+            <p className="montserrat text-right text-xs md:text-[12px] font-light tracking-wide text-white drop-shadow-md">
               Umm Al Sheif, Dubai, United Arab Emirates
             </p>
           </div>
