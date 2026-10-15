@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import useCmsPosts from "./cms/useCmsPosts";
 import true_cost from "/src/assets/journal/true_cost.png";
 import verify from "/src/assets/journal/verify.png";
 import sell_faster from "/src/assets/journal/sell_faster.png";
@@ -254,10 +255,12 @@ function BlogCard({ post }) {
 }
 
 export default function BlogCards({ activeCategory = null }) {
+  const cmsPosts = useCmsPosts();
+  const allPosts = [...blogPosts, ...cmsPosts];
   const filteredPosts = (
     activeCategory
-      ? blogPosts.filter((post) => post.category === activeCategory)
-      : blogPosts
+      ? allPosts.filter((post) => post.category === activeCategory)
+      : allPosts
   )
 
     .slice()

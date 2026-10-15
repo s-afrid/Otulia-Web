@@ -16,6 +16,7 @@ import CouponsTab from '../components/admin/CouponsTab';
 import SettingsTab from '../components/admin/SettingsTab';
 import DocumentViewerModal from '../components/admin/DocumentViewerModal';
 import CouponModal from '../components/admin/CouponModal';
+import JournalCms from './journal/JournalCms';
 
 const AdminDashboard = () => {
     const { token, user } = useAuth();
@@ -311,6 +312,8 @@ const AdminDashboard = () => {
                             deleteCoupon={deleteCoupon}
                         />
                     )}
+
+                    {activeTab === 'journal' && <JournalCms />}
 
                     {activeTab === 'settings' && (
                         <SettingsTab 

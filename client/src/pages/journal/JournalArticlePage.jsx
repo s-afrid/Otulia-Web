@@ -3,7 +3,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { journalArticles } from "../../data/journalArticles";
 import SEO from "../../components/SEO";
-import NotFound from "../NotFound";
+import CmsArticle from "../../components/journal/cms/CmsArticle";
 
 function JournalArticlePage() {
   const { slug } = useParams();
@@ -11,7 +11,7 @@ function JournalArticlePage() {
     ? journalArticles[slug]
     : null;
 
-  if (!article) return <NotFound />;
+  if (!article) return <CmsArticle slug={slug} />;
 
   const ArticleContent = article.component;
   return (
