@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import {
     FiGrid, FiUsers, FiPieChart, FiDollarSign, FiSettings,
-    FiXCircle, FiShoppingBag, FiShield, FiPercent, FiFileText
+    FiXCircle, FiShoppingBag, FiShield, FiPercent, FiFileText, FiEdit3
 } from 'react-icons/fi';
 
 const AdminSidebar = ({ isSidebarOpen, toggleSidebar, activeTab, setActiveTab, user }) => {
@@ -18,6 +18,7 @@ const AdminSidebar = ({ isSidebarOpen, toggleSidebar, activeTab, setActiveTab, u
         { id: 'payouts', label: 'Payout Management', icon: FiDollarSign },
         { id: 'partners', label: 'Partners', icon: FiShoppingBag },
         { id: 'coupons', label: 'Coupons', icon: FiPercent },
+        { id: 'journal', label: 'Journal CMS', icon: FiEdit3 },
         { id: 'content-management', label: 'Content Management', icon: FiFileText, isRoute: true, path: '/content-management' },
         { id: 'settings', label: 'Settings', icon: FiSettings },
     ];
