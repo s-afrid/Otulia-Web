@@ -1,90 +1,97 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import SEO from '../../components/SEO';
+import AssetCard from '../../components/AssetCard';
+import Pagination from '../../components/Pagination';
 import { FiChevronRight } from 'react-icons/fi';
-import { createAssetSlug } from '../../utils/slugUtils';
 
-// Same category inference as AssetCard, so links resolve to /asset/<car|estate|bike|yacht>/<id>.
-const getAssetCategory = (listing) => {
-  const cat = listing.category?.toLowerCase();
-  if (cat) {
-    if (['vehicles', 'cars', 'car', 'carasset'].includes(cat)) return 'car';
-    if (['bikes', 'bike', 'bikeasset'].includes(cat)) return 'bike';
-    if (['yachts', 'yacht', 'yachtasset'].includes(cat)) return 'yacht';
-    return 'estate';
-  }
-  const model = listing.itemModel?.toLowerCase() || '';
-  if (model.includes('car')) return 'car';
-  if (model.includes('bike')) return 'bike';
-  if (model.includes('yacht')) return 'yacht';
-  return 'estate';
-};
+const PAGE_SIZE = 9;
 
-const ListingTemplate = ({ 
-  pageTitle, 
-  pageDescription, 
-  breadcrumb, 
-  filterParams,
-  children 
-}) => {
+const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterParams = {} }) => {
   const [listings, setListings] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
+  const resultsRef = useRef(null);
+  const filterKey = JSON.stringify(filterParams);
+
+  const query = useMemo(() => {
+    const filters = JSON.parse(filterKey);
+    const routeType = filters.type;
+    const params = new URLSearchParams({
+      assetType: routeType === 'car' ? 'car' : 'estate',
+      page: String(page),
+      limit: String(PAGE_SIZE),
+    });
+
+    if (routeType === 'car') {
+      if (filters.brand) params.set('brand', filters.brand);
+      if (filters.model) params.set('model', filters.model);
+    } else {
+      if (filters.country) params.set('country', filters.country);
+      if (filters.region) params.set('region', filters.region);
+      if (routeType === 'island') params.set('propertyType', 'island');
+    }
+
+    return params.toString();
+  }, [filterKey, page]);
 
   useEffect(() => {
+    setPage(1);
+  }, [filterKey]);
+
+  useEffect(() => {
+    const controller = new AbortController();
     const fetchListings = async () => {
+      setLoading(true);
+      setError('');
       try {
-        setLoading(true);
-        // Build query string from filterParams
-        const queryString = new URLSearchParams(filterParams).toString();
-        const response = await fetch(`/api/listings?${queryString}`);
-        
-        if (!response.ok) throw new Error('Failed to fetch listings');
-        const data = await response.json();
-        setListings(data.listings || []);
-      } catch (err) {
-        console.error('Error fetching listings:', err);
-        setError(err.message);
+        const response = await fetch(`/api/assets/landing-listings?${query}`, { signal: controller.signal });
+        if (!response.ok) throw new Error('Could not load listings for this page.');
+        const result = await response.json();
+        setListings(result.data || []);
+        setTotalPages(result.pagination?.totalPages || 1);
+      } catch (fetchError) {
+        if (fetchError.name !== 'AbortError') setError(fetchError.message || 'Could not load listings.');
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
 
     fetchListings();
-  }, [filterParams]);
+    return () => controller.abort();
+  }, [query]);
+
+  const handlePageChange = (nextPage) => {
+    setPage(nextPage);
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
-    <div className='relative w-full overflow-x-hidden'>
+    <div className="relative w-full overflow-x-hidden">
       <SEO
         title={pageTitle}
         description={pageDescription}
         breadcrumbs={[
           { label: 'Home', path: '/' },
-          ...(breadcrumb || []),
+          ...breadcrumb,
         ]}
       />
       <Navbar />
 
-      {/* Breadcrumb Navigation */}
       <div className="w-full bg-gray-50 px-6 py-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center space-x-2 text-sm">
-            <a href="/" className="text-gray-600 hover:text-[#D48D2A] transition-colors">
-              Home
-            </a>
-            {breadcrumb.map((item, idx) => (
-              <div key={idx} className="flex items-center space-x-2">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <Link to="/" className="text-gray-600 transition-colors hover:text-[#D48D2A]">Home</Link>
+            {breadcrumb.map((item, index) => (
+              <div key={`${item.label}-${index}`} className="flex items-center gap-2">
                 <FiChevronRight className="text-gray-400" />
                 {item.path ? (
-                  <a 
-                    href={item.path} 
-                    className="text-gray-600 hover:text-[#D48D2A] transition-colors"
-                  >
-                    {item.label}
-                  </a>
+                  <Link to={item.path} className="text-gray-600 transition-colors hover:text-[#D48D2A]">{item.label}</Link>
                 ) : (
-                  <span className="text-[#D48D2A] font-medium">{item.label}</span>
+                  <span className="font-medium text-[#D48D2A]">{item.label}</span>
                 )}
               </div>
             ))}
@@ -92,62 +99,29 @@ const ListingTemplate = ({
         </div>
       </div>
 
-      {/* Page Title */}
-      <div className="w-full px-6 py-12 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          {/* {pageTitle} */}
-        </h1>
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-          {pageDescription}
-        </p>
-      </div>
+      <main ref={resultsRef} className="w-full scroll-mt-4 bg-[#f9f9f9] px-4 py-10 sm:px-6 md:px-9 md:py-14">
+        <div className="mx-auto max-w-[1600px]">
+          <header className="mb-8 md:mb-12">
+            <h1 className="canela mb-2 text-3xl font-normal text-black md:text-5xl">{pageTitle}</h1>
+            <p className="max-w-3xl font-sans text-sm text-gray-500 md:text-base">{pageDescription}</p>
+          </header>
 
-      {/* Content Area */}
-      <div className="w-full px-6 py-12">
-        <div className="max-w-7xl mx-auto">
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600">Loading listings...</p>
-            </div>
-          ) : listings.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {listings.map((listing) => (
-                <div key={listing._id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
-                  <img 
-                    src={listing.images?.[0] || '/placeholder.jpg'} 
-                    alt={listing.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {listing.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-3">{listing.location}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xl font-bold text-[#D48D2A]">
-                        ${listing.price?.toLocaleString()}
-                      </span>
-                      <Link 
-                        to={`/asset/${getAssetCategory(listing)}/${createAssetSlug(listing.title, listing._id)}`}
-                        state={{ id: listing._id }}
-                        className="bg-[#D48D2A] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#b8731f] transition-colors"
-                      >
-                        View Details
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <div className="py-24 text-center text-gray-500" role="status">Loading listings…</div>
+          ) : error ? (
+            <div className="py-24 text-center text-red-600" role="alert">{error}</div>
+          ) : listings.length ? (
+            <>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {listings.map((listing) => <AssetCard key={listing._id} item={listing} />)}
+              </div>
+              <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
+            </>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600">No listings available in this category.</p>
-            </div>
+            <div className="py-24 text-center text-gray-500">No active listings found for this page yet.</div>
           )}
         </div>
-      </div>
-
-      {children && <div className="w-full">{children}</div>}
+      </main>
     </div>
   );
 };

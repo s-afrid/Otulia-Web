@@ -12,6 +12,76 @@ const { incrementPopularity } = require("../utils/popularityUpdater");
 const axios = require("axios");
 const router = express.Router();
 
+// Search public landing pages with conjunctive brand/model/location filters.
+router.get("/landing-listings", async (req, res) => {
+  try {
+    const {
+      assetType,
+      brand,
+      model,
+      country,
+      region,
+      propertyType,
+      page = 1,
+      limit = 9,
+    } = req.query;
+    if (!['car', 'estate'].includes(assetType)) {
+      return res.status(400).json({ message: "Unsupported landing listing type" });
+    }
+
+    const Model = assetType === "car" ? CarAsset : EstateAsset;
+    const conditions = [{ status: "Active", type: "Sale" }];
+    const makePattern = (value) => {
+      const words = String(value).trim().replace(/-/g, " ").split(/\s+/).filter(Boolean);
+      return new RegExp(words.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[\\s-]+"), "i");
+    };
+    const addMatch = (fields, value) => {
+      if (!value) return;
+      const pattern = makePattern(value);
+      conditions.push({ $or: fields.map((field) => ({ [field]: pattern })) });
+    };
+
+    if (assetType === "car") {
+      addMatch(["brand", "title"], brand);
+      addMatch(["specification.model", "title"], model);
+    } else {
+      addMatch(["location", "specification.country", "specification.address"], country);
+      addMatch(["location", "specification.city", "specification.areaNeighborhood", "specification.address"], region);
+      addMatch(["keySpecifications.propertyType", "specification.propertyType", "title", "description", "keywords"], propertyType);
+    }
+
+    if (conditions.length === 1) {
+      return res.status(400).json({ message: "A landing listing filter is required" });
+    }
+
+    const safePage = Math.max(1, Number.parseInt(page, 10) || 1);
+    const safeLimit = Math.min(24, Math.max(1, Number.parseInt(limit, 10) || 9));
+    const query = { $and: conditions };
+    const [total, data] = await Promise.all([
+      Model.countDocuments(query),
+      Model.find(query)
+        .sort({ createdAt: -1 })
+        .skip((safePage - 1) * safeLimit)
+        .limit(safeLimit)
+        .lean(),
+    ]);
+
+    if (assetType === "car") await syncAgentInfo(data);
+    return res.json({
+      data,
+      pagination: {
+        total,
+        page: safePage,
+        limit: safeLimit,
+        totalPages: Math.ceil(total / safeLimit),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching landing listings:", error);
+    return res.status(500).json({ message: "Failed to fetch landing listings" });
+  }
+});
+
 // Helper to keep agent/dealer information in sync with User collection in database
 const syncAgentInfo = async (assets) => {
   if (!assets) return assets;
