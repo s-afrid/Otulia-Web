@@ -124,7 +124,7 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
       />
       <Navbar />
 
-      <main ref={resultsRef} className="w-full scroll-mt-4 bg-[#f9f9f9] px-4 py-10 sm:px-6 md:px-9 md:py-14">
+      <main ref={resultsRef} className="w-full scroll-mt-4 bg-[#f9f9f9] px-4 pt-16 pb-10 sm:px-6 md:px-9 md:pt-20 md:pb-14">
         <div className="mx-auto max-w-[1600px]">
           <header className="mb-8 md:mb-12">
             <h1 className="canela mb-2 text-3xl font-normal text-black md:text-5xl">{pageTitle}</h1>
