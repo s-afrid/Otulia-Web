@@ -1,12 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import SEO from '../../components/SEO';
 import AssetCard from '../../components/AssetCard';
 import Pagination from '../../components/Pagination';
-import { FiChevronRight } from 'react-icons/fi';
+import FilterBar from '../../components/category_page/category_sections/cars/FilterBar';
+import PropertyFilterBar from '../../components/category_page/category_sections/estates/PropertyFilterBar';
+import carFilterOptions from '../../json/car_filter_options.json';
 
 const PAGE_SIZE = 9;
+const CAR_PRICE_RANGES = ['$50K – $100K', '$100K – $200K', '$200K – $400K', '$400K – $750K', '$750K – $1.5M', '$1.5M – $3M', '$3M+'];
+const CAR_YEAR_OPTIONS = ['2025+', '2023-2024', '2020-2022', '2015-2019', '2010-2014', 'Before 2010'];
+
+const displayValue = (value = '') => value
+  .split('-')
+  .map((part) => part ? part[0].toUpperCase() + part.slice(1) : part)
+  .join(' ');
+
+const matchFilterOption = (value, options) => {
+  const normalizedValue = value.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return options.find((option) => option.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedValue) || displayValue(value);
+};
 
 const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterParams = {} }) => {
   const [listings, setListings] = useState([]);
@@ -14,6 +27,7 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeFilters, setActiveFilters] = useState({});
   const resultsRef = useRef(null);
   const filterKey = JSON.stringify(filterParams);
 
@@ -28,19 +42,48 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
 
     if (routeType === 'car') {
       if (filters.brand) params.set('brand', filters.brand);
-      if (filters.model) params.set('model', filters.model);
+      if (filters.model || activeFilters.model) params.set('model', filters.model || activeFilters.model);
+      if (activeFilters.category) params.set('category', activeFilters.category);
+      if (activeFilters.q) params.set('search', activeFilters.q);
+      if (activeFilters.year) params.set('year', activeFilters.year);
+      if (activeFilters.priceRange) params.set('priceRange', activeFilters.priceRange);
+      if (activeFilters.sort) params.set('sort', activeFilters.sort);
     } else {
       if (filters.country) params.set('country', filters.country);
       if (filters.region) params.set('region', filters.region);
       if (routeType === 'island') params.set('propertyType', 'island');
+      if (activeFilters.priceRange && activeFilters.priceRange !== 'Any Price') params.set('priceRange', activeFilters.priceRange);
+      if (activeFilters.type && activeFilters.type !== 'Any') params.set('propertyType', activeFilters.type);
+      if (activeFilters.bedrooms && activeFilters.bedrooms !== 'Any') params.set('bedrooms', activeFilters.bedrooms);
+      if (activeFilters.bathrooms && activeFilters.bathrooms !== 'Any') params.set('bathrooms', activeFilters.bathrooms);
+      if (activeFilters.architecture && activeFilters.architecture !== 'Any') params.set('architecture', activeFilters.architecture);
+      if (activeFilters.amenities && activeFilters.amenities !== 'Any') params.set('amenities', activeFilters.amenities);
+      if (activeFilters.sort && activeFilters.sort !== 'Newest') params.set('sort', activeFilters.sort);
     }
 
     return params.toString();
-  }, [filterKey, page]);
+  }, [filterKey, page, JSON.stringify(activeFilters)]);
 
   useEffect(() => {
     setPage(1);
-  }, [filterKey]);
+  }, [filterKey, JSON.stringify(activeFilters)]);
+
+  const routeType = filterParams.type;
+  const isCar = routeType === 'car';
+  const carBrands = [...new Set(Object.values(carFilterOptions).flatMap((group) => Object.keys(group)))];
+  const carModels = [...new Set(Object.values(carFilterOptions).flatMap((group) => Object.values(group).flat()))];
+  const carBrand = matchFilterOption(filterParams.brand || '', carBrands);
+  const carModel = matchFilterOption(filterParams.model || '', carModels);
+  const fixedEstateLocation = displayValue(filterParams.country || filterParams.region || '');
+  const initialCarFilters = {
+    ...(filterParams.brand ? { brand: carBrand } : {}),
+    ...(filterParams.model ? { model: carModel } : {}),
+  };
+  const initialPropertyFilters = routeType === 'island' ? { type: 'Private Island' } : {};
+  const lockedCarFilters = [
+    ...(filterParams.brand ? ['brand'] : []),
+    ...(filterParams.model ? ['model'] : []),
+  ];
 
   useEffect(() => {
     const controller = new AbortController();
@@ -81,30 +124,36 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
       />
       <Navbar />
 
-      <div className="w-full bg-gray-50 px-6 py-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-wrap items-center gap-2 text-sm">
-            <Link to="/" className="text-gray-600 transition-colors hover:text-[#D48D2A]">Home</Link>
-            {breadcrumb.map((item, index) => (
-              <div key={`${item.label}-${index}`} className="flex items-center gap-2">
-                <FiChevronRight className="text-gray-400" />
-                {item.path ? (
-                  <Link to={item.path} className="text-gray-600 transition-colors hover:text-[#D48D2A]">{item.label}</Link>
-                ) : (
-                  <span className="font-medium text-[#D48D2A]">{item.label}</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       <main ref={resultsRef} className="w-full scroll-mt-4 bg-[#f9f9f9] px-4 py-10 sm:px-6 md:px-9 md:py-14">
         <div className="mx-auto max-w-[1600px]">
           <header className="mb-8 md:mb-12">
             <h1 className="canela mb-2 text-3xl font-normal text-black md:text-5xl">{pageTitle}</h1>
             <p className="max-w-3xl font-sans text-sm text-gray-500 md:text-base">{pageDescription}</p>
           </header>
+
+          <div className="relative z-[100] mb-8">
+            {isCar ? (
+              <FilterBar
+                onFilter={setActiveFilters}
+                filterOptions={carFilterOptions}
+                priceRanges={CAR_PRICE_RANGES}
+                yearOptions={CAR_YEAR_OPTIONS}
+                hideLocation
+                initialFilters={initialCarFilters}
+                disabledFilters={lockedCarFilters}
+              />
+            ) : (
+              <PropertyFilterBar
+                onFilter={setActiveFilters}
+                initialLocation={fixedEstateLocation}
+                initialFilters={initialPropertyFilters}
+                disabledFilters={[
+                  ...(fixedEstateLocation ? ['location'] : []),
+                  ...(routeType === 'island' ? ['type'] : []),
+                ]}
+              />
+            )}
+          </div>
 
           {loading ? (
             <div className="py-24 text-center text-gray-500" role="status">Loading listings…</div>

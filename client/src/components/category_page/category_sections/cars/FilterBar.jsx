@@ -55,7 +55,7 @@ const SearchIcon = () => (
 );
 
 // --- Pill Dropdown ---
-const PillDropdown = ({ label, value, options, onChange, dark = false }) => {
+const PillDropdown = ({ label, value, options, onChange, dark = false, disabled = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
   const hasValue = value && value !== "";
@@ -85,7 +85,7 @@ const PillDropdown = ({ label, value, options, onChange, dark = false }) => {
     fontSize: 14,
     fontWeight: dark ? 600 : hasValue ? 600 : 500,
     fontFamily: "'DM Sans', sans-serif",
-    cursor: "pointer",
+    cursor: disabled ? "not-allowed" : "pointer",
     whiteSpace: "nowrap",
     letterSpacing: "-0.01em",
     transition: "all 0.15s ease",
@@ -108,10 +108,12 @@ const PillDropdown = ({ label, value, options, onChange, dark = false }) => {
     >
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        style={pillBase}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        disabled={disabled}
+        aria-disabled={disabled}
+        style={{ ...pillBase, opacity: disabled ? 0.72 : 1 }}
         onMouseEnter={(e) => {
-          if (!dark) e.currentTarget.style.background = "#f2f2f2";
+          if (!dark && !disabled) e.currentTarget.style.background = "#f2f2f2";
         }}
         onMouseLeave={(e) => {
           if (!dark)
@@ -221,6 +223,8 @@ const FilterBar = ({
   priceRanges = null,
   yearOptions = [],
   hideLocation = false,
+  initialFilters = {},
+  disabledFilters = [],
 }) => {
   const [filters, setFilters] = useState({
     location: initialLocation,
@@ -231,6 +235,7 @@ const FilterBar = ({
     priceRange: "",
     year: "",
     sort: "",
+    ...initialFilters,
   });
 
   const [suggestions, setSuggestions] = useState([]);
@@ -238,8 +243,15 @@ const FilterBar = ({
   const locationRef = useRef(null);
 
   useEffect(() => {
-    setFilters((prev) => ({ ...prev, location: initialLocation }));
-  }, [initialLocation]);
+    setFilters((prev) => ({
+      ...prev,
+      location: initialLocation,
+      category: "",
+      brand: "",
+      model: "",
+      ...initialFilters,
+    }));
+  }, [initialLocation, JSON.stringify(initialFilters)]);
 
   const categories = filterOptions ? Object.keys(filterOptions) : [];
   const brands =
@@ -264,7 +276,7 @@ const FilterBar = ({
 
   useEffect(() => {
     const handler = setTimeout(async () => {
-      if (!hideLocation && filters.location && filters.location.length > 0) {
+      if (!hideLocation && !disabledFilters.includes("location") && filters.location && filters.location.length > 0) {
         try {
           const response = await fetch(
             `/api/assets/location-suggestions?q=${filters.location}`,
@@ -279,7 +291,7 @@ const FilterBar = ({
       }
     }, 300);
     return () => clearTimeout(handler);
-  }, [filters.location, hideLocation]);
+  }, [filters.location, hideLocation, disabledFilters]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -343,6 +355,21 @@ const FilterBar = ({
         .search-btn:hover {
           background: #2a2a2a !important;
         }
+
+        @media (max-width: 768px) {
+          .listing-car-filter-shell {
+            max-width: 100% !important;
+            border-radius: 24px !important;
+          }
+          .listing-car-filter-form {
+            flex-wrap: wrap !important;
+            justify-content: flex-start !important;
+            gap: 8px !important;
+          }
+          .listing-car-filter-form > * {
+            max-width: 100%;
+          }
+        }
       `}</style>
 
       {/* Outer centering wrapper */}
@@ -356,6 +383,7 @@ const FilterBar = ({
       >
         {/* Premium rounded outer container */}
         <div
+          className="listing-car-filter-shell"
           style={{
             maxWidth: 900,
             width: "100%",
@@ -371,6 +399,7 @@ const FilterBar = ({
           }}
         >
           <form
+            className="listing-car-filter-form"
             onSubmit={handleSearch}
             style={{
               display: "flex",
@@ -419,11 +448,12 @@ const FilterBar = ({
                     type="text"
                     placeholder="Location"
                     value={filters.location}
+                    disabled={disabledFilters.includes("location")}
                     onChange={(e) => {
                       handleFilterChange("location", e.target.value);
                       setShowSuggestions(true);
                     }}
-                    onFocus={() => setShowSuggestions(true)}
+                    onFocus={() => !disabledFilters.includes("location") && setShowSuggestions(true)}
                     style={{
                       border: "none",
                       outline: "none",
@@ -436,6 +466,7 @@ const FilterBar = ({
                         ? Math.max(60, filters.location.length * 8)
                         : 70,
                       maxWidth: 140,
+                      cursor: disabledFilters.includes("location") ? "not-allowed" : "text",
                     }}
                   />
                   <ChevronDown />
@@ -491,30 +522,35 @@ const FilterBar = ({
               value={filters.category}
               options={categories}
               onChange={(val) => handleFilterChange("category", val)}
+              disabled={disabledFilters.includes("category")}
             />
             <PillDropdown
               label="Brand"
               value={filters.brand}
               options={brands}
               onChange={(val) => handleFilterChange("brand", val)}
+              disabled={disabledFilters.includes("brand")}
             />
             <PillDropdown
               label="Model"
               value={filters.model}
               options={models}
               onChange={(val) => handleFilterChange("model", val)}
+              disabled={disabledFilters.includes("model")}
             />
             <PillDropdown
               label="Year"
               value={filters.year}
               options={yearOptions || []}
               onChange={(val) => handleFilterChange("year", val)}
+              disabled={disabledFilters.includes("year")}
             />
             <PillDropdown
               label="Price"
               value={filters.priceRange}
               options={priceRanges || []}
               onChange={(val) => handleFilterChange("priceRange", val)}
+              disabled={disabledFilters.includes("priceRange")}
             />
 
             {/* Search button */}

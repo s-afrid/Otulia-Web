@@ -8,6 +8,7 @@ const YachtAsset = require("../models/YachtAsset.model");
 const Listing = require("../models/Listing.model");
 const User = require("../models/User.model");
 const { incrementPopularity } = require("../utils/popularityUpdater");
+const carFilterOptions = require("../../client/src/json/car_filter_options.json");
 
 const axios = require("axios");
 const router = express.Router();
@@ -22,6 +23,15 @@ router.get("/landing-listings", async (req, res) => {
       country,
       region,
       propertyType,
+      search,
+      priceRange,
+      bedrooms,
+      bathrooms,
+      architecture,
+      amenities,
+      category,
+      year,
+      sort,
       page = 1,
       limit = 9,
     } = req.query;
@@ -44,10 +54,67 @@ router.get("/landing-listings", async (req, res) => {
     if (assetType === "car") {
       addMatch(["brand", "title"], brand);
       addMatch(["specification.model", "title"], model);
+      addMatch(["title", "description", "brand", "specification.model"], search);
+      if (category && carFilterOptions[category]) {
+        const categoryBrands = Object.keys(carFilterOptions[category]);
+        conditions.push({
+          $or: categoryBrands.flatMap((categoryBrand) => {
+            const pattern = makePattern(categoryBrand);
+            return [{ brand: pattern }, { title: pattern }];
+          }),
+        });
+      }
+      if (year) {
+        let yearPattern;
+        if (year === "2025+") yearPattern = "^(202[5-9]|20[3-9][0-9])";
+        else if (year === "Before 2010") yearPattern = "^(19[0-9]{2}|200[0-9])";
+        else yearPattern = `^(${year.replace(/[^0-9-]/g, "").split("-").filter(Boolean).join("|")})`;
+        conditions.push({ "specification.yearOfConstruction": { $regex: yearPattern } });
+      }
     } else {
       addMatch(["location", "specification.country", "specification.address"], country);
       addMatch(["location", "specification.city", "specification.areaNeighborhood", "specification.address"], region);
       addMatch(["keySpecifications.propertyType", "specification.propertyType", "title", "description", "keywords"], propertyType);
+      if (bedrooms && bedrooms !== "Any") {
+        const minimum = Number.parseInt(bedrooms, 10);
+        if (Number.isFinite(minimum)) {
+          conditions.push({ $or: [
+            { "specification.bedrooms": { $gte: minimum } },
+            { "keySpecifications.bedrooms": { $regex: `^\\s*${minimum}(?:\\D|$)`, $options: "i" } },
+          ] });
+        }
+      }
+      if (bathrooms && bathrooms !== "Any") {
+        const minimum = Number.parseInt(bathrooms, 10);
+        if (Number.isFinite(minimum)) {
+          conditions.push({ $or: [
+            { "specification.bathrooms": { $gte: minimum } },
+            { "keySpecifications.bathrooms": { $regex: `^\\s*${minimum}(?:\\D|$)`, $options: "i" } },
+          ] });
+        }
+      }
+      addMatch(["specification.architectureStyle"], architecture);
+      if (amenities) {
+        const selectedAmenities = String(amenities).split(",").map((item) => item.trim()).filter(Boolean);
+        if (selectedAmenities.length) {
+          conditions.push({ amenities: { $in: selectedAmenities.map((item) => new RegExp(item.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i")) } });
+        }
+      }
+    }
+
+    if (priceRange) {
+      const amounts = [...String(priceRange).matchAll(/\$?([\d,.]+)\s*([KkMm])?/g)]
+        .map((match) => Number(match[1].replace(/,/g, "")) * (match[2]?.toUpperCase() === "M" ? 1_000_000 : match[2]?.toUpperCase() === "K" ? 1_000 : 1))
+        .filter(Number.isFinite);
+      if (amounts.length) {
+        const price = {};
+        if (String(priceRange).includes("+")) price.$gte = amounts[0];
+        else {
+          price.$gte = amounts[0];
+          if (amounts[1]) price.$lte = amounts[1];
+        }
+        conditions.push({ price });
+      }
     }
 
     if (conditions.length === 1) {
@@ -57,10 +124,14 @@ router.get("/landing-listings", async (req, res) => {
     const safePage = Math.max(1, Number.parseInt(page, 10) || 1);
     const safeLimit = Math.min(24, Math.max(1, Number.parseInt(limit, 10) || 9));
     const query = { $and: conditions };
+    const sortOptions = sort === "Oldest" ? { createdAt: 1 }
+      : sort === "Low to High" ? { price: 1 }
+        : sort === "High to Low" ? { price: -1 }
+          : { createdAt: -1 };
     const [total, data] = await Promise.all([
       Model.countDocuments(query),
       Model.find(query)
-        .sort({ createdAt: -1 })
+        .sort(sortOptions)
         .skip((safePage - 1) * safeLimit)
         .limit(safeLimit)
         .lean(),

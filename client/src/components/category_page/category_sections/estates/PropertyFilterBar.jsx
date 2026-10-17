@@ -4,6 +4,8 @@ const PropertyFilterBar = ({
   onFilter,
   initialLocation = "",
   hideLocation = false,
+  initialFilters = {},
+  disabledFilters = [],
 }) => {
   const [activeFilter, setActiveFilter] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({
@@ -17,6 +19,7 @@ const PropertyFilterBar = ({
     architecture: "Any",
     amenities: "Any",
     sort: "Newest",
+    ...initialFilters,
   });
 
   // For Type subcategories
@@ -161,13 +164,18 @@ const PropertyFilterBar = ({
   const locationRef = useRef(null);
 
   useEffect(() => {
-    setSelectedFilters((prev) => ({ ...prev, location: initialLocation }));
-  }, [initialLocation]);
+    setSelectedFilters((prev) => ({
+      ...prev,
+      location: initialLocation,
+      ...initialFilters,
+    }));
+  }, [initialLocation, JSON.stringify(initialFilters)]);
 
   useEffect(() => {
     const handler = setTimeout(async () => {
       if (
         !hideLocation &&
+        !disabledFilters.includes("location") &&
         selectedFilters.location &&
         selectedFilters.location.length > 0
       ) {
@@ -185,7 +193,7 @@ const PropertyFilterBar = ({
       }
     }, 300);
     return () => clearTimeout(handler);
-  }, [selectedFilters.location, hideLocation]);
+  }, [selectedFilters.location, hideLocation, disabledFilters]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -333,6 +341,8 @@ const PropertyFilterBar = ({
   ];
 
   const toggleFilter = (label) => {
+    const filter = filters.find((item) => item.label === label);
+    if (filter && disabledFilters.includes(filter.key)) return;
     setActiveFilter(activeFilter === label ? null : label);
     if (label !== "Type") setExpandedTypeGroup(null);
   };
@@ -393,6 +403,20 @@ const PropertyFilterBar = ({
 
   return (
     <div className="w-full py-6 px-4 bg-white flex flex-col items-center relative z-20">
+      <style>{`
+        .property-filter-dropdown-menu {
+          max-width: calc(100vw - 32px);
+        }
+        @media (max-width: 640px) {
+          .property-filter-dropdown-menu {
+            left: auto !important;
+            right: 0 !important;
+          }
+          .property-filter-amenities-menu {
+            width: min(520px, calc(100vw - 32px)) !important;
+          }
+        }
+      `}</style>
       <form
         onSubmit={handleSearch}
         className="flex flex-wrap items-center justify-center gap-4 w-full max-w-[1500px] border border-gray-200 rounded-2xl p-4 shadow-sm bg-white"
@@ -405,9 +429,10 @@ const PropertyFilterBar = ({
               name="location"
               placeholder="Location"
               value={selectedFilters.location}
+              disabled={disabledFilters.includes("location")}
               onChange={handleInputChange}
-              onFocus={() => setShowSuggestions(true)}
-              className="w-full px-6 py-2.5 border border-gray-300 rounded-lg text-sm md:text-base font-medium focus:outline-none focus:border-black transition-all montserrat"
+              onFocus={() => !disabledFilters.includes("location") && setShowSuggestions(true)}
+              className={`w-full px-6 py-2.5 border border-gray-300 rounded-lg text-sm md:text-base font-medium focus:outline-none focus:border-black transition-all montserrat ${disabledFilters.includes("location") ? "bg-gray-100 text-gray-500 cursor-not-allowed" : ""}`}
             />
             {showSuggestions && suggestions.length > 0 && (
               <ul className="absolute z-[110] w-full bg-white border border-gray-100 rounded-xl mt-2 shadow-2xl left-0 p-2 overflow-hidden">
@@ -433,12 +458,15 @@ const PropertyFilterBar = ({
             <button
               type="button"
               onClick={() => toggleFilter(filter.label)}
+              disabled={disabledFilters.includes(filter.key)}
+              aria-disabled={disabledFilters.includes(filter.key)}
               className={`
                 px-6 py-2.5
                 border rounded-lg
                 text-sm montserrat md:text-base font-medium
                 transition-all duration-300
                 whitespace-nowrap
+                ${disabledFilters.includes(filter.key) ? "opacity-70 cursor-not-allowed" : ""}
                 ${
                   isFilterActive(filter) || activeFilter === filter.label
                     ? "bg-black text-white border-black shadow-md"
@@ -459,7 +487,7 @@ const PropertyFilterBar = ({
                     setExpandedTypeGroup(null);
                   }}
                 />
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="property-filter-dropdown-menu absolute top-full left-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                   {/* Any option */}
                   <div
                     className={`px-4 py-3 text-sm cursor-pointer transition-colors ${selectedFilters.type === "Any" ? "bg-[#9C824A]/10 text-[#9C824A] font-bold" : "text-gray-700 hover:bg-gray-50 hover:text-black"}`}
@@ -574,7 +602,7 @@ const PropertyFilterBar = ({
                   className="fixed inset-0 z-10 cursor-default"
                   onClick={() => setActiveFilter(null)}
                 />
-                <div className="absolute top-full right-0 mt-2 w-[520px] max-h-[480px] overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-2xl z-20 animate-in fade-in zoom-in-95 duration-200">
+                <div className="property-filter-dropdown-menu property-filter-amenities-menu absolute top-full right-0 mt-2 w-[520px] max-h-[480px] overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-2xl z-20 animate-in fade-in zoom-in-95 duration-200">
                   <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-5 pt-4 pb-2 border-b border-gray-100">
                     <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
                       Amenities
@@ -640,7 +668,7 @@ const PropertyFilterBar = ({
                     className="fixed inset-0 z-10 cursor-default"
                     onClick={() => setActiveFilter(null)}
                   />
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                  <div className="property-filter-dropdown-menu absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                     {filter.options.map((option, idx) => (
                       <div
                         key={idx}
