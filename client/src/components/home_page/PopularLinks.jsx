@@ -27,7 +27,7 @@ const PopularLinks = () => {
 
   const cars = [
     { label: 'Ferrari for sale', path: '/listings/ferrari' },
-    { label: 'Astin Martin for sale', path: '/listings/aston-martin' },
+    { label: 'Aston Martin for sale', path: '/listings/aston-martin' },
     { label: 'Koenigsegg for sale', path: '/listings/koenigsegg' },
     { label: 'Lamborghini for sale', path: '/listings/lamborghini' },
     { label: 'Bugatti for sale', path: '/listings/bugatti' },
