@@ -18,6 +18,8 @@ router.get("/landing-listings", async (req, res) => {
   try {
     const {
       assetType,
+      location,
+      acquisition,
       brand,
       model,
       country,
@@ -40,7 +42,7 @@ router.get("/landing-listings", async (req, res) => {
     }
 
     const Model = assetType === "car" ? CarAsset : EstateAsset;
-    const conditions = [{ status: "Active", type: "Sale" }];
+    const conditions = [{ status: "Active", type: acquisition === "rent" ? "Rent" : "Sale" }];
     const makePattern = (value) => {
       const words = String(value).trim().replace(/-/g, " ").split(/\s+/).filter(Boolean);
       return new RegExp(words.map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("[\\s-]+"), "i");
@@ -54,6 +56,7 @@ router.get("/landing-listings", async (req, res) => {
     if (assetType === "car") {
       addMatch(["brand", "title"], brand);
       addMatch(["specification.model", "title"], model);
+      addMatch(["location", "specification.carLocation", "specification.countryOfFirstDelivery"], location);
       addMatch(["title", "description", "brand", "specification.model"], search);
       if (category && carFilterOptions[category]) {
         const categoryBrands = Object.keys(carFilterOptions[category]);
@@ -72,6 +75,7 @@ router.get("/landing-listings", async (req, res) => {
         conditions.push({ "specification.yearOfConstruction": { $regex: yearPattern } });
       }
     } else {
+      addMatch(["location", "specification.city", "specification.areaNeighborhood", "specification.address", "specification.country"], location);
       addMatch(["location", "specification.country", "specification.address"], country);
       addMatch(["location", "specification.city", "specification.areaNeighborhood", "specification.address"], region);
       addMatch(["keySpecifications.propertyType", "specification.propertyType", "title", "description", "keywords"], propertyType);

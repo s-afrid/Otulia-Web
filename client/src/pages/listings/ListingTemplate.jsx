@@ -6,6 +6,7 @@ import Pagination from '../../components/Pagination';
 import FilterBar from '../../components/category_page/category_sections/cars/FilterBar';
 import PropertyFilterBar from '../../components/category_page/category_sections/estates/PropertyFilterBar';
 import carFilterOptions from '../../json/car_filter_options.json';
+import ListingSearch from './ListingSearch';
 
 const PAGE_SIZE = 9;
 const CAR_PRICE_RANGES = ['$50K – $100K', '$100K – $200K', '$200K – $400K', '$400K – $750K', '$750K – $1.5M', '$1.5M – $3M', '$3M+'];
@@ -28,6 +29,7 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeFilters, setActiveFilters] = useState({});
+  const [listingSearch, setListingSearch] = useState({ location: '', acquisition: 'buy' });
   const resultsRef = useRef(null);
   const filterKey = JSON.stringify(filterParams);
 
@@ -39,6 +41,8 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
       page: String(page),
       limit: String(PAGE_SIZE),
     });
+    if (listingSearch.location) params.set('location', listingSearch.location);
+    if (listingSearch.acquisition === 'rent') params.set('acquisition', 'rent');
 
     if (routeType === 'car') {
       if (filters.brand) params.set('brand', filters.brand);
@@ -62,11 +66,11 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
     }
 
     return params.toString();
-  }, [filterKey, page, JSON.stringify(activeFilters)]);
+  }, [filterKey, page, JSON.stringify(activeFilters), JSON.stringify(listingSearch)]);
 
   useEffect(() => {
     setPage(1);
-  }, [filterKey, JSON.stringify(activeFilters)]);
+  }, [filterKey, JSON.stringify(activeFilters), JSON.stringify(listingSearch)]);
 
   const routeType = filterParams.type;
   const isCar = routeType === 'car';
@@ -134,6 +138,8 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
             <h1 className="canela mb-2 text-3xl font-normal text-black md:text-5xl">{pageTitle}</h1>
             <p className="max-w-3xl font-sans text-sm text-gray-500 md:text-base">{pageDescription}</p>
           </header>
+
+          <ListingSearch onSearch={setListingSearch} />
 
           <div className="relative z-[100] mb-8">
             {isCar ? (
