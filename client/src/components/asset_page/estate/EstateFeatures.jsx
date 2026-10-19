@@ -127,7 +127,7 @@ const EstateFeatures = ({ item }) => {
 
   return (
     <div className="w-full px-[2%] py-10 bg-white montserrat">
-      <div className="flex justify-between items-end mb-10">
+      <div className="flex justify-between items-end mb-6 md:mb-10">
         <h3 className="text-2xl md:text-3xl font-normal canela text-black">
           Property Specifications
         </h3>
@@ -159,7 +159,7 @@ const EstateFeatures = ({ item }) => {
       {isModalOpen && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-            <div className="flex justify-between items-center p-6 border-b border-gray-100">
+            <div className="flex justify-between items-center p-5 md:p-6 border-b border-gray-100">
               <h2 className="text-2xl font-bold canela">
                 All Property Specifications
               </h2>
@@ -171,7 +171,7 @@ const EstateFeatures = ({ item }) => {
               </button>
             </div>
 
-            <div className="p-8 overflow-y-auto">
+            <div className="p-5 md:p-8 overflow-y-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
                 {allSpecs.map((spec, idx) => (
                   <SpecRow key={idx} {...spec} />
@@ -185,7 +185,7 @@ const EstateFeatures = ({ item }) => {
       {/* AMENITIES / FEATURES VISUAL GRID */}
       {item?.amenities && item.amenities.length > 0 && (
         <div className="mt-16 w-full max-w-[1400px] mx-auto border-t border-gray-100 pt-16 mb-8">
-          <h2 className="text-3xl font-bold canela flex items-center gap-2 mb-2">
+          <h2 className="text-2xl md:text-3xl font-bold canela flex items-center gap-2 mb-2">
             Features
           </h2>
           <p className="text-gray-500 mb-8 montserrat text-sm">
@@ -196,7 +196,7 @@ const EstateFeatures = ({ item }) => {
             {item.amenities.slice(0, 20).map((amenity, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-[#D48D2A] transition-all"
+                className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-[#D48D2A] transition-all"
               >
                 <span className="text-[#D48D2A] text-lg shrink-0 flex items-center justify-center ">
                   {getFeatureIcon(amenity)}
@@ -224,7 +224,7 @@ const EstateFeatures = ({ item }) => {
       {isFeaturesModalOpen && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-            <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+            <div className="flex justify-between items-center p-5 md:p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
               <div>
                 <h2 className="text-2xl font-bold canela mb-1 flex items-center gap-2">
                   Features
@@ -241,12 +241,12 @@ const EstateFeatures = ({ item }) => {
               </button>
             </div>
 
-            <div className="p-6 md:p-8 overflow-y-auto bg-[#fafafa]">
+            <div className="p-4 md:p-8 overflow-y-auto bg-[#fafafa]">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {item?.amenities?.map((amenity, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-sm hover:border-[#D48D2A] transition-all hover:-translate-y-0.5"
+                    className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-3 border border-gray-200 rounded-xl bg-white shadow-sm hover:border-[#D48D2A] transition-all hover:-translate-y-0.5"
                   >
                     <span className="text-[#D48D2A] text-lg shrink-0 flex items-center justify-center opacity-80">
                       {getFeatureIcon(amenity)}

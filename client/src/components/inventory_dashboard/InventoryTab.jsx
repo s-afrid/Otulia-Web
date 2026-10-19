@@ -333,7 +333,7 @@ const InventoryTab = ({
       </div>
 
       {/* Dynamic Pagination */}
-      <div className="sticky bottom-0 z-30 grid grid-cols-[1fr_auto_1fr] items-center gap-3 py-4 mt-1 border-t border-[#E9ECF1] bg-[#F9FAFB]/95 backdrop-blur-sm -mx-8 px-8 shadow-[0_-4px_16px_rgba(15,23,42,0.04)]">
+      <div className="sticky bottom-0 z-30 grid grid-cols-[1fr_auto_1fr] items-center gap-3 py-4 mt-1 border-t border-[#E9ECF1] bg-[#F9FAFB]/95 backdrop-blur-sm -mx-3 md:-mx-8 px-3 md:px-8 shadow-[0_-4px_16px_rgba(15,23,42,0.04)]">
         <div />
         <div className="flex justify-center">
           <div className="inline-flex items-center gap-0.5 bg-white rounded-full border border-[#E9ECF1] shadow-[0_1px_4px_rgba(17,24,39,0.05)] px-1.5 py-1 inter">

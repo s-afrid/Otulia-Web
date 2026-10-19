@@ -23,10 +23,10 @@ export default function SecondaryNavbar() {
 
   return (
     <nav className="w-full bg-white border-gray-200 sticky top-0 z-40">
-      <div className="max-w-screen-xl mx-auto px-6">
+      <div className="max-w-screen-xl mx-auto px-4 md:px-6">
         <div className="relative flex items-center h-12">
           {/* Center Nav Links */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-8 overflow-x-auto scrollbar-hide">
+          <div className="flex-1 min-w-0 md:flex-none md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center gap-6 md:gap-8 overflow-x-auto scrollbar-hide">
             {secondaryLinks.map((link) => {
               const isActive = activeCategory === link.category;
               return (
@@ -56,7 +56,7 @@ export default function SecondaryNavbar() {
           </div>
 
           {/* Search */}
-          <div className="ml-auto flex items-center">
+          <div className="ml-auto pl-3 md:pl-0 flex items-center">
             {searchOpen ? (
               <div className="flex items-center gap-2">
                 <input

@@ -20,13 +20,13 @@ const BrandCarousel = () => {
     ]
 
     return (
-        <section className="w-full px-3 md:px-6 py-12 bg-white">
-            <h2 className="text-3xl canela text-black mb-12">Trusted Brands We Carry</h2>
+        <section className="w-full px-3 md:px-6 py-10 md:py-12 bg-white">
+            <h2 className="text-3xl canela text-black mb-8 md:mb-12">Trusted Brands We Carry</h2>
             <div className="grid grid-cols-2 md:grid-cols-5 border border-gray-100">
                 {brands.map((brand, idx) => (
                     <div 
                         key={idx} 
-                        className={`h-40 flex items-center justify-center p-8 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer bg-white
+                        className={`h-28 md:h-40 flex items-center justify-center p-6 md:p-8 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer bg-white
                             border-gray-100
                             ${(idx + 1) % 2 !== 0 ? 'border-r' : ''} 
                             ${idx < 4 ? 'border-b md:border-b-0' : ''}

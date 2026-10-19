@@ -170,7 +170,7 @@ function Sellwithus() {
           </p>
 
           {/* Small Divider */}
-          <div className="w-16 h-[2px] bg-[#C8922A] mt-10 mb-14"></div>
+          <div className="w-16 h-[2px] bg-[#C8922A] mt-8 md:mt-10 mb-10 md:mb-14"></div>
 
           {/* Brand Boxes */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 w-full">
@@ -196,7 +196,7 @@ function Sellwithus() {
             {stats.map((item, index) => (
               <div
                 key={index}
-                className="bg-white border border-black/10 min-h-[260px] flex flex-col items-center justify-center text-center px-8 py-2 transition-all duration-300 hover:shadow-xl"
+                className="bg-white border border-black/10 min-h-[260px] flex flex-col items-center justify-center text-center px-6 md:px-8 py-8 md:py-2 transition-all duration-300 hover:shadow-xl"
               >
                 <div className="mb-8">{item.icon}</div>
 
@@ -217,7 +217,7 @@ function Sellwithus() {
       </section>
 
       {/* SEPARATING LINE */}
-      <div className="w-full h-[1px] bg-black/10 my-15"></div>
+      <div className="w-full h-[1px] bg-black/10 my-10 md:my-15"></div>
 
       {/* GROW BUSINESS SECTION */}
       <section className="w-full bg-white pt-2 pb-0 px-6 md:px-10 lg:px-16">
@@ -231,8 +231,8 @@ function Sellwithus() {
           </h2>
 
           {/* Main Box */}
-          <div className="w-full mt-16 border-2 border-[#E3B24B] rounded-[28px] bg-white/40 backdrop-blur-sm px-8 md:px-12 py-8 md:py-16">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-14 md:gap-10">
+          <div className="w-full mt-10 md:mt-16 border-2 border-[#E3B24B] rounded-[28px] bg-white/40 backdrop-blur-sm px-5 md:px-12 py-8 md:py-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {growthCards.map((item, index) => (
                 <div key={index} className="relative">
                   {/* Vertical Separator */}
@@ -240,8 +240,8 @@ function Sellwithus() {
                     <div className="hidden md:block absolute top-0 -right-5 w-[1px] h-full bg-black/10 mr-1"></div>
                   )}
 
-                  <div className="flex items-start gap-7">
-                    <div className="w-[130px] h-[130px] flex items-center justify-center rounded-full bg-white shadow-md shrink-0">
+                  <div className="flex items-start gap-4 md:gap-7">
+                    <div className="w-20 h-20 md:w-[130px] md:h-[130px] flex items-center justify-center rounded-full bg-white shadow-md shrink-0">
                       {item.icon}
                     </div>
 
@@ -285,7 +285,7 @@ function Sellwithus() {
 
           {/* CARD 1 */}
 
-          <div className="mt-15 grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+          <div className="mt-10 md:mt-15 grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-20 items-start">
             {/* LEFT SIDE */}
             <div className="pt-6">
               <div className="w-10 h-10 rounded-full border border-[#D4B06A] flex items-center justify-center">
@@ -299,14 +299,14 @@ function Sellwithus() {
 
               {/* Title */}
               <h3
-                className="mt-3 text-[42px] leading-tight font-light text-[#D4B06A]"
+                className="mt-3 text-[32px] md:text-[42px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
                 Out Reach Forms
               </h3>
 
               {/* Description */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed">
+              <p className="mt-6 max-w-lg text-black/75 text-[17px] md:text-[19px] leading-relaxed">
                 Buyers fill out a form about their preferences, and we provide
                 them with the best buyer-seller matches.Depending upon the
                 requirements.
@@ -325,7 +325,7 @@ function Sellwithus() {
 
           {/* CARD 2 */}
 
-          <div className="mt-15 grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+          <div className="mt-10 md:mt-15 grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-20 items-start">
             {/* Left Side */}
             <div className="flex justify-center lg:justify-start">
               <img
@@ -349,14 +349,14 @@ function Sellwithus() {
 
               {/* Title */}
               <h3
-                className="mt-3 text-[42px] leading-tight font-light text-[#D4B06A]"
+                className="mt-3 text-[32px] md:text-[42px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
                 Direct Enquiry
               </h3>
 
               {/* Description */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed">
+              <p className="mt-6 max-w-lg text-black/75 text-[17px] md:text-[19px] leading-relaxed">
                 When buyers click “Interested” on your listing through Otulia
                 Website , the enquiry and buyer details are sent directly to
                 your CRM dashboard inbox, WA and Gmail.
@@ -366,7 +366,7 @@ function Sellwithus() {
 
           {/* CARD 3 */}
 
-          <div className="mt-15 grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+          <div className="mt-10 md:mt-15 grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-20 items-start">
             {/* LEFT SIDE */}
             <div className="pt-6">
               <div className="w-10 h-10 rounded-full border border-[#D4B06A] flex items-center justify-center">
@@ -380,14 +380,14 @@ function Sellwithus() {
 
               {/* Title */}
               <h3
-                className="mt-3 text-[42px] leading-tight font-light text-[#D4B06A]"
+                className="mt-3 text-[32px] md:text-[42px] leading-tight font-light text-[#D4B06A]"
                 style={{ fontFamily: "serif" }}
               >
                 Cross Category
               </h3>
 
               {/* Description */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed">
+              <p className="mt-6 max-w-lg text-black/75 text-[17px] md:text-[19px] leading-relaxed">
                 When a sale happens in your region within your average lead
                 value, you’ll be notified about the asset sold and its price to
                 help you price inventory and identify top-selling assets to
@@ -408,9 +408,9 @@ function Sellwithus() {
       </section>
 
       {/* SELL EMOTIONS VS SECTION */}
-      <section className="w-full bg-white py-20 px-6 md:px-10 lg:px-16 overflow-hidden">
+      <section className="w-full bg-white py-12 md:py-20 px-6 md:px-10 lg:px-16 overflow-hidden">
         {/* TITLE */}
-        <div className="flex flex-col items-center text-center mb-16">
+        <div className="flex flex-col items-center text-center mb-10 md:mb-16">
           <h2
             className="text-[37px] md:text-[62px] leading-[1.05] font-light text-black"
             style={{ fontFamily: "serif" }}
@@ -458,10 +458,10 @@ function Sellwithus() {
       </section>
 
       {/* Line */}
-      <div className="w-full h-[1px] bg-black/10 my-15"></div>
+      <div className="w-full h-[1px] bg-black/10 my-10 md:my-15"></div>
 
       <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16">
-        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
           {/* LEFT CONTENT */}
           <div className="w-full flex justify-center lg:justify-end">
             <div className="relative h-auto w-full max-w-[600px]">
@@ -486,7 +486,7 @@ function Sellwithus() {
             >
               Attract More Buyers
             </h3>
-            <p className="mt-6 text-black/75 text-[19px] leading-relaxed max-w-lg">
+            <p className="mt-6 text-black/75 text-[17px] md:text-[19px] leading-relaxed max-w-lg">
               Give buyers access to 5–15 years of historical price data —
               increasing confidence, trust, and conversion rates.
             </p>
@@ -495,13 +495,13 @@ function Sellwithus() {
       </section>
 
       {/* Line */}
-      <div className="w-full h-[1px] bg-black/10 my-15"></div>
+      <div className="w-full h-[1px] bg-black/10 my-10 md:my-15"></div>
 
       {/* SELL SMARTER SECTION */}
       <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-[1600px] mx-auto">
           {/* HEADING */}
-          <div className="text-center mb-24">
+          <div className="text-center mb-12 md:mb-24">
             <h2
               className="text-[37px] md:text-[57px] leading-[1.05] font-light text-black"
               style={{ fontFamily: "serif" }}
@@ -511,7 +511,7 @@ function Sellwithus() {
           </div>
 
           {/* TOP ROW */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
             {/* LEFT CONTENT */}
             <div>
               <h3
@@ -521,7 +521,7 @@ function Sellwithus() {
                 Otulia Analytics and Insights
               </h3>
 
-              <p className="mt-6 text-black/75 text-[19px] leading-relaxed max-w-lg font-light">
+              <p className="mt-6 text-black/75 text-[17px] md:text-[19px] leading-relaxed max-w-lg font-light">
                 A purpose-built CRM for luxury dealerships-manage inventory,
                 buyer inquiries, pricing history, follow-ups, and documents from
                 one dashboard.
@@ -537,7 +537,7 @@ function Sellwithus() {
           </div>
 
           {/* BOTTOM ROW */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mt-28">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center mt-16 md:mt-28">
             {/* LEFT IMAGE PLACEHOLDER */}
             <div className="flex justify-center lg:justify-start order-2 lg:order-1">
               <div className="w-full max-w-[620px] border border-black/10 rounded-[2px] bg-white shadow-sm flex items-center justify-center">
@@ -554,7 +554,7 @@ function Sellwithus() {
                 Global Google Analytics API
               </h3>
 
-              <p className="mt-6 text-black/75 text-[19px] leading-relaxed max-w-lg font-light">
+              <p className="mt-6 text-black/75 text-[17px] md:text-[19px] leading-relaxed max-w-lg font-light">
                 The world’s first luxury marketplace with Google Trends
                 Integration, live Buyer Demand Intelligence — see global search
                 demand, buyer locations, price ranges, and the best time to post
@@ -566,12 +566,12 @@ function Sellwithus() {
       </section>
 
       {/* Line */}
-      <div className="w-full h-[1px] bg-black/10 my-15"></div>
+      <div className="w-full h-[1px] bg-black/10 my-10 md:my-15"></div>
 
       {/* NJM ID SECTION */}
       <section className="w-full bg-white py-2 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-[1600px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-20 items-center">
             {/* LEFT CONTENT */}
             <div>
               {/* HEADING */}
@@ -591,7 +591,7 @@ function Sellwithus() {
               </h3>
 
               {/* DESCRIPTION */}
-              <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed">
+              <p className="mt-6 max-w-lg text-black/75 text-[17px] md:text-[19px] leading-relaxed">
                 Every asset gets a unique NJM ID — making listings instantly
                 searchable, shareable, and verifiable worldwide with a single
                 code.
@@ -613,12 +613,12 @@ function Sellwithus() {
         </div>
       </section>
 
-      <div className="w-full h-[1px] bg-black/10 my-15"></div>
+      <div className="w-full h-[1px] bg-black/10 my-10 md:my-15"></div>
 
       {/* RANKING SYSTEM SECTION */}
       <section className="w-full bg-white py-10 px-6 md:px-10 lg:px-16 overflow-hidden">
         <div className="max-w-[1750px] mx-auto">
-          <div className="flex flex-col lg:flex-row gap-16 lg:items-stretch">
+          <div className="flex flex-col lg:flex-row gap-10 md:gap-16 lg:items-stretch">
             {/* LEFT IMAGE PLACEHOLDER */}
             <div className="lg:flex-[1.3] flex">
               <div className="w-full max-w-[1050px] bg-white/40 rounded-[8px] flex">
@@ -649,7 +649,7 @@ function Sellwithus() {
                 </h3>
 
                 {/* DESCRIPTION */}
-                <p className="mt-8 max-w-xl text-black/75 text-[20px] md:text-[22px] leading-relaxed font-light">
+                <p className="mt-8 max-w-xl text-black/75 text-[17px] md:text-[22px] leading-relaxed font-light">
                   Your listings and company profile are added as nominees in
                   global luxury rankings released every six months, helping
                   drive millions of buyers toward your assets and increasing
@@ -658,11 +658,11 @@ function Sellwithus() {
               </div>
 
               {/* STATS GRID */}
-              <div className="grid grid-cols-2 gap-x-16 gap-y-16 mt-16 pb-2">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:gap-x-16 md:gap-y-16 mt-10 md:mt-16 pb-2">
                 {/* ITEM */}
                 <div className="border-l-[3px] border-[#D4B06A] pl-4 ">
                   <h4
-                    className="text-[#D4B06A] text-[40px] md:text-[44px] leading-none font-light"
+                    className="text-[#D4B06A] text-[34px] md:text-[44px] leading-none font-light"
                     style={{ fontFamily: "serif" }}
                   >
                     3x–7x
@@ -676,7 +676,7 @@ function Sellwithus() {
                 {/* ITEM */}
                 <div className="border-l-[3px] border-[#D4B06A] pl-4">
                   <h4
-                    className="text-[#D4B06A] text-[40px] md:text-[44px] leading-none font-light"
+                    className="text-[#D4B06A] text-[34px] md:text-[44px] leading-none font-light"
                     style={{ fontFamily: "serif" }}
                   >
                     40%–65%
@@ -690,7 +690,7 @@ function Sellwithus() {
                 {/* ITEM */}
                 <div className="border-l-[3px] border-[#D4B06A] pl-4">
                   <h4
-                    className="text-[#D4B06A] text-[40px] md:text-[44px] leading-none font-light"
+                    className="text-[#D4B06A] text-[34px] md:text-[44px] leading-none font-light"
                     style={{ fontFamily: "serif" }}
                   >
                     +55%
@@ -704,7 +704,7 @@ function Sellwithus() {
                 {/* ITEM */}
                 <div className="border-l-[3px] border-[#D4B06A] pl-4">
                   <h4
-                    className="text-[#D4B06A] text-[40px] md:text-[44px] leading-none font-light"
+                    className="text-[#D4B06A] text-[34px] md:text-[44px] leading-none font-light"
                     style={{ fontFamily: "serif" }}
                   >
                     2.8x
@@ -721,7 +721,7 @@ function Sellwithus() {
       </section>
 
       {/* Line */}
-      <div className="w-full h-[1px] bg-black/10 my-15"></div>
+      <div className="w-full h-[1px] bg-black/10 my-10 md:my-15"></div>
 
       {/* FAQ SECTION */}
       <section className="w-full py-10 px-6 md:px-10 lg:px-16 overflow-hidden">
@@ -742,7 +742,7 @@ function Sellwithus() {
           </div>
 
           {/* FAQ LIST */}
-          <div className="mt-20 border-t border-[#E7DFD2] max-w-5xl mx-auto">
+          <div className="mt-12 md:mt-20 border-t border-[#E7DFD2] max-w-5xl mx-auto">
             {faqs.map((faq, index) => {
               const isOpen = openIndex === index;
 
@@ -750,10 +750,10 @@ function Sellwithus() {
                 <div key={index} className="border-b border-[#E7DFD2]">
                   <button
                     onClick={() => setOpenIndex(isOpen ? null : index)}
-                    className="w-full flex items-center justify-between py-8 text-left group"
+                    className="w-full flex items-center justify-between gap-4 md:gap-0 py-5 md:py-8 text-left group"
                   >
                     <span
-                      className={`text-[24px] leading-snug font-light transition-colors duration-300 ${
+                      className={`text-[19px] md:text-[24px] leading-snug font-light transition-colors duration-300 ${
                         isOpen ? "text-[#C8922A]" : "text-black"
                       }`}
                       style={{ fontFamily: "serif" }}
@@ -803,7 +803,7 @@ function Sellwithus() {
           </h2>
 
           {/* Description */}
-          <p className="mt-6 max-w-lg text-black/75 text-[19px] leading-relaxed font-light">
+          <p className="mt-6 max-w-lg text-black/75 text-[17px] md:text-[19px] leading-relaxed font-light">
             Join the dealerships writing the next chapter of luxury commerce.
             List your first asset on Otulia today.
           </p>

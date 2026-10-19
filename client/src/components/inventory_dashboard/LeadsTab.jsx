@@ -105,7 +105,7 @@ const LeadsTab = ({
     return (
         <div className="h-full flex flex-col gap-4 animate-in fade-in duration-700">
             {/* Header Row */}
-            <div className="flex justify-between items-end shrink-0 mb-1">
+            <div className="flex flex-wrap md:flex-nowrap justify-between items-end gap-2 md:gap-0 shrink-0 mb-1">
                 <div className="flex items-center gap-2 text-[11px] font-bold text-gray-700 bg-white border border-gray-200 rounded-xl px-4 py-2 hover:bg-gray-50 cursor-pointer shadow-sm">
                     <FiCalendar className="text-gray-400" /> Last 30 days <FiChevronDown className="ml-1 text-gray-400" />
                 </div>
@@ -179,7 +179,7 @@ const LeadsTab = ({
             </div>
 
             {/* Filter Bar */}
-            <div className="flex justify-between gap-3 shrink-0 py-2">
+            <div className="flex flex-col md:flex-row justify-between gap-3 shrink-0 py-2">
                 <div className="relative flex-1">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <FiSearch className="text-gray-400 text-sm" />
@@ -192,7 +192,7 @@ const LeadsTab = ({
                         className="w-full bg-white border border-gray-200 rounded-[1rem] py-2.5 pl-9 pr-4 text-[11px] font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#D48D2A] focus:ring-1 focus:ring-[#D48D2A] transition-all shadow-sm"
                     />
                 </div>
-                <div className="flex gap-3 shrink-0">
+                <div className="flex flex-wrap md:flex-nowrap gap-3 shrink-0">
                     <div className="relative w-[130px]">
                         <select value={leadStatusFilter} onChange={e => setLeadStatusFilter(e.target.value)} className="w-full appearance-none bg-white border border-gray-200 rounded-[1rem] py-2.5 pl-4 pr-8 text-[11px] font-bold text-gray-600 focus:outline-none cursor-pointer hover:border-gray-300 shadow-sm">
                             <option value="All Status">All Status</option>
@@ -248,7 +248,7 @@ const LeadsTab = ({
                                 const assetImage = lead.assetImage || asset?.images?.[0];
                                 
                                 return (
-                                    <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-shadow grid grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_176px] gap-6 items-center group relative">
+                                    <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-shadow grid grid-cols-1 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_176px] gap-4 md:gap-6 items-center group relative">
                                         {/* Lead Profile Section */}
                                         <div className="flex items-start gap-4 min-w-0">
                                             <div className="relative shrink-0">

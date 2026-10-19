@@ -12,7 +12,7 @@ const Estate_Hero = () => {
   };
 
   return (
-    <div className="relative flex flex-col hero-banner h-[90vh] md:h-[92vh] w-full z-20">
+    <div className="relative flex flex-col hero-banner h-[90svh] md:h-[92vh] w-full z-20">
       {/* Background Image */}
       <img
         className="absolute top-0 left-0 -z-10 h-full w-full object-cover"
@@ -27,7 +27,7 @@ const Estate_Hero = () => {
             Otulia Luxury Real Estate
           </h1>
           <div className="w-24 h-[2px] bg-[#D48D2A] mx-auto"></div>
-          <p className="text-white/90 montserrat text-lg md:text-xl font-normal tracking-wide">
+          <p className="text-white/90 montserrat text-base md:text-xl font-normal tracking-wide">
             Explore curated estates, villas, penthouses, and exceptional
             properties worldwide.
           </p>

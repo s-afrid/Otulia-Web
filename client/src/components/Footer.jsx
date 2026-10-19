@@ -83,9 +83,9 @@ const Footer = () => {
   return (
     <footer className="w-full bg-[#151515] text-white pt-13 montserrat">
       {/* Top Section */}
-      <div className="px-3 md:px-6 xl:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 xl:gap-8 mb-8">
+      <div className="px-4 md:px-6 xl:px-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8 sm:gap-6 xl:gap-8 mb-8">
         {/* Logo Column */}
-        <Link to="/" className="flex flex-col cursor-pointer">
+        <Link to="/" className="col-span-2 sm:col-span-1 flex flex-col cursor-pointer">
           <img
             className="w-[150px] xl:w-[200px] h-auto object-contain object-left"
             alt="Otulia"
@@ -95,7 +95,7 @@ const Footer = () => {
         </Link>
 
         {/* Discover */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 md:gap-6">
           <h3 className="text-sm font-bold text-white uppercase tracking-widest">
             Discover
           </h3>
@@ -124,7 +124,7 @@ const Footer = () => {
         </div>
 
         {/* Our Company */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 md:gap-6">
           <h3 className="text-sm font-bold text-white uppercase tracking-widest">
             Our Company
           </h3>
@@ -143,7 +143,7 @@ const Footer = () => {
         </div>
 
         {/* Connect With Us */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 md:gap-6">
           <h3 className="text-sm font-bold text-white uppercase tracking-widest">
             Connect With Us
           </h3>
@@ -163,7 +163,7 @@ const Footer = () => {
         </div>
 
         {/* Experience App */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4 md:gap-6">
           <h3 className="text-sm font-bold text-white uppercase tracking-widest">
             Experience App
           </h3>
@@ -202,7 +202,7 @@ const Footer = () => {
         </div>
 
         {/* Settings */}
-        <div className="flex flex-col gap-6">
+        <div className="col-span-2 sm:col-span-1 flex flex-col gap-4 md:gap-6">
           <h3 className="text-sm font-bold text-white uppercase tracking-widest">
             Settings
           </h3>
@@ -291,7 +291,7 @@ const Footer = () => {
       </div>
 
       {/* Legal Links Section */}
-      <div className="px-3 md:px-8 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center">
+      <div className="px-4 md:px-8 py-8 md:py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-5 md:gap-8 items-center">
         {[
           { name: "Terms & Conditions", path: "/terms" },
           { name: "Privacy Policy", path: "/privacy-policy" },

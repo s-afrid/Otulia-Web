@@ -25,7 +25,7 @@ const CompanyProfileSection = ({ agent }) => {
 
   return (
     <div className="w-full px-6 md:px-10 py-10 border-t border-gray-100 mt-10">
-      <div className="flex flex-col lg:flex-row gap-12 items-start">
+      <div className="flex flex-col lg:flex-row gap-6 md:gap-12 items-start">
         {/* Left: Logo */}
         <div className="w-full lg:w-1/4 flex justify-center lg:justify-start">
           {agent.companyLogo && agent.companyLogo !== agent?.photo ? (
@@ -102,7 +102,7 @@ const CompanyProfileSection = ({ agent }) => {
           </div>
 
           {/* Metadata Grid (Simplified version of Image 4) */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-8 border-t border-gray-50">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 pt-8 border-t border-gray-50">
             <div>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">
                 Company

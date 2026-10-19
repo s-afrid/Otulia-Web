@@ -87,7 +87,7 @@ function HeroSkeleton() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 animate-pulse">
       <div>
-        <div className="w-full h-[600px] bg-gray-100 rounded-sm" />
+        <div className="w-full h-[260px] md:h-[600px] bg-gray-100 rounded-sm" />
         <div className="mt-5 h-3 w-40 bg-gray-100 mb-4" />
         <div className="h-8 w-4/5 bg-gray-100 mb-3" />
         <div className="h-4 w-full bg-gray-100" />
@@ -95,7 +95,7 @@ function HeroSkeleton() {
       <div className="flex flex-col gap-8">
         {[0, 1].map((i) => (
           <div key={i} className="flex gap-5 pb-8 border-b border-gray-100">
-            <div className="w-[140px] h-[100px] flex-shrink-0 bg-gray-100 rounded-sm" />
+            <div className="w-[110px] h-[80px] md:w-[140px] md:h-[100px] flex-shrink-0 bg-gray-100 rounded-sm" />
             <div className="flex-1">
               <div className="h-3 w-24 bg-gray-100 mb-3" />
               <div className="h-4 w-full bg-gray-100 mb-2" />
@@ -125,7 +125,7 @@ export default function HeroSection() {
   return (
     <section className="w-full bg-white font-sans">
       {/* Hero Grid */}
-      <div className="mx-auto px-25 py-10">
+      <div className="mx-auto px-4 md:px-25 py-6 md:py-10">
         {!posts ? (
           <HeroSkeleton />
         ) : (
@@ -137,7 +137,7 @@ export default function HeroSection() {
                 <PostImage
                   src={featured.image}
                   alt={featured.title}
-                  className="w-full h-[600px] object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
+                  className="w-full h-[260px] md:h-[600px] object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
                 />
               </div>
               <div className="mt-5">
@@ -150,7 +150,7 @@ export default function HeroSection() {
                   />
                 </div>
                 <h2
-                  className="text-3xl font-bold leading-tight text-gray-900 mb-3 group-hover:text-[#c8a96e] transition-colors"
+                  className="text-2xl md:text-3xl font-bold leading-tight text-gray-900 mb-3 group-hover:text-[#c8a96e] transition-colors"
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
                   }}
@@ -171,7 +171,7 @@ export default function HeroSection() {
                 <Link
                   key={article.link}
                   to={article.link}
-                  className={`group flex gap-5 ${
+                  className={`group flex gap-4 md:gap-5 ${
                     idx < sideArticles.length - 1 || extraArticle
                       ? "pb-8 border-b border-gray-100"
                       : ""
@@ -181,7 +181,7 @@ export default function HeroSection() {
                     <PostImage
                       src={article.image}
                       alt={article.title}
-                      className="w-[140px] h-[100px] object-cover object-top group-hover:scale-[1.03] transition-transform duration-500"
+                      className="w-[110px] h-[80px] md:w-[140px] md:h-[100px] object-cover object-top group-hover:scale-[1.03] transition-transform duration-500"
                     />
                   </div>
                   <div className="flex flex-col justify-center">

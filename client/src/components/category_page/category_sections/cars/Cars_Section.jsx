@@ -228,18 +228,18 @@ const Cars_Section = () => {
       <div className="bg-white">
         <section className="w-full px-3 md:px-6 py-12 bg-white">
           <div className="flex flex-col items-center justify-center mb-10">
-            <h2 className="text-3xl md:text-4xl canela text-black mb-12 text-center">
+            <h2 className="text-3xl md:text-4xl canela text-black mb-8 md:mb-12 text-center">
               Popular Brands
             </h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-16 w-full items-center justify-center">
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-x-4 gap-y-8 md:gap-16 w-full items-center justify-center">
               {brands.map((item) => (
                 <div key={item.id} className="w-full flex justify-center group">
                   <img
                     src={item.logo}
                     alt={item.name}
                     onClick={() => handleBrandClick(item.name)}
-                    className="h-16 md:h-20 w-auto object-contain cursor-pointer mix-blend-multiply"
+                    className="h-10 md:h-20 w-auto object-contain cursor-pointer mix-blend-multiply"
                   />
                 </div>
               ))}
@@ -262,10 +262,10 @@ const Cars_Section = () => {
 
         <section
           ref={featuredListRef}
-          className="w-full  py-16 mt-4"
+          className="w-full py-10 md:py-16 mt-4"
         >
           <div className="w-full px-2 md:px-9">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-12 gap-6">
               <div>
                 <h2 className="text-3xl md:text-5xl font-normal canela text-black mb-2">
                   Featured Cars

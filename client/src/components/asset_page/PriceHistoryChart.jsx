@@ -163,19 +163,19 @@ const PriceHistoryChart = ({ priceHistory, options }) => {
   };
 
   return (
-    <div className="w-full px-[2%] py-16">
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 md:p-12 shadow-sm">
-        <div className="flex flex-col lg:flex-row gap-12">
+    <div className="w-full px-[2%] py-10 md:py-16">
+      <div className="bg-white rounded-2xl md:rounded-[2.5rem] border border-gray-100 p-5 md:p-12 shadow-sm">
+        <div className="flex flex-col lg:flex-row gap-8 md:gap-12">
           {/* Left Side: Stats */}
           <div className="lg:w-1/3">
-            <h2 className="text-3xl font-normal canela mb-4">
+            <h2 className="text-2xl md:text-3xl font-normal canela mb-4">
               Past {chartData.length} Year Price Chart
             </h2>
             <p className="text-sm text-gray-500 montserrat leading-relaxed mb-8">
               Discover the historical market trend of this model and see how its value has evolved over the past {chartData.length} years.
             </p>
 
-            <div className="bg-gray-50/50 rounded-3xl p-8 border border-gray-100">
+            <div className="bg-gray-50/50 rounded-3xl p-5 md:p-8 border border-gray-100">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Avg. Market Price</p>
               <h3 className="text-2xl font-bold text-gray-900 mb-1 montserrat">
                 {currency} {numberWithCommas(Math.round(avgPrice))}
@@ -198,7 +198,7 @@ const PriceHistoryChart = ({ priceHistory, options }) => {
 
           {/* Right Side: Chart */}
           <div className="lg:w-2/3 flex flex-col justify-between">
-            <div className="h-[350px] w-full">
+            <div className="h-[260px] md:h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 {renderChart()}
               </ResponsiveContainer>

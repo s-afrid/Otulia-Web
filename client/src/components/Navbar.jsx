@@ -168,7 +168,7 @@ const Navbar = ({
 
       {/* MOBILE PANEL */}
       <div
-        className={`fixed top-0 right-0 h-screen w-[80vw] bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-in-out ${panelFlag ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 h-dvh md:h-screen w-[80vw] overflow-y-auto bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-in-out ${panelFlag ? "translate-x-0" : "translate-x-full"}`}
       >
         <button
           aria-label="Close menu"

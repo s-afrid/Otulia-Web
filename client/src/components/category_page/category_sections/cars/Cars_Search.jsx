@@ -38,7 +38,7 @@ const Cars_Search = () => {
       <div className="bg-white/[0.06] backdrop-blur-[2px] border-[1.25px] border-white/35 p-1.5 rounded-full flex items-center shadow-2xl">
         
         {/* 1. Location Section */}
-        <div className="flex-[2.5] flex items-center px-6 md:px-8 gap-3 border-r-[1.25px] border-white/25">
+        <div className="flex-[2.5] flex items-center px-4 md:px-8 gap-3 border-r-[1.25px] border-white/25">
           <FiMapPin className="text-white text-xl shrink-0" />
           <input
             type="text"

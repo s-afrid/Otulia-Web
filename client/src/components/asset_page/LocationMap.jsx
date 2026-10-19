@@ -25,7 +25,7 @@ const CustomZoomControls = () => {
   const map = useMap();
   return (
     <div
-      className="absolute top-8 right-8 z-[1002] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100"
+      className="absolute top-4 right-4 md:top-8 md:right-8 z-[1002] flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100"
       onClick={(e) => e.stopPropagation()}
     >
       <button
@@ -180,9 +180,9 @@ const LocationMap = ({ locationName, lat, lng }) => {
   };
 
   return (
-    <div className="w-full px-[2%] mb-16">
+    <div className="w-full px-[2%] mb-10 md:mb-16">
       <div
-        className="w-full h-[400px] md:h-[550px] relative rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 group cursor-pointer"
+        className="w-full h-[340px] md:h-[550px] relative rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 group cursor-pointer"
         onClick={handleOpenMap}
       >
         {/* Click-to-open Overlay */}
@@ -197,7 +197,7 @@ const LocationMap = ({ locationName, lat, lng }) => {
 
         {/* Fullscreen Button */}
         <button
-          className="absolute top-8 left-8 z-[1002] p-4 bg-white rounded-2xl shadow-xl hover:scale-105 transition-all text-gray-800 border border-gray-50"
+          className="absolute top-4 left-4 md:top-8 md:left-8 z-[1002] p-4 bg-white rounded-2xl shadow-xl hover:scale-105 transition-all text-gray-800 border border-gray-50"
           onClick={(e) => {
             e.stopPropagation();
             handleOpenMap();
@@ -208,18 +208,18 @@ const LocationMap = ({ locationName, lat, lng }) => {
 
         {/* Map Type Toggle */}
         <div
-          className="absolute bottom-10 right-10 z-[1002] flex bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100"
+          className="absolute bottom-4 right-4 md:bottom-10 md:right-10 z-[1002] flex bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100"
           onClick={(e) => e.stopPropagation()}
         >
           <button
             onClick={() => setMapType("street")}
-            className={`px-8 py-3 text-[11px] font-bold uppercase tracking-widest transition-all ${mapType === "street" ? "bg-black text-white" : "text-gray-500 hover:bg-gray-50"}`}
+            className={`px-5 md:px-8 py-3 text-[11px] font-bold uppercase tracking-widest transition-all ${mapType === "street" ? "bg-black text-white" : "text-gray-500 hover:bg-gray-50"}`}
           >
             Map
           </button>
           <button
             onClick={() => setMapType("satellite")}
-            className={`px-8 py-3 text-[11px] font-bold uppercase tracking-widest transition-all ${mapType === "satellite" ? "bg-black text-white" : "text-gray-500 hover:bg-gray-50"}`}
+            className={`px-5 md:px-8 py-3 text-[11px] font-bold uppercase tracking-widest transition-all ${mapType === "satellite" ? "bg-black text-white" : "text-gray-500 hover:bg-gray-50"}`}
           >
             Satellite
           </button>

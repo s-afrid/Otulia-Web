@@ -15,7 +15,7 @@ const AssetSlider = ({ title, items }) => {
   if (!items || items.length === 0) return null;
 
   return (
-    <section className="relative w-full px-8 md:px-12 py-8 bg-white group">
+    <section className="relative w-full px-4 md:px-12 py-8 bg-white group">
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl md:text-3xl font-bold canela text-black">
           {title}
@@ -89,13 +89,13 @@ const AssetSlider = ({ title, items }) => {
         {/* SCROLLABLE LIST */}
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scroll-smooth pb-4 px-1 no-scrollbar"
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory md:snap-none pb-4 px-1 no-scrollbar"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {items.map((item, idx) => (
             <div
               key={item._id || idx}
-              className="flex-none w-full sm:w-[48%] md:w-[calc((100%-2rem)/3)]"
+              className="flex-none w-[85%] sm:w-[48%] snap-start md:w-[calc((100%-2rem)/3)]"
             >
               <AssetCard item={item} idx={idx} />
             </div>

@@ -25,7 +25,7 @@ const CarKeyFeatures = ({ item }) => {
 
   // Helper Component for a Feature Card
   const FeatureCard = ({ icon, label, value }) => (
-    <div className="flex items-center gap-4 w-[300px] h-[100px] bg-[#FCFBF9] border border-[#E8E3DD] rounded-[8px] px-5 py-[12px] shadow-none hover:shadow-sm transition-shadow cursor-default">
+    <div className="flex items-center gap-4 w-full max-w-[300px] md:w-[300px] h-[100px] bg-[#FCFBF9] border border-[#E8E3DD] rounded-[8px] px-5 py-[12px] shadow-none hover:shadow-sm transition-shadow cursor-default">
       {/* Icon Container */}
       <div className="flex justify-center items-center shrink-0">
         <img
@@ -47,14 +47,14 @@ const CarKeyFeatures = ({ item }) => {
   );
 
   return (
-    <div className="w-full px-[4%] py-16 bg-white">
+    <div className="w-full px-[4%] py-10 md:py-16 bg-white">
       {/* Header Box - Line with Centered Text */}
-      <div className="relative flex items-center justify-center mb-16">
-        <span className="absolute left-0 text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em] bg-white z-10 pr-4">
+      <div className="relative flex items-center justify-center mb-10 md:mb-16">
+        <span className="hidden md:inline absolute left-0 text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em] bg-white z-10 pr-4">
           HIGHLIGHTS
         </span>
         <div className="w-full h-px bg-gray-200"></div>
-        <div className="absolute bg-white px-10 flex flex-col items-center">
+        <div className="absolute bg-white px-4 md:px-10 flex flex-col items-center">
           <h2 className="text-3xl md:text-4xl font-normal canela text-black whitespace-nowrap">
             Key Features
           </h2>

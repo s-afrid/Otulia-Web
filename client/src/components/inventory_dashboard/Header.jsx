@@ -21,8 +21,8 @@ const Header = ({
     setChartInterval
 }) => {
     return (
-        <header className="h-[clamp(50px,8vh,80px)] border-b flex items-center justify-between px-[clamp(12px,2vw,40px)] sticky top-0 z-[40] transition-colors duration-300 bg-white border-gray-100">
-            <div className="flex items-center gap-[clamp(8px,1vw,20px)]">
+        <header className="min-h-[56px] md:min-h-auto md:h-[clamp(50px,8vh,80px)] border-b flex flex-wrap md:flex-nowrap items-center justify-between gap-x-3 gap-y-2 md:gap-0 py-2 md:py-0 px-[clamp(12px,2vw,40px)] sticky top-0 z-[40] transition-colors duration-300 bg-white border-gray-100">
+            <div className="mr-auto md:mr-0 flex items-center gap-[clamp(8px,1vw,20px)]">
                 <div className="flex flex-col">
                     <h2 className="text-[clamp(16px,2.2vh,28px)] font-bold text-gray-900 flex items-center gap-[clamp(4px,0.5vw,12px)] leading-none inter">
                         {activeTab === 'settings' ? 'Profile & Company Settings' : navItems.find(n => n.id === activeTab)?.label}
@@ -41,11 +41,11 @@ const Header = ({
                 </div>
             </div>
 
-            <div className="flex items-center gap-[clamp(12px,1.5vw,32px)]">
+            <div className="contents md:flex items-center gap-[clamp(12px,1.5vw,32px)]">
                 {activeTab === 'dashboard' && (
                     <>
                         {/* Last 30 Days Dropdown */}
-                        <div className="relative w-[clamp(120px,10vw,180px)] h-[clamp(30px,4vh,44px)]">
+                        <div className="order-last md:order-none relative w-[clamp(120px,10vw,180px)] h-[clamp(30px,4vh,44px)]">
                             <FiCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 text-[clamp(10px,1.2vh,16px)] pointer-events-none" />
                             <select 
                                 value={chartInterval}
@@ -60,7 +60,7 @@ const Header = ({
                         </div>
 
                         {/* Day/Week/Month Tabs */}
-                        <div className="flex items-center rounded-[clamp(4px,0.8vh,10px)] bg-gray-50 p-[clamp(2px,0.4vh,6px)] h-[clamp(30px,4vh,44px)]">
+                        <div className="order-last md:order-none flex items-center rounded-[clamp(4px,0.8vh,10px)] bg-gray-50 p-[clamp(2px,0.4vh,6px)] h-[clamp(30px,4vh,44px)]">
                             {['Day', 'Week', 'Month'].map((t) => (
                                 <button
                                     key={t}
@@ -77,7 +77,7 @@ const Header = ({
                 )}
 
                 {activeTab === 'analytics' && (
-                    <div className="flex items-center gap-[clamp(8px,1vw,20px)]">
+                    <div className="order-last md:order-none flex flex-wrap md:flex-nowrap items-center gap-[clamp(8px,1vw,20px)]">
                         {/* Date Range Picker Placeholder */}
                         <div className="flex items-center gap-2 px-[clamp(10px,1.2vh,20px)] h-[clamp(30px,4vh,44px)] bg-white border border-gray-100 rounded-[clamp(8px,1vh,12px)] shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
                             <FiCalendar className="text-gray-500 text-[clamp(12px,1.6vh,24px)]" />
@@ -203,7 +203,7 @@ const Header = ({
                         className="flex items-center gap-[clamp(8px,1vw,16px)] hover:opacity-80 transition-opacity focus:outline-none"
                     >
                         <img src={user?.profilePicture || '/assets/user.png'} className="w-[clamp(30px,4vh,54px)] h-[clamp(30px,4vh,54px)] rounded-full border border-gray-200 object-cover" alt="Profile" />
-                        <div className="text-left">
+                        <div className="hidden md:block text-left">
                             <p className="text-[clamp(10px,1.4vh,18px)] font-semibold text-gray-900 inter leading-none mb-1">{user?.name || 'Prestige Motors'}</p>
                             <p className="text-[clamp(8px,1vh,14px)] text-[#999999] font-normal inter leading-none">{user?.plan || 'Professional'} Plan</p>
                         </div>

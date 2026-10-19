@@ -60,17 +60,17 @@ const PostImage = ({ src, alt, className }) =>
   );
 
 const BlogSkeleton = () => (
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 animate-pulse">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 animate-pulse">
     <div>
       <div className="aspect-[16/9] bg-gray-100 mb-6" />
       <div className="h-3 w-28 bg-gray-100 mb-4" />
       <div className="h-8 w-4/5 bg-gray-100 mb-3" />
       <div className="h-4 w-full bg-gray-100" />
     </div>
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-6 md:gap-10">
       {[0, 1, 2].map((i) => (
-        <div key={i} className="flex gap-6">
-          <div className="w-48 h-32 flex-shrink-0 bg-gray-100" />
+        <div key={i} className="flex gap-4 md:gap-6">
+          <div className="w-32 h-24 md:w-48 md:h-32 flex-shrink-0 bg-gray-100" />
           <div className="flex-1">
             <div className="h-3 w-24 bg-gray-100 mb-3" />
             <div className="h-5 w-full bg-gray-100 mb-2" />
@@ -91,14 +91,14 @@ const BlogSection = () => {
 
   return (
     <section className="w-full px-3 md:px-6 py-6 bg-white">
-      <div className="flex items-center justify-between mb-12">
-        <h2 className="text-4xl canela text-black">Our Blog</h2>
+      <div className="flex items-center justify-between mb-8 md:mb-12">
+        <h2 className="text-3xl md:text-4xl canela text-black">Our Blog</h2>
       </div>
 
       {!posts ? (
         <BlogSkeleton />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12">
           {/* Left: Featured (latest) Post */}
           <a
             href={mainPost.link}
@@ -126,15 +126,15 @@ const BlogSection = () => {
           </a>
 
           {/* Right: Next 3 Posts */}
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-6 md:gap-10">
             {sidePosts.map((post) => (
               <a
                 key={post.link}
                 href={post.link}
                 target="_blank"
-                className="flex gap-6 group cursor-pointer"
+                className="flex gap-4 md:gap-6 group cursor-pointer"
               >
-                <div className="w-48 h-32 flex-shrink-0 overflow-hidden">
+                <div className="w-32 h-24 md:w-48 md:h-32 flex-shrink-0 overflow-hidden">
                   <PostImage
                     src={post.image}
                     alt={post.title}
@@ -145,7 +145,7 @@ const BlogSection = () => {
                   <span className="text-gray-400 text-xs font-semibold mb-2 uppercase tracking-tight">
                     {formatDate(post.publishedAt)}
                   </span>
-                  <h4 className="text-lg font-bold text-black leading-snug mb-2 group-hover:text-gray-700 transition-colors">
+                  <h4 className="text-base md:text-lg font-bold text-black leading-snug mb-2 group-hover:text-gray-700 transition-colors">
                     {post.title}
                   </h4>
                   {post.excerpt && (

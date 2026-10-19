@@ -264,7 +264,7 @@ const DashboardTab = ({
             </div>
           </div>
 
-          <div className="flex-1 relative mt-0 min-h-0 w-full">
+          <div className="flex-1 relative mt-0 min-h-[200px] md:min-h-0 w-full">
             <div className="absolute inset-0 pb-[clamp(16px,2vh,32px)] pl-[clamp(24px,3.5vh,56px)] flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-[clamp(8px,1vh,16px)]">
               {[100, 75, 50, 25, 0].map((val, i) => (
                 <div
@@ -399,7 +399,7 @@ const DashboardTab = ({
           <h4 className="inter text-[clamp(12px,1.6vh,24px)] font-semibold text-gray-900 leading-none tracking-normal mb-[clamp(8px,1vh,20px)] shrink-0">
             Leads by Asset Category
           </h4>
-          <div className="flex-1 flex items-center justify-center gap-[clamp(8px,1.5vh,32px)] lg:gap-[clamp(16px,3vh,60px)] min-h-0 pl-[clamp(4px,0.5vh,12px)] pr-[clamp(8px,1vh,24px)]">
+          <div className="flex-1 flex items-center justify-center gap-[clamp(8px,1.5vh,32px)] lg:gap-[clamp(16px,3vh,60px)] min-h-[160px] md:min-h-0 pl-[clamp(4px,0.5vh,12px)] pr-[clamp(8px,1vh,24px)]">
             <div className="w-[clamp(80px,12vh,240px)] md:w-[clamp(100px,14vh,280px)] lg:w-[clamp(120px,20vh,360px)] aspect-square flex items-center justify-center relative shrink-0">
               <svg
                 viewBox="0 0 100 100"
@@ -577,7 +577,7 @@ const DashboardTab = ({
               View all
             </button>
           </div>
-          <div className="flex-1 flex items-center justify-between z-10 px-0 mt-[clamp(2px,0.3vh,8px)] min-h-0">
+          <div className="flex-1 flex items-center justify-between z-10 px-0 mt-[clamp(2px,0.3vh,8px)] min-h-[160px] md:min-h-0">
             <div className="w-[clamp(80px,12vh,240px)] md:w-[clamp(100px,14vh,280px)] lg:w-[clamp(120px,18vh,360px)] aspect-square flex items-center justify-center relative shrink-0 -ml-[clamp(4px,0.5vh,12px)] lg:-ml-[clamp(8px,1vh,24px)]">
               <svg
                 viewBox="0 0 100 100"
@@ -695,7 +695,7 @@ const DashboardTab = ({
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col mt-[clamp(4px,0.5vh,12px)] relative min-h-0">
+          <div className="flex-1 flex flex-col mt-[clamp(4px,0.5vh,12px)] relative min-h-[180px] md:min-h-0">
             <div className="absolute inset-0 pb-[clamp(12px,1.8vh,32px)] pl-[clamp(24px,3.5vh,64px)] flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-[clamp(4px,0.5vh,12px)]">
               {[100, 75, 50, 25, 0].map((val, i) => (
                 <div

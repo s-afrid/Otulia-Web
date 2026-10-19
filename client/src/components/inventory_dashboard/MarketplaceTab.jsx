@@ -20,9 +20,9 @@ import numberWithCommas from "../../modules/numberwithcomma";
 
 const MarketplaceTab = ({ data, handleTogglePublic }) => {
   return (
-    <div className="h-[calc(100vh-6rem)] overflow-hidden flex flex-col p-2 gap-4 animate-in fade-in duration-700">
+    <div className="md:h-[calc(100vh-6rem)] md:overflow-hidden flex flex-col p-2 gap-4 animate-in fade-in duration-700">
       {/* Visibility & Performance */}
-      <div className="flex-1 flex gap-4 min-h-0">
+      <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0">
         {/* Visibility Controls */}
         <div className="flex-[3] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col min-h-0 relative">
           <div className="flex justify-between items-start mb-4 shrink-0">

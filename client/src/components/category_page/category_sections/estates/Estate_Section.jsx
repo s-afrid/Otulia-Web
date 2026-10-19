@@ -176,10 +176,10 @@ const Estate_Section = () => {
 
         <section
           ref={featuredListRef}
-          className="w-full bg-[#f9f9f9] py-16 mt-4"
+          className="w-full bg-[#f9f9f9] py-10 md:py-16 mt-4"
         >
           <div className="w-full px-2 md:px-9">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-12 gap-6">
               <div>
                 <h2 className="text-3xl md:text-5xl font-normal canela text-black mb-2">
                   Featured Estates

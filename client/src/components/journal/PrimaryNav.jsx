@@ -17,7 +17,7 @@ export default function PrimaryNavbar() {
 
   return (
     <nav className="w-full bg-white border-b-2 border-gray-200">
-      <div className="max-w-screen-xl mx-auto px-6 py-4">
+      <div className="max-w-screen-xl mx-auto px-4 md:px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0 w-44 h-8 flex items-center">
             <NavLink to={"/"}>

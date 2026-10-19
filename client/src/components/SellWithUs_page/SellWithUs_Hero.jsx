@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 
 const SellWithUs_Hero = () => {
   return (
-    <div className="relative flex flex-col bg-white h-screen w-full z-20 overflow-hidden">
+    <div className="relative flex flex-col bg-white h-svh md:h-screen w-full z-20 overflow-hidden">
       {/* Background Image - Matching the refined, high-end look */}
       <div className="absolute inset-0 -z-10">
         <img
@@ -30,13 +30,13 @@ const SellWithUs_Hero = () => {
 
           {/* Main Heading - Replicating the Canela light typography and layout */}
           <div className="leading-[1.1] md:leading-[1]">
-            <h1 className="text-white font-light text-[54px] sm:text-[72px] md:text-[90px] lg:text-[100px] tracking-tight canela">
+            <h1 className="text-white font-light text-[44px] sm:text-[72px] md:text-[90px] lg:text-[100px] tracking-tight canela">
               The
             </h1>
-            <h1 className="text-white font-light text-[54px] sm:text-[72px] md:text-[90px] lg:text-[100px] tracking-tight canela">
+            <h1 className="text-white font-light text-[44px] sm:text-[72px] md:text-[90px] lg:text-[100px] tracking-tight canela">
               Marketplace
             </h1>
-            <h1 className="text-[#C8922A] italic font-light text-[44px] sm:text-[58px] md:text-[72px] lg:text-[80px] tracking-tight canela">
+            <h1 className="text-[#C8922A] italic font-light text-[36px] sm:text-[58px] md:text-[72px] lg:text-[80px] tracking-tight canela">
               for Luxury Assets.
             </h1>
           </div>
@@ -48,7 +48,7 @@ const SellWithUs_Hero = () => {
           </p>
 
           {/* Button - Exact match of the style */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-12">
+          <div className="flex flex-col sm:flex-row gap-4 mt-8 md:mt-12">
             <NavLink to="/pricing">
               <button className="group flex items-center justify-center gap-4 bg-white text-black px-10 py-5 text-[11px] tracking-[0.3em] uppercase montserrat font-bold transition-all duration-300 hover:bg-[#f0f0f0] shadow-xl">
                 LIST YOUR ASSETS
