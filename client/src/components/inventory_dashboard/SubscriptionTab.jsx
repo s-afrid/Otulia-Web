@@ -17,11 +17,11 @@ const SubscriptionTab = ({
   setIsUpgradeModalOpen,
 }) => {
   return (
-    <div className="h-[calc(100vh-6rem)] overflow-hidden flex flex-col p-4 animate-in fade-in duration-700">
+    <div className="md:h-[calc(100vh-6rem)] md:overflow-hidden flex flex-col p-1 md:p-4 animate-in fade-in duration-700">
       {/* Current Plan Block */}
-      <div className="bg-[#FFF8F0] rounded-[1.5rem] border border-[#F2E8DB] shadow-[0_2px_15px_rgba(0,0,0,0.02)] p-4 mb-2 shrink-0 flex justify-between relative overflow-hidden">
+      <div className="bg-[#FFF8F0] rounded-[1.5rem] border border-[#F2E8DB] shadow-[0_2px_15px_rgba(0,0,0,0.02)] p-4 mb-2 shrink-0 flex flex-col md:flex-row gap-4 md:gap-0 justify-between relative overflow-hidden">
         <div className="absolute top-0 right-0 h-full w-1/3 pointer-events-none opacity-40 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMDAiPjxwYXRoIGQ9Ik0wIDEwMDBDMzAwIDEwMDAgMzAwIDAgMTAwMCAwIiBzdHJva2U9IiNENDhEMkEiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==')] bg-cover bg-right bg-no-repeat w-1/2"></div>
-        <div className="flex gap-6 items-start relative z-10 w-full max-w-4xl">
+        <div className="flex gap-4 md:gap-6 items-start relative z-10 w-full max-w-4xl">
           <div className="w-14 h-14 bg-[#D48D2A] rounded-[1rem] flex items-center justify-center shrink-0 shadow-lg shadow-[#D48D2A]/20">
             <FiSettings className="text-white text-2xl" />
           </div>
@@ -111,7 +111,7 @@ const SubscriptionTab = ({
 
       {/* Plans Comparison */}
       <div className="flex-1 min-h-0 bg-white rounded-[1.5rem] border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] p-4 flex flex-col">
-        <div className="flex justify-between items-center mb-6 shrink-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0 mb-6 shrink-0">
           <div>
             <h4 className="inter text-sm font-bold text-gray-900 tracking-normal">
               Available Plans
@@ -132,7 +132,7 @@ const SubscriptionTab = ({
           </div>
         </div>
 
-        <div className="flex-1 grid grid-cols-3 gap-4 min-h-0">
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 min-h-0">
           {[
             {
               name: "Premium Basic",

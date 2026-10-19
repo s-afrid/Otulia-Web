@@ -150,7 +150,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="h-screen w-full relative bg-black z-[5]">
+    <div className="h-svh md:h-screen w-full relative bg-black z-[5]">
       {/* Background Images Slideshow */}
       {images.map((img, index) => (
         <div
@@ -209,7 +209,7 @@ const Hero = () => {
                 }
                 onKeyDown={handleKeyDown}
                 placeholder="Search by Asset ID, Location or Name"
-                className="bg-transparent text-white placeholder:text-white/40 outline-none w-full text-sm md:text-lg montserrat"
+                className="bg-transparent text-white placeholder:text-white/40 outline-none w-full text-base md:text-lg montserrat"
               />
               <button
                 type="submit"

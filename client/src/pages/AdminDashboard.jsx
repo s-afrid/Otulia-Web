@@ -263,7 +263,7 @@ const AdminDashboard = () => {
             />
 
             {/* MAIN CONTENT */}
-            <main className="flex-1 bg-[#F9FAFB] transition-all duration-300 ease-in-out lg:ml-[240px]">
+            <main className="flex-1 min-w-0 md:min-w-auto bg-[#F9FAFB] transition-all duration-300 ease-in-out lg:ml-[240px]">
                 {/* HEADER/NAVBAR */}
                 <AdminNavbar 
                     activeTab={activeTab}

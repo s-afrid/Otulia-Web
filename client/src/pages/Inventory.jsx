@@ -644,7 +644,7 @@ const Inventory = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[#FDFDFD] overflow-hidden">
+    <div className="flex h-dvh md:h-screen bg-[#FDFDFD] overflow-hidden">
       <SEO
         title="Inventory & Dealer Dashboard"
         description="Manage your Otulia inventory, leads, analytics, marketplace listings, and subscription."
@@ -660,7 +660,7 @@ const Inventory = () => {
         setIsProfileDropdownOpen={setIsProfileDropdownOpen}
       />
 
-      <main className="flex-1 ml-[clamp(180px,14vw,320px)] flex flex-col h-screen overflow-hidden transition-all duration-300">
+      <main className="flex-1 min-w-0 md:min-w-auto ml-0 md:ml-[clamp(180px,14vw,320px)] flex flex-col h-dvh md:h-screen overflow-hidden transition-all duration-300">
         <Header
           activeTab={activeTab}
           navItems={navItems}
@@ -681,7 +681,7 @@ const Inventory = () => {
           logout={logout}
         />
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-[clamp(12px,2vw,32px)] pt-4 pb-0 transition-all">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-[clamp(12px,2vw,32px)] pt-4 pb-20 md:pb-0 transition-all">
           {activeTab === "dashboard" && (
             <DashboardTab
               data={data}

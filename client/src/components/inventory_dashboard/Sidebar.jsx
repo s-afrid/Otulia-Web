@@ -13,31 +13,31 @@ const Sidebar = ({ activeTab, setActiveTab, user, navigate, logout, isProfileDro
     ];
 
     return (
-        <div className="w-[clamp(180px,14vw,320px)] h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0 z-[50] transition-all duration-300 overflow-hidden">
+        <div className="w-full md:w-[clamp(180px,14vw,320px)] h-16 md:h-screen bg-white border-t md:border-t-0 md:border-r border-gray-100 flex flex-col fixed left-0 bottom-0 md:bottom-auto md:top-0 z-[50] transition-all duration-300 overflow-hidden">
             {/* Logo Area */}
-            <div className="h-[clamp(80px,12vh,130px)] flex items-center px-[clamp(16px,2vw,32px)] border-b border-gray-50">
+            <div className="h-[clamp(80px,12vh,130px)] hidden md:flex items-center px-[clamp(16px,2vw,32px)] border-b border-gray-50">
                 <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-[clamp(45px,6vh,95px)] object-contain cursor-pointer" onClick={() => navigate('/')} />
             </div>
 
-            <nav className="flex-1 px-[clamp(10px,1vw,20px)] space-y-[clamp(6px,1vh,12px)] overflow-y-auto no-scrollbar pb-8">
+            <nav className="flex-1 flex md:block items-stretch gap-1 px-2 md:px-[clamp(10px,1vw,20px)] pt-1.5 pb-1.5 md:pt-0 md:pb-8 md:space-y-[clamp(6px,1vh,12px)] overflow-x-auto overflow-y-hidden md:overflow-y-auto no-scrollbar">
                 {navItems.map((item) => (
                     <button
                         key={item.id}
                         onClick={() => setActiveTab(item.id)}
-                        className={`w-full flex items-center gap-[clamp(8px,0.8vw,16px)] px-[clamp(8px,1vw,20px)] py-[clamp(8px,1.2vh,16px)] rounded-[clamp(4px,1vh,12px)] transition-all group relative ${activeTab === item.id 
+                        className={`w-auto md:w-full shrink-0 flex flex-col md:flex-row items-center gap-1 md:gap-[clamp(8px,0.8vw,16px)] px-3 md:px-[clamp(8px,1vw,20px)] py-1.5 md:py-[clamp(8px,1.2vh,16px)] rounded-[clamp(4px,1vh,12px)] transition-all group relative ${activeTab === item.id 
                             ? 'bg-[#FFF8F0] text-[#D48D2A] shadow-[inset_0_0_0_1px_rgba(212,141,42,0.05)]' 
                             : 'text-gray-500 hover:bg-gray-50'}`}
                     >
                         <item.icon className={`text-[clamp(14.28px,1.83vh,24.48px)] ${activeTab === item.id ? 'text-[#D48D2A]' : 'text-gray-400 group-hover:text-gray-600'}`} />
-                        <span className="inter text-[clamp(10.2px,1.53vh,20.4px)] font-semibold tracking-tight">{item.label}</span>
+                        <span className="inter text-[10px] md:text-[clamp(10.2px,1.53vh,20.4px)] whitespace-nowrap md:whitespace-normal font-semibold tracking-tight">{item.label}</span>
                         {activeTab === item.id && (
-                            <div className="absolute right-0 top-[20%] bottom-[20%] w-[4px] bg-[#D48D2A] rounded-l-full shadow-[0_0_12px_rgba(212,141,42,0.6)] animate-in fade-in slide-in-from-right-1 duration-300" />
+                            <div className="hidden md:block absolute right-0 top-[20%] bottom-[20%] w-[4px] bg-[#D48D2A] rounded-l-full shadow-[0_0_12px_rgba(212,141,42,0.6)] animate-in fade-in slide-in-from-right-1 duration-300" />
                         )}
                     </button>
                 ))}
             </nav>
 
-            <div className="p-[clamp(8px,1vw,16px)] border-t border-gray-100 space-y-[clamp(8px,1.5vh,20px)]">
+            <div className="hidden md:block p-[clamp(8px,1vw,16px)] border-t border-gray-100 space-y-[clamp(8px,1.5vh,20px)]">
                 {/* User Profile Snippet */}
                 <div 
                     className="flex items-center justify-between p-[clamp(4px,0.8vh,12px)] rounded-[clamp(4px,1vh,12px)] hover:bg-gray-50 cursor-pointer transition-colors relative"

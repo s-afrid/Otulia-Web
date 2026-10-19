@@ -270,7 +270,7 @@ Reference ID: #${refId}
               )}
             </div>
 
-            <div className="inline-flex items-center gap-1.5 mb-10 text-gray-500">
+            <div className="inline-flex items-center gap-1.5 mb-6 md:mb-10 text-gray-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -329,7 +329,7 @@ Reference ID: #${refId}
 
               {/* RENTAL BOOKING BOX */}
               {type === "Rent" && (
-                <div className="mt-10 border border-[#E5E5E5] rounded-xl bg-white p-6 shadow-sm">
+                <div className="mt-10 border border-[#E5E5E5] rounded-xl bg-white p-4 md:p-6 shadow-sm">
                   <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#B58252] mb-5">
                     Book Your Charter
                   </h3>
@@ -346,7 +346,7 @@ Reference ID: #${refId}
                           type="date"
                           value={startDate}
                           onChange={(e) => setStartDate(e.target.value)}
-                          className="w-full h-[44px] border border-[#D9D9D9] rounded-md px-3 text-sm outline-none bg-white"
+                          className="w-full h-[44px] border border-[#D9D9D9] rounded-md px-3 text-base md:text-sm outline-none bg-white"
                         />
                       </div>
                     </div>
@@ -362,7 +362,7 @@ Reference ID: #${refId}
                           type="date"
                           value={endDate}
                           onChange={(e) => setEndDate(e.target.value)}
-                          className="w-full h-[44px] border border-[#D9D9D9] rounded-md px-3 text-sm outline-none bg-white"
+                          className="w-full h-[44px] border border-[#D9D9D9] rounded-md px-3 text-base md:text-sm outline-none bg-white"
                         />
                       </div>
                     </div>
@@ -374,7 +374,7 @@ Reference ID: #${refId}
                       </label>
 
                       <select
-                        className="w-full h-[44px] border border-[#D9D9D9] rounded-md px-3 text-sm outline-none bg-white"
+                        className="w-full h-[44px] border border-[#D9D9D9] rounded-md px-3 text-base md:text-sm outline-none bg-white"
                         defaultValue="8"
                       >
                         <option value="2">2 Guests</option>
@@ -467,7 +467,7 @@ Reference ID: #${refId}
             </div>
 
             {/* Expanded Agent Box */}
-            <div className="border border-gray-200 rounded-2xl shadow-sm p-6 bg-white flex flex-col gap-4">
+            <div className="border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6 bg-white flex flex-col gap-4">
               {/* Agent Profile & Company Logo Header */}
               <div className="flex items-center justify-between gap-3 pb-1">
                 {/* Left: Avatar & Details */}
@@ -587,14 +587,14 @@ Reference ID: #${refId}
                 <input
                   type="text"
                   placeholder="What can we help you with?"
-                  className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-gray-400 transition-colors bg-white"
+                  className="flex-1 min-w-0 md:min-w-auto border border-gray-200 rounded-xl px-3 md:px-4 py-3 text-base md:text-sm outline-none focus:border-gray-400 transition-colors bg-white"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
                 <button
                   onClick={handleCallAgent}
                   disabled={activityLoading}
-                  className="bg-black text-white px-5 py-3 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-gray-800 transition-all disabled:opacity-50 shrink-0"
+                  className="bg-black text-white px-4 md:px-5 py-3 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-gray-800 transition-all disabled:opacity-50 shrink-0"
                 >
                   <span>{activityLoading ? "..." : "Send"}</span>
                   <svg

@@ -105,7 +105,7 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset', assetTitle, 
           
           {/* Main Large Image (Cover) */}
           <div 
-            className="md:col-span-2 md:row-span-2 relative cursor-pointer overflow-hidden bg-gray-200"
+            className="aspect-[4/3] md:aspect-auto md:col-span-2 md:row-span-2 relative cursor-pointer overflow-hidden bg-gray-200"
             onClick={() => openLightbox(0)}
           >
             {allMedia[0].type === 'video' ? (
@@ -258,7 +258,7 @@ const AssetGallery = ({ images = [], videoUrl, assetType = 'Asset', assetTitle, 
           </div>
           
           {/* Thumbnail Strip */}
-          <div className="p-6 h-32 flex gap-3 overflow-x-auto justify-center items-center no-scrollbar bg-black/40 backdrop-blur-sm">
+          <div className="p-4 md:p-6 h-28 md:h-32 flex gap-3 overflow-x-auto justify-start md:justify-center items-center no-scrollbar bg-black/40 backdrop-blur-sm">
             {allMedia.map((item, idx) => (
               <button 
                 key={idx}

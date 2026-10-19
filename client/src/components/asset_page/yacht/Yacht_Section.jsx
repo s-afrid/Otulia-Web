@@ -157,13 +157,13 @@ const Yacht_Section = () => {
       <CompanyProfileSection agent={info.agent} />
 
       {similarAssets.length > 0 && (
-        <div className="py-16 border-t border-gray-100">
+        <div className="py-8 md:py-16 border-t border-gray-100">
           <AssetSlider title="Similar Yachts" items={similarAssets} />
         </div>
       )}
 
       {agentAssets.length > 0 && (
-        <div className="py-16 bg-gray-50/30">
+        <div className="py-8 md:py-16 bg-gray-50/30">
           <AssetSlider
             title={`More from ${info.agent?.company || "this Agency"}`}
             items={agentAssets}

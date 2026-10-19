@@ -37,9 +37,9 @@ const MostPopularAssets = () => {
   }, []);
 
   return (
-    <section className="relative px-4 md:px-6 pt-2 pb-16 bg-[#f9f9f9] group w-full">
+    <section className="relative px-4 md:px-6 pt-2 pb-12 md:pb-16 bg-[#f9f9f9] group w-full">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-10 gap-4">
         <div>
           <h2 className="text-3xl md:text-4xl font-normal canela text-black mb-2">
             Most Popular Assets
@@ -97,7 +97,7 @@ const MostPopularAssets = () => {
         {/* SCROLLABLE LIST */}
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto scroll-smooth pb-8 pt-2"
+          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory md:snap-none pb-8 pt-2"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <style>{`.scroll-smooth::-webkit-scrollbar { display: none; }`}</style>
@@ -105,7 +105,7 @@ const MostPopularAssets = () => {
           {list.map((item, idx) => (
             <div
               key={item._id}
-              className="w-[85vw] sm:w-[calc(50%-8px)] lg:w-[calc(33.333%-10.66px)] shrink-0 group-hover:opacity-100"
+              className="w-[85vw] sm:w-[calc(50%-8px)] lg:w-[calc(33.333%-10.66px)] shrink-0 snap-start group-hover:opacity-100"
             >
               <AssetCard item={item} idx={idx} />
             </div>

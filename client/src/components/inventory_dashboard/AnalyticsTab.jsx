@@ -67,7 +67,7 @@ const AnalyticsTab = ({
     return (
         <div className="flex flex-col gap-[2vh] h-full animate-in fade-in duration-700 pb-[2vh]">
             {/* Top KPI Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-[clamp(8px,1vh,20px)] flex-none h-[14vh] min-h-[100px]">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-[clamp(8px,1vh,20px)] flex-none md:h-[14vh] min-h-[100px]">
                 {kpiCards.map((kpi, idx) => (
                     <div key={idx} className="bg-white rounded-[clamp(8px,1.2vh,20px)] p-[clamp(10px,1.2vh,20px)] flex flex-col justify-between border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] relative overflow-hidden group">
                         <div className="flex justify-between items-start z-10 w-full relative">
@@ -127,7 +127,7 @@ const AnalyticsTab = ({
                         </div>
                     </div>
 
-                    <div className="flex-1 relative mt-2 min-h-0 w-full">
+                    <div className="flex-1 relative mt-2 min-h-[200px] md:min-h-0 w-full">
                         {/* Grid Lines */}
                         <div className="absolute inset-0 pb-[clamp(20px,2.5vh,48px)] pl-[clamp(32px,4.5vh,80px)] flex flex-col justify-between border-b border-gray-50 pointer-events-none pr-4">
                             {[100, 75, 50, 25, 0].map((val, i) => (
@@ -253,7 +253,7 @@ const AnalyticsTab = ({
                             View Report
                         </button>
                     </div>
-                    <div className="flex-1 flex items-center justify-center gap-[clamp(12px,2vw,48px)] min-h-0 px-2">
+                    <div className="flex-1 flex items-center justify-center gap-[clamp(12px,2vw,48px)] min-h-[180px] md:min-h-0 px-2">
                         {/* Donut Chart SVG */}
                         <div className="w-[clamp(100px,15vh,260px)] aspect-square flex items-center justify-center relative shrink-0">
                             <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90 overflow-visible">
@@ -398,9 +398,9 @@ const AnalyticsTab = ({
                         </div>
                     </div>
                     
-                    <div className="flex-1 flex gap-8 min-h-0">
+                    <div className="flex-1 flex flex-col md:flex-row gap-6 md:gap-8 min-h-0">
                         {/* Location List */}
-                        <div className="flex-[0.8] flex flex-col justify-center gap-[clamp(10px,1.5vh,28px)] h-full pr-4 border-r border-gray-50/50">
+                        <div className="flex-[0.8] flex flex-col justify-center gap-[clamp(10px,1.5vh,28px)] h-full md:pr-4 md:border-r border-gray-50/50">
                             <div className="flex justify-between items-center pb-1 text-[clamp(10px,1.3vh,16px)] font-bold text-gray-800 uppercase tracking-[0.05em] border-b border-gray-50/80">
                                 <span>Assets</span>
                                 <div className="flex gap-[clamp(40px,5vw,80px)]">

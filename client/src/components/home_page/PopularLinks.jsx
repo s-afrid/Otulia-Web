@@ -44,10 +44,10 @@ const PopularLinks = () => {
   };
 
   return (
-    <div className="w-full bg-white py-16 px-6">
-      <div className="max-w-full mx-auto ml-14">
+    <div className="w-full bg-white py-10 md:py-16 px-4 md:px-6">
+      <div className="max-w-full mx-auto md:ml-14">
         {/* Breadcrumb Navigation */}
-        <div className="mb-12 text-center"></div>
+        <div className="mb-6 md:mb-12 text-center"></div>
 
         {/* Popular Links Section Title */}
         <h2 className="text-3xl md:text-3xl canela text-black font-bold text-start mb-8 text-gray-900">
@@ -55,7 +55,7 @@ const PopularLinks = () => {
         </h2>
 
         {/* Links Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 md:gap-8">
           {/* Cities & Regions Column */}
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-4 ">

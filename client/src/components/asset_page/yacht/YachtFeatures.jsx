@@ -81,7 +81,7 @@ const YachtFeatures = ({ item }) => {
 
   return (
     <div className="w-full px-[2%] py-10 bg-white montserrat">
-      <div className="flex justify-between items-end mb-10">
+      <div className="flex justify-between items-end mb-6 md:mb-10">
         <h3 className="text-2xl md:text-3xl font-normal canela text-black">Yacht Specifications</h3>
         {allSpecs.length > LIMIT * 2 && (
           <button
@@ -110,14 +110,14 @@ const YachtFeatures = ({ item }) => {
       {isModalOpen && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-            <div className="flex justify-between items-center p-6 border-b border-gray-100">
+            <div className="flex justify-between items-center p-5 md:p-6 border-b border-gray-100">
               <h2 className="text-2xl font-bold canela">All Yacht Specifications</h2>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <FiX className="text-2xl" />
               </button>
             </div>
 
-            <div className="p-8 overflow-y-auto">
+            <div className="p-5 md:p-8 overflow-y-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
                 {allSpecs.map((spec, idx) => (
                   <SpecRow key={idx} {...spec} />

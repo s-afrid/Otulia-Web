@@ -19,9 +19,9 @@ const ContentManagementHeader = ({
     const [isHeaderDropdownOpen, setIsHeaderDropdownOpen] = useState(false);
     
     return (
-        <header className="h-16 bg-[#0A0E17] border-b border-[#151C2C] px-6 flex items-center justify-between sticky top-0 z-40">
+        <header className="h-16 bg-[#0A0E17] border-b border-[#151C2C] px-4 md:px-6 flex items-center justify-between sticky top-0 z-40">
             {/* Left section: mobile button & title */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
                 <button onClick={toggleSidebar} className="text-gray-400 hover:text-white lg:hidden">
                     <FiMenu className="text-lg" />
                 </button>
@@ -31,7 +31,7 @@ const ContentManagementHeader = ({
             </div>
 
             {/* Right section: user actions */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 md:gap-4">
                 {/* View Site Button */}
                 <button 
                     onClick={() => navigate('/')}

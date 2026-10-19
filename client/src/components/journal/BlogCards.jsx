@@ -268,7 +268,7 @@ export default function BlogCards({ activeCategory = null }) {
 
   return (
     <section className="w-full bg-white">
-      <div className="mx-auto px-25 pb-16">
+      <div className="mx-auto px-4 md:px-25 pb-16">
         {/* Section divider */}
         <div className="flex items-center gap-4 mb-8">
           <div className="h-px flex-1 bg-gray-100" />

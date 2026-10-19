@@ -231,8 +231,8 @@ const SettingsTab = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-6">
-              <div className="col-span-3">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
+              <div className="md:col-span-3">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Email Address
                 </label>
@@ -248,7 +248,7 @@ const SettingsTab = ({
                   />
                 </div>
               </div>
-              <div className="col-span-3">
+              <div className="md:col-span-3">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Phone Number
                 </label>
@@ -297,7 +297,7 @@ const SettingsTab = ({
                   />
                 </div>
               </div>
-              <div className="col-span-3">
+              <div className="md:col-span-3">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   WhatsApp Number
                 </label>
@@ -346,7 +346,7 @@ const SettingsTab = ({
                   />
                 </div>
               </div>
-              <div className="col-span-3">
+              <div className="md:col-span-3">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Preferred Contact Method
                 </label>
@@ -371,7 +371,7 @@ const SettingsTab = ({
                   <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
-              <div className="col-span-2">
+              <div className="md:col-span-2">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Language
                 </label>
@@ -391,7 +391,7 @@ const SettingsTab = ({
                   <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
-              <div className="col-span-3">
+              <div className="md:col-span-3">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Time Zone
                 </label>
