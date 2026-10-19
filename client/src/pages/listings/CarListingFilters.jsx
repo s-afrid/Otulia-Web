@@ -3,10 +3,10 @@ const FILTERS = [
   { key: 'model', label: 'Model' },
   { key: 'year', label: 'Year' },
   { key: 'priceRange', label: 'Price' },
-  { key: 'bodyType', label: 'Body type' },
+  { key: 'bodyType', label: 'Body Type' },
   { key: 'transmission', label: 'Transmission' },
-  { key: 'fuelType', label: 'Fuel type' },
-  { key: 'exteriorColor', label: 'Exterior color' },
+  { key: 'fuelType', label: 'Fuel Type' },
+  { key: 'exteriorColor', label: 'Exterior Color' },
 ];
 
 const OPTIONS = {
@@ -26,18 +26,18 @@ const CarListingFilters = ({ filters, onChange, filterOptions, modelOptions, yea
   const hasFilters = Object.values(filters).some(Boolean);
 
   return (
-    <section aria-label="Filter car listings" className="mb-8 border-y border-gray-200 py-4">
-      <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
-        <div className="flex flex-wrap items-center gap-2">
+    <section aria-label="Filter car listings" className="mb-8 border-y border-gray-200 py-3">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <button type="button" onClick={() => onChange({})}
-            className={`shrink-0 rounded-full px-5 py-3 text-sm font-semibold transition ${hasFilters ? 'bg-[#171717] text-white hover:bg-black' : 'bg-[#171717] text-white'}`}>
-            All filters
+            className="h-11 shrink-0 rounded-full bg-[#171717] px-5 text-sm font-semibold text-white transition hover:bg-black">
+            All Filters
           </button>
           {FILTERS.map(({ key, label }) => (
-            <label key={key} className="relative inline-flex">
+            <label key={key} className="relative inline-flex shrink-0">
               <span className="sr-only">{label}</span>
               <select value={filters[key] || ''} disabled={key === 'model' && modelDisabled} onChange={(event) => setFilter(key, event.target.value)}
-                className={`min-h-11 min-w-[118px] appearance-none rounded-full border py-2.5 pl-4 pr-9 text-sm outline-none transition focus:border-gray-500 ${filters[key] ? 'border-gray-500 bg-gray-100 font-medium text-gray-900' : 'border-gray-200 bg-white text-gray-800 hover:border-gray-400'}`}>
+                className={`h-11 appearance-none rounded-full border py-2.5 pl-3 pr-8 text-sm outline-none transition focus:border-gray-500 ${key === 'category' ? 'w-[122px]' : key === 'model' ? 'w-[108px]' : key === 'year' ? 'w-[86px]' : key === 'priceRange' ? 'w-[132px]' : key === 'bodyType' ? 'w-[120px]' : key === 'transmission' ? 'w-[140px]' : key === 'fuelType' ? 'w-[116px]' : 'w-[140px]'} ${filters[key] ? 'border-gray-500 bg-gray-100 font-medium text-gray-900' : 'border-gray-200 bg-white text-gray-800 hover:border-gray-400'}`}>
                 <option value="">{label}</option>
                 {(typeof OPTIONS[key] === 'function' ? OPTIONS[key](optionValues[key] || []) : OPTIONS[key] || [])
                   .filter((option, index, list) => option && list.indexOf(option) === index)
@@ -47,7 +47,8 @@ const CarListingFilters = ({ filters, onChange, filterOptions, modelOptions, yea
             </label>
           ))}
         </div>
-        <label className="relative inline-flex shrink-0 xl:ml-auto">
+        <span aria-hidden="true" className="hidden h-8 shrink-0 border-l border-gray-300 sm:block" />
+        <label className="relative inline-flex shrink-0">
           <span className="sr-only">Sort listings</span>
           <select value={filters.sort || ''} onChange={(event) => setFilter('sort', event.target.value)}
             className="min-h-11 min-w-[140px] appearance-none rounded-full border border-gray-200 bg-white py-2.5 pl-4 pr-9 text-sm text-gray-800 outline-none hover:border-gray-400 focus:border-gray-500">
