@@ -6,7 +6,7 @@ import { FiHeart, FiMapPin, FiPlay, FiTrash2 } from "react-icons/fi";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 import { createAssetSlug } from "../utils/slugUtils";
 
-const AssetCard = ({ item }) => {
+const AssetCard = ({ item, listingStyle = 'default' }) => {
   const navigate = useNavigate();
   const { user, token, isAuthenticated, refreshUser } = useAuth();
   const pathname = useLocation();
@@ -166,17 +166,17 @@ const AssetCard = ({ item }) => {
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative bg-white flex flex-col"
+      className={`group relative flex flex-col bg-white ${listingStyle === 'marketplace' ? 'rounded-xl shadow-sm transition-shadow hover:shadow-lg' : ''}`}
       style={{
         width: "100%",
         maxWidth: "595px",
-        borderRadius: "1px",
+        borderRadius: listingStyle === 'marketplace' ? "12px" : "1px",
         border: "1px solid rgba(0, 0, 0, 0.12)",
         containerType: "inline-size",
       }}
     >
       {/* IMAGE AREA */}
-      <div className="relative overflow-hidden w-full aspect-[595/375]">
+      <div className={`relative w-full overflow-hidden ${listingStyle === 'marketplace' ? 'aspect-[1.9]' : 'aspect-[595/375]'} ${listingStyle === 'marketplace' ? 'rounded-t-xl' : ''}`}>
         <img
           src={optimizeCloudinaryUrl(item.images?.[0] || item.image, 800)}
           alt={item.title}
@@ -285,7 +285,27 @@ const AssetCard = ({ item }) => {
           className="flex flex-col pb-[5px]"
           style={{ gap: "1.6cqi" /* Uniform gap */ }}
         >
-          {category === "car" ? (
+          {category === "car" && listingStyle === 'marketplace' ? (
+            <>
+              <div className="flex items-start justify-between gap-3">
+                <h4 className="line-clamp-1 min-w-0 flex-1 text-sm font-medium leading-5 text-[#242424] sm:text-base" style={{ fontFamily: "'Kaisei Decol', serif" }}>
+                  {item.title}
+                </h4>
+                <h3 className="shrink-0 text-sm font-semibold leading-5 text-[#171717] sm:text-base">
+                  {item.isPriceOnRequest ? 'Price on request' : `$${numberWithCommas(item.price)}`}
+                </h3>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500 sm:text-sm">
+                {[item.specification?.yearOfConstruction, item.keySpecifications?.power || item.specification?.power, item.specification?.transmission, item.specification?.mileage]
+                  .filter(Boolean)
+                  .map((spec, index, values) => <React.Fragment key={`${spec}-${index}`}><span>{spec}</span>{index < values.length - 1 && <span className="text-gray-300">·</span>}</React.Fragment>)}
+              </div>
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 sm:text-sm">
+                <FiMapPin className="shrink-0 text-gray-500" />
+                <span className="truncate">{item.location}</span>
+              </div>
+            </>
+          ) : category === "car" ? (
             <>
               {/* TITLE */}
               <div>
@@ -472,7 +492,7 @@ const AssetCard = ({ item }) => {
           )}
 
           {/* LOCATION */}
-          <div>
+          {!(category === "car" && listingStyle === 'marketplace') && <div>
             <span
               className="truncate block"
               style={{
@@ -485,7 +505,7 @@ const AssetCard = ({ item }) => {
             >
               {item.location}
             </span>
-          </div>
+          </div>}
         </div>
 
         {/* FOOTER */}

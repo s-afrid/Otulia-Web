@@ -22,6 +22,10 @@ router.get("/landing-listings", async (req, res) => {
       acquisition,
       brand,
       model,
+      bodyType,
+      transmission,
+      fuelType,
+      exteriorColor,
       country,
       region,
       propertyType,
@@ -57,6 +61,10 @@ router.get("/landing-listings", async (req, res) => {
       addMatch(["brand", "title"], brand);
       addMatch(["specification.model", "title"], model);
       addMatch(["location", "specification.carLocation", "specification.countryOfFirstDelivery"], location);
+      addMatch(["specification.body"], bodyType);
+      addMatch(["specification.transmission"], transmission);
+      addMatch(["specification.fuel", "specification.engineType"], fuelType);
+      addMatch(["specification.exteriorColor", "specification.manufacturerColorCode"], exteriorColor);
       addMatch(["title", "description", "brand", "specification.model"], search);
       if (category && carFilterOptions[category]) {
         const categoryBrands = Object.keys(carFilterOptions[category]);

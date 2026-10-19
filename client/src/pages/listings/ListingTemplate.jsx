@@ -3,10 +3,10 @@ import Navbar from '../../components/Navbar';
 import SEO from '../../components/SEO';
 import AssetCard from '../../components/AssetCard';
 import Pagination from '../../components/Pagination';
-import FilterBar from '../../components/category_page/category_sections/cars/FilterBar';
 import PropertyFilterBar from '../../components/category_page/category_sections/estates/PropertyFilterBar';
 import carFilterOptions from '../../json/car_filter_options.json';
 import ListingSearch from './ListingSearch';
+import CarListingFilters from './CarListingFilters';
 
 const PAGE_SIZE = 9;
 const CAR_PRICE_RANGES = ['$50K – $100K', '$100K – $200K', '$200K – $400K', '$400K – $750K', '$750K – $1.5M', '$1.5M – $3M', '$3M+'];
@@ -16,11 +16,6 @@ const displayValue = (value = '') => value
   .split('-')
   .map((part) => part ? part[0].toUpperCase() + part.slice(1) : part)
   .join(' ');
-
-const matchFilterOption = (value, options) => {
-  const normalizedValue = value.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return options.find((option) => option.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedValue) || displayValue(value);
-};
 
 const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterParams = {} }) => {
   const [listings, setListings] = useState([]);
@@ -51,6 +46,10 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
       if (activeFilters.q) params.set('search', activeFilters.q);
       if (activeFilters.year) params.set('year', activeFilters.year);
       if (activeFilters.priceRange) params.set('priceRange', activeFilters.priceRange);
+      if (activeFilters.bodyType) params.set('bodyType', activeFilters.bodyType);
+      if (activeFilters.transmission) params.set('transmission', activeFilters.transmission);
+      if (activeFilters.fuelType) params.set('fuelType', activeFilters.fuelType);
+      if (activeFilters.exteriorColor) params.set('exteriorColor', activeFilters.exteriorColor);
       if (activeFilters.sort) params.set('sort', activeFilters.sort);
     } else {
       if (filters.country) params.set('country', filters.country);
@@ -74,21 +73,13 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
 
   const routeType = filterParams.type;
   const isCar = routeType === 'car';
-  const carBrands = [...new Set(Object.values(carFilterOptions).flatMap((group) => Object.keys(group)))];
-  const carModels = [...new Set(Object.values(carFilterOptions).flatMap((group) => Object.values(group).flat()))];
-  const carBrand = matchFilterOption(filterParams.brand || '', carBrands);
-  const carModel = matchFilterOption(filterParams.model || '', carModels);
+  const carModels = [...new Set(Object.values(carFilterOptions)
+    .flatMap((group) => Object.entries(group)
+      .filter(([brand]) => !filterParams.brand || brand.toLowerCase() === filterParams.brand.toLowerCase())
+      .flatMap(([, models]) => models)))];
+  if (filterParams.model && !carModels.includes(displayValue(filterParams.model))) carModels.unshift(displayValue(filterParams.model));
   const fixedEstateLocation = displayValue(filterParams.country || filterParams.region || '');
-  const initialCarFilters = {
-    ...(filterParams.brand ? { brand: carBrand } : {}),
-    ...(filterParams.model ? { model: carModel } : {}),
-  };
   const initialPropertyFilters = routeType === 'island' ? { type: 'Private Island' } : {};
-  const lockedCarFilters = [
-    ...(filterParams.brand ? ['brand'] : []),
-    ...(filterParams.model ? ['model'] : []),
-  ];
-
   useEffect(() => {
     const controller = new AbortController();
     const fetchListings = async () => {
@@ -134,23 +125,28 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
         style={{ paddingTop: 'calc(clamp(12px, 2vh, 24px) + clamp(50px, 8vh, 80px) + 20px)' }}
       >
         <div className="mx-auto max-w-[1600px]">
-          <header className="mb-8 md:mb-12">
-            <h1 className="canela mb-2 text-3xl font-normal text-black md:text-5xl">{pageTitle}</h1>
-            <p className="max-w-3xl font-sans text-sm text-gray-500 md:text-base">{pageDescription}</p>
+          <header className="mb-7 md:mb-9">
+            {isCar && breadcrumb.length > 0 && (
+              <nav aria-label="Breadcrumb" className="mb-4 flex justify-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-gray-400">
+                <span>Cars</span><span aria-hidden="true">/</span><span>{filterParams.brand || filterParams.model || 'For sale'}</span>
+              </nav>
+            )}
+            <h1 className="canela mb-2 text-center text-3xl font-normal text-black md:text-5xl">{pageTitle}</h1>
+            <p className="mx-auto max-w-3xl text-center font-sans text-sm text-gray-500 md:text-base">{pageDescription}</p>
           </header>
 
           <ListingSearch onSearch={setListingSearch} />
 
           <div className="relative z-[100] mb-8">
             {isCar ? (
-              <FilterBar
-                onFilter={setActiveFilters}
+              <CarListingFilters
+                filters={activeFilters}
+                onChange={setActiveFilters}
                 filterOptions={carFilterOptions}
+                modelOptions={carModels}
                 priceRanges={CAR_PRICE_RANGES}
                 yearOptions={CAR_YEAR_OPTIONS}
-                hideLocation
-                initialFilters={initialCarFilters}
-                disabledFilters={lockedCarFilters}
+                modelDisabled={Boolean(filterParams.model)}
               />
             ) : (
               <PropertyFilterBar
@@ -172,7 +168,7 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
           ) : listings.length ? (
             <>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {listings.map((listing) => <AssetCard key={listing._id} item={listing} />)}
+                {listings.map((listing) => <AssetCard key={listing._id} item={listing} listingStyle={isCar ? 'marketplace' : 'default'} />)}
               </div>
               <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
             </>
