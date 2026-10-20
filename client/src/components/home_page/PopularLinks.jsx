@@ -1,4 +1,15 @@
+import React, { useEffect, useState } from 'react';
+
 const PopularLinks = () => {
+  const [databaseBrands, setDatabaseBrands] = useState([]);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/assets/car-taxonomy?activeOnly=true', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => setDatabaseBrands(data?.databaseBrands || []))
+      .catch((error) => { if (error.name !== 'AbortError') console.error('Could not load popular car brands:', error); });
+    return () => controller.abort();
+  }, []);
   const citiesAndRegions = [
     { label: 'Private islands for sale', path: '/listings/private-islands' },
     { label: 'Balearic Islands homes for sale', path: '/listings/balearic-islands' },
@@ -35,8 +46,17 @@ const PopularLinks = () => {
     { label: 'Pagani for sale', path: '/listings/pagani' },
     { label: 'Porsche for sale', path: '/listings/porsche' },
     { label: 'Rolls-Royce for sale', path: '/listings/rolls-royce' },
-    { label: 'Bugatti Chiron for sale', path: '/listings/bugatti-chiron' },
   ];
+  const knownBrandNames = new Map(cars.map(({ label }) => [label.replace(/ for sale$/i, '').toLowerCase(), label.replace(/ for sale$/i, '')]));
+  const dynamicCars = databaseBrands
+    .filter((brand) => typeof brand === 'string' && brand.trim())
+    .map((brand) => {
+      const canonical = knownBrandNames.get(brand.trim().toLowerCase()) || brand.trim();
+      const slug = canonical.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      return { label: `${canonical} for sale`, path: `/listings/${slug}` };
+    })
+    .filter((link) => !cars.some((existing) => existing.path === link.path));
+  const allCars = [...cars, ...dynamicCars];
 
   const handleLinkClick = (label, path) => {
     // Track breadcrumb for analytics or state if needed
@@ -102,7 +122,7 @@ const PopularLinks = () => {
               Cars
             </h3>
             <ul className="space-y-3">
-              {cars.map((link, idx) => (
+              {allCars.map((link, idx) => (
                 <li key={idx}>
                   <a
                     href={link.path}

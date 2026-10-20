@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   FiX, FiArrowLeft, FiImage, FiPlus, FiTrash2, FiVideo, FiCheck, 
   FiChevronRight, FiCheckCircle, FiInfo, FiMapPin, FiUploadCloud, 
@@ -95,6 +96,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     };
 
     const [formData, setFormData] = useState(initialFormState);
+    const [carSuggestions, setCarSuggestions] = useState({ brands: [], models: [], variants: [] });
     const [coverImage, setCoverImage] = useState(null);
     const [galleryImages, setGalleryImages] = useState([]);
     const [existingImages, setExistingImages] = useState([]);
@@ -102,6 +104,25 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [showDraftConfirm, setShowDraftConfirm] = useState(false);
     const [showGraphPopup, setShowGraphPopup] = useState(false);
+
+    useEffect(() => {
+        if (!isOpen || assetType !== 'Car') return;
+        const controller = new AbortController();
+        const params = new URLSearchParams();
+        if (formData.make.trim()) params.set('brand', formData.make.trim());
+        if (formData.model.trim()) params.set('model', formData.model.trim());
+        fetch(`/api/assets/car-taxonomy?${params.toString()}`, { signal: controller.signal })
+            .then((response) => response.ok ? response.json() : null)
+            .then((data) => {
+                if (data) setCarSuggestions({
+                    brands: data.brands || [],
+                    models: data.models || [],
+                    variants: data.variants || [],
+                });
+            })
+            .catch((error) => { if (error.name !== 'AbortError') console.error('Could not load car suggestions:', error); });
+        return () => controller.abort();
+    }, [isOpen, assetType, formData.make, formData.model]);
 
     const handleCloseAttempt = () => {
         // Only show draft confirmation if we have some data and we're not in edit mode
@@ -389,10 +410,16 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
+        setFormData(prev => {
+            const nextValue = type === 'checkbox' ? checked : value;
+            if (name === 'make' && prev.make.trim().toLowerCase() !== String(nextValue).trim().toLowerCase()) {
+                return { ...prev, make: nextValue, model: '', variant: '' };
+            }
+            if (name === 'model' && prev.model.trim().toLowerCase() !== String(nextValue).trim().toLowerCase()) {
+                return { ...prev, model: nextValue, variant: '' };
+            }
+            return { ...prev, [name]: nextValue };
+        });
     };
 
     const handleGenerateId = () => {
@@ -737,6 +764,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     placeholder={assetType === 'Estate' ? "e.g., Monaco Penthouse" : "e.g., Ferrari / Azimut"}
                                     onChange={handleInputChange}
                                     required={assetType === 'Car'} 
+                                    options={assetType === 'Car' ? carSuggestions.brands : undefined}
+                                    suggestionPlaceholder="Search brands..."
                                 />
                                 {assetType === 'Yacht' && (
                                     <InputField 
@@ -757,8 +786,11 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             placeholder="e.g., SF90 / Grande 32" 
                                             onChange={handleInputChange} 
                                             required={assetType === 'Car'} 
+                                            options={assetType === 'Car' ? carSuggestions.models : undefined}
+                                            suggestionDisabled={assetType === 'Car' && !formData.make.trim()}
+                                            suggestionPlaceholder="Search models..."
                                         />
-                                        <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} required={false} />
+                                        <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano / S" onChange={handleInputChange} required={false} options={assetType === 'Car' ? carSuggestions.variants : undefined} suggestionDisabled={assetType === 'Car' && (!formData.make.trim() || !formData.model.trim())} suggestionPlaceholder="Search variants..." />
                                         <InputField label="Year *" name="year" type="number" value={formData.year} onChange={handleInputChange} required={false} />
                                     </>
                                 )}
@@ -1598,20 +1630,141 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     );
 };
 
-const InputField = ({ label, name, value, type = "text", placeholder, onChange, required = false }) => (
+const InputField = ({ label, name, value, type = "text", placeholder, onChange, required = false, options, suggestionDisabled = false, suggestionPlaceholder }) => (
     <div>
         <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">{label}</label>
-        <input
-            type={type}
-            name={name}
-            value={value !== null && value !== undefined ? value : ''}
-            onChange={onChange}
-            placeholder={placeholder}
-            required={required}
-            className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-5 py-3.5 text-sm font-medium text-black focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all placeholder:text-gray-400"
-        />
+        {options !== undefined ? (
+            <FilterStyleAutocomplete
+                name={name}
+                value={value}
+                options={options}
+                placeholder={placeholder}
+                searchPlaceholder={suggestionPlaceholder}
+                onChange={onChange}
+                required={required}
+                disabled={suggestionDisabled}
+            />
+        ) : (
+            <input
+                type={type}
+                name={name}
+                value={value !== null && value !== undefined ? value : ''}
+                onChange={onChange}
+                placeholder={placeholder}
+                required={required}
+                className="w-full bg-gray-50/50 rounded-xl border border-gray-200 px-5 py-3.5 text-sm font-medium text-black transition-all placeholder:text-gray-400 focus:border-[#D48D2A] focus:bg-white focus:outline-none"
+            />
+        )}
     </div>
 );
+
+const FilterStyleAutocomplete = ({ name, value = '', options = [], placeholder, searchPlaceholder, onChange, required, disabled }) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+    const wrapperRef = React.useRef(null);
+    const menuRef = React.useRef(null);
+    const [menuPosition, setMenuPosition] = React.useState(null);
+    const filteredOptions = [...new Set(options)]
+        .filter((option) => option.toLowerCase().includes(String(value || '').trim().toLowerCase()))
+        .slice(0, 100);
+
+    React.useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (!wrapperRef.current?.contains(event.target) && !menuRef.current?.contains(event.target)) setIsOpen(false);
+        };
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => document.removeEventListener('mousedown', handleOutsideClick);
+    }, []);
+
+    React.useEffect(() => {
+        if (!isOpen || disabled) return undefined;
+        const updatePosition = () => {
+            const bounds = wrapperRef.current?.getBoundingClientRect();
+            if (!bounds) return;
+            const roomBelow = window.innerHeight - bounds.bottom - 16;
+            const roomAbove = bounds.top - 16;
+            const placeAbove = roomBelow < 220 && roomAbove > roomBelow;
+            const availableHeight = Math.max(100, Math.min(260, placeAbove ? roomAbove : roomBelow));
+            setMenuPosition({
+                left: bounds.left,
+                width: bounds.width,
+                ...(placeAbove
+                    ? { bottom: window.innerHeight - bounds.top + 8, top: 'auto' }
+                    : { top: bounds.bottom + 8, bottom: 'auto' }),
+                maxHeight: availableHeight,
+            });
+        };
+        updatePosition();
+        window.addEventListener('resize', updatePosition);
+        window.addEventListener('scroll', updatePosition, true);
+        return () => {
+            window.removeEventListener('resize', updatePosition);
+            window.removeEventListener('scroll', updatePosition, true);
+        };
+    }, [isOpen, disabled]);
+
+    const selectOption = (option) => {
+        onChange({ target: { name, value: option, type: 'text' } });
+        setIsOpen(false);
+    };
+
+    return (
+        <div className="relative" ref={wrapperRef}>
+            <div className={`flex w-full items-center overflow-hidden rounded-xl border bg-gray-50/50 transition-all ${isOpen ? 'border-[#D48D2A] bg-white ring-2 ring-[#D48D2A]/10' : 'border-gray-200'} ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}>
+                <input
+                    type="text"
+                    name={name}
+                    value={value ?? ''}
+                    onChange={onChange}
+                    onFocus={() => !disabled && setIsOpen(true)}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Escape') setIsOpen(false);
+                        if (event.key === 'ArrowDown' && !disabled) { event.preventDefault(); setIsOpen(true); }
+                        if (event.key === 'Enter' && isOpen && filteredOptions.length) { event.preventDefault(); selectOption(filteredOptions[0]); }
+                    }}
+                    placeholder={placeholder}
+                    required={required}
+                    disabled={disabled}
+                    aria-expanded={isOpen}
+                    aria-haspopup="listbox"
+                    className="min-w-0 flex-1 border-0 bg-transparent px-5 py-3.5 text-sm font-medium text-black placeholder:text-gray-400 focus:outline-none focus:ring-0"
+                />
+                <button
+                    type="button"
+                    disabled={disabled}
+                    aria-label={`Show ${name} options`}
+                    aria-expanded={isOpen}
+                    onClick={() => setIsOpen((open) => !open)}
+                    className="flex h-full min-h-[48px] w-12 shrink-0 items-center justify-center text-gray-500 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                    <FiChevronDown className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                </button>
+            </div>
+            {isOpen && !disabled && menuPosition && createPortal(
+                <div ref={menuRef} style={{ position: 'fixed', maxHeight: menuPosition.maxHeight, ...menuPosition, zIndex: 10000 }} className="min-w-[220px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)]">
+                    <div className="border-b border-gray-100 px-4 py-3 text-xs font-medium text-gray-400">{searchPlaceholder}</div>
+                    <div style={{ maxHeight: Math.max(60, menuPosition.maxHeight - 44) }} className="overflow-y-auto p-1.5" role="listbox" aria-label={`${name} options`}>
+                        {filteredOptions.length ? filteredOptions.map((option) => (
+                            <button
+                                type="button"
+                                role="option"
+                                aria-selected={value === option}
+                                key={option}
+                                onMouseDown={(event) => event.preventDefault()}
+                                onClick={() => selectOption(option)}
+                                className={`block w-full rounded-xl px-3.5 py-2.5 text-left text-sm transition-colors ${value === option ? 'bg-[#fdf8f0] font-semibold text-[#9C824A]' : 'text-gray-700 hover:bg-gray-50'}`}
+                            >
+                                {option}
+                            </button>
+                        )) : (
+                            <div className="px-3.5 py-3 text-sm text-gray-400">No matching options. You can keep your custom value.</div>
+                        )}
+                    </div>
+                </div>,
+                document.body,
+            )}
+        </div>
+    );
+};
 
 const SelectField = ({ label, name, value, options, onChange, required = false }) => (
     <div>

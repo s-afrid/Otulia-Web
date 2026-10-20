@@ -12,6 +12,120 @@ const carFilterOptions = require("../../client/src/json/car_filter_options.json"
 
 const axios = require("axios");
 const router = express.Router();
+const catalogCache = new Map();
+const CATALOG_API = "https://fleetcatalog.disturbingbyte.pt/v1";
+const CATALOG_CACHE_TTL_MS = 60 * 60 * 1000;
+
+const escapeRegex = (value) => String(value || "").replace(/[|\\{}()[\]^$+*?.]/g, "\\$&");
+const mergeCanonicalValues = (...groups) => {
+  const values = new Map();
+  groups.flat().filter((value) => typeof value === "string" && value.trim()).forEach((value) => {
+    const trimmed = value.trim();
+    const key = trimmed.toLocaleLowerCase();
+    if (!values.has(key)) values.set(key, trimmed);
+  });
+  return [...values.values()].sort((a, b) => a.localeCompare(b));
+};
+
+const cleanTaxonomyValues = (values, { maxWords, knownBrands = [] }) => {
+  const canonicalBrands = knownBrands.map((brand) => brand.toLocaleLowerCase());
+  return mergeCanonicalValues(values).filter((value) => {
+    const normalized = value.replace(/\s+/g, " ").trim();
+    const wordCount = normalized.split(" ").filter(Boolean).length;
+    if (!normalized || normalized.length > 72 || wordCount > maxWords) return false;
+    if (/[|\r\n]/.test(normalized) || /\b(?:by|warranty|service|for sale|price on request|verified dealer|listed by)\b/i.test(normalized)) return false;
+    return !canonicalBrands.some((knownBrand) => normalized.toLocaleLowerCase().startsWith(`${knownBrand} `));
+  });
+};
+
+const getCachedCatalogItems = async (cacheKey, url) => {
+  const cached = catalogCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) return cached.items;
+  const { data } = await axios.get(url, { timeout: 6000 });
+  const items = Array.isArray(data?.items) ? data.items : [];
+  catalogCache.set(cacheKey, { items, total: Number(data?.total) || items.length, expiresAt: Date.now() + CATALOG_CACHE_TTL_MS });
+  return items;
+};
+
+const getCatalogMakes = async () => {
+  const firstPage = await getCachedCatalogItems(
+    "makes:1",
+    `${CATALOG_API}/makes?page=1&pageSize=100`,
+  );
+  const cached = catalogCache.get("makes:1");
+  const totalPages = Math.ceil((cached?.total || firstPage.length) / 100);
+  if (totalPages <= 1) return firstPage;
+  const pages = await Promise.all(Array.from({ length: totalPages - 1 }, (_, index) => {
+    const page = index + 2;
+    return getCachedCatalogItems(`makes:${page}`, `${CATALOG_API}/makes?page=${page}&pageSize=100`);
+  }));
+  return [...firstPage, ...pages.flat()];
+};
+
+// Brand/model/variant suggestions combine the curated filter taxonomy with saved car listings.
+router.get("/car-taxonomy", async (req, res) => {
+  try {
+    const staticBrands = Object.values(carFilterOptions).flatMap((group) => Object.keys(group));
+    const staticBrandModels = Object.values(carFilterOptions).flatMap((group) => Object.entries(group));
+    const brand = String(req.query.brand || "").trim();
+    const model = String(req.query.model || "").trim();
+    const brandRegex = brand ? new RegExp(`^${escapeRegex(brand)}$`, "i") : null;
+    const modelRegex = model ? new RegExp(`^${escapeRegex(model)}$`, "i") : null;
+
+    const [databaseBrands, databaseModels, databaseVariants] = await Promise.all([
+      CarAsset.distinct("brand", req.query.activeOnly === "true" ? { status: "Active" } : {}),
+      CarAsset.distinct("specification.model", brandRegex ? { brand: brandRegex } : {}),
+      brandRegex && modelRegex
+        ? Promise.all([
+            CarAsset.distinct("variant", { brand: brandRegex, "specification.model": modelRegex }),
+            CarAsset.distinct("specification.variant", { brand: brandRegex, "specification.model": modelRegex }),
+          ]).then((groups) => groups.flat())
+        : Promise.resolve([]),
+    ]);
+
+    const matchingStaticEntries = staticBrandModels.filter(([knownBrand]) => !brand || knownBrand.toLowerCase() === brand.toLowerCase());
+    let catalogBrands = [];
+    let catalogModels = [];
+    let catalogVariants = [];
+    try {
+      catalogBrands = await getCatalogMakes();
+      const matchingMake = brand && catalogBrands.find((entry) => entry.name?.toLowerCase() === brand.toLowerCase());
+      if (matchingMake) {
+        catalogModels = await getCachedCatalogItems(
+          `models:${matchingMake.id}`,
+          `${CATALOG_API}/makes/${encodeURIComponent(matchingMake.id)}/models?page=1&pageSize=100`,
+        );
+        const matchingModel = model && catalogModels.find((entry) => entry.name?.toLowerCase() === model.toLowerCase());
+        if (matchingModel) {
+          catalogVariants = await getCachedCatalogItems(
+            `variants:${matchingModel.id}`,
+            `${CATALOG_API}/models/${encodeURIComponent(matchingModel.id)}/variants?page=1&pageSize=100`,
+          );
+        }
+      }
+    } catch (catalogError) {
+      // Keep inventory suggestions available if the external catalog is temporarily unavailable.
+      console.warn("External vehicle catalog unavailable; using local suggestions:", catalogError.message);
+    }
+
+    const knownBrands = mergeCanonicalValues(staticBrands, catalogBrands.map((entry) => entry.name));
+    const cleanDatabaseBrands = cleanTaxonomyValues(databaseBrands, { maxWords: 4, knownBrands });
+    const models = mergeCanonicalValues(
+      matchingStaticEntries.flatMap(([, entries]) => entries),
+      cleanTaxonomyValues(databaseModels, { maxWords: 9, knownBrands: brand ? [brand] : [] }),
+      cleanTaxonomyValues(catalogModels.map((entry) => entry.name), { maxWords: 9, knownBrands: brand ? [brand] : [] }),
+    );
+    const variants = mergeCanonicalValues(
+      cleanTaxonomyValues(databaseVariants, { maxWords: 12, knownBrands: brand ? [brand] : [] }),
+      catalogVariants.map((entry) => entry.name),
+    );
+    const brands = mergeCanonicalValues(knownBrands, cleanDatabaseBrands);
+    res.json({ brands, models, variants, databaseBrands: cleanDatabaseBrands });
+  } catch (error) {
+    console.error("Error loading car taxonomy suggestions:", error);
+    res.status(500).json({ message: "Could not load car suggestions" });
+  }
+});
 
 // Search public landing pages with conjunctive brand/model/location filters.
 router.get("/landing-listings", async (req, res) => {

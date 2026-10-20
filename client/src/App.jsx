@@ -47,6 +47,7 @@ const ContentManagement = lazy(() => import("./pages/ContentManagement"));
 const DealerProfile = lazy(() => import("./pages/DealerProfile"));
 const SellWithUs = lazy(() => import("./pages/SellWithUs"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const DynamicCarBrandPage = lazy(() => import("./pages/listings/DynamicCarBrandPage"));
 
 // Policy pages
 const Terms = lazy(() => import("./pages/policies/Terms"));
@@ -377,6 +378,7 @@ function App() {
             path="/listings/bugatti-chiron"
             element={<BugattiChironPage />}
           />
+          <Route path="/listings/:brandSlug" element={<DynamicCarBrandPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
