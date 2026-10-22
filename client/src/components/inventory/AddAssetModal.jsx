@@ -1663,6 +1663,13 @@ const FilterStyleAutocomplete = ({ name, value = '', options = [], placeholder, 
     const wrapperRef = React.useRef(null);
     const menuRef = React.useRef(null);
     const [menuPosition, setMenuPosition] = React.useState(null);
+    const formatOptionLabel = (option) => String(option).split(/([\s/-]+)/).map((part) => {
+        if (!part || /^[\s/-]+$/.test(part)) return part;
+        return part.split('-').map((word) => {
+            if (/^(?:[A-Z]{2,3}|[IVX]{2,5}|\d+[A-Z])$/.test(word)) return word;
+            return word.charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase();
+        }).join('-');
+    }).join('');
     const filteredOptions = [...new Set(options)]
         .filter((option) => option.toLowerCase().includes(String(value || '').trim().toLowerCase()))
         .slice(0, 100);
@@ -1753,7 +1760,7 @@ const FilterStyleAutocomplete = ({ name, value = '', options = [], placeholder, 
                                 onClick={() => selectOption(option)}
                                 className={`block w-full rounded-xl px-3.5 py-2.5 text-left text-sm transition-colors ${value === option ? 'bg-[#fdf8f0] font-semibold text-[#9C824A]' : 'text-gray-700 hover:bg-gray-50'}`}
                             >
-                                {option}
+                                {formatOptionLabel(option)}
                             </button>
                         )) : (
                             <div className="px-3.5 py-3 text-sm text-gray-400">No matching options. You can keep your custom value.</div>
