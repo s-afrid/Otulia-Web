@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const IrelandPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Homes for Sale in Ireland"
     pageDescription="Beautiful properties across Ireland's cities and countryside."
     breadcrumb={[{ label: 'Listings' }, { label: 'Countries' }, { label: 'Ireland' }]}

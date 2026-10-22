@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const AtlantaPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Atlanta Homes for Sale"
     pageDescription="Premium properties in Atlanta, Georgia's thriving real estate market."
     breadcrumb={[{ label: 'Listings' }, { label: 'Atlanta' }]}

@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const CanadaPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Homes for Sale in Canada"
     pageDescription="Beautiful properties across Canada's major cities and regions."
     breadcrumb={[{ label: 'Listings' }, { label: 'Countries' }, { label: 'Canada' }]}

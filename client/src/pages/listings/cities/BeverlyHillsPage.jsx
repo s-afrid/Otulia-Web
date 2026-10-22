@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const BeverlyHillsPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Beverly Hills Homes for Sale"
     pageDescription="Iconic luxury properties in Beverly Hills, California."
     breadcrumb={[{ label: 'Listings' }, { label: 'Beverly Hills' }]}

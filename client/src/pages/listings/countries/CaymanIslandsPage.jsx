@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const CaymanIslandsPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Homes for Sale in Cayman Islands"
     pageDescription="Exclusive island properties in the Cayman Islands."
     breadcrumb={[{ label: 'Listings' }, { label: 'Countries' }, { label: 'Cayman Islands' }]}

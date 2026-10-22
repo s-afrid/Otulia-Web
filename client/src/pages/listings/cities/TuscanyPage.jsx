@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const TuscanyPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Tuscany Homes for Sale"
     pageDescription="Charming villas and estates in the heart of Tuscany, Italy."
     breadcrumb={[{ label: 'Listings' }, { label: 'Tuscany' }]}

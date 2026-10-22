@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const BalearicIslandsPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Balearic Islands Homes for Sale"
     pageDescription="Exclusive properties in the stunning Balearic Islands."
     breadcrumb={[
