@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const CostaDelSolPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Costa del Sol Homes for Sale"
     pageDescription="Luxury homes available in Costa del Sol, Spain's premier destination."
     breadcrumb={[{ label: 'Listings' }, { label: 'Costa del Sol' }]}

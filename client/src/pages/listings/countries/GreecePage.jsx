@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const GreecePage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Homes for Sale in Greece"
     pageDescription="Mediterranean properties across Greek islands and mainland."
     breadcrumb={[{ label: 'Listings' }, { label: 'Countries' }, { label: 'Greece' }]}

@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const AmsterdamPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Amsterdam Homes for Sale"
     pageDescription="Beautiful canal houses and properties in Amsterdam, Netherlands."
     breadcrumb={[{ label: 'Listings' }, { label: 'Amsterdam' }]}

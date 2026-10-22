@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const PrivateIslandsPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Private Islands for Sale"
     pageDescription="Discover exclusive private island listings available for sale worldwide."
     breadcrumb={[

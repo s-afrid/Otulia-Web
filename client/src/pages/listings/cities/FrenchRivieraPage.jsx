@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const FrenchRivieraPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="French Riviera Homes for Sale"
     pageDescription="Magnificent properties along the French Riviera coast."
     breadcrumb={[{ label: 'Listings' }, { label: 'French Riviera' }]}

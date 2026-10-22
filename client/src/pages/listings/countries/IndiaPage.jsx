@@ -1,7 +1,7 @@
-import ListingTemplate from '../ListingTemplate';
+import EstateListingTemplate from '../EstateListingTemplate';
 
 const IndiaPage = () => (
-  <ListingTemplate
+  <EstateListingTemplate
     pageTitle="Homes for Sale in India"
     pageDescription="Luxury properties in India's major cities and destinations."
     breadcrumb={[{ label: 'Listings' }, { label: 'Countries' }, { label: 'India' }]}
