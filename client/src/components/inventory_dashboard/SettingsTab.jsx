@@ -78,18 +78,15 @@ const SettingsTab = ({
   ];
 
   const toggleLanguage = (lang) => {
-    const currentLangs = companyInfo.languagesKnown || [];
-    if (currentLangs.includes(lang)) {
-      setCompanyInfo({
-        ...companyInfo,
-        languagesKnown: currentLangs.filter((l) => l !== lang),
-      });
-    } else {
-      setCompanyInfo({
-        ...companyInfo,
-        languagesKnown: [...currentLangs, lang],
-      });
-    }
+    setCompanyInfo((previous) => {
+      const currentLangs = previous.languagesKnown || [];
+      return {
+        ...previous,
+        languagesKnown: currentLangs.includes(lang)
+          ? currentLangs.filter((item) => item !== lang)
+          : [...currentLangs, lang],
+      };
+    });
   };
 
   const countryCodes = [
@@ -231,8 +228,8 @@ const SettingsTab = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
-              <div className="md:col-span-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+              <div className="min-w-0">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Email Address
                 </label>
@@ -241,14 +238,15 @@ const SettingsTab = ({
                   <input
                     type="email"
                     value={agentInfo.email}
-                    onChange={(e) =>
-                      setAgentInfo((p) => ({ ...p, email: e.target.value }))
-                    }
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none transition-all shadow-sm"
+                    readOnly
+                    title={agentInfo.email || "Account login email"}
+                    aria-label="Account login email"
+                    className="w-full min-w-0 text-ellipsis bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black outline-none shadow-sm cursor-text"
                   />
+                  <p className="mt-1 text-[10px] text-gray-400">Account login email</p>
                 </div>
               </div>
-              <div className="md:col-span-3">
+              <div className="min-w-0">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Phone Number
                 </label>
@@ -297,7 +295,7 @@ const SettingsTab = ({
                   />
                 </div>
               </div>
-              <div className="md:col-span-3">
+              <div className="min-w-0">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   WhatsApp Number
                 </label>
@@ -346,7 +344,7 @@ const SettingsTab = ({
                   />
                 </div>
               </div>
-              <div className="md:col-span-3">
+              <div className="min-w-0">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Preferred Contact Method
                 </label>
@@ -371,7 +369,7 @@ const SettingsTab = ({
                   <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
-              <div className="md:col-span-2">
+              <div className="min-w-0">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Language
                 </label>
@@ -391,7 +389,7 @@ const SettingsTab = ({
                   <FiChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
                 </div>
               </div>
-              <div className="md:col-span-3">
+              <div className="min-w-0">
                 <label className="block text-[11px] font-bold text-gray-900 uppercase tracking-[0.12em] mb-2.5">
                   Time Zone
                 </label>
@@ -648,7 +646,7 @@ const SettingsTab = ({
               </div>
 
               {/* Right: 2-column grid — Name+Languages left, Website+Active right */}
-              <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-6">
+              <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
                 {/* Row 1 left: Company Name */}
                 <div>
                   <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
@@ -769,8 +767,8 @@ const SettingsTab = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-              <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-6">
+              <div className="min-w-0 2xl:col-span-2">
                 <label className="block text-[12px] font-bold text-gray-900 uppercase tracking-wider mb-2.5">
                   Company Email
                 </label>
@@ -779,10 +777,11 @@ const SettingsTab = ({
                   <input
                     type="email"
                     value={companyInfo.email}
+                    title={companyInfo.email}
                     onChange={(e) =>
                       setCompanyInfo((p) => ({ ...p, email: e.target.value }))
                     }
-                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
+                    className="w-full min-w-0 text-ellipsis bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] outline-none shadow-sm transition-all"
                   />
                 </div>
               </div>

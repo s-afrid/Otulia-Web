@@ -424,23 +424,25 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
   try {
     const {
       name, phone, phoneCode, whatsapp, whatsappCode,
-      jobTitle, languages, timezone, contactMethod, preferredContact,
+      jobTitle, language, languages, timezone, contactMethod, preferredContact,
       agentDescription, social, profilePicture, company
     } = req.body;
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
 
-    if (name) user.name = name;
-    if (phone) user.phone = phone;
-    if (phoneCode) user.phoneCode = phoneCode;
-    if (whatsapp) user.whatsapp = whatsapp;
-    if (whatsappCode) user.whatsappCode = whatsappCode;
-    if (jobTitle) user.jobTitle = jobTitle;
-    if (languages) user.languages = languages;
-    if (timezone) user.timezone = timezone;
-    if (contactMethod || preferredContact) user.contactMethod = contactMethod || preferredContact;
-    if (agentDescription) user.agentDescription = agentDescription;
+    const hasField = (field) => Object.prototype.hasOwnProperty.call(req.body, field);
+    if (hasField("name")) user.name = name;
+    if (hasField("phone")) user.phone = phone;
+    if (hasField("phoneCode")) user.phoneCode = phoneCode;
+    if (hasField("whatsapp")) user.whatsapp = whatsapp;
+    if (hasField("whatsappCode")) user.whatsappCode = whatsappCode;
+    if (hasField("jobTitle")) user.jobTitle = jobTitle;
+    if (hasField("language")) user.language = language;
+    if (hasField("languages")) user.languages = languages;
+    if (hasField("timezone")) user.timezone = timezone;
+    if (hasField("contactMethod") || hasField("preferredContact")) user.contactMethod = contactMethod ?? preferredContact;
+    if (hasField("agentDescription")) user.agentDescription = agentDescription;
     
     if (social) {
       user.social = {
@@ -449,7 +451,7 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
       };
       user.markModified('social');
     }
-    if (profilePicture) user.profilePicture = profilePicture;
+    if (hasField("profilePicture")) user.profilePicture = profilePicture;
     if (req.body.leadEmailNotifications !== undefined) {
       user.leadEmailNotifications = !!req.body.leadEmailNotifications;
     }
@@ -458,8 +460,12 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
       const companyData = {
         ...user.company,
         ...company,
-        email: company.companyEmail || company.email || user.company?.email,
-        companyName: company.companyName || company.name || user.company?.companyName,
+        email: Object.prototype.hasOwnProperty.call(company, "email")
+          ? company.email
+          : company.companyEmail ?? user.company?.email,
+        companyName: Object.prototype.hasOwnProperty.call(company, "companyName")
+          ? company.companyName
+          : company.name ?? user.company?.companyName,
         social: company.social ? { ...user.company?.social, ...company.social } : user.company?.social
       };
 

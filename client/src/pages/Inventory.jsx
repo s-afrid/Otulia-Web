@@ -189,7 +189,7 @@ const Inventory = () => {
           ? formatPhoneWithCode(user.whatsapp, wCode)
           : "",
         contactMethod: user.contactMethod || "WhatsApp",
-        language: user.language || "English",
+        language: user.language || user.languages?.[0] || "English",
         timezone: user.timezone || "(GMT+4) Dubai, UAE",
         bio: user.agentDescription || "",
         photo: user.profilePicture || "",
@@ -202,10 +202,10 @@ const Inventory = () => {
         },
       });
       setCompanyInfo({
-        name: user.company?.companyName || user.company?.name || "",
+        name: user.company?.companyName ?? user.company?.name ?? "",
         website: user.company?.website || "",
         email:
-          user.company?.email || user.company?.companyEmail || user.email || "",
+          user.company?.email ?? user.company?.companyEmail ?? "",
         businessType:
           user.company?.businessType || "Luxury Cars & Supercars Dealer",
         establishedYear: user.company?.establishedYear || "",
@@ -440,13 +440,14 @@ const Inventory = () => {
         }),
       });
       const result = await response.json();
-      if (result.success !== false) {
-        const updatedUser = result.user || result;
-        updateUserLocal(updatedUser);
-        alert("Personal details saved successfully!");
+      if (!response.ok || result.error) {
+        throw new Error(result.error || result.message || "Could not save personal details.");
       }
+      if (result.user) updateUserLocal(result.user);
+      alert("Personal details saved successfully!");
     } catch (error) {
       console.error("Save error:", error);
+      alert(error.message || "Could not save personal details. Please try again.");
     } finally {
       setIsSavingPersonal(false);
     }
@@ -490,13 +491,14 @@ const Inventory = () => {
         }),
       });
       const result = await response.json();
-      if (result.success !== false) {
-        const updatedUser = result.user || result;
-        updateUserLocal(updatedUser);
-        alert("Company details saved successfully!");
+      if (!response.ok || result.error) {
+        throw new Error(result.error || result.message || "Could not save company details.");
       }
+      if (result.user) updateUserLocal(result.user);
+      alert("Company details saved successfully!");
     } catch (error) {
       console.error("Save error:", error);
+      alert(error.message || "Could not save company details. Please try again.");
     } finally {
       setIsSavingCompany(false);
     }
