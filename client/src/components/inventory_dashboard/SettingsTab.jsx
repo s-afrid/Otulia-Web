@@ -238,12 +238,16 @@ const SettingsTab = ({
                   <input
                     type="email"
                     value={agentInfo.email}
-                    readOnly
-                    title={agentInfo.email || "Account login email"}
-                    aria-label="Account login email"
-                    className="w-full min-w-0 text-ellipsis bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black outline-none shadow-sm cursor-text"
+                    onChange={(e) =>
+                      setAgentInfo((p) => ({ ...p, email: e.target.value }))
+                    }
+                    title={agentInfo.email || "Agent contact email"}
+                    aria-label="Agent contact email"
+                    autoComplete="email"
+                    placeholder="Enter your contact email"
+                    className="w-full min-w-0 bg-white border border-gray-200 rounded-2xl px-5 py-3.5 pl-12 text-[14px] font-medium text-black placeholder:text-gray-400 focus:border-[#D48D2A] focus:ring-4 focus:ring-[#D48D2A]/5 outline-none transition-all shadow-sm"
                   />
-                  <p className="mt-1 text-[10px] text-gray-400">Account login email</p>
+                  <p className="mt-1 text-[10px] text-gray-400">Client contact email. Your account login email stays the same.</p>
                 </div>
               </div>
               <div className="min-w-0">

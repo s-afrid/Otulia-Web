@@ -423,7 +423,7 @@ router.post("/upgrade-plan", authMiddleware, async (req, res) => {
 router.put("/update-profile", authMiddleware, async (req, res) => {
   try {
     const {
-      name, phone, phoneCode, whatsapp, whatsappCode,
+      name, contactEmail, phone, phoneCode, whatsapp, whatsappCode,
       jobTitle, language, languages, timezone, contactMethod, preferredContact,
       agentDescription, social, profilePicture, company
     } = req.body;
@@ -433,6 +433,13 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
 
     const hasField = (field) => Object.prototype.hasOwnProperty.call(req.body, field);
     if (hasField("name")) user.name = name;
+    if (hasField("contactEmail")) {
+      const normalizedContactEmail = String(contactEmail || "").trim().toLowerCase();
+      if (normalizedContactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedContactEmail)) {
+        return res.status(400).json({ error: "INVALID_CONTACT_EMAIL" });
+      }
+      user.contactEmail = normalizedContactEmail;
+    }
     if (hasField("phone")) user.phone = phone;
     if (hasField("phoneCode")) user.phoneCode = phoneCode;
     if (hasField("whatsapp")) user.whatsapp = whatsapp;
@@ -478,6 +485,7 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     // Update all assets with new agent info
     await updateUserAssetsAgent(user._id, {
       name: user.name,
+      email: user.contactEmail || user.email,
       phone: user.phone,
       photo: user.profilePicture,
       company: user.company?.companyName,

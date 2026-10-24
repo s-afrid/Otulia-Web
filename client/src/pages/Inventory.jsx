@@ -181,7 +181,7 @@ const Inventory = () => {
       setAgentInfo({
         fullName: user.name || "",
         jobTitle: user.jobTitle || "",
-        email: user.email || "",
+        email: user.contactEmail || user.email || "",
         phoneCode: pCode,
         phone: user.phone ? formatPhoneWithCode(user.phone, pCode) : "",
         whatsappCode: wCode,
@@ -421,6 +421,7 @@ const Inventory = () => {
         },
         body: JSON.stringify({
           name: agentInfo.fullName,
+          contactEmail: agentInfo.email.trim(),
           jobTitle: agentInfo.jobTitle,
           phone: formattedPhone,
           phoneCode: agentInfo.phoneCode,

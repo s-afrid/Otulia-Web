@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    contactEmail: {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
 
     password: {
       type: String,

@@ -358,7 +358,7 @@ router.post('/create', authMiddleware, upload.fields([
             agent: {
                 id: user._id,
                 name: user.name,
-                email: user.email,
+                email: user.contactEmail || user.email,
                 phone: user.phone,
                 photo: user.profilePicture,
                 company: user.company?.companyName || 'Otulia Private Seller',
